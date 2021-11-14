@@ -1,4 +1,4 @@
-# AnyUI
+# Any UI
 
 This is a cute UI components library for Vue 3.
 
