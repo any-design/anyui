@@ -5,7 +5,7 @@ const fs = require('fs-extra');
 const projectDistDir = path.resolve(process.cwd(), './lib/');
 const cssFilePath = path.resolve(projectDistDir, './style.css');
 const scssFilesPath = path.resolve(process.cwd(), './src/styles');
-const faviconFile = path.resolve(projectDistDir, './favicon.ico');
+const faviconFile = path.resolve(projectDistDir, './favicon.png');
 const stylesPath = path.resolve(process.cwd(), './styles');
 
 console.log(chalk.cyan('AnyUI after building script is starting...'));

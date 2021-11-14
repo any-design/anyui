@@ -1,7 +1,8 @@
-src
+./src
 public
 index.html
 .vscode
+.history
 .prettierrc.js
 tsconfig.json
 vite.config.ts
