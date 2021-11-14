@@ -20,7 +20,7 @@ Step 2: Import the library into your project.
 import { createApp } from 'vue';
 import AnyUI from '@any-design/anyui';
 // Don't forget to import the style file
-import 'anyui/styles/default.scss';
+import '@any-design/anyui/styles/default.scss';
 
 const app = createApp(App);
 
