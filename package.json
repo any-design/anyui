@@ -1,5 +1,5 @@
 {
-  "name": "any-ui",
+  "name": "@any-design/anyui",
   "version": "0.0.1",
   "scripts": {
     "start": "vite",
