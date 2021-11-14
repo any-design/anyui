@@ -1,0 +1,18 @@
+import mitt, { Emitter } from 'mitt';
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+type ImageEvents = {
+  load: {
+    imageId: string;
+  };
+  loaded: {
+    imageId: string;
+  };
+  error: {
+    imageId: string;
+  };
+};
+
+const emitter: Emitter<ImageEvents> = mitt();
+
+export default emitter;

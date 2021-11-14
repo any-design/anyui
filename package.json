@@ -1,0 +1,41 @@
+{
+  "name": "anyui",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "npm run lint && rimraf ./lib && rimraf ./styles && vue-tsc --noEmit && vite build && node ./scripts/afterBuild.js",
+    "serve": "vite preview",
+    "lint": "eslint ./src/**/* --config ./.eslintrc.js"
+  },
+  "main": "lib/anyui.esm.js",
+  "module": "lib/anyui.esm.js",
+  "types": "lib/src/index.d.ts",
+  "dependencies": {
+    "@popperjs/core": "^2.10.2",
+    "mitt": "^3.0.0",
+    "vue": "^3.2.21"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.16.3",
+    "@types/node": "^16.11.7",
+    "@typescript-eslint/eslint-plugin": "^5.3.1",
+    "@typescript-eslint/parser": "^5.3.1",
+    "@vitejs/plugin-vue": "^1.9.4",
+    "chalk": "^4.1.2",
+    "eslint": "^8.2.0",
+    "eslint-config-alloy": "^4.4.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "fs-extra": "^10.0.0",
+    "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
+    "sass": "^1.43.4",
+    "typescript": "^4.4.4",
+    "vite": "^2.6.14",
+    "vite-plugin-dts": "^0.9.4",
+    "vue-eslint-parser": "^8.0.1",
+    "vue-tsc": "^0.3.0"
+  }
+}

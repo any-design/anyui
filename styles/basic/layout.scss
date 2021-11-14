@@ -1,0 +1,55 @@
+// basic layout styles
+
+html,
+body,
+#app {
+  width: 100vw;
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow-y: auto;
+}
+
+$scroll-width: 8px;
+
+body::-webkit-scrollbar {
+  width: $scroll-width;
+  height: $scroll-width;
+}
+body::-webkit-scrollbar-button {
+  display: none;
+}
+body::-webkit-scrollbar-thumb {
+  width: $scroll-width;
+  border-radius: $scroll-width;
+  background: var(--scroll-bar);
+}
+body::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+body::-webkit-scrollbar-corner {
+  background: var(--bg);
+}
+
+div,
+span,
+p,
+a,
+input,
+button,
+pre {
+  color: var(--text);
+  font-family: var(--font-normal);
+}
+
+p {
+  margin: 0;
+}

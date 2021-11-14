@@ -1,0 +1,11 @@
+src
+public
+index.html
+.vscode
+.prettierrc.js
+tsconfig.json
+vite.config.ts
+.eslintrc.js
+.eslintignore
+scripts
+assets
