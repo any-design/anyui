@@ -1,4 +1,4 @@
-./src
+.git
 public
 index.html
 .vscode
@@ -10,3 +10,4 @@ vite.config.ts
 .eslintignore
 scripts
 assets
+/src
