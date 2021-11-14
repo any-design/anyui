@@ -8,6 +8,13 @@
       "url": "https://github.com/backrunner"
     }
   ],
+  "keywords": [
+    "vue",
+    "vue3",
+    "ui",
+    "library",
+    "cute"
+  ],
   "homepage": "https://github.com/any-design/anyui",
   "repository": {
     "type": "git",
@@ -23,6 +30,7 @@
   "main": "lib/anyui.esm.js",
   "module": "lib/anyui.esm.js",
   "types": "lib/src/index.d.ts",
+  "license": "MIT",
   "dependencies": {
     "@popperjs/core": "^2.10.2",
     "mitt": "^3.0.0",
