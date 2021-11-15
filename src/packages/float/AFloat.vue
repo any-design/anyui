@@ -2,7 +2,7 @@
   <teleport to="body">
     <transition name="a-float-fade">
       <div v-if="visible" :class="['a-float', className || null]" :style="floatStyles">
-        <div class="a-float__mask" :style="maskStyles" @click="onClose"></div>
+        <div class="a-float__mask" @click="onClose"></div>
         <div class="a-float__content" :style="contentStyles">
           <slot></slot>
         </div>
@@ -56,11 +56,6 @@ export default defineComponent({
   emits: ['close', 'update:visible'],
   computed: {
     floatStyles() {
-      return {
-        'z-index': this.zIndex + 1,
-      };
-    },
-    maskStyles() {
       return {
         'z-index': this.zIndex,
       };
