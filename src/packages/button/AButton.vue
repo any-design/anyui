@@ -117,6 +117,7 @@ export default defineComponent({
 }
 .a-button.a-button--disabled {
   transition: none;
+  border: none;
   background: var(--disabled) !important;
   color: var(--text-disabled) !important;
   box-shadow: 0 2px 10px var(--shadow-5);
