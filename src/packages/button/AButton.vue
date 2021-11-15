@@ -5,6 +5,7 @@
       'a-button--large': size === 'large',
       'a-button--small': size === 'small',
       'a-button--primary': type === 'primary',
+      'a-button--gradient': type === 'gradient',
       'a-button--round': round,
       'a-button--anim': anim,
       'a-button--disabled': disabled,
@@ -96,6 +97,12 @@ export default defineComponent({
 }
 .a-button.a-button--primary {
   background: var(--primary);
+  color: var(--btn);
+  box-shadow: 0 4px 10px var(--shadow-20);
+  border: none;
+}
+.a-button.a-button--gradient {
+  background: linear-gradient(90deg, var(--secondary), var(--primary));
   color: var(--btn);
   box-shadow: 0 4px 10px var(--shadow-20);
   border: none;
