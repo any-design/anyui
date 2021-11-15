@@ -22,3 +22,14 @@ if (fs.existsSync(faviconFile)) {
 
 fs.copySync(path.resolve(scssFilesPath), stylesPath);
 console.log(chalk.green('Styles has been copied to the lib folder.'));
+
+// modify the index.scss
+const indexScssPath = path.resolve(stylesPath, './index.scss');
+if (fs.existsSync(indexScssPath)) {
+  const indexScssContent = fs.readFileSync(indexScssPath, 'utf-8');
+  fs.writeFileSync(
+    indexScssPath,
+    indexScssContent.replace('// components inject', "@import './components.scss';"),
+  );
+  console.log(chalk.green('Main style file has been injected.'));
+}
