@@ -11,6 +11,7 @@ import Upload from './packages/upload';
 import Image from './packages/image';
 import Popper from './packages/popper';
 import PopupMenu from './packages/popmenu';
+import Lottie from './packages/lottie';
 
 const defaultComponentList = [
   Button,
@@ -48,6 +49,7 @@ export {
   Image,
   Popper,
   PopupMenu,
+  Lottie,
   buildInstaller,
 };
 

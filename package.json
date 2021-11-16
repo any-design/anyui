@@ -30,9 +30,11 @@
   "main": "lib/anyui.esm.js",
   "module": "lib/anyui.esm.js",
   "types": "lib/src/index.d.ts",
+  "sideEffects": false,
   "license": "MIT",
   "dependencies": {
     "@popperjs/core": "^2.10.2",
+    "lottie-web": "^5.8.1",
     "mitt": "^3.0.0",
     "vue": "^3.2.21"
   },

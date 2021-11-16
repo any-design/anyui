@@ -92,7 +92,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (!props.src) {
-        console.warn('You should give a source to the image component.');
+        console.warn('[AnyUI][image] You should give a source to the image component.');
         isError.value = true;
         return;
       }
