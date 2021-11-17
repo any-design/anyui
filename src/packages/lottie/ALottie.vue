@@ -11,6 +11,26 @@ export default defineComponent({
     animData: {
       type: Object,
     },
+    loop: {
+      type: Boolean,
+      default: true,
+    },
+    autoplay: {
+      type: Boolean,
+      default: true,
+    },
+    preserveAspectRatio: {
+      type: String,
+      default: 'none',
+    },
+    hideOnTransparent: {
+      type: Boolean,
+      default: true,
+    },
+    progressiveLoad: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const container = ref(null);
@@ -22,11 +42,13 @@ export default defineComponent({
       lottie.loadAnimation({
         container: container.value,
         renderer: 'svg',
-        loop: true,
-        autoplay: true,
+        loop: props.loop,
+        autoplay: props.autoplay,
         animationData: props.animData,
         rendererSettings: {
-          preserveAspectRatio: 'none',
+          preserveAspectRatio: props.preserveAspectRatio,
+          progressiveLoad: props.progressiveLoad,
+          hideOnTransparent: props.hideOnTransparent,
         },
       });
     });
