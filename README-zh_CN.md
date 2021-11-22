@@ -1,18 +1,27 @@
 # AnyUI
 
-<img src="https://github.com/any-design/anyui/blob/main/assets/logo.png?raw=true" width="240" align="center">
+<div align="center">
+<img src="https://github.com/any-design/anyui/blob/main/assets/logo.png?raw=true" width="240">
 
 [English](README.md) | [中文](README-zh_CN.md)
+
+</div>
+
+<br>
 
 AnyUI 是一款拥有萌系设计风格的 Vue3 前端 UI 组件库，衍生于 AnyMoeNFT 项目，主要面向 C 端优化用户交互体验。
 
 警告：本项目仍然处于快速迭代阶段，我们不完全保证稳定性，请勿用于重要项目！！
 
----
+<br>
 
 ## 快速开始
 
-第一步：使用 npm 或 yarn 引入本项目 `@any-design/anyui` 依赖包
+<br>
+
+第一步： 使用 npm 或 yarn 引入本项目 `@any-design/anyui` 依赖包
+
+<br>
 
 ```bash
 # 推荐使用 npm@8
@@ -23,7 +32,11 @@ $ npm install @any-design/anyui --save
 $ yarn add @any-design/anyui
 ```
 
-第二步：将本库导入你的项目中使用。
+<br>
+
+第二步： 将本库导入你的项目中使用。
+
+<br>
 
 以下是一个最小化示例：
 
@@ -40,13 +53,23 @@ app.use(AnyUI);
 app.mount('#app');
 ```
 
+<br>
+
 ### TypeScript 支持
+
+<br>
 
 本项目基于 TypeScript 开发，提供了完整的 `.d.ts` 定义文件。
 
+<br>
+
 ## 社区共建
 
+<br>
+
 ### 本地开发
+
+<br>
 
 你可以将本项目 Fork 至你的 GitHub 项目库中，将仓库克隆到本地开发，你也可以使用 GitHub Dev。
 
@@ -59,7 +82,11 @@ $ npm install
 $ npm run dev
 ```
 
+<br>
+
 ### Pull Request
+
+<br>
 
 AnyDesign 团队成员均利用业余时间维护本项目，无论贡献大小，我们都会尽量及时对每一个贡献进行 Review，Review 通过后你的提交就可以直接合入到主干。
 
@@ -67,15 +94,23 @@ AnyDesign 团队成员均利用业余时间维护本项目，无论贡献大小�
 
 我们欢迎任何人在任何时间提交你的贡献～
 
-### 社区互助
+<br>
 
-如果你在使用或者开发中遇到了问题，你可以在以下途径寻求到我们的帮助，我们也鼓励社区成员之间进行互助。
+### 社区讨论与互助
 
-> 在此之前，我们强烈推荐阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way)、[《如何向开源社区提问题》](https://github.com/seajs/seajs/issues/545)，以助于获取到更有效的帮助。
+<br>
+
+如果你在使用或者开发中遇到了问题，你可以通过以下途径寻求我们的帮助，我们也鼓励社区成员积极讨论技术、互相帮助解决技术问题。
+
+> 在参与社区讨论之前，我们强烈推荐阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way)、[《如何向开源社区提问题》](https://github.com/seajs/seajs/issues/545)，以助于获取到更有效的帮助。
 
 1. [GitHub Issues](https://github.com/any-design/anyui/issues)
 2. Coming soon...
 
+<br>
+
 ## 许可协议
+
+<br>
 
 AnyUI 项目基于 [MIT](LICENSE) 协议开源，使用本项目请遵守该协议。
