@@ -4,3 +4,4 @@ vite-env.d.ts
 lib/**/*
 node_modules/**/*
 .history/**/*
+docs/**/*
