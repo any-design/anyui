@@ -1,17 +1,19 @@
 # AnyUI
 
+<br>
+
 <div align="center">
 <img src="https://github.com/any-design/anyui/blob/main/assets/logo.png?raw=true" width="240">
 
 [English](README.md) | [中文](README-zh_CN.md)
 
-</div>
-
 <br>
 
-AnyUI 是一款拥有萌系设计风格的 Vue3 前端 UI 组件库，衍生于 AnyMoeNFT 项目，主要面向 C 端优化用户交互体验。
+一款拥有萌系设计风格的 Vue3 前端 UI 组件库
 
 警告：本项目仍然处于快速迭代阶段，我们不完全保证稳定性，请勿用于重要项目！！
+
+</div>
 
 <br>
 

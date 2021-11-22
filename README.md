@@ -1,17 +1,17 @@
 # AnyUI
 
+<br>
+
 <div align="center">
 <img src="https://github.com/any-design/anyui/blob/main/assets/logo.png?raw=true" width="240">
 
 [English](README.md) | [中文](README-zh_CN.md)
 
-</div>
-
-<br>
-
 This is a cute UI components library for Vue 3.
 
 IMPORTANT: This project is still working in progress.
+
+</div>
 
 <br>
 
