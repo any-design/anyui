@@ -46,11 +46,11 @@ app.mount('#app');
 
 ---
 ## Contributing
-## AnyUI社区共建
+## AnyUI 社区共建
 
 <br/>
 
-### AnyUI开发以及二次开发
+### AnyUI 开发以及二次开发
 
 您可以将本项目 Fork 至你的 GitHub 项目库中，将仓库克隆到本地开发，您也可以使用 GitHub Dev。
 
