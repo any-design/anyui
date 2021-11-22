@@ -2,7 +2,7 @@
 
 <img src="https://github.com/any-design/anyui/blob/main/assets/logo.png?raw=true" width="240" align="center">
 
-[English](README.md) | [中文](README-CN.md)
+[English](README.md) | [中文](README-zh_CN.md)
 
 AnyUI是一款基于可爱理念设计的Vue3前端UI组件库，衍生于AnyMoe项目中。
 

@@ -2,7 +2,7 @@
 
 <img src="https://github.com/any-design/anyui/blob/main/assets/logo.png?raw=true" width="240" align="center">
 
-[English](README.md) | [中文](README-CN.md)
+[English](README.md) | [中文](README-zh_CN.md)
 
 This is a cute UI components library for Vue 3.
 
