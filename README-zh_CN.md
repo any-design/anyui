@@ -4,13 +4,12 @@
 
 [English](README.md) | [中文](README-zh_CN.md)
 
-AnyUI 是一款拥有萌系设计风格的 Vue3 前端 UI 组件库，衍生于 AnyMoeNFT 项目，主要面向 C 端。
+AnyUI 是一款拥有萌系设计风格的 Vue3 前端 UI 组件库，衍生于 AnyMoeNFT 项目，主要面向 C 端优化用户交互体验。
 
 警告：本项目仍然处于快速迭代阶段，我们不完全保证稳定性，请勿用于重要项目！！
 
 ---
 
-## How to use
 ## 快速开始
 
 第一步：使用 npm 或 yarn 引入本项目 `@any-design/anyui` 依赖包
@@ -45,12 +44,12 @@ app.mount('#app');
 本项目基于 TypeScript 开发，提供了完整的`.d.ts`定义文件。
 
 ---
-## Contributing
-## AnyUI 社区共建
+
+## 社区共建
 
 <br/>
 
-### AnyUI 开发以及二次开发
+### 本地开发
 
 您可以将本项目 Fork 至你的 GitHub 项目库中，将仓库克隆到本地开发，您也可以使用 GitHub Dev。
 
@@ -67,7 +66,7 @@ $ npm start
 
 ### Pull Request
 
-AnyDesign 团队成员均利用业余时间维护本项目，我们会关注每一个 PR，无论贡献大小，我们会尽量及时对您的贡献进行 Review，Review通过后您的提交将被合入我们的库中。
+AnyDesign 团队成员均利用业余时间维护本项目，我们会关注每一个 PR，无论贡献大小，我们会尽量及时对您的贡献进行 Review，Review 通过后您的提交将被合入我们的库中。
 我们欢迎任何人在任何时间提交您的贡献～
 
 <br/>
@@ -81,9 +80,8 @@ AnyDesign 团队成员均利用业余时间维护本项目，我们会关注每�
 1. [GitHub Issues](https://github.com/any-design/anyui/issues)
 2. Coming soon
 
-
 ---
-## License
-## 开源许可协议
+
+## 许可协议
 
 AnyUI 项目基于 [MIT](LICENSE) 开源协议开源，使用本项目请遵守该开源协议使用。

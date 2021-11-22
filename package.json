@@ -28,7 +28,7 @@
     "dist": "npm run lint && npm run clean && npm run build && node ./scripts/afterBuild.js",
     "build:testground": "npm run lint && rimraf ./dist-testground && cross-env BUILD_TARGET=TESTGROUND vite build",
     "serve": "vite preview",
-    "lint": "eslint ./src/**/* --config ./.eslintrc.js"
+    "lint": "eslint --ext .vue,.ts src/ --config .eslintrc.js"
   },
   "main": "lib/anyui.esm.js",
   "module": "lib/anyui.esm.js",
