@@ -1,7 +1,8 @@
 node_modules
+.history
 .DS_Store
+.vscode
 dist
 dist-ssr
-.history
 lib
 /styles
