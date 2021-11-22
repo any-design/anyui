@@ -25,7 +25,7 @@
     "dev": "vite",
     "build": "npm run lint && rimraf ./lib && rimraf ./styles && vue-tsc --noEmit && vite build && node ./scripts/afterBuild.js",
     "serve": "vite preview",
-    "lint": "eslint ./src/**/* --config ./.eslintrc.js"
+    "lint": "eslint --ext .vue,.ts src/ --config .eslintrc.js"
   },
   "main": "lib/anyui.esm.js",
   "module": "lib/anyui.esm.js",
