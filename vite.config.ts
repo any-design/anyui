@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import path from 'path';
 import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
+import gfont from 'vite-plugin-gfont';
 
 const BUILD_CONFIGS = {
   LIBRARY: {
@@ -30,7 +31,17 @@ const BUILD_CONFIGS = {
     },
   },
   TESTGROUND: {
-    plugins: [vue()],
+    plugins: [
+      vue(),
+      gfont({
+        fonts: [
+          {
+            family: 'Quicksand',
+            styles: [400, 500, 600, 700],
+          },
+        ],
+      }),
+    ],
     build: {
       outDir: 'dist-testground',
       sourcemap: false,
