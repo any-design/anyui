@@ -8,5 +8,6 @@ module.exports = {
   extends: ['alloy', 'alloy/typescript', 'alloy/vue', 'plugin:vue/vue3-essential', 'prettier'],
   rules: {
     'vue/no-v-model-argument': 0,
+    'vue/multi-word-component-names': 0,
   },
 };
