@@ -46,7 +46,7 @@ export default defineComponent({
       uploadStatus.value = status;
     };
     return {
-      uploadStatus: '',
+      uploadStatus,
       updateUploadStatus,
     };
   },
