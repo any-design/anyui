@@ -5,6 +5,4 @@ APopper.install = (app: App) => {
   app.component('APopper', APopper);
 };
 
-export type APopper = typeof APopper;
-
 export default APopper;
