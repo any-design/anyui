@@ -13,6 +13,6 @@ type ImageEvents = {
   };
 };
 
-const emitter: Emitter<ImageEvents> = mitt();
+const imageEventEmitter: Emitter<ImageEvents> = mitt();
 
-export default emitter;
+export default imageEventEmitter;

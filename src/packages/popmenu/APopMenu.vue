@@ -19,7 +19,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { formatStyleSize } from '../../utils';
-import type { APopper } from '../popper';
+import type APopper from '../popper';
 
 interface AnyUIPopMenuItem {
   name: string;
@@ -71,8 +71,7 @@ export default defineComponent({
     },
     handleItemClick(key: string) {
       if (this.$refs.popper && this.hideAfterClick) {
-        const popper = this.$refs.popper as APopper;
-        popper.hide();
+        (this.$refs.popper as InstanceType<typeof APopper>).hide();
       }
       this.$emit('command', key);
     },
