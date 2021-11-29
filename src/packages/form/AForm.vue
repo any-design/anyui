@@ -148,5 +148,8 @@ export default defineComponent({
 }
 .a-form--inline {
   display: flex;
+  .a-form-item {
+    margin-bottom: 0;
+  }
 }
 </style>
