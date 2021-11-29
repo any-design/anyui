@@ -16,6 +16,7 @@
       <ImageSection />
       <PopperSection />
       <PopMenuSection />
+      <FormSection />
     </div>
     <a-split margin="14"></a-split>
     <div class="testground-footer">
@@ -42,6 +43,7 @@ import UploadSection from './sections/upload.vue';
 import ImageSection from './sections/image.vue';
 import PopperSection from './sections/popper.vue';
 import PopMenuSection from './sections/popmenu.vue';
+import FormSection from './sections/form.vue';
 import Logo from './icon/Logo.vue';
 import GitHubIcon from './icon/GitHub.vue';
 
@@ -59,6 +61,7 @@ export default defineComponent({
     ImageSection,
     PopperSection,
     PopMenuSection,
+    FormSection,
     Logo,
     GitHubIcon,
   },

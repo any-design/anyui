@@ -12,6 +12,8 @@ import Image from './packages/image';
 import Popper from './packages/popper';
 import PopupMenu from './packages/popmenu';
 import Lottie from './packages/lottie';
+import Form from './packages/form';
+import FormItem from './packages/formItem';
 
 const defaultComponentList = [
   Button,
@@ -26,6 +28,8 @@ const defaultComponentList = [
   Image,
   Popper,
   PopupMenu,
+  Form,
+  FormItem,
 ];
 
 const buildInstaller = (components: any[]) => {
@@ -50,6 +54,8 @@ export {
   Popper,
   PopupMenu,
   Lottie,
+  Form,
+  FormItem,
   buildInstaller,
 };
 

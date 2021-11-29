@@ -3,7 +3,7 @@
     <p class="testground-content-title">Image</p>
     <div class="textground-flex">
       <a-image
-        src="https://avatars.githubusercontent.com/u/93182835?s=200&v=4"
+        src="https://github.com/any-design/anyui/blob/main/public/favicon.png?raw=true"
         width="200"
         height="200"
       >
