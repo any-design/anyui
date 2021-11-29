@@ -24,7 +24,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useSlots } from 'vue';
+import { Handler } from 'mitt';
+import {
+  defineComponent,
+  getCurrentInstance,
+  onMounted,
+  onUnmounted,
+  ref,
+  useSlots,
+  watchEffect,
+} from 'vue';
+import { formatStyleSize, getCertainParent } from '../../utils';
+import { FormItemEventEmitter } from '../formItem/bus';
 
 export default defineComponent({
   props: {
@@ -58,34 +69,52 @@ export default defineComponent({
     },
   },
   emits: ['update:modelValue', 'submit'],
-  data() {
-    return {
-      storedValue: this.modelValue,
+  setup(props, { emit }) {
+    const storedValue = ref(props.modelValue);
+
+    const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
+    let formItemEventEmitter: FormItemEventEmitter | undefined;
+    if (formItemParent) {
+      formItemEventEmitter = formItemParent.exposed?.emitter as FormItemEventEmitter;
+    }
+
+    // methods
+    const clear = () => {
+      emit('update:modelValue', '');
     };
-  },
-  computed: {
-    style() {
-      return {
-        width: typeof this.width === 'number' ? `${this.width}px` : this.width,
-      };
-    },
-    hasPrefix() {
-      return !!useSlots().prefix;
-    },
-  },
-  watch: {
-    modelValue(val) {
-      this.storedValue = val;
-    },
-  },
-  methods: {
-    handleInput(e: Event) {
+    const handleInput = (e: Event) => {
       const target = e.target as HTMLInputElement;
-      this.$emit('update:modelValue', target.value);
-    },
-    handleEnterDown() {
-      this.$emit('submit', this.storedValue);
-    },
+      emit('update:modelValue', target.value);
+    };
+    const handleEnterDown = () => {
+      emit('submit', storedValue.value);
+    };
+    const handleClear: Handler = () => {
+      clear();
+    };
+
+    // life hooks
+    watchEffect(() => {
+      storedValue.value = props.modelValue;
+    });
+
+    onMounted(() => {
+      formItemEventEmitter?.on('clear', handleClear);
+    });
+
+    onUnmounted(() => {
+      formItemEventEmitter?.off('clear', handleClear);
+    });
+
+    return {
+      storedValue,
+      hasPrefix: !!useSlots().prefix,
+      style: {
+        width: formatStyleSize(props.width),
+      },
+      handleInput,
+      handleEnterDown,
+    };
   },
 });
 </script>
