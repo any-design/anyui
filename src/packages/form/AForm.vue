@@ -39,6 +39,27 @@ export default defineComponent({
     // exposed data
     const emitter = formEventEmitterFactory();
 
+    const handleValidatePassed = (field?: string) => {
+      if (!props.rules) {
+        return;
+      }
+      if (field) {
+        emitter.emit('setValid', {
+          field,
+          message: '',
+          isValid: true,
+        });
+        return;
+      }
+      Object.keys(props.rules).forEach((key: string) => {
+        emitter.emit('setValid', {
+          field: key,
+          message: '',
+          isValid: true,
+        });
+      });
+    };
+
     const handleValidateErrors = (errors: unknown) => {
       const validateErrs = errors as ValidateError[];
       validateErrs.forEach((error) => {
@@ -59,6 +80,7 @@ export default defineComponent({
       const validator = new ValidateSchema(props.rules as Rules);
       try {
         await validator.validate(formData);
+        handleValidatePassed();
         return true;
       } catch ({ errors }) {
         handleValidateErrors(errors);
@@ -80,6 +102,7 @@ export default defineComponent({
       });
       try {
         await validator.validate(formData);
+        handleValidatePassed(field);
         return true;
       } catch ({ errors }) {
         handleValidateErrors(errors);
@@ -108,6 +131,7 @@ export default defineComponent({
     };
 
     expose(exposed);
+
     return exposed;
   },
 });

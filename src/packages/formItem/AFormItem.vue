@@ -1,10 +1,21 @@
 <template>
-  <div class="a-form-item">
-    <div v-if="label" class="a-form-item__label" :style="labelStyle">
-      <span>{{ label }}</span>
+  <div
+    :class="{
+      'a-form-item': true,
+      'a-form-item--invalid': !isValid,
+    }"
+  >
+    <div class="a-form-item-inner">
+      <div v-if="label" class="a-form-item-inner__label" :style="labelStyle">
+        <span>{{ label }}</span>
+      </div>
+      <div class="a-form-item-inner__content">
+        <slot></slot>
+      </div>
     </div>
-    <div class="a-form-item__content">
-      <slot></slot>
+    <div v-if="!isValid" class="a-form-item-invalid">
+      <div v-if="label" class="a-form-item-invalid__placeholder" :style="labelStyle"></div>
+      <div class="a-form-item-invalid__msg">{{ inValidMessage }}</div>
     </div>
   </div>
 </template>
@@ -42,14 +53,14 @@ export default defineComponent({
       width: formattedLabelWidth,
     };
 
-    const isValid = ref(false);
+    const isValid = ref(true);
     const inValidMessage = ref('');
 
     const setValidHandler: Handler<SetValidEventPayload> = (payload) => {
-      if (payload.field && props.prop && payload.field !== props.prop) {
+      if (!payload.field || !props.prop || payload.field !== props.prop) {
         return;
       }
-      inValidMessage.value = payload.isValid
+      inValidMessage.value = !payload.isValid
         ? payload.message || `${props.prop || 'Unknown form item'} is invalid`
         : '';
       isValid.value = payload.isValid;
@@ -83,6 +94,7 @@ export default defineComponent({
     return {
       labelStyle,
       isValid,
+      inValidMessage,
     };
   },
 });
@@ -91,12 +103,35 @@ export default defineComponent({
 <style lang="scss">
 .a-form-item {
   width: 100%;
-  display: flex;
-  align-items: center;
   position: relative;
   margin-bottom: 18px;
-  &__content {
-    flex: 1;
+  &-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    &__content {
+      flex: 1;
+    }
+  }
+  &-invalid {
+    margin-top: 12px;
+    display: flex;
+    &__msg {
+      font-size: 15px;
+      color: var(--danger);
+      flex: 1;
+    }
+  }
+}
+.a-form-item--invalid {
+  .a-form-item-inner {
+    &__content {
+      input {
+        border: 1px solid var(--danger) !important;
+      }
+    }
   }
 }
 .a-form-item:last-of-type {
