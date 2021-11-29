@@ -10,7 +10,7 @@
           <a-button type="primary" @click="submit">Submit</a-button>
         </a-form-item>
       </a-form>
-      <a-form ref="inlineForm" v-model="inlineFormData" :rules="rules">
+      <a-form ref="inlineForm" v-model="inlineFormData" layout="inline" :rules="rules">
         <a-form-item prop="text1" label="Label">
           <a-input v-model="formData.text1"></a-input>
         </a-form-item>
