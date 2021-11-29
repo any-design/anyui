@@ -120,6 +120,9 @@ export default defineComponent({
         type: 'all',
       });
     };
+    const clearValidation = async (field?: string) => {
+      handleValidatePassed(field);
+    };
 
     const exposed = {
       emitter,
@@ -128,6 +131,7 @@ export default defineComponent({
       validateField,
       clearField,
       clearFields,
+      clearValidation,
     };
 
     expose(exposed);
