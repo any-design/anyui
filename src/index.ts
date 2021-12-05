@@ -1,4 +1,5 @@
 import { App } from 'vue';
+import { AnyUIInstallOptions } from './types';
 import Button from './packages/button';
 import Card from './packages/card';
 import ClickableText from './packages/clickableText';
@@ -33,10 +34,10 @@ const defaultComponentList = [
   FormItem,
 ];
 
-const buildInstaller = (components: any[]) => {
+const buildInstaller = (components: any[], options?: AnyUIInstallOptions) => {
   return (app: App) => {
     components.forEach((comp) => {
-      app.use(comp);
+      app.use(comp, options);
     });
   };
 };
