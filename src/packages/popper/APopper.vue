@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, PropType, ref } from 'vue';
 import { Placement } from '@popperjs/core';
 import { createPopperInstance } from './popper';
 
@@ -25,7 +25,7 @@ export default defineComponent({
       default: 100,
     },
     placement: {
-      type: String,
+      type: String as PropType<Placement>,
       default: 'bottom',
     },
     offset: {
