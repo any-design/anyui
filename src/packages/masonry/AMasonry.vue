@@ -405,7 +405,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less" scoped>
+<style lang="scss">
 .a-masonry {
   position: relative;
   -webkit-overflow-scrolling: touch;

@@ -2,10 +2,8 @@
   <button
     :class="{
       'a-button': true,
-      'a-button--large': size === 'large',
-      'a-button--small': size === 'small',
-      'a-button--primary': type === 'primary',
-      'a-button--gradient': type === 'gradient',
+      [`a-button--${size}`]: !!size,
+      [`a-button--${type}`]: !!type,
       'a-button--round': round,
       'a-button--anim': anim,
       'a-button--disabled': disabled,

@@ -19,7 +19,7 @@
 // This component itself doesn't trigger or handle any upload operation.
 // It's just a template and supports exposing dropped files to its parent.
 import { defineComponent, PropType } from 'vue';
-import { UploadStatus } from './types';
+import type { UploadStatus } from './types';
 
 export default defineComponent({
   props: {
