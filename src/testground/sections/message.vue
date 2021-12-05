@@ -7,6 +7,7 @@
       <a-button @click="popup('success')">Success</a-button>
       <a-button @click="popup('warning')">Warning</a-button>
       <a-button @click="popup('error')">Error</a-button>
+      <a-button @click="popupRound">Round</a-button>
     </div>
   </div>
 </template>
@@ -21,6 +22,13 @@ export default defineComponent({
       this.$message({
         type,
         content: type,
+      });
+    },
+    popupRound() {
+      this.$message({
+        type: 'info',
+        content: 'Round',
+        round: true,
       });
     },
   },

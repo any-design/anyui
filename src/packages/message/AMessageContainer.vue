@@ -7,6 +7,7 @@
     :content="message.content"
     :icon="message.icon"
     :showIcon="message.showIcon"
+    :round="message.round"
   />
 </template>
 
@@ -35,16 +36,18 @@ export default defineComponent({
         ...message,
         key,
       });
-      setTimeout(() => {
-        const idx = messageQueue.value.findIndex((item) => item.key === key);
-        if (idx < 0) {
-          return;
-        }
-        messageQueue.value.splice(idx, 1);
-        if (messageQueue.value.length < 1) {
-          emitter.emit('cleared');
-        }
-      }, message.duration);
+      if (message.duration) {
+        setTimeout(() => {
+          const idx = messageQueue.value.findIndex((item) => item.key === key);
+          if (idx < 0) {
+            return;
+          }
+          messageQueue.value.splice(idx, 1);
+          if (messageQueue.value.length < 1) {
+            emitter.emit('cleared');
+          }
+        }, message.duration);
+      }
     };
 
     expose({

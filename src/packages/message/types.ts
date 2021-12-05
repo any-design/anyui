@@ -9,6 +9,7 @@ export interface MessageOptions {
   showIcon?: boolean;
   zIndex?: number;
   duration?: number;
+  round?: boolean;
 }
 
 export interface Message extends MessageOptions {
