@@ -33,7 +33,9 @@ export default defineComponent({
   },
   setup(props) {
     const displaySteps =
-      typeof props.steps === 'number' ? new Array(props.steps).fill(null) : props.steps;
+      typeof props.steps === 'number'
+        ? new Array(props.steps).fill(null)
+        : (props.steps as string[]);
     return {
       displaySteps,
     };

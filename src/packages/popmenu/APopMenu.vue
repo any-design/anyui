@@ -17,14 +17,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import { formatStyleSize } from '../../utils';
+import { PopMenuItem } from './types';
 import type APopper from '../popper';
-
-interface AnyUIPopMenuItem {
-  name: string;
-  key?: string;
-}
 
 export default defineComponent({
   props: {
@@ -37,7 +33,7 @@ export default defineComponent({
       default: 12,
     },
     items: {
-      type: Array,
+      type: Array as PropType<string[] | PopMenuItem[]>,
       default: () => [],
     },
     width: {
@@ -59,14 +55,14 @@ export default defineComponent({
   },
   methods: {
     getItemKey(item: unknown) {
-      const menuItem = item as string | AnyUIPopMenuItem;
+      const menuItem = item as string | PopMenuItem;
       if (typeof menuItem === 'string') {
         return menuItem;
       }
       return menuItem.key || menuItem.name;
     },
     getItemName(item: unknown) {
-      const menuItem = item as string | AnyUIPopMenuItem;
+      const menuItem = item as string | PopMenuItem;
       return typeof menuItem === 'string' ? menuItem : menuItem.name;
     },
     handleItemClick(key: string) {
