@@ -21,6 +21,10 @@ const BUILD_CONFIGS = {
         external: [
           'vue',
           'mitt',
+          'async-validator',
+          'lottie-web',
+          '@iconify/vue',
+          '@popperjs/core',
           '@popperjs/core/lib/popper-lite',
           '@popperjs/core/lib/enums',
           '@popperjs/core/lib/modifiers/preventOverflow',
