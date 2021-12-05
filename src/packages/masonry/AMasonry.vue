@@ -2,15 +2,10 @@
   <div ref="container" class="a-masonry" :style="containerStyle">
     <template v-if="displayItems.length">
       <div
-        v-for="item in displayItems"
-        :key="item._masonryIndex"
+        v-for="(item, index) in displayItems"
+        :key="index"
         class="a-masonry__item"
-        :style="{
-          width: `${colWidth}px`,
-          height: `${positionMap[item._masonryIndex].height}px`,
-          top: `${positionMap[item._masonryIndex].top}px`,
-          left: `${positionMap[item._masonryIndex].left}px`,
-        }"
+        :style="getItemStyles(item)"
       >
         <slot
           :data="item"
@@ -185,6 +180,15 @@ export default defineComponent({
       const bodyRect = document.documentElement.getBoundingClientRect();
       const elRect = container.getBoundingClientRect();
       return elRect.top - bodyRect.top;
+    },
+    getItemStyles(item: MasonryItem) {
+      return {
+        width: `${this.colWidth}px`,
+        height: `${this.positionMap[item._masonryIndex].height}px`,
+        transform: `translateX(${this.positionMap[item._masonryIndex].left}px) translateY(${
+          this.positionMap[item._masonryIndex].top
+        })px`,
+      };
     },
     // waterfall items
     itemsChanged() {
@@ -381,10 +385,10 @@ export default defineComponent({
       this.handleScroll();
     },
     handleScroll(timeout = false) {
-      if (!timeout && this.lastScroll && Date.now() - this.lastScroll < 200) {
+      if (timeout && this.lastScroll && Date.now() - this.lastScroll < 200) {
         return;
       }
-      if (!timeout) {
+      if (timeout) {
         if (this.scrollTimer) {
           clearTimeout(this.scrollTimer);
         }
@@ -404,9 +408,11 @@ export default defineComponent({
 <style lang="less" scoped>
 .a-masonry {
   position: relative;
-  transform: translate3d(0, 0, 0);
+  -webkit-overflow-scrolling: touch;
   .a-masonry__item {
     position: absolute;
+    top: 0;
+    left: 0;
   }
 }
 </style>
