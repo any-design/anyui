@@ -5,6 +5,6 @@ APopMenu.install = (app: App) => {
   app.component('APopupMenu', APopMenu);
 };
 
-export { PopMenuItem } from './types';
+export type { PopMenuItem } from './types';
 
 export default APopMenu;

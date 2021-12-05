@@ -5,6 +5,6 @@ AUpload.install = (app: App) => {
   app.component('AUpload', AUpload);
 };
 
-export { UploadStatus } from './types';
+export type { UploadStatus } from './types';
 
 export default AUpload;

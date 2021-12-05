@@ -36,6 +36,7 @@
   "sideEffects": false,
   "license": "MIT",
   "dependencies": {
+    "@iconify/vue": "^3.1.1",
     "@popperjs/core": "^2.10.2",
     "async-validator": "^4.0.7",
     "lottie-web": "^5.8.1",

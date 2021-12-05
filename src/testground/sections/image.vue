@@ -1,7 +1,7 @@
 <template>
   <div class="testground-content__item">
     <p class="testground-content-title">Image</p>
-    <div class="textground-flex">
+    <div class="testground-flex">
       <a-image
         src="https://github.com/any-design/anyui/blob/main/public/favicon.png?raw=true"
         width="200"
