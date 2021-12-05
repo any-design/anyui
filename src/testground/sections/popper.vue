@@ -1,7 +1,7 @@
 <template>
   <div class="testground-content__item">
     <p class="testground-content-title">Popper</p>
-    <div class="textground-flex">
+    <div class="testground-flex">
       <a-popper placement="right">
         <template v-slot:popup>
           <span>popup</span>

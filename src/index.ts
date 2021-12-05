@@ -15,6 +15,7 @@ import Lottie from './packages/lottie';
 import Form from './packages/form';
 import FormItem from './packages/formItem';
 import Mansory from './packages/masonry';
+import Message, { message } from './packages/message';
 
 const defaultComponentList = [
   Button,
@@ -31,6 +32,7 @@ const defaultComponentList = [
   PopupMenu,
   Form,
   FormItem,
+  Message,
 ];
 
 const buildInstaller = (components: any[]) => {
@@ -45,20 +47,26 @@ export {
   Button,
   Card,
   ClickableText,
-  GradientText,
   Input,
-  Split,
-  Float,
-  Step,
-  Upload,
   Image,
-  Popper,
-  PopupMenu,
-  Lottie,
   Form,
   FormItem,
+  Float,
+  GradientText,
+  Lottie,
   Mansory,
+  Message,
+  Popper,
+  PopupMenu,
+  Step,
+  Split,
+  Upload,
+  // methods
   buildInstaller,
+  message,
 };
+
+export type MessageFn = typeof message;
+export type { MessageType } from './packages/message/types';
 
 export default buildInstaller(defaultComponentList);
