@@ -1,11 +1,12 @@
-import { defineComponent, Component, h } from 'vue';
+import { AvailableIconType } from 'src/types';
+import { defineComponent, Component, h, PropType } from 'vue';
 
-export default (icons: Record<string, Component>) =>
+export default (icons: Record<AvailableIconType, Component>) =>
   defineComponent({
     components: icons,
     props: {
       name: {
-        type: String,
+        type: String as PropType<AvailableIconType>,
         required: true,
       },
     },
