@@ -14,6 +14,7 @@ import PopupMenu from './packages/popmenu';
 import Lottie from './packages/lottie';
 import Form from './packages/form';
 import FormItem from './packages/formItem';
+import Mansory from './packages/masonry';
 
 const defaultComponentList = [
   Button,
@@ -56,6 +57,7 @@ export {
   Lottie,
   Form,
   FormItem,
+  Mansory,
   buildInstaller,
 };
 
