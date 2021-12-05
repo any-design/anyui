@@ -13,7 +13,8 @@ export const popupMessage = ({
   zIndex = 2000,
   icon = '',
   showIcon = true,
-  duration = 2000,
+  duration = 5000,
+  round = false,
 }: MessageOptions) => {
   if (!messageContainer) {
     const vm = createVNode(AMessageContainer, {
@@ -46,5 +47,6 @@ export const popupMessage = ({
     icon,
     showIcon,
     duration,
+    round,
   });
 };

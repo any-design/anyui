@@ -6,9 +6,11 @@ export type AMessageTypedOptions =
   | string
   | {
       content: string;
-      showIcon: boolean;
-      zIndex: number;
       duration: number;
+      icon?: string;
+      showIcon?: boolean;
+      zIndex?: number;
+      round?: boolean;
     };
 
 const message = (options: MessageOptions) => {
