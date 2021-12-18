@@ -83,6 +83,7 @@ export default defineComponent({
 
     // methods
     const clear = () => {
+      storedValue.value = '';
       emit('update:modelValue', '');
     };
     const handleInput = (e: Event) => {
