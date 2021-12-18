@@ -1,12 +1,12 @@
 <template>
-  <div ref="trigger" class="a-popper__trigger">
+  <span ref="trigger" class="a-popper__trigger">
     <slot></slot>
     <teleport to="body">
       <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
         <slot name="popup"></slot>
       </div>
     </teleport>
-  </div>
+  </span>
 </template>
 
 <script lang="ts">
@@ -169,7 +169,6 @@ export default defineComponent({
 
 <style lang="scss">
 .a-popper__trigger {
-  width: max-content;
   height: max-content;
 }
 .a-popper--hide {
