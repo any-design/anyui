@@ -1,16 +1,32 @@
 <template>
   <span ref="trigger" class="a-popper__trigger">
     <slot></slot>
-    <teleport to="body">
+    <teleport v-if="appendBody" to="body">
       <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
         <slot name="popup"></slot>
       </div>
     </teleport>
+    <div
+      v-show="popupShowed"
+      v-else
+      ref="popup"
+      :class="['a-popper__popup', popupClass]"
+      :style="{ zIndex }"
+    >
+      <slot name="popup"></slot>
+    </div>
   </span>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, onMounted, PropType, ref } from 'vue';
+import {
+  defineComponent,
+  getCurrentInstance,
+  onBeforeUnmount,
+  onMounted,
+  PropType,
+  ref,
+} from 'vue';
 import { Placement } from '@popperjs/core';
 import { createPopperInstance } from './popper';
 import { APopperTriggerType } from './types';
@@ -40,6 +56,13 @@ export default defineComponent({
     zIndex: {
       type: Number,
       default: 3000,
+    },
+    appendBody: {
+      type: Boolean,
+      default: true,
+    },
+    popupClass: {
+      type: String,
     },
   },
   setup(props, { expose }) {
@@ -101,7 +124,7 @@ export default defineComponent({
           elements.forEach((el) => {
             el.addEventListener(eventName, enterShow);
             sideEffectCleaners.push(() => {
-              el.removeEventListener(eventName, enterShow);
+              el?.removeEventListener(eventName, enterShow);
             });
           });
         });
@@ -109,7 +132,7 @@ export default defineComponent({
           elements.forEach((el) => {
             el.addEventListener(eventName, delayHide);
             sideEffectCleaners.push(() => {
-              el.removeEventListener(eventName, delayHide);
+              el?.removeEventListener(eventName, delayHide);
             });
           });
         });
@@ -125,8 +148,13 @@ export default defineComponent({
           }
         };
         triggerEl.addEventListener('click', handleTriggerClick);
+        if (!props.appendBody) {
+          popupEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+          });
+        }
         sideEffectCleaners.push(() => {
-          triggerEl.removeEventListener('click', handleTriggerClick);
+          triggerEl?.removeEventListener('click', handleTriggerClick);
         });
       }
     });

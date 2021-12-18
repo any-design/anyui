@@ -8,6 +8,7 @@
       <ClickableTextSection />
       <GradientTextSection />
       <InputSection />
+      <SelectSection />
       <CardSection />
       <SplitSection />
       <FloatSection />
@@ -35,6 +36,7 @@ import ButtonSection from './sections/button.vue';
 import ClickableTextSection from './sections/clickableText.vue';
 import GradientTextSection from './sections/gradientText.vue';
 import InputSection from './sections/input.vue';
+import SelectSection from './sections/select.vue';
 import CardSection from './sections/card.vue';
 import SplitSection from './sections/split.vue';
 import FloatSection from './sections/float.vue';
@@ -53,6 +55,7 @@ export default defineComponent({
     ClickableTextSection,
     GradientTextSection,
     InputSection,
+    SelectSection,
     CardSection,
     SplitSection,
     FloatSection,

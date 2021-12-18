@@ -4,6 +4,7 @@ import Card from './packages/card';
 import ClickableText from './packages/clickableText';
 import GradientText from './packages/gradientText';
 import Input from './packages/input';
+import Select from './packages/select';
 import Split from './packages/split';
 import Float from './packages/float';
 import Step from './packages/step';
@@ -23,6 +24,7 @@ const defaultComponentList = [
   ClickableText,
   GradientText,
   Input,
+  Select,
   Split,
   Float,
   Step,
@@ -48,6 +50,7 @@ export {
   Card,
   ClickableText,
   Input,
+  Select,
   Image,
   Form,
   FormItem,
