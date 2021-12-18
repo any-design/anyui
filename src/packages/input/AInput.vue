@@ -8,6 +8,7 @@
       'a-input--has-postfix': hasPostfix,
       'a-input--disabled': disabled,
       'a-input--readonly': readonly,
+      'a-input--not-editable': !editable,
     }"
     :style="style"
   >
@@ -16,7 +17,7 @@
       class="a-input__inner"
       :placeholder="placeholder"
       :disabled="disabled"
-      :readonly="readonly"
+      :readonly="readonly || !editable"
       autocomplete="off"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
@@ -69,6 +70,10 @@ export default defineComponent({
     readonly: {
       type: Boolean,
       default: false,
+    },
+    editable: {
+      type: Boolean,
+      default: true,
     },
   },
   emits: ['update:modelValue', 'submit'],
@@ -264,6 +269,11 @@ export default defineComponent({
 .a-input.a-input--readonly {
   .a-input__inner {
     background: var(--readonly);
+  }
+}
+.a-input.a-input--not-editable {
+  .a-input__inner {
+    user-select: none;
   }
 }
 </style>
