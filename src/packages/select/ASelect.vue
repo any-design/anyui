@@ -158,6 +158,11 @@ export default defineComponent({
   position: relative;
   .a-select {
     width: 100%;
+    .a-select__inner {
+      .a-input__inner {
+        cursor: pointer;
+      }
+    }
   }
 }
 .a-select-dropdown__wrapper {

@@ -8,7 +8,6 @@
       'a-input--has-postfix': hasPostfix,
       'a-input--disabled': disabled,
       'a-input--readonly': readonly,
-      'a-input--not-editable': !editable,
     }"
     :style="style"
   >
@@ -269,11 +268,6 @@ export default defineComponent({
 .a-input.a-input--readonly {
   .a-input__inner {
     background: var(--readonly);
-  }
-}
-.a-input.a-input--not-editable {
-  .a-input__inner {
-    user-select: none;
   }
 }
 </style>
