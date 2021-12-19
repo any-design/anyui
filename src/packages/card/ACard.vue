@@ -31,6 +31,7 @@
 import { defineComponent, useSlots } from 'vue';
 
 export default defineComponent({
+  name: 'ACard',
   props: {
     title: {
       type: String,

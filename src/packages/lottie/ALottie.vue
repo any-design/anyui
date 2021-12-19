@@ -7,6 +7,7 @@ import { defineComponent, onMounted, ref } from 'vue';
 import lottie from 'lottie-web';
 
 export default defineComponent({
+  name: 'ALottie',
   props: {
     animData: {
       type: Object,

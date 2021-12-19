@@ -41,6 +41,7 @@ import { formatStyleSize, getCertainParent } from '../../utils';
 import { FormItemEventEmitter } from '../formItem/bus';
 
 export default defineComponent({
+  name: 'AInput',
   props: {
     width: {
       type: [String, Number],
