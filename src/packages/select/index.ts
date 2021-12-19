@@ -6,3 +6,5 @@ ASelect.install = (app: App) => {
 };
 
 export default ASelect;
+
+export * from './types';

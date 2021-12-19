@@ -5,6 +5,8 @@ import ClickableText from './packages/clickableText';
 import GradientText from './packages/gradientText';
 import Input from './packages/input';
 import Select from './packages/select';
+import Radio from './packages/radio';
+import RadioGroup from './packages/radioGroup';
 import Split from './packages/split';
 import Float from './packages/float';
 import Step from './packages/step';
@@ -25,6 +27,8 @@ const defaultComponentList = [
   GradientText,
   Input,
   Select,
+  Radio,
+  RadioGroup,
   Split,
   Float,
   Step,
@@ -51,6 +55,8 @@ export {
   ClickableText,
   Input,
   Select,
+  Radio,
+  RadioGroup,
   Image,
   Form,
   FormItem,
@@ -70,6 +76,5 @@ export {
 };
 
 export type MessageFn = typeof message;
-export type { MessageType } from './packages/message/types';
 
 export default buildInstaller(defaultComponentList);
