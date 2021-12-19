@@ -6,7 +6,12 @@
       <a-input placeholder="Round" round></a-input>
       <a-input placeholder="With Icon">
         <template v-slot:prefix>
-          <SearchIcon />
+          <icon icon="ri:search-2-line" />
+        </template>
+      </a-input>
+      <a-input placeholder="With Postfix Icon">
+        <template v-slot:postfix>
+          <icon icon="ri:search-2-line" />
         </template>
       </a-input>
       <a-input placeholder="Large" size="large"></a-input>
@@ -18,11 +23,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import SearchIcon from '../icon/Search.vue';
+import { Icon } from '@iconify/vue';
 
 export default defineComponent({
   components: {
-    SearchIcon,
+    Icon,
   },
   setup() {
     return {

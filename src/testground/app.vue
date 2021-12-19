@@ -8,6 +8,8 @@
       <ClickableTextSection />
       <GradientTextSection />
       <InputSection />
+      <SelectSection />
+      <RadioSection />
       <CardSection />
       <SplitSection />
       <FloatSection />
@@ -23,19 +25,20 @@
     <div class="testground-footer">
       <Logo class="logo" />
       <span class="text">Any Design</span>
-      <a href="https://github.com/any-design/anyui" target="_blank"
-        ><GitHubIcon class="github"
-      /></a>
+      <a href="https://github.com/any-design/anyui" target="_blank"><icon icon="mdi:github" /></a>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Icon } from '@iconify/vue';
 import ButtonSection from './sections/button.vue';
 import ClickableTextSection from './sections/clickableText.vue';
 import GradientTextSection from './sections/gradientText.vue';
 import InputSection from './sections/input.vue';
+import SelectSection from './sections/select.vue';
+import RadioSection from './sections/radio.vue';
 import CardSection from './sections/card.vue';
 import SplitSection from './sections/split.vue';
 import FloatSection from './sections/float.vue';
@@ -47,7 +50,6 @@ import PopMenuSection from './sections/popmenu.vue';
 import FormSection from './sections/form.vue';
 import MessageSection from './sections/message.vue';
 import Logo from './icon/Logo.vue';
-import GitHubIcon from './icon/GitHub.vue';
 
 export default defineComponent({
   components: {
@@ -55,6 +57,8 @@ export default defineComponent({
     ClickableTextSection,
     GradientTextSection,
     InputSection,
+    SelectSection,
+    RadioSection,
     CardSection,
     SplitSection,
     FloatSection,
@@ -66,7 +70,7 @@ export default defineComponent({
     FormSection,
     MessageSection,
     Logo,
-    GitHubIcon,
+    Icon,
   },
 });
 </script>
@@ -97,10 +101,10 @@ export default defineComponent({
     }
     .testground-flex {
       display: flex;
-      * {
+      > * {
         margin-right: 18px;
       }
-      *:last-child {
+      > *:last-child {
         margin-right: 0;
       }
     }

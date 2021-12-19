@@ -1,18 +1,48 @@
 <template>
-  <div ref="trigger" class="a-popper__trigger">
+  <span ref="trigger" class="a-popper__trigger">
     <slot></slot>
-    <teleport to="body">
-      <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
-        <slot name="popup"></slot>
-      </div>
+    <teleport v-if="appendBody" to="body">
+      <transition v-if="transition" :name="transition">
+        <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
+          <slot name="popup"></slot>
+        </div>
+      </transition>
+      <template v-else>
+        <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
+          <slot name="popup"></slot>
+        </div>
+      </template>
     </teleport>
-  </div>
+    <template v-else>
+      <transition v-if="transition" :name="transition">
+        <div
+          v-show="popupShowed"
+          ref="popup"
+          :class="['a-popper__popup', popupClass]"
+          :style="{ zIndex }"
+        >
+          <slot name="popup"></slot>
+        </div>
+      </transition>
+      <template v-else>
+        <div
+          v-show="popupShowed"
+          ref="popup"
+          :class="['a-popper__popup', popupClass]"
+          :style="{ zIndex }"
+        >
+          <slot name="popup"></slot>
+        </div>
+      </template>
+    </template>
+  </span>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, onMounted, PropType, ref } from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, PropType, ref, watchEffect } from 'vue';
 import { Placement } from '@popperjs/core';
 import { createPopperInstance } from './popper';
+import { APopperTriggerType } from './types';
 
 export default defineComponent({
   props: {
@@ -28,6 +58,10 @@ export default defineComponent({
       type: String as PropType<Placement>,
       default: 'bottom',
     },
+    triggerType: {
+      type: String as PropType<APopperTriggerType>,
+      default: 'hover',
+    },
     offset: {
       type: Number,
       default: 18,
@@ -36,8 +70,19 @@ export default defineComponent({
       type: Number,
       default: 3000,
     },
+    appendBody: {
+      type: Boolean,
+      default: true,
+    },
+    popupClass: {
+      type: String,
+    },
+    transition: {
+      type: String,
+    },
   },
-  setup(props) {
+  emits: ['popup-status-changed'],
+  setup(props, { expose, emit }) {
     const popupShowed = ref(false);
     const trigger = ref(null);
     const popup = ref(null);
@@ -46,71 +91,109 @@ export default defineComponent({
 
     let hideTimeout: ReturnType<typeof window.setTimeout> | null;
 
+    let triggerEl: HTMLElement;
+    let popupEl: HTMLElement;
+    let popperIns: ReturnType<typeof createPopperInstance>;
+
     onMounted(() => {
       if (!trigger.value || !popup.value) {
         return;
       }
 
-      const triggerEl = trigger.value as HTMLElement;
-      const popupEl = popup.value as HTMLElement;
+      triggerEl = trigger.value as HTMLElement;
+      popupEl = popup.value as HTMLElement;
 
       // create popper instance
-      const popper = createPopperInstance({
+      popperIns = createPopperInstance({
         trigger: triggerEl,
         popup: popupEl,
         placement: props.placement as Placement,
         offset: props.offset,
       });
 
-      const elements = [triggerEl, popupEl];
-      const showEvents = ['mouseenter', 'focus'];
-      const hideEvents = ['mouseleave', 'blur'];
+      if (props.triggerType === 'hover') {
+        const elements = [triggerEl, popupEl];
+        const showEvents = ['mouseenter', 'focus'];
+        const hideEvents = ['mouseleave', 'blur'];
 
-      // wrap methods
+        // wrap methods
 
-      const enterShow = () => {
-        if (hideTimeout) {
-          clearTimeout(hideTimeout);
-          hideTimeout = null;
-        }
-        popupShowed.value = true;
-        popper.update();
-      };
+        const enterShow = () => {
+          if (hideTimeout) {
+            clearTimeout(hideTimeout);
+            hideTimeout = null;
+          }
+          popupShowed.value = true;
+          popperIns.update();
+        };
 
-      const delayHide = () => {
-        if (hideTimeout) {
-          clearTimeout(hideTimeout);
-          hideTimeout = null;
-        }
-        hideTimeout = setTimeout(() => {
-          popupShowed.value = false;
-        }, props.hideDelay);
-      };
+        const delayHide = () => {
+          if (hideTimeout) {
+            clearTimeout(hideTimeout);
+            hideTimeout = null;
+          }
+          hideTimeout = setTimeout(() => {
+            popupShowed.value = false;
+          }, props.hideDelay);
+        };
 
-      showEvents.forEach((eventName) => {
-        elements.forEach((el) => {
-          el.addEventListener(eventName, enterShow);
-          sideEffectCleaners.push(() => {
-            el.removeEventListener(eventName, enterShow);
+        showEvents.forEach((eventName) => {
+          elements.forEach((el) => {
+            el.addEventListener(eventName, enterShow);
+            sideEffectCleaners.push(() => {
+              el?.removeEventListener(eventName, enterShow);
+            });
           });
         });
-      });
-      hideEvents.forEach((eventName) => {
-        elements.forEach((el) => {
-          el.addEventListener(eventName, delayHide);
-          sideEffectCleaners.push(() => {
-            el.removeEventListener(eventName, delayHide);
+        hideEvents.forEach((eventName) => {
+          elements.forEach((el) => {
+            el.addEventListener(eventName, delayHide);
+            sideEffectCleaners.push(() => {
+              el?.removeEventListener(eventName, delayHide);
+            });
           });
         });
-      });
+      }
+
+      if (props.triggerType === 'click') {
+        const handleTriggerClick = () => {
+          if (!popupShowed.value) {
+            popupShowed.value = true;
+            popperIns.update();
+          } else {
+            popupShowed.value = false;
+          }
+        };
+        triggerEl.addEventListener('click', handleTriggerClick);
+        if (!props.appendBody) {
+          popupEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+          });
+        }
+        sideEffectCleaners.push(() => {
+          triggerEl?.removeEventListener('click', handleTriggerClick);
+        });
+      }
     });
 
     onBeforeUnmount(() => {
       sideEffectCleaners.forEach((f) => f());
     });
 
+    watchEffect(() => {
+      emit('popup-status-changed', popupShowed.value);
+    });
+
+    const show = () => {
+      if (popupShowed.value || !popperIns) {
+        return;
+      }
+      popupShowed.value = true;
+      popperIns.update();
+    };
+
     const hide = () => {
-      if (!popupShowed.value) {
+      if (!popupShowed.value || !popperIns) {
         return;
       }
       if (hideTimeout) {
@@ -120,10 +203,13 @@ export default defineComponent({
       popupShowed.value = false;
     };
 
+    expose({ show, hide });
+
     return {
       popupShowed,
       trigger,
       popup,
+      show,
       hide,
     };
   },
@@ -132,7 +218,6 @@ export default defineComponent({
 
 <style lang="scss">
 .a-popper__trigger {
-  width: max-content;
   height: max-content;
 }
 .a-popper--hide {
