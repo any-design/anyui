@@ -5,8 +5,10 @@
     placement="bottom"
     triggerType="click"
     popupClass="a-select-dropdown__wrapper"
+    transition="a-fade"
     :offset="8"
     :appendBody="false"
+    @popup-status-changed="handlePopupStatusChanged"
   >
     <div
       :class="{
@@ -22,7 +24,17 @@
         :placeholder="placeholder"
         :disabled="disabled"
         :editable="false"
-      />
+      >
+        <template v-slot:postfix>
+          <icon
+            :class="{
+              'a-select__icon': true,
+              'a-select__icon--expanded': expanded,
+            }"
+            :icon="expandIcon"
+          />
+        </template>
+      </a-input>
     </div>
     <template v-slot:popup>
       <div class="a-select-dropdown">
@@ -41,7 +53,6 @@
 
 <script lang="ts">
 import { Handler } from 'mitt';
-import { getCertainParent } from '../../utils';
 import {
   defineComponent,
   getCurrentInstance,
@@ -51,6 +62,8 @@ import {
   ref,
   watchEffect,
 } from 'vue';
+import { Icon } from '@iconify/vue';
+import { getCertainParent } from '../../utils';
 import { FormItemEventEmitter } from '../formItem/bus';
 import { ASelectItem, ASelectItems } from './types';
 import APopper from '../popper';
@@ -58,6 +71,9 @@ import APopper from '../popper';
 type SelectedValue = string | number | undefined | null;
 
 export default defineComponent({
+  components: {
+    Icon,
+  },
   props: {
     width: {
       type: [String, Number],
@@ -86,11 +102,16 @@ export default defineComponent({
     items: {
       type: Object as PropType<ASelectItems>,
     },
+    expandIcon: {
+      type: String,
+      default: 'ic:outline-expand-more',
+    },
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const selected = ref(props.modelValue);
     const selectedText = ref('');
+    const expanded = ref(false);
     const popperRef = ref(null);
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
@@ -115,6 +136,10 @@ export default defineComponent({
       selected.value = undefined;
       selectedText.value = '';
       emit('update:modelValue', undefined);
+    };
+
+    const handlePopupStatusChanged = (status: boolean) => {
+      expanded.value = status;
     };
 
     const handleClear: Handler = () => {
@@ -145,6 +170,8 @@ export default defineComponent({
     return {
       selected,
       selectedText,
+      expanded,
+      handlePopupStatusChanged,
       handleItemClick,
       popperRef,
     };
@@ -161,6 +188,12 @@ export default defineComponent({
     .a-select__inner {
       .a-input__inner {
         cursor: pointer;
+      }
+      .a-select__icon {
+        transition: transform 100ms ease;
+      }
+      .a-select__icon--expanded {
+        transform: rotate(180deg);
       }
     }
   }
