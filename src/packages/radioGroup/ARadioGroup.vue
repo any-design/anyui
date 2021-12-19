@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { getCertainParent } from 'src/utils';
+import { getCertainParent } from '../../utils';
 import { defineComponent, getCurrentInstance, onMounted, onUnmounted, PropType, ref } from 'vue';
 import { FormItemEventEmitter } from '../formItem/bus';
 import { ARadioGroupItem, ARadioGroupItems } from './types';
