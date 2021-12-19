@@ -21,6 +21,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  name: 'AStep',
   props: {
     steps: {
       type: [Number, Array],

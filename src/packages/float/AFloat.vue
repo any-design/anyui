@@ -16,6 +16,7 @@ import { formatStyleSize } from '../../utils';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  name: 'AFloat',
   props: {
     className: {
       type: String,

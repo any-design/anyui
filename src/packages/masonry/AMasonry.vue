@@ -39,6 +39,7 @@ interface PositionItem {
 }
 
 export default defineComponent({
+  name: 'AMansory',
   props: {
     itemHeightGetter: {
       type: Function,

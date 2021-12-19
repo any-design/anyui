@@ -71,6 +71,7 @@ import APopper from '../popper';
 type SelectedValue = string | number | undefined | null;
 
 export default defineComponent({
+  name: 'ASelect',
   components: {
     Icon,
   },

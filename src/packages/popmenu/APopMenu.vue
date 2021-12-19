@@ -23,6 +23,7 @@ import { PopMenuItem } from './types';
 import type APopper from '../popper';
 
 export default defineComponent({
+  name: 'APopMenu',
   props: {
     placement: {
       type: String,

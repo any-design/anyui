@@ -17,6 +17,7 @@ import { FormItemEventEmitter } from '../formItem/bus';
 import { ARadioGroupItem, ARadioGroupItems } from './types';
 
 export default defineComponent({
+  name: 'ARadioGroup',
   props: {
     items: {
       type: Array as PropType<ARadioGroupItems>,
