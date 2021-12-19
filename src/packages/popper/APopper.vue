@@ -2,31 +2,44 @@
   <span ref="trigger" class="a-popper__trigger">
     <slot></slot>
     <teleport v-if="appendBody" to="body">
-      <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
-        <slot name="popup"></slot>
-      </div>
+      <transition v-if="transition" :name="transition">
+        <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
+          <slot name="popup"></slot>
+        </div>
+      </transition>
+      <template v-else>
+        <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
+          <slot name="popup"></slot>
+        </div>
+      </template>
     </teleport>
-    <div
-      v-show="popupShowed"
-      v-else
-      ref="popup"
-      :class="['a-popper__popup', popupClass]"
-      :style="{ zIndex }"
-    >
-      <slot name="popup"></slot>
-    </div>
+    <template v-else>
+      <transition v-if="transition" :name="transition">
+        <div
+          v-show="popupShowed"
+          ref="popup"
+          :class="['a-popper__popup', popupClass]"
+          :style="{ zIndex }"
+        >
+          <slot name="popup"></slot>
+        </div>
+      </transition>
+      <template v-else>
+        <div
+          v-show="popupShowed"
+          ref="popup"
+          :class="['a-popper__popup', popupClass]"
+          :style="{ zIndex }"
+        >
+          <slot name="popup"></slot>
+        </div>
+      </template>
+    </template>
   </span>
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  getCurrentInstance,
-  onBeforeUnmount,
-  onMounted,
-  PropType,
-  ref,
-} from 'vue';
+import { defineComponent, onBeforeUnmount, onMounted, PropType, ref, watchEffect } from 'vue';
 import { Placement } from '@popperjs/core';
 import { createPopperInstance } from './popper';
 import { APopperTriggerType } from './types';
@@ -64,8 +77,12 @@ export default defineComponent({
     popupClass: {
       type: String,
     },
+    transition: {
+      type: String,
+    },
   },
-  setup(props, { expose }) {
+  emits: ['popup-status-changed'],
+  setup(props, { expose, emit }) {
     const popupShowed = ref(false);
     const trigger = ref(null);
     const popup = ref(null);
@@ -161,6 +178,10 @@ export default defineComponent({
 
     onBeforeUnmount(() => {
       sideEffectCleaners.forEach((f) => f());
+    });
+
+    watchEffect(() => {
+      emit('popup-status-changed', popupShowed.value);
     });
 
     const show = () => {
