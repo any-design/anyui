@@ -27,5 +27,5 @@ jobs:
           ftp-server: ${{ secrets.DEPLOY_REMOTE_SERVER }}
           ftp-username: ${{ secrets.DEPLOY_REMOTE_USER }}
           ftp-password: ${{ secrets.DEPLOY_REMOTE_PASSWORD }}
-          local-dir: dist
+          local-dir: dist-testground
           git-ftp-args: --insecure
