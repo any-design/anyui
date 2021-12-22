@@ -9,6 +9,7 @@ import { formatStyleSize } from '../../utils';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  name: 'AGradientText',
   props: {
     gradient: {
       type: String,

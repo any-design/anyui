@@ -1,6 +1,7 @@
 import { App } from 'vue';
 import Button from './packages/button';
 import Card from './packages/card';
+import Checkbox from './packages/checkbox';
 import ClickableText from './packages/clickableText';
 import GradientText from './packages/gradientText';
 import Input from './packages/input';
@@ -23,6 +24,7 @@ import Message, { message } from './packages/message';
 const defaultComponentList = [
   Button,
   Card,
+  Checkbox,
   ClickableText,
   GradientText,
   Input,
@@ -52,6 +54,7 @@ const buildInstaller = (components: any[]) => {
 export {
   Button,
   Card,
+  Checkbox,
   ClickableText,
   Input,
   Select,

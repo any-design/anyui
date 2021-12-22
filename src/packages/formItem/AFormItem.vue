@@ -111,6 +111,9 @@ export default defineComponent({
     display: flex;
     align-items: center;
     position: relative;
+    &__label {
+      flex-shrink: 0;
+    }
     &__content {
       flex: 1;
     }

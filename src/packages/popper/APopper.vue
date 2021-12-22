@@ -45,6 +45,7 @@ import { createPopperInstance } from './popper';
 import { APopperTriggerType } from './types';
 
 export default defineComponent({
+  name: 'APopper',
   props: {
     hideClassName: {
       type: String,
