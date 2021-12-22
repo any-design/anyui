@@ -122,10 +122,10 @@ export default defineComponent({
   background: var(--primary-75);
 }
 .a-button.a-button--anim {
-  transition: all 100ms ease;
+  transition: all 200ms ease;
 }
 .a-button.a-button--anim:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
   box-shadow: 0 4px 16px var(--shadow-25);
 }
 .a-button.a-button--disabled {
