@@ -1,9 +1,20 @@
 <template>
-  <div class="a-checkbox" @click="handleClick">
-    <div class="a-checkbox__before">
-      <icon v-if="checked" :icon="checkIcon" color="var(--primary)" />
+  <div
+    :class="{
+      'a-checkbox': true,
+      'a-checkbox--checked': checked,
+    }"
+    @click="handleClick"
+  >
+    <div class="a-checkbox-before">
+      <icon
+        v-if="checked"
+        class="a-checkbox-before__icon"
+        :icon="checkIcon"
+        color="var(--primary)"
+      />
     </div>
-    <div class="a-checkbox__label">
+    <div class="a-checkbox-label">
       {{ label }}
     </div>
   </div>
@@ -58,16 +69,32 @@ export default defineComponent({
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  &__before {
+  &-before {
     width: 20px;
     height: 20px;
+    border: 1px solid var(--border-lighter);
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--bg-alter);
     margin-right: 10px;
-    box-shadow: 2px 2px 8px var(--shadow-10);
+    box-shadow: 0px 2px 8px var(--shadow-5);
     border-radius: 4px;
+    box-sizing: border-box;
+    &__icon {
+      width: 14px;
+    }
+  }
+}
+.a-checkbox:hover {
+  .a-checkbox-before {
+    transition: 200ms ease;
+    border: 1px solid var(--primary-70);
+  }
+}
+.a-checkbox--checked {
+  .a-checkbox-before {
+    border: 1px solid var(--primary-70);
   }
 }
 </style>

@@ -88,7 +88,7 @@ export default defineComponent({
     line-height: 24px;
     font-size: 15px;
     user-select: none;
-    transition: all 100ms ease;
+    transition: all 200ms ease;
   }
   &__item:hover {
     background: var(--bg);
