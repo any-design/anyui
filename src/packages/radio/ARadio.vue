@@ -15,6 +15,7 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  name: 'ARadio',
   props: {
     label: {
       type: String,

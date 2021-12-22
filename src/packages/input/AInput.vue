@@ -41,6 +41,7 @@ import { formatStyleSize, getCertainParent } from '../../utils';
 import { FormItemEventEmitter } from '../formItem/bus';
 
 export default defineComponent({
+  name: 'AInput',
   props: {
     width: {
       type: [String, Number],
@@ -135,7 +136,6 @@ export default defineComponent({
   box-sizing: border-box;
   &__inner {
     width: 100%;
-    height: 100%;
     line-height: 32px;
     padding: 4px 14px;
     border: 1px solid var(--border);
@@ -144,7 +144,7 @@ export default defineComponent({
     background: var(--bg-alter);
     font-size: 14px;
     letter-spacing: 0.025rem;
-    box-shadow: 2px 8px 16px var(--shadow-10);
+    box-shadow: 0px 6px 12px var(--shadow-5);
   }
   &__inner:focus {
     outline: 0;
@@ -206,9 +206,9 @@ export default defineComponent({
 .a-input--large {
   height: var(--comp-height--large);
   .a-input__inner {
-    line-height: 40px;
+    line-height: 42px;
     font-size: 16px;
-    padding: 4px 18px;
+    padding: 6px 18px;
     box-shadow: 0px 8px 20px var(--shadow-10);
   }
 }

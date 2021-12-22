@@ -10,6 +10,7 @@
       <InputSection />
       <SelectSection />
       <RadioSection />
+      <CheckboxSection />
       <CardSection />
       <SplitSection />
       <FloatSection />
@@ -25,7 +26,9 @@
     <div class="testground-footer">
       <Logo class="logo" />
       <span class="text">Any Design</span>
-      <a href="https://github.com/any-design/anyui" target="_blank"><icon icon="mdi:github" /></a>
+      <a href="https://github.com/any-design/anyui" target="_blank"
+        ><icon class="github" icon="mdi:github"
+      /></a>
     </div>
   </div>
 </template>
@@ -39,6 +42,7 @@ import GradientTextSection from './sections/gradientText.vue';
 import InputSection from './sections/input.vue';
 import SelectSection from './sections/select.vue';
 import RadioSection from './sections/radio.vue';
+import CheckboxSection from './sections/checkbox.vue';
 import CardSection from './sections/card.vue';
 import SplitSection from './sections/split.vue';
 import FloatSection from './sections/float.vue';
@@ -59,6 +63,7 @@ export default defineComponent({
     InputSection,
     SelectSection,
     RadioSection,
+    CheckboxSection,
     CardSection,
     SplitSection,
     FloatSection,
@@ -130,7 +135,6 @@ export default defineComponent({
       transition: 100ms;
       width: 24px;
       height: 24px;
-      transition: 100ms;
     }
     .github:hover {
       opacity: 0.35;

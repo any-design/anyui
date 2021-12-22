@@ -30,6 +30,7 @@ const DEFAULT_ICON: Record<MessageType, string> = {
 };
 
 export default defineComponent({
+  name: 'AMessage',
   components: {
     Icon,
   },

@@ -2,9 +2,10 @@
   <button
     :class="{
       'a-button': true,
-      [`a-button--${size}`]: !!size,
+      [`a-button--${size}`]: size && size !== 'default',
       [`a-button--${type}`]: !!type,
       'a-button--round': round,
+      'a-button--fill': fill,
       'a-button--anim': anim,
       'a-button--disabled': disabled,
     }"
@@ -34,9 +35,13 @@ export default defineComponent({
     },
     size: {
       type: String,
-      default: 'medium',
+      default: 'default',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    fill: {
       type: Boolean,
       default: false,
     },
@@ -51,13 +56,13 @@ export default defineComponent({
   justify-content: center;
   text-align: center;
   position: relative;
-  height: 48px;
-  line-height: 32px;
-  padding: 8px 24px;
+  height: 42px;
+  line-height: 30px;
+  padding: 6px 24px;
   background: var(--bg);
   color: var(--primary);
   border-radius: 4px;
-  box-shadow: 2px 4px 16px var(--shadow-20);
+  box-shadow: 0px 6px 12px var(--shadow-5);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.05rem;
@@ -72,14 +77,14 @@ export default defineComponent({
 .a-button:active {
   filter: brightness(1.05);
 }
-.a-button--round {
+.a-button.a-button--round {
   border-radius: 24px;
 }
 .a-button.a-button--large {
   font-size: 16px;
   line-height: 40px;
-  padding: 10px 32px;
-  height: 60px;
+  padding: 8px 32px;
+  height: 56px;
 }
 .a-button.a-button--large.a-button--round {
   border-radius: 30px;
@@ -92,6 +97,9 @@ export default defineComponent({
 }
 .a-button.a-button--small.a-button--round {
   border-radius: 18px;
+}
+.a-button.a-button--fill {
+  width: 100%;
 }
 .a-button.a-button--primary {
   background: var(--primary);
