@@ -1,5 +1,11 @@
 <template>
-  <div class="a-radio" @click="handleClick">
+  <div
+    :class="{
+      'a-radio': true,
+      'a-radio--checked': checked,
+    }"
+    @click="handleClick"
+  >
     <div class="a-radio-check">
       <transition name="a-radio-inner">
         <div v-show="checked" class="a-radio-check__inner"></div>
@@ -51,17 +57,30 @@ export default defineComponent({
     height: 20px;
     border-radius: 10px;
     background: var(--bg-alter);
-    box-shadow: 2px 2px 8px var(--shadow-10);
+    box-shadow: 0px 2px 8px var(--shadow-5);
+    border: 1px solid var(--border-lighter);
     margin-right: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
     &__inner {
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       background: var(--primary);
       border-radius: 8px;
     }
+  }
+}
+.a-radio:hover {
+  .a-radio-check {
+    transition: 200ms ease;
+    border: 1px solid var(--primary-70);
+  }
+}
+.a-radio--checked {
+  .a-radio-check {
+    border: 1px solid var(--primary-70);
   }
 }
 </style>

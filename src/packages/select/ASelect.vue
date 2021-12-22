@@ -194,7 +194,7 @@ export default defineComponent({
         cursor: pointer;
       }
       .a-select__icon {
-        transition: transform 100ms ease;
+        transition: transform 200ms ease;
       }
       .a-select__icon--expanded {
         transform: rotate(180deg);
@@ -217,7 +217,7 @@ export default defineComponent({
       line-height: 32px;
       font-size: 15px;
       user-select: none;
-      transition: all 100ms ease;
+      transition: all 200ms ease;
       cursor: pointer;
     }
     &__item:hover {
