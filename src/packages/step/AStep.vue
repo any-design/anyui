@@ -70,9 +70,9 @@ export default defineComponent({
       justify-content: center;
       z-index: 1;
       &__circle {
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
+        width: 42px;
+        height: 42px;
+        line-height: 42px;
         background: var(--disabled);
         color: var(--text-disabled);
         border-radius: 50%;
@@ -84,10 +84,11 @@ export default defineComponent({
       }
       &__name {
         color: var(--text-disabled);
-        margin-top: 8px;
+        margin-top: 10px;
         font-weight: 600;
-        font-size: 18px;
+        font-size: 20px;
         transition: all 200ms ease;
+        letter-spacing: 0.05rem;
       }
     }
     .a-step-item--current {

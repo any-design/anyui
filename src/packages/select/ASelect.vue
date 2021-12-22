@@ -1,7 +1,10 @@
 <template>
   <a-popper
     ref="popperRef"
-    class="a-select__wrapper"
+    :class="{
+      'a-select__wrapper': true,
+      'a-select__wrapper--round': round,
+    }"
     placement="bottom"
     triggerType="click"
     popupClass="a-select-dropdown__wrapper"
@@ -203,20 +206,29 @@ export default defineComponent({
   width: 100%;
   .a-select-dropdown {
     width: 100%;
-    border-radius: 12px;
+    border-radius: 4px;
     background: var(--bg-alter);
     box-sizing: border-box;
     padding: 8px 0;
     box-shadow: 0 4px 12px var(--shadow-10);
     left: 0;
     &__item {
-      padding: 6px 14px;
-      font-size: 14px;
+      padding: 4px 16px;
+      line-height: 32px;
+      font-size: 15px;
       user-select: none;
       transition: all 100ms ease;
+      cursor: pointer;
     }
     &__item:hover {
       background: var(--bg);
+    }
+  }
+}
+.a-select__wrapper--round {
+  .a-select-dropdown__wrapper {
+    .a-select-dropdown {
+      border-radius: 12px;
     }
   }
 }

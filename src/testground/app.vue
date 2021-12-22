@@ -26,7 +26,9 @@
     <div class="testground-footer">
       <Logo class="logo" />
       <span class="text">Any Design</span>
-      <a href="https://github.com/any-design/anyui" target="_blank"><icon icon="mdi:github" /></a>
+      <a href="https://github.com/any-design/anyui" target="_blank"
+        ><icon class="github" icon="mdi:github"
+      /></a>
     </div>
   </div>
 </template>
@@ -133,7 +135,6 @@ export default defineComponent({
       transition: 100ms;
       width: 24px;
       height: 24px;
-      transition: 100ms;
     }
     .github:hover {
       opacity: 0.35;

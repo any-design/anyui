@@ -18,7 +18,7 @@
           <a-input v-model="formData.text2"></a-input>
         </a-form-item>
         <a-form-item>
-          <a-button type="primary" @click="clear">Clear</a-button>
+          <a-button type="primary" fill @click="clear">Clear</a-button>
         </a-form-item>
       </a-form>
     </div>
