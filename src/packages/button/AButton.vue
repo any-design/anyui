@@ -81,7 +81,7 @@ export default defineComponent({
   border-radius: 24px;
 }
 .a-button.a-button--large {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 40px;
   padding: 8px 32px;
   height: 56px;
