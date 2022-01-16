@@ -61,7 +61,9 @@ app.mount('#app');
 
 <br>
 
-AnyDesign 团队在 Vercel 上搭建了一个组件演示中心，你可以在 Vercel 上体验到 AnyUI 组件的设计。~~ 当然更加完善的组件中心正在积极的开发当中 ~~
+AnyDesign 团队在 Vercel 上搭建了一个组件演示中心，你可以在 Vercel 上体验到 AnyUI 组件的设计。
+
+[https://anyui.vercel.app](https://anyui.vercel.app)
 
 <br>
 
@@ -116,16 +118,6 @@ AnyDesign 团队成员均利用业余时间维护本项目，无论贡献大小�
 
 1. [GitHub Issues](https://github.com/any-design/anyui/issues)
 2. Coming soon...
-
-<br>
-
-## 项目演示
-
-<br>
-
-我们已经在Vercel上部署了一个该项目的演示，你可以在那里体验我们的UI组件。
-
-[https://anyui.vercel.app](https://anyui.vercel.app)
 
 <br>
 
