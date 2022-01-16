@@ -23,6 +23,7 @@ import { PopMenuItem } from './types';
 import type APopper from '../popper';
 
 export default defineComponent({
+  name: 'APopMenu',
   props: {
     placement: {
       type: String,
@@ -83,10 +84,11 @@ export default defineComponent({
   padding: 8px 0;
   box-shadow: 0 4px 12px var(--shadow-10);
   &__item {
-    padding: 6px 14px;
-    font-size: 14px;
+    padding: 8px 16px;
+    line-height: 24px;
+    font-size: 15px;
     user-select: none;
-    transition: all 100ms ease;
+    transition: all 200ms ease;
   }
   &__item:hover {
     background: var(--bg);

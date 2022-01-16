@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { MessageType } from '../../index';
+import { MessageType } from 'src/packages/message/types';
 import { defineComponent } from 'vue';
 
 export default defineComponent({

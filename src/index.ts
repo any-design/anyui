@@ -1,9 +1,13 @@
 import { App } from 'vue';
 import Button from './packages/button';
 import Card from './packages/card';
+import Checkbox from './packages/checkbox';
 import ClickableText from './packages/clickableText';
 import GradientText from './packages/gradientText';
 import Input from './packages/input';
+import Select from './packages/select';
+import Radio from './packages/radio';
+import RadioGroup from './packages/radioGroup';
 import Split from './packages/split';
 import Float from './packages/float';
 import Step from './packages/step';
@@ -20,9 +24,13 @@ import Message, { message } from './packages/message';
 const defaultComponentList = [
   Button,
   Card,
+  Checkbox,
   ClickableText,
   GradientText,
   Input,
+  Select,
+  Radio,
+  RadioGroup,
   Split,
   Float,
   Step,
@@ -46,8 +54,12 @@ const buildInstaller = (components: any[]) => {
 export {
   Button,
   Card,
+  Checkbox,
   ClickableText,
   Input,
+  Select,
+  Radio,
+  RadioGroup,
   Image,
   Form,
   FormItem,
@@ -67,6 +79,5 @@ export {
 };
 
 export type MessageFn = typeof message;
-export type { MessageType } from './packages/message/types';
 
 export default buildInstaller(defaultComponentList);

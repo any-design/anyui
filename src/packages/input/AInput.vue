@@ -5,6 +5,7 @@
       'a-input--large': size === 'large',
       'a-input--round': round,
       'a-input--has-prefix': hasPrefix,
+      'a-input--has-postfix': hasPostfix,
       'a-input--disabled': disabled,
       'a-input--readonly': readonly,
     }"
@@ -15,11 +16,13 @@
       class="a-input__inner"
       :placeholder="placeholder"
       :disabled="disabled"
-      :readonly="readonly"
+      :readonly="readonly || !editable"
+      autocomplete="off"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     />
     <div v-if="hasPrefix" class="a-input__prefix"><slot name="prefix"></slot></div>
+    <div v-if="hasPostfix" class="a-input__postfix"><slot name="postfix"></slot></div>
   </div>
 </template>
 
@@ -38,6 +41,7 @@ import { formatStyleSize, getCertainParent } from '../../utils';
 import { FormItemEventEmitter } from '../formItem/bus';
 
 export default defineComponent({
+  name: 'AInput',
   props: {
     width: {
       type: [String, Number],
@@ -67,6 +71,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    editable: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:modelValue', 'submit'],
   setup(props, { emit }) {
@@ -80,6 +88,7 @@ export default defineComponent({
 
     // methods
     const clear = () => {
+      storedValue.value = '';
       emit('update:modelValue', '');
     };
     const handleInput = (e: Event) => {
@@ -109,6 +118,7 @@ export default defineComponent({
     return {
       storedValue,
       hasPrefix: !!useSlots().prefix,
+      hasPostfix: !!useSlots().postfix,
       style: {
         width: formatStyleSize(props.width),
       },
@@ -121,12 +131,11 @@ export default defineComponent({
 
 <style lang="scss">
 .a-input {
-  height: 40px;
+  height: var(--comp-height--default);
   position: relative;
   box-sizing: border-box;
   &__inner {
     width: 100%;
-    height: 100%;
     line-height: 32px;
     padding: 4px 14px;
     border: 1px solid var(--border);
@@ -135,7 +144,7 @@ export default defineComponent({
     background: var(--bg-alter);
     font-size: 14px;
     letter-spacing: 0.025rem;
-    box-shadow: 2px 8px 16px var(--shadow-10);
+    box-shadow: 0px 6px 12px var(--shadow-5);
   }
   &__inner:focus {
     outline: 0;
@@ -150,16 +159,21 @@ export default defineComponent({
     padding: 4px 18px;
   }
 }
+
+@mixin input-inserted {
+  position: absolute;
+  top: 0;
+  line-height: var(--comp-height--default);
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
 .a-input.a-input--has-prefix {
   .a-input__prefix {
-    position: absolute;
-    top: 0;
     left: 0;
-    line-height: 40px;
-    display: flex;
-    align-items: center;
-    height: 100%;
     padding-left: 8px;
+    @include input-inserted();
     svg {
       width: 22px;
       height: 22px;
@@ -172,12 +186,29 @@ export default defineComponent({
     padding-left: 32px;
   }
 }
-.a-input--large {
-  height: 48px;
+.a-input.a-input--has-postfix {
+  .a-input__postfix {
+    right: 0;
+    padding-right: 8px;
+    @include input-inserted();
+    svg {
+      width: 22px;
+      height: 22px;
+      path {
+        stroke: var(--placeholder);
+      }
+    }
+  }
   .a-input__inner {
-    line-height: 40px;
+    padding-right: 32px;
+  }
+}
+.a-input--large {
+  height: var(--comp-height--large);
+  .a-input__inner {
+    line-height: 42px;
     font-size: 16px;
-    padding: 4px 18px;
+    padding: 6px 18px;
     box-shadow: 0px 8px 20px var(--shadow-10);
   }
 }
@@ -189,6 +220,7 @@ export default defineComponent({
 }
 .a-input.a-input--large.a-input--has-prefix {
   .a-input__prefix {
+    line-height: var(--comp-height--large);
     svg {
       width: 26px;
       height: 26px;
@@ -198,12 +230,32 @@ export default defineComponent({
     padding-left: 36px;
   }
 }
+.a-input.a-input--large.a-input--has-postfix {
+  .a-input__postfix {
+    line-height: var(--comp-height--large);
+    svg {
+      width: 26px;
+      height: 26px;
+    }
+  }
+  .a-input__inner {
+    padding-right: 36px;
+  }
+}
 .a-input.a-input--round.a-input--large.a-input--has-prefix {
   .a-input__prefix {
     padding-left: 12px;
   }
   .a-input__inner {
     padding-left: 40px;
+  }
+}
+.a-input.a-input--round.a-input--large.a-input--has-postfix {
+  .a-input__postfix {
+    padding-right: 12px;
+  }
+  .a-input__inner {
+    padding-right: 40px;
   }
 }
 .a-input.a-input--disabled {

@@ -3,7 +3,7 @@
     <template v-if="displayItems.length">
       <div
         v-for="(item, index) in displayItems"
-        :key="index"
+        :key="getKey(item, index)"
         class="a-masonry__item"
         :style="getItemStyles(item)"
       >
@@ -39,6 +39,7 @@ interface PositionItem {
 }
 
 export default defineComponent({
+  name: 'AMansory',
   props: {
     itemHeightGetter: {
       type: Function,
@@ -75,6 +76,10 @@ export default defineComponent({
     additionalDistance: {
       type: Number,
       default: 300,
+    },
+    recycleNode: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -143,7 +148,7 @@ export default defineComponent({
     this.resetHeightStore();
     this.resetPositionMap();
     window.addEventListener('resize', this.handleWindowResize);
-    window.addEventListener('scroll', this.handleScrollEvent, {
+    window.addEventListener('scroll', this.handleScroll, {
       passive: true,
     });
   },
@@ -157,9 +162,13 @@ export default defineComponent({
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleWindowResize);
-    window.removeEventListener('scroll', this.handleScrollEvent);
+    window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
+    getKey(item: MasonryItem, index: number) {
+      // set key to index, vue will auto reuse the dom node.
+      return this.recycleNode ? index : item._masonryIndex;
+    },
     // waterfall container
     getContainerWidth() {
       if (this.fit && this.col) {
@@ -381,25 +390,23 @@ export default defineComponent({
       this.screenHeight = document.documentElement.clientHeight;
       this.containerOffset = this.getContainerOffset();
     },
-    handleScrollEvent() {
-      this.handleScroll();
-    },
-    handleScroll(timeout = false) {
-      if (timeout && this.lastScroll && Date.now() - this.lastScroll < 200) {
-        return;
+    handleScroll() {
+      if (this.scrollTimer) {
+        clearTimeout(this.scrollTimer);
+        this.scrollTimer = 0;
       }
-      if (timeout) {
-        if (this.scrollTimer) {
-          clearTimeout(this.scrollTimer);
-        }
-        this.scrollTimer = setTimeout(() => {
-          this.handleScroll(true);
-        }, 200);
+      this.scrollTimer = setTimeout(() => {
+        this.handleScroll();
+      }, 200);
+      if (this.lastScroll && Date.now() - this.lastScroll < 200) {
+        return;
       }
       this.lastScroll = Date.now();
       this.containerOffset = this.getContainerOffset();
       this.scrollTop = document.documentElement.scrollTop - this.containerOffset;
       this.setDisplay();
+      clearTimeout(this.scrollTimer);
+      this.scrollTimer = 0;
     },
   },
 });

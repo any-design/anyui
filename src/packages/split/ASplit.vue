@@ -7,6 +7,7 @@ import { defineComponent } from 'vue';
 import { formatStyleSize } from '../../utils';
 
 export default defineComponent({
+  name: 'ASplit',
   props: {
     height: {
       type: [String, Number],

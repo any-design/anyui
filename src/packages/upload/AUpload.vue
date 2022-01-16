@@ -22,6 +22,7 @@ import { defineComponent, PropType } from 'vue';
 import type { UploadStatus } from './types';
 
 export default defineComponent({
+  name: 'AUpload',
   props: {
     status: {
       type: String as PropType<UploadStatus>,

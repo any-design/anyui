@@ -147,9 +147,20 @@ export default defineComponent({
   position: relative;
 }
 .a-form--inline {
+  width: 100%;
   display: flex;
   .a-form-item {
     margin-bottom: 0;
+    margin-right: 12px;
+    flex: 1;
+    &-inner {
+      &__label {
+        margin-right: 12px;
+      }
+    }
+  }
+  .a-form-item:last-child {
+    margin-right: 0;
   }
 }
 </style>
