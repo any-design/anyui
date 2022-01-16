@@ -40,9 +40,9 @@ app.mount('#app');
 
 ## Testground
 
-We've deployed a testground to Vercel, where you can experience our UI components.
+We've deployed a testground, where you can explore all of our UI components.
 
-[https://anyui.vercel.app](https://anyui.vercel.app)
+[https://anyui-testground.pwp.app](https://anyui-testground.pwp.app)
 
 ## License
 

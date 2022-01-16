@@ -1,0 +1,11 @@
+.a-fade-enter-active,
+.a-fade-leave-active {
+  opacity: 1;
+  transition: opacity 100ms ease-in-out;
+}
+
+.a-fade-enter-from,
+.a-fade-leave-to {
+  opacity: 0;
+  transition: opacity 100ms ease-in-out;
+}

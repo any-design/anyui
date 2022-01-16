@@ -25,6 +25,7 @@ interface AnyUIPicStyles {
 }
 
 export default defineComponent({
+  name: 'AImage',
   props: {
     src: {
       type: String,
