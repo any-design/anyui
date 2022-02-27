@@ -20,7 +20,7 @@ export default defineComponent({
     };
     const width = typeof props.width === 'number' ? `${props.width}px` : props.width;
     const styles = {
-      width: width || null,
+      width: width || '',
     };
     if (typeof hasSide !== 'undefined') {
       onMounted(() => {
