@@ -15,6 +15,7 @@ import Upload from './packages/upload';
 import Image from './packages/image';
 import Popper from './packages/popper';
 import PopupMenu from './packages/popmenu';
+import Layout, { Header, Content, Footer, Side } from './packages/layout';
 import Lottie from './packages/lottie';
 import Form from './packages/form';
 import FormItem from './packages/formItem';
@@ -41,6 +42,7 @@ const defaultComponentList = [
   Form,
   FormItem,
   Message,
+  Layout,
 ];
 
 const buildInstaller = (components: any[]) => {
@@ -73,6 +75,11 @@ export {
   Step,
   Split,
   Upload,
+  Layout,
+  Header,
+  Content,
+  Footer,
+  Side,
   // methods
   buildInstaller,
   message,
