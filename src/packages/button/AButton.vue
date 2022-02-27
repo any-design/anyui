@@ -8,18 +8,25 @@
       'a-button--fill': fill,
       'a-button--anim': anim,
       'a-button--disabled': disabled,
+      'a-button--icon': !!icon,
+      'a-button--icon-text': !!icon && hasContent,
     }"
     :disabled="disabled"
   >
+    <Icon v-if="icon" :icon="icon" />
     <slot></slot>
   </button>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, useSlots } from 'vue';
+import { Icon } from '@iconify/vue';
 
 export default defineComponent({
   name: 'AButton',
+  components: {
+    Icon,
+  },
   props: {
     type: {
       type: String,
@@ -45,6 +52,16 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    icon: {
+      type: String,
+      default: '',
+    },
+  },
+  setup() {
+    const hasContent = !!useSlots().default;
+    return {
+      hasContent,
+    };
   },
 });
 </script>
@@ -135,5 +152,17 @@ export default defineComponent({
   color: var(--text-disabled) !important;
   box-shadow: 0 2px 10px var(--shadow-5);
   cursor: not-allowed;
+}
+.a-button--icon {
+  display: flex;
+  align-items: center;
+  svg {
+    font-size: 1.2em;
+  }
+}
+.a-button--icon-text {
+  svg {
+    margin-right: 4px;
+  }
 }
 </style>

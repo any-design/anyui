@@ -10,4 +10,5 @@ vite.config.ts
 .eslintignore
 scripts
 assets
+todo.md
 /src
