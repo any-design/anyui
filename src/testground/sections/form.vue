@@ -12,10 +12,10 @@
       </a-form>
       <a-form ref="inlineForm" v-model="inlineFormData" layout="inline" :rules="rules">
         <a-form-item prop="text1" label="Label">
-          <a-input v-model="formData.text1"></a-input>
+          <a-input v-model="inlineFormData.text1"></a-input>
         </a-form-item>
         <a-form-item prop="text2" label="Label">
-          <a-input v-model="formData.text2"></a-input>
+          <a-input v-model="inlineFormData.text2"></a-input>
         </a-form-item>
         <a-form-item>
           <a-button type="primary" fill @click="clear">Clear</a-button>
