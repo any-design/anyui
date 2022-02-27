@@ -57,16 +57,6 @@ app.mount('#app');
 
 <br>
 
-### 组件演示
-
-<br>
-
-AnyDesign 团队在 Vercel 上搭建了一个组件演示中心，你可以在 Vercel 上体验到 AnyUI 组件的设计。
-
-[https://anyui.vercel.app](https://anyui.vercel.app)
-
-<br>
-
 ### TypeScript 支持
 
 <br>
