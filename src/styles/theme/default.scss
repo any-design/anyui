@@ -1,3 +1,4 @@
+// colors
 $primary: rgba(15, 111, 239);
 $secondary: rgba(17, 205, 239);
 $text: #323438;
@@ -9,6 +10,9 @@ $info: rgb(47, 124, 224);
 $shadow: #001220;
 $shadow-w: #fff;
 $main-font: Quicksand;
+// num vars
+$header-height: 64px;
+$footer-height: 64px;
 
 :root {
   --primary: #{rgba($primary, 0.9)};
@@ -63,6 +67,8 @@ $main-font: Quicksand;
   --shadow-40: #{rgba($shadow, 0.4)};
   --shadow-w-10: #{rgba($shadow-w, 0.1)};
   --shadow-w-20: #{rgba($shadow-w, 0.2)};
+  --a-header-height: #{$header-height};
+  --a-footer-height: #{$footer-height};
   --font-normal: #{$main-font}, -apple-system, BlinkMacSystemFont, 'Microsoft Yahei UI',
     'Microsoft Yahei', 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol';
