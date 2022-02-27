@@ -21,6 +21,7 @@
       <PopMenuSection />
       <FormSection />
       <MessageSection />
+      <LayoutSection />
     </div>
     <a-split margin="14"></a-split>
     <div class="testground-footer">
@@ -53,6 +54,7 @@ import PopperSection from './sections/popper.vue';
 import PopMenuSection from './sections/popmenu.vue';
 import FormSection from './sections/form.vue';
 import MessageSection from './sections/message.vue';
+import LayoutSection from './sections/layout.vue';
 import Logo from './icon/Logo.vue';
 
 export default defineComponent({
@@ -74,6 +76,7 @@ export default defineComponent({
     PopMenuSection,
     FormSection,
     MessageSection,
+    LayoutSection,
     Logo,
     Icon,
   },
