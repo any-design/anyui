@@ -5,7 +5,7 @@
       :key="item"
       v-model="storedValues[item]"
       :label="item"
-      @change="(checked) => handleItemChange(checked, item)"
+      @change="(checked: boolean) => handleItemChange(checked, item)"
     ></a-checkbox>
   </div>
 </template>
