@@ -96,7 +96,7 @@ export default defineComponent({
       inGroup,
       sections: [{}] as SectionRecord[],
       sectionsIdx: 0,
-      displayItems: [] as unknown[],
+      displayItems: [] as any[],
       storedItemsLength: 0,
       currentSectionCount: 0,
       containerWidth: 0,
@@ -122,7 +122,7 @@ export default defineComponent({
       return this.col * this.colWidth + (this.col - 1) * this.gap;
     },
     containerStyle() {
-      const width = this.fit && this.col ? `${this.containerFitWidth}px` : null;
+      const width = this.fit && this.col ? `${this.containerFitWidth}px` : '';
       const height = `${this.maxHeight || 0}px`;
       return {
         width,
