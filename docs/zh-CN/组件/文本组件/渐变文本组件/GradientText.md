@@ -6,6 +6,6 @@
 
 可以通过以下方式使用渐变文本组件：
 
-``` vuejs
+```vue
 <a-gradient-text>渐变文本</a-gradient-text>
 ```

@@ -39,13 +39,13 @@ AnyUI Button 按钮组件有以下属性：
 
 方法一（推荐）：
 
-```vuejs
+```vue
 <a-button round>圆角按钮</a-button>
 ```
 
 方法二：
 
-```vuejs
+```vue
 <a-button round="true">圆角按钮</a-button>
 ```
 
@@ -55,13 +55,13 @@ AnyUI Button 按钮组件有以下属性：
 
 方法一（推荐）：
 
-```vuejs
+```vue
 <a-button anim>动画按钮</a-button>
 ```
 
 方法二：
 
-```vuejs
+```vue
 <a-button anim="true">动画按钮</a-button>
 ```
 
@@ -69,7 +69,7 @@ AnyUI Button 按钮组件有以下属性：
 
 按钮大小 AnyUI Size Button 按钮组件，可以通过设置 `size` 属性为 `small` 或 `large`，来设置为小按钮或大按钮：
 
-```vuejs
+```vue
 <a-button size="small">小按钮</a-button>
 <a-button size="large">大按钮</a-button>
 ```
@@ -80,19 +80,20 @@ AnyUI Button 按钮组件有以下属性：
 
 方法一（推荐）：
 
-```vuejs
+```vue
 <a-button disa-bled>禁用按钮</a-button>
 ```
 
 方法二：
 
-```vuejs
+```vue
 <a-button :disa-bled="true">禁用按钮</a-button>
 ```
+
 ### 图标按钮
 
 图标按钮 AnyUI Icon Button 按钮组件，可以通过设置 `icon` 属性为图标类名，来设置为图标按钮：
 
-```vuejs
+```vue
 <a-button icon="icon-search">图标按钮</a-button>
 ```

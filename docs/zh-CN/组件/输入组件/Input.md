@@ -32,7 +32,7 @@ AnyUI Input 输入框组件有以下属性：
 
 ### 输入框大小
 
-输入框大小 AnyUI Input 输入框组件，可以通过设置 `size` 属性为 `large`,来设置输入框为大输入框：
+输入框大小 AnyUI Input 输入框组件，可以通过设置 `size` 属性为 `large`，来设置输入框为大输入框：
 
 ```vuejs
 <a-input size="large"></a-input>
@@ -40,7 +40,7 @@ AnyUI Input 输入框组件有以下属性：
 
 ### 禁用输入框
 
-禁用 AnyUI Input 输入框组件，可以通过设置 `:disabled` 属性为 `true`,来设置禁用输入框：
+禁用 AnyUI Input 输入框组件，可以通过设置 `:disabled` 属性为 `true`，来设置禁用输入框：
 
 ```vuejs
 <a-input :disable="true"></a-input>
@@ -48,7 +48,7 @@ AnyUI Input 输入框组件有以下属性：
 
 ### 只读输入框
 
-只读 AnyUI Input 输入框组件，可以通过设置 `:readonly` 属性为 `true`,来设置只读输入框：
+只读 AnyUI Input 输入框组件，可以通过设置 `:readonly` 属性为 `true`，来设置只读输入框：
 
 ```vuejs
 <a-input :readonly="true"></a-input>
@@ -56,22 +56,22 @@ AnyUI Input 输入框组件有以下属性：
 
 ### 输入框前置图标和后置图标
 
-AnyUI Input 输入框组件，可以通过设置 `v-slot:prefix` 属性为 `true`,来设置输入框前置图标：
+AnyUI Input 输入框组件，可以通过设置 `v-slot:prefix` 属性为 `true`，来设置输入框前置图标：
 
-```vuejs
+```vue
 <a-input placeholder="With Icon">
-        <template v-slot:prefix>
-          <icon icon="ri:search-2-line" />
-        </template>
-      </a-input>
+  <template v-slot:prefix>
+    <icon icon="ri:search-2-line" />
+  </template>
+</a-input>
 ```
 
-同理，可以通过设置 `v-slot:postfix` 属性为 `true`,来设置输入框后置图标：
+同理，可以通过设置 `v-slot:postfix` 属性为 `true`，来设置输入框后置图标：
 
-```vuejs
+```vue
 <a-input placeholder="With Icon">
-        <template v-slot:postfix>
-          <icon icon="ri:search-2-line" />
-        </template>
-        </a-input>
+  <template v-slot:postfix>
+    <icon icon="ri:search-2-line" />
+  </template>
+</a-input>
 ```
