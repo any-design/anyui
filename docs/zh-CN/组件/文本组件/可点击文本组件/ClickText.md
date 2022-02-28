@@ -12,21 +12,22 @@
 
 最基本的 AnyUI ClickText 可点击文本组件，可以通过以下方式使用：
 
-```vuejs
+```vue
 <a-click-text>可点击文本</a-click-text>
+```
 
 ### 主要点击文本
 
-AnyUI ClickText 可点击文本组件可以设置主要点击文本，可以通过设置 `type` 属性为 `primary` 来设置主要点击文本：
+AnyUI ClickText 可点击文本组件可以设置主要点击文本，可以通过设置 `type` 属性为 `primary` 来创建主要点击文本：
 
-```vuejs
+```vue
 <a-click-text type="primary">主要点击文本</a-click-text>
 ```
 
 ### 次要点击文本
 
-AnyUI ClickText 可点击文本组件可以设置次要点击文本，可以通过设置 `type` 属性为 `secondary` 来设置次要点击文本：
+AnyUI ClickText 可点击文本组件可以设置次要点击文本，可以通过设置 `type` 属性为 `secondary` 来创建次要点击文本：
 
-```vuejs
+```vue
 <a-click-text type="secondary">次要点击文本</a-click-text>
 ```
