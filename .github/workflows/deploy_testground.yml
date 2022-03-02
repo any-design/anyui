@@ -21,6 +21,9 @@ jobs:
       - name: Build project
         run: npm install && npm run build:testground
 
+      - name: Reset project
+        run: git reset --hard
+
       - name: Deploy to remote
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:

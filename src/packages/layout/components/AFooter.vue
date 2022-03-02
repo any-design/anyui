@@ -17,7 +17,7 @@ export default defineComponent({
   setup(props) {
     const height = typeof props.height === 'number' ? `${props.height}px` : props.height;
     const styles = {
-      height: height || null,
+      height: height || '',
     };
     return {
       styles,
