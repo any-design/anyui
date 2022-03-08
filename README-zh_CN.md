@@ -3,7 +3,7 @@
 <br>
 
 <div align="center">
-<img src="https://github.com/any-design/anyui/blob/main/assets/logo.png?raw=true" width="240">
+<img src="./assets/logo.png" width="240">
 
 [English](README.md) | [中文](README-zh_CN.md)
 
@@ -57,16 +57,6 @@ app.mount('#app');
 
 <br>
 
-### 组件演示
-
-<br>
-
-AnyDesign 团队在 Vercel 上搭建了一个组件演示中心，你可以在 Vercel 上体验到 AnyUI 组件的设计。
-
-[https://anyui.vercel.app](https://anyui.vercel.app)
-
-<br>
-
 ### TypeScript 支持
 
 <br>
@@ -117,7 +107,8 @@ AnyDesign 团队成员均利用业余时间维护本项目，无论贡献大小�
 > 在参与社区讨论之前，我们强烈推荐阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way)、[《如何向开源社区提问题》](https://github.com/seajs/seajs/issues/545)，以助于获取到更有效的帮助。
 
 1. [GitHub Issues](https://github.com/any-design/anyui/issues)
-2. Coming soon...
+2. [Telegram HashGeek IT民工社区群组](https://t.me/HashGeekCoder)
+3. Coming soon...
 
 <br>
 
