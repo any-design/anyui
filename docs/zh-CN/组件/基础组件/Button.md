@@ -21,7 +21,7 @@ AnyUI Button 按钮组件有以下属性：
 
 最基本的 AnyUI Button 按钮组件，可以通过以下方式使用：
 
-```vuejs
+```vue
 <a-button>按钮</a-button>
 ```
 
@@ -29,7 +29,7 @@ AnyUI Button 按钮组件有以下属性：
 
 主按钮 AnyUI Primary Button 按钮组件，可以通过设置 `type` 属性为 `primary`，来设置为主按钮：
 
-```vuejs
+```vue
 <a-button type="primary">主按钮</a-button>
 ```
 
@@ -76,18 +76,18 @@ AnyUI Button 按钮组件有以下属性：
 
 ### 禁用按钮
 
-禁用按钮 AnyUI Disa-bled Button 按钮组件，可以通过设置 `disa-bled` 属性为 `true`，来设置为禁用按钮：
+禁用按钮 AnyUI Disa-bled Button 按钮组件，可以通过设置 `:disabled` 属性为 `true`，来设置为禁用按钮：
 
 方法一（推荐）：
 
 ```vue
-<a-button disa-bled>禁用按钮</a-button>
+<a-button disabled>禁用按钮</a-button>
 ```
 
 方法二：
 
 ```vue
-<a-button :disa-bled="true">禁用按钮</a-button>
+<a-button :disabled="true">禁用按钮</a-button>
 ```
 
 ### 图标按钮
