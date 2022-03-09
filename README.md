@@ -86,7 +86,7 @@ $ npm run dev
 
 AnyDesign team members use our spare time to develop this project,we will review any contribution,and merge it into the main branch.
 
-We have set up a CI pipeline line to ensure your codes are followed our code standard, you must pass the check to merge your code into the main branch.
+We have set up a CI pipeline to ensure that your code meets our prefer code standards, you have to pass the tests to merge your code into the main branch.
 
 Welcome pull requests from anyone.
 
