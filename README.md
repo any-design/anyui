@@ -21,7 +21,7 @@ Step 1: Install the `@any-design/anyui` package.
 
 ```bash
 # Suggested to use npm@8
-npm install @any-design/anyui
+$ npm install @any-design/anyui
 ```
 
 <br>
@@ -55,7 +55,7 @@ app.mount('#app');
 
 <br>
 
-This project is written in TypeScript,provides a built-in Typescript definition file.
+This project is written in TypeScript,providing a built-in Typescript definition file.
 
 <br>
 
@@ -67,7 +67,7 @@ This project is written in TypeScript,provides a built-in Typescript definition 
 
 <br>
 
-You can fork this project to your GitHub project repository,and clone the repository to your local machine.Of coures,you can also  use GitHub Dev.
+You can fork this project to your GitHub project repository,and clone the repository to your local machine. Of coures,you can also use GitHub Dev.
 
 Git clone instructions:
 
@@ -88,7 +88,7 @@ AnyDesign team members use our spare time to develop this project,we will review
 
 We have set up a CI pipeline line to ensure your codes are followed our code standard, you must pass the check to merge your code into the main branch.
 
-We welcome pull requests from anyone.
+Welcome pull requests from anyone.
 
 <br>
 
@@ -96,9 +96,9 @@ We welcome pull requests from anyone.
 
 <br>
 
-if you have any questions,please contact us.We also encourage the community members to help each other.
+If you have any questions,please contact us. We also encourage the community members to help each other.
 
-> Before you start contributing,please read the [How To Ask Questions The Smart Way](http://www.catb.org/~esr/faqs/smart-questions.html)，to make sure you can get the best answer.
+> Before you start contributing,please read the [How To Ask Questions The Smart Way](http://www.catb.org/~esr/faqs/smart-questions.html),to make sure you can get the best answer.
 
 1. [GitHub Issues](https://github.com/any-design/anyui/issues)
 2. Coming soon...
@@ -113,4 +113,4 @@ We've deployed a testground, where you can explore all of our UI components.
 
 ## License
 
-AnyUI Project is based on [MIT LICENSE](LICENSE) open source,please follow the MIT LICENSE to use this project.
+[MIT](LICENSE)
