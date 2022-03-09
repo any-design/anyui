@@ -76,7 +76,7 @@ AnyUI Button 按钮组件有以下属性：
 
 ### 禁用按钮
 
-禁用按钮 AnyUI Disa-bled Button 按钮组件，可以通过设置 `:disabled` 属性为 `true`，来设置为禁用按钮：
+禁用按钮 AnyUI Disa-bled Button 按钮组件，可以通过设置 `disabled` 属性为 `true`，来设置为禁用按钮：
 
 方法一（推荐）：
 
@@ -87,7 +87,7 @@ AnyUI Button 按钮组件有以下属性：
 方法二：
 
 ```vue
-<a-button :disabled="true">禁用按钮</a-button>
+<a-button disabled="true">禁用按钮</a-button>
 ```
 
 ### 图标按钮

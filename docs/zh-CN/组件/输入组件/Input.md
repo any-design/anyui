@@ -40,18 +40,18 @@ AnyUI Input 输入框组件有以下属性：
 
 ### 禁用输入框
 
-禁用 AnyUI Input 输入框组件，可以通过设置 `:disabled` 属性为 `true`，来设置禁用输入框：
+禁用 AnyUI Input 输入框组件，可以通过设置 `disabled` 属性为 `true`，来设置禁用输入框：
 
 ```vuejs
-<a-input :disable="true"></a-input>
+<a-input disabled="true"></a-input>
 ```
 
 ### 只读输入框
 
-只读 AnyUI Input 输入框组件，可以通过设置 `:readonly` 属性为 `true`，来设置只读输入框：
+只读 AnyUI Input 输入框组件，可以通过设置 `readonly` 属性为 `true`，来设置只读输入框：
 
 ```vuejs
-<a-input :readonly="true"></a-input>
+<a-input readonly="true"></a-input>
 ```
 
 ### 输入框前置图标和后置图标
