@@ -55,7 +55,7 @@ app.mount('#app');
 
 <br>
 
-This project is written in TypeScript,providing a built-in Typescript definition file.
+This project is written in TypeScript, providing a built-in Typescript definition file.
 
 <br>
 
@@ -67,7 +67,7 @@ This project is written in TypeScript,providing a built-in Typescript definition
 
 <br>
 
-You can fork this project to your GitHub project repository,and clone the repository to your local machine. Of coures,you can also use GitHub Dev.
+You can fork this project to your GitHub project repository, and clone the repository to your local machine. Of coures, you can also use GitHub Dev.
 
 Git clone instructions:
 
@@ -84,7 +84,7 @@ $ npm run dev
 
 <br>
 
-AnyDesign team members use our spare time to develop this project,we will review any contribution,and merge it into the main branch.
+AnyDesign team members use our spare time to develop this project, we will review any contribution, and merge it into the main branch.
 
 We have set up a CI pipeline to ensure that your code meets our prefer code standards, you have to pass the tests to merge your code into the main branch.
 
@@ -96,9 +96,9 @@ Welcome pull requests from anyone.
 
 <br>
 
-If you have any questions,please contact us. We also encourage the community members to help each other.
+If you have any questions, please contact us. We also encourage the community members to help each other.
 
-> Before you start contributing,please read the [How To Ask Questions The Smart Way](http://www.catb.org/~esr/faqs/smart-questions.html),to make sure you can get the best answer.
+> Before you start contributing, please read the [How To Ask Questions The Smart Way](http://www.catb.org/~esr/faqs/smart-questions.html), to make sure you can get the best answer.
 
 1. [GitHub Issues](https://github.com/any-design/anyui/issues)
 2. Coming soon...
