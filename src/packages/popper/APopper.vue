@@ -214,7 +214,6 @@ export default defineComponent({
         clearTimeout(hideTimeout);
         hideTimeout = null;
       }
-      console.log(1);
       popupShowed.value = false;
     };
 
