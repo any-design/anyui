@@ -1,5 +1,13 @@
 <template>
-  <a-popper ref="popper" :placement="placement" :offset="offset">
+  <a-popper
+    ref="popper"
+    :placement="placement"
+    :offset="offset"
+    :hideDelay="hideDelay"
+    :appendToBody="appendToBody"
+    :transition="transition"
+    :zIndex="zIndex"
+  >
     <slot></slot>
     <template v-slot:popup>
       <div class="a-popup-menu" :style="menuStyle">
@@ -40,6 +48,21 @@ export default defineComponent({
     width: {
       type: Number,
       default: 180,
+    },
+    hideDelay: {
+      type: Number,
+      default: 100,
+    },
+    zIndex: {
+      type: Number,
+      default: 3000,
+    },
+    appendToBody: {
+      type: Boolean,
+      default: true,
+    },
+    transition: {
+      type: String,
     },
     hideAfterClick: {
       type: Boolean,
