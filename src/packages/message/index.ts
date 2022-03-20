@@ -1,4 +1,6 @@
+import { loadIcons } from '@iconify/vue';
 import { App } from 'vue';
+import { DefaultIcon } from './constants';
 import { popupMessage } from './helper';
 import { MessageOptions, MessageType } from './types';
 
@@ -43,5 +45,13 @@ export { message };
 export default {
   install(app: App) {
     app.config.globalProperties.$message = message;
+    // preload icons
+    loadIcons(
+      Object.keys(DefaultIcon)
+        .map((key) => {
+          return DefaultIcon[key as keyof typeof DefaultIcon];
+        })
+        .filter((icon) => !!icon),
+    );
   },
 };
