@@ -7,7 +7,7 @@
     @click="handleClick"
   >
     <div class="a-checkbox-before">
-      <icon
+      <Icon
         v-if="checked"
         class="a-checkbox-before__icon"
         :icon="checkIcon"
