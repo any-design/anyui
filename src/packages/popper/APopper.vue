@@ -1,7 +1,7 @@
 <template>
   <span ref="trigger" class="a-popper__trigger">
     <slot></slot>
-    <teleport v-if="appendBody" to="body">
+    <teleport v-if="appendToBody" to="body">
       <transition v-if="transition" :name="transition">
         <div v-show="popupShowed" ref="popup" class="a-popper__popup" :style="{ zIndex }">
           <slot name="popup"></slot>
@@ -71,7 +71,7 @@ export default defineComponent({
       type: Number,
       default: 3000,
     },
-    appendBody: {
+    appendToBody: {
       type: Boolean,
       default: true,
     },
@@ -166,7 +166,7 @@ export default defineComponent({
           }
         };
         triggerEl.addEventListener('click', handleTriggerClick);
-        if (!props.appendBody) {
+        if (!props.appendToBody) {
           popupEl.addEventListener('click', (e) => {
             e.stopPropagation();
           });
