@@ -8,11 +8,11 @@
 
 AnyUI Input 输入框组件有以下属性：
 
-- `placeholder`：输入框占位文本
-- `Round`:是否圆角，可选值为 `true` 。
-- `size`:输入框大小，可选值为 `large` 。
-- `disabled`:是否禁用，可选值为 `true` 。
-- `readonly`:是否只读，可选值为 `true` 。
+- `placeholder`： 输入框占位文本
+- `Round`: 是否圆角，可选值为 `true` 。
+- `size`: 输入框大小，可选值为 `large` 。
+- `disabled`: 是否禁用，可选值为 `true` 。
+- `readonly`: 是否只读，可选值为 `true` 。
 
 ### 基本输入框
 
@@ -56,21 +56,23 @@ AnyUI Input 输入框组件有以下属性：
 
 ### 输入框前置图标和后置图标
 
-AnyUI Input 输入框组件，可以通过设置 `v-slot:prefix` 属性为 `true`，来设置输入框前置图标：
+AnyUI Input 输入框组件，可以通过设置相关插槽来设置输入框的前置或后置图标。
+
+前置图标对应的插槽是 `prefix`：
 
 ```vue
 <a-input placeholder="With Icon">
-  <template v-slot:prefix>
+  <template #prefix>
     <icon icon="ri:search-2-line" />
   </template>
 </a-input>
 ```
 
-同理，可以通过设置 `v-slot:postfix` 属性为 `true`，来设置输入框后置图标：
+同理，可以通过设置 `postfix` 插槽来设置输入框后置图标：
 
 ```vue
 <a-input placeholder="With Icon">
-  <template v-slot:postfix>
+  <template #postfix>
     <icon icon="ri:search-2-line" />
   </template>
 </a-input>

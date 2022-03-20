@@ -9,7 +9,7 @@
     :zIndex="zIndex"
   >
     <slot></slot>
-    <template v-slot:popup>
+    <template #popup>
       <div class="a-popup-menu" :style="menuStyle">
         <div
           v-for="item in items"
