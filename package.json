@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "any-design",
   "description": "A cute UI components library for Vue 3.",
   "files": [
@@ -40,35 +40,35 @@
   "sideEffects": false,
   "license": "MIT",
   "dependencies": {
-    "@iconify/vue": "^3.1.3",
-    "@popperjs/core": "^2.11.2",
+    "@iconify/vue": "^3.2.0",
+    "@popperjs/core": "^2.11.4",
     "async-validator": "^4.0.7",
-    "lottie-web": "^5.8.1",
+    "lottie-web": "^5.9.1",
     "mitt": "^3.0.0",
     "vue": "^3.2.31"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.17.0",
     "@types/node": "^16.11.26",
-    "@typescript-eslint/eslint-plugin": "^5.12.1",
-    "@typescript-eslint/parser": "^5.12.1",
-    "@vitejs/plugin-vue": "^2.2.2",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
+    "@typescript-eslint/parser": "^5.15.0",
+    "@vitejs/plugin-vue": "^2.2.4",
     "chalk": "^4.1.2",
     "cross-env": "^7.0.3",
-    "eslint": "^8.10.0",
+    "eslint": "^8.11.0",
     "eslint-config-alloy": "^4.5.1",
-    "eslint-config-prettier": "^8.4.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-vue": "^8.5.0",
     "fs-extra": "^10.0.1",
-    "prettier": "^2.5.1",
+    "prettier": "^2.6.0",
     "rimraf": "^3.0.2",
     "sass": "^1.49.9",
-    "typescript": "^4.5.5",
-    "vite": "^2.8.4",
-    "vite-plugin-dts": "^0.9.9",
+    "typescript": "^4.6.2",
+    "vite": "^2.8.6",
+    "vite-plugin-dts": "^0.9.10",
     "vite-plugin-gfont": "^0.1.0",
     "vue-eslint-parser": "^8.3.0",
-    "vue-tsc": "^0.32.0"
+    "vue-tsc": "^0.32.1"
   }
 }
