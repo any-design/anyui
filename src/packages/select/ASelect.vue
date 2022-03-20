@@ -10,15 +10,13 @@
     popupClass="a-select-dropdown__wrapper"
     transition="a-fade"
     :offset="8"
-    :appendBody="false"
+    :appendToBody="false"
     @popup-status-changed="handlePopupStatusChanged"
   >
-    <div
-      :class="{
-        'a-select': true,
-        'a-select--large': size === 'large',
-      }"
-    >
+    <div :class="{
+      'a-select': true,
+      'a-select--large': size === 'large',
+    }">
       <a-input
         v-model="selectedText"
         class="a-select__inner"
@@ -28,8 +26,8 @@
         :disabled="disabled"
         :editable="false"
       >
-        <template v-slot:postfix>
-          <icon
+        <template #postfix>
+          <Icon
             :class="{
               'a-select__icon': true,
               'a-select__icon--expanded': expanded,
@@ -39,16 +37,14 @@
         </template>
       </a-input>
     </div>
-    <template v-slot:popup>
+    <template #popup>
       <div class="a-select-dropdown">
         <div
           v-for="item in items"
           :key="item.value"
           class="a-select-dropdown__item"
           @click="handleItemClick(item)"
-        >
-          {{ item.text }}
-        </div>
+        >{{ item.text }}</div>
       </div>
     </template>
   </a-popper>

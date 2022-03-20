@@ -10,19 +10,19 @@
       </a-card>
       <a-card>
         <p>With footer</p>
-        <template v-slot:footer>
+        <template #footer>
           <p>This is a footer</p>
         </template>
       </a-card>
       <a-card title="Title">
         <p>With header and footer</p>
-        <template v-slot:footer>
+        <template #footer>
           <p>This is a footer</p>
         </template>
       </a-card>
       <a-card clean>
         <p>This is a clean card</p>
-        <template v-slot:footer>
+        <template #footer>
           <p>This is a footer</p>
         </template>
       </a-card>

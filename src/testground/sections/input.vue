@@ -5,12 +5,12 @@
       <a-input placeholder="Default"></a-input>
       <a-input placeholder="Round" round></a-input>
       <a-input placeholder="With Icon">
-        <template v-slot:prefix>
+        <template #prefix>
           <icon icon="ri:search-2-line" />
         </template>
       </a-input>
       <a-input placeholder="With Postfix Icon">
-        <template v-slot:postfix>
+        <template #postfix>
           <icon icon="ri:search-2-line" />
         </template>
       </a-input>
