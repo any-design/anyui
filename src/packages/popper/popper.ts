@@ -15,7 +15,7 @@ const createPopperInstance = ({
   placement: Placement;
   offset: number;
 }) => {
-  return createPopper(trigger, popup, {
+  const popper = createPopper(trigger, popup, {
     placement: placement,
     modifiers: [
       {
@@ -38,6 +38,10 @@ const createPopperInstance = ({
       },
     ],
   });
+
+  popper.update();
+
+  return popper;
 };
 
 export { createPopperInstance };
