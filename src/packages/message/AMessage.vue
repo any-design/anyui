@@ -1,4 +1,4 @@
-<template>
+taze -<template>
   <div
     :class="[
       'a-message',
@@ -10,7 +10,7 @@
     ]"
   >
     <div v-if="displayIcon" class="a-message__icon">
-      <icon :icon="iconName" />
+      <Icon :icon="iconName" />
     </div>
     <span class="a-message__text">{{ content }}</span>
   </div>
@@ -20,14 +20,7 @@
 import { defineComponent, PropType } from 'vue';
 import { Icon } from '@iconify/vue';
 import { MessageType } from './types';
-
-const DEFAULT_ICON: Record<MessageType, string> = {
-  default: '',
-  success: 'clarity:success-standard-solid',
-  warning: 'ph:warning-fill',
-  info: 'fluent:info-24-filled',
-  error: 'si-glyph:circle-error',
-};
+import { DefaultIcon } from './constants';
 
 export default defineComponent({
   name: 'AMessage',
@@ -62,14 +55,14 @@ export default defineComponent({
       if (this.icon) {
         return true;
       }
-      const defaultIcon = DEFAULT_ICON[this.type!];
+      const defaultIcon = DefaultIcon[this.type!];
       return !!defaultIcon;
     },
     iconName() {
       if (this.icon) {
         return this.icon;
       }
-      const defaultIcon = DEFAULT_ICON[this.type!];
+      const defaultIcon = DefaultIcon[this.type!];
       return defaultIcon || '';
     },
   },
