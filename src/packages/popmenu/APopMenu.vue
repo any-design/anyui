@@ -10,7 +10,7 @@
   >
     <slot></slot>
     <template #popup>
-      <div class="a-popup-menu" :style="menuStyle">
+      <div :class="['a-popup-menu', menuClass]" :style="menuStyle">
         <div
           v-for="item in items"
           :key="getItemKey(item)"
@@ -62,6 +62,9 @@ export default defineComponent({
       default: true,
     },
     transition: {
+      type: String,
+    },
+    menuClass: {
       type: String,
     },
     hideAfterClick: {
