@@ -7,28 +7,33 @@
         size="small"
         style="margin-right: 8px"
         @click="updateUploadStatus('uploading')"
-        >Uploading</a-button
-      >
-      <a-button round size="small" style="margin-right: 8px" @click="updateUploadStatus('error')"
-        >Error</a-button
-      >
-      <a-button round size="small" style="margin-right: 8px" @click="updateUploadStatus('success')"
-        >Success</a-button
-      >
+      >Uploading</a-button>
+      <a-button
+        round
+        size="small"
+        style="margin-right: 8px"
+        @click="updateUploadStatus('error')"
+      >Error</a-button>
+      <a-button
+        round
+        size="small"
+        style="margin-right: 8px"
+        @click="updateUploadStatus('success')"
+      >Success</a-button>
     </div>
     <div style="width: 200px; height: 200px">
       <a-upload :status="uploadStatus">
         <span>Default</span>
-        <template v-slot:dragging>
+        <template #dragging>
           <span>Dragging</span>
         </template>
-        <template v-slot:uploading>
+        <template #uploading>
           <span>Uploading</span>
         </template>
-        <template v-slot:error>
+        <template #error>
           <span>Error</span>
         </template>
-        <template v-slot:success>
+        <template #success>
           <span>Success</span>
         </template>
       </a-upload>
