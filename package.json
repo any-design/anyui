@@ -69,6 +69,6 @@
     "vite-plugin-dts": "^0.9.10",
     "vite-plugin-gfont": "^0.1.0",
     "vue-eslint-parser": "^8.3.0",
-    "vue-tsc": "^0.32.1"
+    "vue-tsc": "^0.32.0"
   }
 }
