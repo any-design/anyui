@@ -32,6 +32,7 @@ const BUILD_CONFIGS = {
           '@popperjs/core/lib/modifiers/flip',
         ],
       },
+      cssCodeSplit: false,
     },
   },
   TESTGROUND: {

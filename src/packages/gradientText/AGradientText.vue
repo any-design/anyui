@@ -1,7 +1,7 @@
 <template>
-  <div class="a-gradient-text" :style="gradientStyles">
+  <span class="a-gradient-text" :style="gradientStyles">
     <slot></slot>
-  </div>
+  </span>
 </template>
 
 <script lang="ts">
@@ -19,7 +19,7 @@ export default defineComponent({
     },
     size: {
       type: [String, Number],
-      default: 16,
+      default: '',
     },
     primaryColor: {
       type: String,
@@ -40,10 +40,15 @@ export default defineComponent({
       } else {
         gradient = DEFAULT_GRADIENT;
       }
-      return {
+      const styles = {
         background: gradient,
-        'font-size': formatStyleSize(this.size),
       };
+      if (this.size) {
+        Object.assign(styles, {
+          fontSize: formatStyleSize(this.size),
+        });
+      }
+      return styles;
     },
   },
 });
