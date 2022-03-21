@@ -1,10 +1,11 @@
 {
   "name": "@any-design/anyui",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "author": "any-design",
   "description": "A cute UI components library for Vue 3.",
   "files": [
-    "lib"
+    "lib",
+    "styles"
   ],
   "maintainers": [
     {
