@@ -2,7 +2,7 @@
   <div class="testground-content__item">
     <p class="testground-content-title">Popper</p>
     <div class="testground-flex">
-      <a-popper placement="right">
+      <a-popper placement="right" :appendToBody="false">
         <template #popup>
           <span>popup</span>
         </template>
