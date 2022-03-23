@@ -1,8 +1,6 @@
 <template>
-  <span>
-    <span ref="trigger" class="a-popper__trigger">
-      <slot></slot>
-    </span>
+  <span ref="trigger" class="a-popper__trigger">
+    <slot></slot>
     <teleport v-if="appendToBody" to="body">
       <transition v-if="transition" :name="transition" mode="out-in">
         <div
@@ -125,9 +123,13 @@ export default defineComponent({
       });
 
       if (props.triggerType === 'hover') {
-        const elements = [triggerEl, popupEl];
+        const elements = [triggerEl];
         const showEvents = ['mouseenter', 'focus'];
         const hideEvents = ['mouseleave', 'blur'];
+
+        if (props.appendToBody) {
+          elements.push(popupEl);
+        }
 
         // wrap methods
 
@@ -141,7 +143,7 @@ export default defineComponent({
           getCurrentInstance()?.proxy?.$forceUpdate();
         };
 
-        const delayHide = () => {
+        const delayHide = (e: Event) => {
           if (hideTimeout) {
             clearTimeout(hideTimeout);
             hideTimeout = null;
@@ -159,6 +161,7 @@ export default defineComponent({
             });
           });
         });
+
         hideEvents.forEach((eventName) => {
           elements.forEach((el) => {
             el.addEventListener(eventName, delayHide);
