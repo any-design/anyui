@@ -1,10 +1,8 @@
 <template>
-  <div
-    :class="{
-      'a-layout': true,
-      'a-layout--has-side': hasSide,
-    }"
-  >
+  <div :class="{
+    'a-layout': true,
+    'a-layout--has-side': hasSide,
+  }">
     <slot></slot>
   </div>
 </template>
@@ -29,6 +27,7 @@ export default defineComponent({
 <style lang="scss">
 .a-layout {
   width: 100%;
+  height: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
