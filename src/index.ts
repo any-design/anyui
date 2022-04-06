@@ -3,6 +3,7 @@ import Button from './packages/button';
 import Card from './packages/card';
 import Checkbox from './packages/checkbox';
 import ClickableText from './packages/clickableText';
+import Collapse from './packages/collapse';
 import GradientText from './packages/gradientText';
 import Input from './packages/input';
 import Select from './packages/select';
@@ -28,6 +29,7 @@ const defaultComponentList = [
   Card,
   Checkbox,
   ClickableText,
+  Collapse,
   GradientText,
   Input,
   Select,
@@ -60,6 +62,7 @@ export {
   Card,
   Checkbox,
   ClickableText,
+  Collapse,
   Input,
   Select,
   Radio,

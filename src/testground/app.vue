@@ -23,6 +23,7 @@
       <MessageSection />
       <LayoutSection />
       <TagSection />
+      <CollapseSection />
     </div>
     <a-split margin="14"></a-split>
     <div class="testground-footer">
@@ -57,12 +58,14 @@ import FormSection from './sections/form.vue';
 import MessageSection from './sections/message.vue';
 import LayoutSection from './sections/layout.vue';
 import TagSection from './sections/tag.vue';
+import CollapseSection from './sections/collapse.vue';
 import Logo from './icon/Logo.vue';
 
 export default defineComponent({
   components: {
     ButtonSection,
     ClickableTextSection,
+    CollapseSection,
     GradientTextSection,
     InputSection,
     SelectSection,
