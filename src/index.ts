@@ -21,6 +21,7 @@ import Form from './packages/form';
 import FormItem from './packages/formItem';
 import Mansory from './packages/masonry';
 import Message, { message } from './packages/message';
+import Tag from './packages/tag';
 
 const defaultComponentList = [
   Button,
@@ -43,6 +44,7 @@ const defaultComponentList = [
   FormItem,
   Message,
   Layout,
+  Tag,
 ];
 
 const buildInstaller = (components: any[]) => {
@@ -80,6 +82,7 @@ export {
   Content,
   Footer,
   Side,
+  Tag,
   // methods
   buildInstaller,
   message,
