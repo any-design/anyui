@@ -44,12 +44,14 @@
     "@iconify/vue": "^3.2.0",
     "@popperjs/core": "^2.11.4",
     "async-validator": "^4.0.7",
+    "color": "^4.2.3",
     "lottie-web": "^5.9.1",
     "mitt": "^3.0.0",
     "vue": "^3.2.31"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.17.0",
+    "@types/color": "^3.0.3",
     "@types/node": "^16.11.26",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",

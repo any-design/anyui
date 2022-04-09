@@ -87,6 +87,7 @@ export default defineComponent({
   border: 1px solid var(--primary);
   user-select: none;
   box-sizing: border-box;
+  white-space: nowrap;
 }
 .a-button:hover {
   filter: brightness(1.125);
@@ -158,6 +159,7 @@ export default defineComponent({
   align-items: center;
   svg {
     font-size: 1.2em;
+    flex-shrink: 0;
   }
 }
 .a-button--icon-text {
