@@ -22,14 +22,17 @@
       <FormSection />
       <MessageSection />
       <LayoutSection />
+      <TagSection />
+      <CollapseSection />
+      <LoadingSection />
     </div>
     <a-split margin="14"></a-split>
     <div class="testground-footer">
       <Logo class="logo" />
       <span class="text">Any Design</span>
-      <a href="https://github.com/any-design/anyui" target="_blank"
-        ><icon class="github" icon="mdi:github"
-      /></a>
+      <a href="https://github.com/any-design/anyui" target="_blank">
+        <Icon class="github" icon="mdi:github" />
+      </a>
     </div>
   </div>
 </template>
@@ -55,12 +58,16 @@ import PopMenuSection from './sections/popmenu.vue';
 import FormSection from './sections/form.vue';
 import MessageSection from './sections/message.vue';
 import LayoutSection from './sections/layout.vue';
+import TagSection from './sections/tag.vue';
+import CollapseSection from './sections/collapse.vue';
+import LoadingSection from './sections/loading.vue';
 import Logo from './icon/Logo.vue';
 
 export default defineComponent({
   components: {
     ButtonSection,
     ClickableTextSection,
+    CollapseSection,
     GradientTextSection,
     InputSection,
     SelectSection,
@@ -77,6 +84,8 @@ export default defineComponent({
     FormSection,
     MessageSection,
     LayoutSection,
+    TagSection,
+    LoadingSection,
     Logo,
     Icon,
   },
