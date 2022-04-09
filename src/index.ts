@@ -18,6 +18,7 @@ import Popper from './packages/popper';
 import PopupMenu from './packages/popmenu';
 import Layout, { Header, Content, Footer, Side } from './packages/layout';
 import Lottie from './packages/lottie';
+import Loading from './packages/loading';
 import Form from './packages/form';
 import FormItem from './packages/formItem';
 import Mansory from './packages/masonry';
@@ -46,6 +47,7 @@ const defaultComponentList = [
   FormItem,
   Message,
   Layout,
+  Loading,
   Tag,
 ];
 
@@ -73,6 +75,7 @@ export {
   Float,
   GradientText,
   Lottie,
+  Loading,
   Mansory,
   Message,
   Popper,
