@@ -11,18 +11,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
+import { CSSProperties, defineComponent, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
 import { formatStyleSize } from '../../utils';
 import observer from './observer';
 import emitter from './bus';
 import { Handler } from 'mitt';
-
-interface AnyUIPicStyles {
-  'background-image'?: string;
-  'background-position': string;
-  'background-size': string;
-  'background-repeat': string;
-}
 
 export default defineComponent({
   name: 'AImage',
@@ -60,7 +53,7 @@ export default defineComponent({
       width: formatStyleSize(props.width),
       height: formatStyleSize(props.height),
     };
-    const picStyles: AnyUIPicStyles = {
+    const picStyles: CSSProperties = {
       'background-position': props.position,
       'background-size': props.size,
       'background-repeat': props.repeat,

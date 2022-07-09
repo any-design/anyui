@@ -15,8 +15,8 @@
         </template>
       </a-input>
       <a-input placeholder="Large" size="large"></a-input>
-      <a-input placeholder="Disabled" :disabled="true"></a-input>
-      <a-input v-model="readOnlyText" placeholder="Read Only" :readonly="true"></a-input>
+      <a-input placeholder="Disabled" disabled></a-input>
+      <a-input v-model="readOnlyText" placeholder="Read Only" readonly></a-input>
     </div>
   </div>
 </template>
