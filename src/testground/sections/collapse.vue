@@ -3,11 +3,11 @@
     <p class="testground-content-title">Collapse</p>
     <div class="testground-flex">
       <a-button @click="handleClick('vertical')">Vertical</a-button>
-      <a-collapse :value="verticalCollapsed">
+      <a-collapse :visible="verticalVisible">
         <p v-for="(_, idx) in new Array(10).fill(0)" :key="idx">vertical</p>
       </a-collapse>
       <a-button @click="handleClick('horizontal')">Horizontal</a-button>
-      <a-collapse direction="horizontal" :value="horizontalCollapsed">
+      <a-collapse direction="horizontal" :visible="horizontalVisible">
         <span v-for="(_, idx) in new Array(10).fill(0)" :key="idx">horizontal</span>
       </a-collapse>
     </div>
@@ -20,14 +20,13 @@ import { defineComponent } from "vue";
 export default defineComponent({
   data() {
     return {
-      verticalCollapsed: false,
-      horizontalCollapsed: false,
+      verticalVisible: false,
+      horizontalVisible: false,
     };
   },
   methods: {
     handleClick(direction: 'horizontal' | 'vertical') {
-      this[`${direction}Collapsed`] = !this[`${direction}Collapsed`]
-      console.log(this[`${direction}Collapsed`]);
+      this[`${direction}Visible`] = !this[`${direction}Visible`]
     },
   }
 });
