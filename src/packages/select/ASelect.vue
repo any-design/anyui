@@ -11,7 +11,7 @@
     transition="a-fade"
     :offset="8"
     :appendToBody="false"
-    @popupStatusChanged="handlePopupStatusChanged"
+    @popup-status-changed="handlePopupStatusChanged"
   >
     <div :class="{
       'a-select': true,
