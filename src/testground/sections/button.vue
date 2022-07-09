@@ -8,7 +8,7 @@
       <a-button type="primary" round anim>Anim</a-button>
       <a-button size="large" round>Large</a-button>
       <a-button size="small" round>Small</a-button>
-      <a-button type="primary" round :disabled="true">Disabled</a-button>
+      <a-button type="primary" round disabled>Disabled</a-button>
     </div>
     <div class="testground-flex" style="margin-top: 20px">
       <a-button type="primary" icon="eva:alert-circle-fill"></a-button>
