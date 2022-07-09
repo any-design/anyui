@@ -88,7 +88,7 @@ export default defineComponent({
       type: String,
     },
   },
-  emits: ['popup-status-changed'],
+  emits: ['popupStatusChanged'],
   setup(props, { expose, emit }) {
     const popupShowed = ref(false);
     const trigger = ref(null);
@@ -198,7 +198,7 @@ export default defineComponent({
     });
 
     watch(popupShowed, () => {
-      emit('popup-status-changed', popupShowed.value);
+      emit('popupStatusChanged', popupShowed.value);
     });
 
     const show = () => {

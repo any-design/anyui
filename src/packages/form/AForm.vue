@@ -12,7 +12,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import ValidateSchema, { Rules } from 'async-validator';
-import { Rule, ValidateError } from 'async-validator/dist-types/interface';
+import type { Rule, ValidateError } from 'async-validator/dist-types/interface';
 import { formatStyleSize } from '../../utils';
 import formEventEmitterFactory from './bus';
 

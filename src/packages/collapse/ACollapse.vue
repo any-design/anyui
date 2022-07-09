@@ -18,8 +18,7 @@ const TRANSITION_DURATION = 200;
 
 export default defineComponent({
   props: {
-    // collapsed
-    value: {
+    visible: {
       type: Boolean,
       default: false,
     },
@@ -29,32 +28,32 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const collapsed = ref(props.value);
+    const collapsed = ref(!props.visible);
     const element = ref<Element | undefined>();
     const elementStyle = ref<Partial<CSSProperties> | undefined>();
 
     let animeTimeout: number;
 
-    watch(() => props.value, async () => {
-      const newVal = !!props.value;
+    watch(() => props.visible, async () => {
+      const newCollapsed = !props.visible;
       if (animeTimeout) {
         clearTimeout(animeTimeout);
       }
       if (element.value) {
         if (props.direction === 'vertical') {
-          const maxHeight = element.value[newVal ? 'clientHeight' : 'scrollHeight'];
+          const maxHeight = element.value[newCollapsed ? 'clientHeight' : 'scrollHeight'];
           elementStyle.value = {
             maxHeight: `${maxHeight}px`,
           };
         } else {
-          const maxWidth = element.value[newVal ? 'clientWidth' : 'scrollWidth'];
+          const maxWidth = element.value[newCollapsed ? 'clientWidth' : 'scrollWidth'];
           elementStyle.value = {
             maxWidth: `${maxWidth}px`,
           };
         }
       }
       await nextTick();
-      collapsed.value = !!props.value;
+      collapsed.value = !props.visible;
       animeTimeout = setTimeout(() => {
         elementStyle.value = undefined;
       }, TRANSITION_DURATION);
