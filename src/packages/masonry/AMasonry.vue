@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/runtime-core';
+import { defineComponent, PropType } from 'vue';
 
 interface MasonryItem extends Object {
   _masonryIndex: number;
