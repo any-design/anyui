@@ -42,6 +42,8 @@ message.info = messageFnFactory('info');
 
 export { message };
 
+export * from './types';
+
 export default {
   install(app: App) {
     app.config.globalProperties.$message = message;
