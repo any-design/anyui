@@ -7,6 +7,7 @@
     :appendToBody="appendToBody"
     :transition="transition"
     :zIndex="zIndex"
+    :popupClass="popupClass"
   >
     <slot></slot>
     <template #popup>
@@ -62,6 +63,9 @@ export default defineComponent({
       default: true,
     },
     transition: {
+      type: String,
+    },
+    popupClass: {
       type: String,
     },
     menuClass: {
