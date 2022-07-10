@@ -74,7 +74,7 @@ export default defineComponent({
 }
 .a-radio:hover {
   .a-radio-check {
-    transition: 200ms ease;
+    transition: var(--anim-duration, 200ms) ease;
     border: 1px solid var(--primary-70);
   }
 }

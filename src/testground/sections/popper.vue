@@ -23,7 +23,7 @@
 <style>
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 200ms ease;
+  transition: all var(--anim-duration, 200ms) ease;
 }
 .fade-enter-to {
   top: 0 !important;

@@ -5,7 +5,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  extends: ['alloy', 'alloy/typescript', 'alloy/vue', 'plugin:vue/vue3-essential', 'prettier'],
+  extends: ['plugin:vue/vue3-essential', 'alloy', 'alloy/typescript', 'alloy/vue', 'prettier'],
   rules: {
     'vue/no-v-model-argument': 0,
     'vue/multi-word-component-names': 0,

@@ -88,7 +88,7 @@ export default defineComponent({
 }
 .a-checkbox:hover {
   .a-checkbox-before {
-    transition: 200ms ease;
+    transition: var(--anim-duration, 200ms) ease;
     border: 1px solid var(--primary-70);
   }
 }

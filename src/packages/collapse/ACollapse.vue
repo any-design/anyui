@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { CSSProperties, defineComponent, nextTick, PropType, ref, watch } from "vue";
+import { CSSProperties, defineComponent, nextTick, PropType, ref, watch } from 'vue';
 
 const TRANSITION_DURATION = 200;
 
@@ -34,37 +34,40 @@ export default defineComponent({
 
     let animeTimeout: number;
 
-    watch(() => props.visible, async () => {
-      const newCollapsed = !props.visible;
-      if (animeTimeout) {
-        clearTimeout(animeTimeout);
-      }
-      if (element.value) {
-        if (props.direction === 'vertical') {
-          const maxHeight = element.value[newCollapsed ? 'clientHeight' : 'scrollHeight'];
-          elementStyle.value = {
-            maxHeight: `${maxHeight}px`,
-          };
-        } else {
-          const maxWidth = element.value[newCollapsed ? 'clientWidth' : 'scrollWidth'];
-          elementStyle.value = {
-            maxWidth: `${maxWidth}px`,
-          };
+    watch(
+      () => props.visible,
+      async () => {
+        const newCollapsed = !props.visible;
+        if (animeTimeout) {
+          clearTimeout(animeTimeout);
         }
-      }
-      await nextTick();
-      collapsed.value = !props.visible;
-      animeTimeout = setTimeout(() => {
-        elementStyle.value = undefined;
-      }, TRANSITION_DURATION);
-    });
+        if (element.value) {
+          if (props.direction === 'vertical') {
+            const maxHeight = element.value[newCollapsed ? 'clientHeight' : 'scrollHeight'];
+            elementStyle.value = {
+              maxHeight: `${maxHeight}px`,
+            };
+          } else {
+            const maxWidth = element.value[newCollapsed ? 'clientWidth' : 'scrollWidth'];
+            elementStyle.value = {
+              maxWidth: `${maxWidth}px`,
+            };
+          }
+        }
+        await nextTick();
+        collapsed.value = !props.visible;
+        animeTimeout = setTimeout(() => {
+          elementStyle.value = undefined;
+        }, TRANSITION_DURATION);
+      },
+    );
 
     return {
       collapsed,
       element,
       elementStyle,
     };
-  }
+  },
 });
 </script>
 
@@ -73,7 +76,8 @@ export default defineComponent({
   width: max-content;
   height: max-content;
   overflow: hidden;
-  transition: max-width 200ms ease, max-height 200ms ease-out;
+  transition: max-width var(--anim-duration, 200ms) ease,
+    max-height var(--anim-duration, 200ms) ease-out;
 }
 .a-collapse--collapsed-horizontal {
   max-width: 0;

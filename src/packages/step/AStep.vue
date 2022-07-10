@@ -80,14 +80,14 @@ export default defineComponent({
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        transition: all 200ms ease;
+        transition: all var(--anim-duration, 200ms) ease;
       }
       &__name {
         color: var(--text-disabled);
         margin-top: 10px;
         font-weight: 600;
         font-size: 20px;
-        transition: all 200ms ease;
+        transition: all var(--anim-duration, 200ms) ease;
         letter-spacing: 0.05rem;
       }
     }

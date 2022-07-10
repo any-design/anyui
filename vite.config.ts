@@ -55,5 +55,8 @@ const BUILD_CONFIGS = {
   },
 };
 
-// https://vitejs.dev/config/
+if (!process.env.BUILD_TARGET) {
+  throw new Error('No build target.');
+}
+
 export default defineConfig(BUILD_CONFIGS[process.env.BUILD_TARGET]);
