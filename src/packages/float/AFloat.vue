@@ -1,8 +1,8 @@
 <template>
   <teleport to="body">
     <transition name="a-float-fade">
-      <div v-if="visible" :class="['a-float', className || null]" :style="floatStyles">
-        <div class="a-float__mask" @click="onClose"></div>
+      <div v-if="visible" :class="['a-float', className || null]" :style="floatStyles" @click.stop>
+        <div class="a-float__mask" @click.stop="onClose"></div>
         <div class="a-float__content" :style="contentStyles">
           <slot></slot>
         </div>
@@ -120,13 +120,13 @@ export default defineComponent({
     margin-left: auto;
     margin-right: auto;
     z-index: 1;
-    box-shadow: 0 12px 40px var(--shadow-w-20);
+    box-shadow: 0 12px 40px var(--shadow-w-10);
     box-sizing: border-box;
   }
 }
 .a-float-fade-enter-active,
 .a-float-fade-leave-active {
-  transition: opacity 200ms ease;
+  transition: opacity var(--anim-duration, 200ms) ease;
 }
 
 .a-float-fade-enter-from,
