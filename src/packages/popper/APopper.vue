@@ -49,7 +49,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, PropType, ref, watch, watchEffect } from 'vue';
+import {
+  defineComponent,
+  getCurrentInstance,
+  onBeforeUnmount,
+  onMounted,
+  PropType,
+  ref,
+  watch,
+} from 'vue';
 import { Placement } from '@popperjs/core';
 import { createPopperInstance } from './popper';
 import { APopperTriggerType } from './types';

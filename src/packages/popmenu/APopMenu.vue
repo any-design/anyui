@@ -118,7 +118,7 @@ export default defineComponent({
     line-height: 24px;
     font-size: 15px;
     user-select: none;
-    transition: all 200ms ease;
+    transition: all var(--anim-duration, 200ms) ease;
   }
   &__item:hover {
     background: var(--bg);
