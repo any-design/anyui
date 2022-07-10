@@ -140,7 +140,7 @@ export default defineComponent({
   background: var(--primary-75);
 }
 .a-button.a-button--anim {
-  transition: all 200ms ease;
+  transition: all var(--anim-duration, 200ms) ease;
 }
 .a-button.a-button--anim:hover {
   transform: translateY(-4px);

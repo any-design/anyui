@@ -13,10 +13,12 @@
     :appendToBody="false"
     @popup-status-changed="handlePopupStatusChanged"
   >
-    <div :class="{
-      'a-select': true,
-      'a-select--large': size === 'large',
-    }">
+    <div
+      :class="{
+        'a-select': true,
+        'a-select--large': size === 'large',
+      }"
+    >
       <a-input
         v-model="selectedText"
         class="a-select__inner"
@@ -44,7 +46,9 @@
           :key="item.value"
           class="a-select-dropdown__item"
           @click="handleItemClick(item)"
-        >{{ item.text }}</div>
+        >
+          {{ item.text }}
+        </div>
       </div>
     </template>
   </a-popper>
@@ -190,7 +194,7 @@ export default defineComponent({
         cursor: pointer;
       }
       .a-select__icon {
-        transition: transform 200ms ease;
+        transition: transform var(--anim-duration, 200ms) ease;
       }
       .a-select__icon--expanded {
         transform: rotate(180deg);
@@ -213,7 +217,7 @@ export default defineComponent({
       line-height: 32px;
       font-size: 15px;
       user-select: none;
-      transition: all 200ms ease;
+      transition: all var(--anim-duration, 200ms) ease;
       cursor: pointer;
     }
     &__item:hover {
