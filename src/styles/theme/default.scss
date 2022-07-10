@@ -13,6 +13,7 @@ $main-font: Quicksand;
 // num vars
 $header-height: 64px;
 $footer-height: 64px;
+$anim-duration: var(--anim-duration, 200ms);
 
 :root {
   --primary: #{rgba($primary, 0.9)};
@@ -72,4 +73,5 @@ $footer-height: 64px;
   --font-normal: #{$main-font}, -apple-system, BlinkMacSystemFont, 'Microsoft Yahei UI',
     'Microsoft Yahei', 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol';
+  --anim-duration: #{$anim-duration};
 }

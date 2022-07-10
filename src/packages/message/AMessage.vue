@@ -8,6 +8,7 @@
         'a-message--round': round,
       },
     ]"
+    role="dialog"
     @click.stop
   >
     <div v-if="displayIcon" class="a-message__icon">

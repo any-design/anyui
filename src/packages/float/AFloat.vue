@@ -1,7 +1,13 @@
 <template>
   <teleport to="body">
     <transition name="a-float-fade">
-      <div v-if="visible" :class="['a-float', className || null]" :style="floatStyles" @click.stop>
+      <div
+        v-if="visible"
+        :class="['a-float', className || null]"
+        :style="floatStyles"
+        role="dialog"
+        @click.stop
+      >
         <div class="a-float__mask" @click.stop="onClose"></div>
         <div class="a-float__content" :style="contentStyles">
           <slot></slot>
