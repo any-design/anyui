@@ -1,4 +1,4 @@
-taze -<template>
+<template>
   <div
     :class="[
       'a-message',
@@ -8,6 +8,7 @@ taze -<template>
         'a-message--round': round,
       },
     ]"
+    @click.stop
   >
     <div v-if="displayIcon" class="a-message__icon">
       <Icon :icon="iconName" />
