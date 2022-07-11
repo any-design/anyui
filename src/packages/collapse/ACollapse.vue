@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="renderComponent"
     ref="element"
     :class="{
       'a-collapse': true,
@@ -12,6 +13,7 @@
 </template>
 
 <script lang="ts">
+import { computed } from 'vue';
 import { CSSProperties, defineComponent, nextTick, PropType, ref, watch } from 'vue';
 
 const TRANSITION_DURATION = 200;
@@ -26,13 +28,29 @@ export default defineComponent({
       type: String as PropType<'horizontal' | 'vertical'>,
       default: 'vertical',
     },
+    alwaysRender: {
+      type: Boolean,
+      default: false,
+    },
+    renderWaitTime: {
+      type: Number,
+      default: 100,
+    },
   },
   setup(props) {
     const collapsed = ref(!props.visible);
+    const rendered = ref(!collapsed.value);
     const element = ref<Element | undefined>();
     const elementStyle = ref<Partial<CSSProperties> | undefined>();
+    const renderComponent = computed(() => {
+      if (props.alwaysRender) {
+        return true;
+      }
+      return rendered.value;
+    });
 
     let animeTimeout: number;
+    let renderTimeout: number;
 
     watch(
       () => props.visible,
@@ -41,6 +59,18 @@ export default defineComponent({
         if (animeTimeout) {
           clearTimeout(animeTimeout);
         }
+        if (renderTimeout) {
+          clearTimeout(renderTimeout);
+        }
+        const targetValue = !props.visible;
+        if (!targetValue) {
+          rendered.value = true;
+        } else {
+          renderTimeout = setTimeout(() => {
+            rendered.value = false;
+          }, TRANSITION_DURATION + props.renderWaitTime);
+        }
+        await nextTick();
         if (element.value) {
           if (props.direction === 'vertical') {
             const maxHeight = element.value[newCollapsed ? 'clientHeight' : 'scrollHeight'];
@@ -54,8 +84,7 @@ export default defineComponent({
             };
           }
         }
-        await nextTick();
-        collapsed.value = !props.visible;
+        collapsed.value = targetValue;
         animeTimeout = setTimeout(() => {
           elementStyle.value = undefined;
         }, TRANSITION_DURATION);
@@ -66,6 +95,8 @@ export default defineComponent({
       collapsed,
       element,
       elementStyle,
+      rendered,
+      renderComponent,
     };
   },
 });
