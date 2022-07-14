@@ -4,24 +4,30 @@
       <div
         v-if="visible"
         ref="wrapper"
-        :class="['a-drawer', `a-drawer--${position}`]"
+        :class="['a-drawer', `a-drawer--${position}`, drawerClass]"
         role="dialog"
         @click.stop
       >
         <div
           v-if="withMask"
-          :class="{
-            'a-drawer__mask': true,
-            'a-drawer__mask--outside': appendToBody,
-          }"
+          :class="[
+            maskClass,
+            {
+              'a-drawer__mask': true,
+              'a-drawer__mask--outside': appendToBody,
+            },
+          ]"
           :style="maskStyles"
           @click="onMaskClicked"
         ></div>
         <div
-          :class="{
-            'a-drawer__body': true,
-            'a-drawer__body--outside': appendToBody,
-          }"
+          :class="[
+            bodyClass,
+            {
+              'a-drawer__body': true,
+              'a-drawer__body--outside': appendToBody,
+            },
+          ]"
           :style="drawerStyles"
         >
           <slot></slot>
@@ -38,6 +44,15 @@ import { DrawerPosition } from './types';
 
 export default defineComponent({
   props: {
+    drawerClass: {
+      type: String,
+    },
+    maskClass: {
+      type: String,
+    },
+    bodyClass: {
+      type: String,
+    },
     appendToBody: {
       type: Boolean,
       default: true,
