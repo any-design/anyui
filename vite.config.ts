@@ -7,6 +7,11 @@ import gfont from 'vite-plugin-gfont';
 const BUILD_CONFIGS = {
   LIBRARY: {
     plugins: [vue(), dts()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
     build: {
       sourcemap: true,
       minify: 'terser',
@@ -36,6 +41,11 @@ const BUILD_CONFIGS = {
     },
   },
   TESTGROUND: {
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
     plugins: [
       vue(),
       gfont({
