@@ -185,7 +185,7 @@ export default defineComponent({
     left: 0;
     bottom: 0;
     right: 0;
-    background-color: var(--mask);
+    background-color: var(--mask, rgba(0, 0, 0, 0.8));
   }
   &__mask--outside {
     width: 100vw;
