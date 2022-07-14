@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, ref, computed, CSSProperties, watch } from 'vue';
-import { useScrollLock } from '../hooks/use-scroll-lock';
+import { SCROLL_LOCK_PROPS, useScrollLock } from '../hooks/use-scroll-lock';
 import { DrawerPosition } from './types';
 
 export default defineComponent({
@@ -83,10 +83,7 @@ export default defineComponent({
     transitionName: {
       type: String,
     },
-    lockScroll: {
-      type: Boolean,
-      default: true,
-    },
+    ...SCROLL_LOCK_PROPS,
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
@@ -115,21 +112,24 @@ export default defineComponent({
       return props.transitionName;
     });
 
+    const scrollLockTarget = computed(
+      () => (document.querySelector(props.lockTarget) as HTMLElement) || document.body,
+    );
+
     watch(
       () => props.modelValue,
       () => {
         visible.value = props.modelValue;
-        const scrollLockTarget = wrapper.value?.parentElement || document.body;
         if (visible.value) {
-          props.lockScroll && useScrollLock(scrollLockTarget);
+          props.lockScroll && useScrollLock(scrollLockTarget.value);
         } else {
-          useScrollLock(scrollLockTarget, false);
+          useScrollLock(scrollLockTarget.value, false);
         }
       },
     );
 
     const onMaskClicked = () => {
-      useScrollLock(wrapper.value?.parentElement || document.body, false);
+      useScrollLock(scrollLockTarget.value, false);
       visible.value = false;
       emit('update:modelValue', false);
     };
