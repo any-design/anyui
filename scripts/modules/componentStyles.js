@@ -48,6 +48,7 @@ const getComponentStyles = async () => {
     await fsp.rm(targetDir, { recursive: true, force: true });
     await fsp.mkdir(targetDir, { recursive: true });
   }
+  // compile scss
   await Promise.all(
     Object.keys(results).map(async (compName) => {
       if (!results[compName]) {
@@ -68,7 +69,6 @@ const getComponentStyles = async () => {
     }),
   );
   console.log(chalk.green('Component styles has been collected and compiled to CSS.'));
-  // compile scss
 };
 
 module.exports = getComponentStyles;

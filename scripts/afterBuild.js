@@ -54,14 +54,31 @@ const compileToCss = async (filePaths) => {
       await fsp.writeFile(target, (await sass.compileAsync(file)).css, { encoding: 'utf-8' });
     }),
   );
+  console.log(chalk.green('Basic style files has been compiled.'));
+};
+
+const collectDirScss = (dirName) => {
+  const actualDirPath = path.resolve(stylesPath, dirName);
+  if (!fs.existsSync(actualDirPath) || !fs.statSync(actualDirPath).isDirectory()) {
+    return [];
+  }
+  const dirInfo = fs.readdirSync(actualDirPath);
+  return dirInfo
+    .filter((file) => file.endsWith('.scss'))
+    .map((fileName) => `./${dirName}/${fileName}`);
 };
 
 // compile scss to css
-compileToCss([
-  path.resolve(stylesPath, './index.scss'),
-  path.resolve(stylesPath, './default.scss'),
-  path.resolve(stylesPath, './responsive.scss'),
-]);
+compileToCss(
+  ['./index.css', './default.scss', './responsive.scss']
+    .concat(
+      // compile scss in sub folders
+      ['basic', 'theme', 'responsive'].reduce((res, dirName) => {
+        return res.concat(collectDirScss(dirName));
+      }, []),
+    )
+    .map((p) => path.resolve(stylesPath, p)),
+);
 
-// compile scss files
+// compile components scss files
 getComponentStyles();
