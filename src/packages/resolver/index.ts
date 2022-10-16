@@ -11,7 +11,7 @@ const getSideEffects = (importName: string, options: AnyUIResolverOptions) => {
     return;
   }
   // generate style path
-  const formattedName = importName[0].toLowerCase() + importName.slice(1);
+  const formattedName = importName[1].toLowerCase() + importName.slice(2);
   return `@any-design/anyui/styles/components/${formattedName}.${styleType}`;
 };
 
