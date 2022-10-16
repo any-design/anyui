@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui",
-  "version": "0.0.28-f2",
+  "version": "0.0.28-f3",
   "author": "any-design",
   "description": "A cute UI components library for Vue 3.",
   "files": [
@@ -29,26 +29,28 @@
     "start": "npm run dev",
     "dev": "cross-env BUILD_TARGET=TESTGROUND vite",
     "clean": "rimraf ./lib && rimraf ./styles",
-    "build": "vue-tsc && cross-env BUILD_TARGET=LIBRARY vite build",
+    "build": "vue-tsc && cross-env BUILD_TARGET=LIBRARY vite build && cross-env BUILD_TARGET=RESOLVER vite build",
     "dist": "npm run lint && npm run clean && npm run build && node ./scripts/afterBuild.js",
     "build:after": "node ./scripts/afterBuild.js",
     "build:testground": "npm run lint && rimraf ./dist-testground && cross-env BUILD_TARGET=TESTGROUND vite build",
     "serve": "vite preview",
     "lint": "eslint --ext .vue,.ts src/ --config .eslintrc.js"
   },
-  "main": "lib/anyui.umd.js",
-  "module": "lib/anyui.mjs",
+  "main": "lib/anyui.js",
+  "module": "lib/anyui.js",
   "types": "lib/src/index.d.ts",
   "sideEffects": false,
   "license": "MIT",
   "dependencies": {
+    "mitt": "^3.0.0",
+    "vue": "^3.2.41",
+    "async-validator": "^4.2.5",
+    "color": "^4.2.3"
+  },
+  "optionalDependencies": {
     "@iconify/vue": "^3.2.1",
     "@popperjs/core": "^2.11.6",
-    "async-validator": "^4.2.5",
-    "color": "^4.2.3",
-    "lottie-web": "^5.9.6",
-    "mitt": "^3.0.0",
-    "vue": "^3.2.41"
+    "lottie-web": "^5.9.6"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
