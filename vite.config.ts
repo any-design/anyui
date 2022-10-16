@@ -25,7 +25,6 @@ const BUILD_CONFIGS = {
       rollupOptions: {
         external: [
           'vue',
-          'mitt',
           'async-validator',
           'lottie-web',
           '@iconify/vue',

@@ -21,6 +21,7 @@
 </template>
 
 <script lang="ts">
+import { Timeout } from '@/utils/types';
 import { defineComponent, PropType } from 'vue';
 
 interface MasonryItem extends Object {
@@ -106,8 +107,8 @@ export default defineComponent({
       scrollTop: document.documentElement.scrollTop,
       containerOffset: 0,
       lastScroll: 0,
-      resizeTimer: 0 as ReturnType<typeof setTimeout>,
-      scrollTimer: 0 as ReturnType<typeof setTimeout>,
+      resizeTimer: null as Timeout | null,
+      scrollTimer: null as Timeout | null,
     };
   },
   computed: {
@@ -393,7 +394,7 @@ export default defineComponent({
     handleScroll() {
       if (this.scrollTimer) {
         clearTimeout(this.scrollTimer);
-        this.scrollTimer = 0;
+        this.scrollTimer = null;
       }
       this.scrollTimer = setTimeout(() => {
         this.handleScroll();
@@ -406,7 +407,7 @@ export default defineComponent({
       this.scrollTop = document.documentElement.scrollTop - this.containerOffset;
       this.setDisplay();
       clearTimeout(this.scrollTimer);
-      this.scrollTimer = 0;
+      this.scrollTimer = null;
     },
   },
 });
