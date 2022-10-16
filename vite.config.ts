@@ -19,13 +19,12 @@ const BUILD_CONFIGS = {
       lib: {
         entry: path.resolve(__dirname, './src/index.ts'),
         name: 'anyui',
-        fileName: () => 'anyui.esm.js',
+        fileName: () => 'anyui.js',
         formats: ['es'],
       },
       rollupOptions: {
         external: [
           'vue',
-          'async-validator',
           'lottie-web',
           '@iconify/vue',
           '@popperjs/core',
@@ -36,6 +35,27 @@ const BUILD_CONFIGS = {
           '@popperjs/core/lib/modifiers/flip',
         ],
       },
+      cssCodeSplit: false,
+    },
+  },
+  RESOLVER: {
+    plugins: [dts()],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+    build: {
+      sourcemap: false,
+      minify: 'terser',
+      outDir: 'lib',
+      lib: {
+        name: 'AnyUIResolver',
+        entry: path.resolve(__dirname, './src/resolver.ts'),
+        fileName: (format: string) => (format === 'cjs' ? 'resolver.js' : 'resolver.mjs'),
+        formats: ['es', 'cjs'],
+      },
+      emptyOutDir: false,
       cssCodeSplit: false,
     },
   },
