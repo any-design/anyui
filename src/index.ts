@@ -1,5 +1,4 @@
 import { App } from 'vue';
-import { AnyUIResolver } from './packages/resolver';
 import Button from './packages/button';
 import Card from './packages/card';
 import Checkbox from './packages/checkbox';
@@ -96,8 +95,6 @@ export {
   // methods
   buildInstaller,
   message,
-  // helpers
-  AnyUIResolver,
 };
 
 export type MessageFn = typeof message;
