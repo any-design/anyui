@@ -17,6 +17,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    reverseGradient: {
+      type: Boolean,
+      default: false,
+    },
     size: {
       type: [String, Number],
       default: '',
@@ -29,6 +33,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    splitPercent: {
+      type: Number,
+      default: 30,
+    },
   },
   computed: {
     gradientStyles() {
@@ -36,7 +44,9 @@ export default defineComponent({
       if (this.gradient) {
         gradient = this.gradient;
       } else if (this.primaryColor && this.secondaryColor) {
-        gradient = `linear-gradient(90deg, ${this.secondaryColor} 30%, ${this.primaryColor})`
+        gradient = this.reverseGradient
+          ? `linear-gradient(90deg, ${this.primaryColor} ${this.splitPercent}%, ${this.secondaryColor})`
+          : `linear-gradient(90deg, ${this.secondaryColor} ${this.splitPercent}%, ${this.primaryColor})`;
       } else {
         gradient = DEFAULT_GRADIENT;
       }
@@ -53,7 +63,6 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <style lang="scss">
 .a-gradient-text {

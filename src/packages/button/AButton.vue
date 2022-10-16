@@ -90,7 +90,7 @@ export default defineComponent({
   white-space: nowrap;
 }
 .a-button:hover {
-  filter: brightness(1.125);
+  filter: brightness(1.08);
 }
 .a-button:active {
   filter: brightness(1.05);
@@ -126,6 +126,12 @@ export default defineComponent({
   border: none;
 }
 .a-button.a-button--gradient {
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  color: var(--btn);
+  box-shadow: 0 4px 10px var(--shadow-20);
+  border: none;
+}
+.a-button.a-button--gradient-reserve {
   background: linear-gradient(90deg, var(--secondary), var(--primary));
   color: var(--btn);
   box-shadow: 0 4px 10px var(--shadow-20);
