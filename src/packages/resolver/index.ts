@@ -21,7 +21,7 @@ export function AnyUIResolver(options: AnyUIResolverOptions = {}): ComponentReso
     resolve: (name: string) => {
       if (/^A[A-Za-z]+$/.test(name)) {
         return {
-          name,
+          name: name.slice(1),
           from: '@any-design/anyui',
           sideEffects: getSideEffects(name, options),
         };
