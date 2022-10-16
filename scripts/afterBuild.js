@@ -73,7 +73,7 @@ compileToCss(
   ['./index.css', './default.scss', './responsive.scss']
     .concat(
       // compile scss in sub folders
-      ['basic', 'theme', 'responsive'].reduce((res, dirName) => {
+      ['basic', 'responsive'].reduce((res, dirName) => {
         return res.concat(collectDirScss(dirName));
       }, []),
     )
