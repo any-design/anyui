@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### v0.0.30
+
+- Feat: `AGradientText` will use primary and secondary colors in the CSS vars first.
+
 ### v0.0.29
 
 - Breaking change: `AGradientText` now will render from primary color to secondary color.

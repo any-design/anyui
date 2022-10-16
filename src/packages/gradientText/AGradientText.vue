@@ -8,8 +8,6 @@
 import { formatStyleSize } from '../../utils';
 import { defineComponent } from 'vue';
 
-const DEFAULT_GRADIENT = 'linear-gradient(90deg, var(--secondary) 30%, var(--primary))';
-
 export default defineComponent({
   name: 'AGradientText',
   props: {
@@ -27,11 +25,11 @@ export default defineComponent({
     },
     primaryColor: {
       type: String,
-      default: '',
+      default: 'var(--primary)',
     },
     secondaryColor: {
       type: String,
-      default: '',
+      default: 'var(--secondary)',
     },
     splitPercent: {
       type: Number,
@@ -43,12 +41,10 @@ export default defineComponent({
       let gradient;
       if (this.gradient) {
         gradient = this.gradient;
-      } else if (this.primaryColor && this.secondaryColor) {
+      } else {
         gradient = this.reverseGradient
           ? `linear-gradient(90deg, ${this.primaryColor} ${this.splitPercent}%, ${this.secondaryColor})`
           : `linear-gradient(90deg, ${this.secondaryColor} ${this.splitPercent}%, ${this.primaryColor})`;
-      } else {
-        gradient = DEFAULT_GRADIENT;
       }
       const styles = {
         background: gradient,
