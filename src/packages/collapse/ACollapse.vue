@@ -13,6 +13,7 @@
 </template>
 
 <script lang="ts">
+import { Timeout } from '@/utils/types';
 import { computed } from 'vue';
 import { CSSProperties, defineComponent, nextTick, PropType, ref, watch } from 'vue';
 
@@ -39,7 +40,7 @@ export default defineComponent({
   },
   setup(props) {
     const collapsed = ref(!props.visible);
-    const rendered = ref(!collapsed.value);
+    const rendered = ref(props.visible);
     const element = ref<Element | undefined>();
     const elementStyle = ref<Partial<CSSProperties> | undefined>();
     const renderComponent = computed(() => {
@@ -49,8 +50,8 @@ export default defineComponent({
       return rendered.value;
     });
 
-    let animeTimeout: number;
-    let renderTimeout: number;
+    let animeTimeout: Timeout;
+    let renderTimeout: Timeout;
 
     watch(
       () => props.visible,

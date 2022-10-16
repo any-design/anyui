@@ -19,6 +19,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, PropType, getCurrentInstance, ref } from 'vue';
 import { Icon } from '@iconify/vue';
+import { Interval, Timeout } from '@/utils/types';
 
 const CIRCLE_COUNT = 4;
 const CIRCLE_ANIM_DURATION = 1200;
@@ -35,12 +36,12 @@ export default defineComponent({
     icon: {
       type: String,
       default: 'quill:loading-spin',
-    }
+    },
   },
   setup(props) {
     const animated = ref(false);
-    let animInterval: number;
-    let animTimeout: number;
+    let animInterval: Interval;
+    let animTimeout: Timeout;
 
     onMounted(() => {
       if (props.type === 'default') {
@@ -149,8 +150,7 @@ export default defineComponent({
         a-loading-circle-4 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.375s 1;
     }
     &-circle__2 {
-      animation: a-loading-circle-1 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.075s
-          1,
+      animation: a-loading-circle-1 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.075s 1,
         a-loading-circle-2 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.2s 1,
         a-loading-circle-3 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.325s 1,
         a-loading-circle-4 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.45s 1;
@@ -162,8 +162,7 @@ export default defineComponent({
         a-loading-circle-4 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.525s 1;
     }
     &-circle__4 {
-      animation: a-loading-circle-1 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.225s
-          1,
+      animation: a-loading-circle-1 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.225s 1,
         a-loading-circle-2 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.35s 1,
         a-loading-circle-3 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.475s 1,
         a-loading-circle-4 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.6s 1;
