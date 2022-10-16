@@ -19,7 +19,7 @@ import Message, { message } from './packages/message';
 import Radio from './packages/radio';
 import RadioGroup from './packages/radioGroup';
 import Popper from './packages/popper';
-import PopupMenu from './packages/popmenu';
+import PopupMenu from './packages/popupMenu';
 import Select from './packages/select';
 import Split from './packages/split';
 import Step from './packages/step';
@@ -95,6 +95,7 @@ export {
   // methods
   buildInstaller,
   message,
+  // helpers
 };
 
 export type MessageFn = typeof message;
