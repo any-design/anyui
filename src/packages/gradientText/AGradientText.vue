@@ -42,7 +42,7 @@ export default defineComponent({
       if (this.gradient) {
         gradient = this.gradient;
       } else {
-        gradient = this.reverseGradient
+        gradient = !this.reverseGradient
           ? `linear-gradient(90deg, ${this.primaryColor} ${this.splitPercent}%, ${this.secondaryColor})`
           : `linear-gradient(90deg, ${this.secondaryColor} ${this.splitPercent}%, ${this.primaryColor})`;
       }
