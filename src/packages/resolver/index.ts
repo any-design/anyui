@@ -1,3 +1,5 @@
+import type { ComponentResolver } from 'unplugin-vue-components';
+
 export interface AnyUIResolverOptions {
   styleType?: 'scss' | 'css';
   importStyle?: 'boolean';
@@ -13,7 +15,7 @@ const getSideEffects = (importName: string, options: AnyUIResolverOptions) => {
   return `@any-design/anyui/styles/components/${formattedName}.${styleType}`;
 };
 
-export function AnyUIResolver(options: AnyUIResolverOptions = {}) {
+export function AnyUIResolver(options: AnyUIResolverOptions = {}): ComponentResolver {
   return {
     type: 'component',
     resolve: (name: string) => {
