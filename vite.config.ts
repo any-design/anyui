@@ -19,8 +19,8 @@ const BUILD_CONFIGS = {
       lib: {
         entry: path.resolve(__dirname, './src/index.ts'),
         name: 'anyui',
-        fileName: () => 'anyui.esm.js',
-        formats: ['es'],
+        format: (format: string) => `anyui.${format}.js`,
+        formats: ['es', 'umd'],
       },
       rollupOptions: {
         external: [
