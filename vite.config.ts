@@ -39,6 +39,7 @@ const BUILD_CONFIGS = {
     },
   },
   RESOLVER: {
+    plugins: [dts()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
