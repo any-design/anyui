@@ -57,6 +57,8 @@ app.mount('#app');
 
 ### Import on demand
 
+<br>
+
 We've added support for `unplugin-vue-components`, it's easily to enable "Importing on demand" on your project.
 
 To enable this feature, you need to do the following steps:
