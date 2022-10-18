@@ -43,8 +43,8 @@ export default defineComponent({
         gradient = this.gradient;
       } else {
         gradient = !this.reverseGradient
-          ? `linear-gradient(90deg, ${this.primaryColor} ${this.splitPercent}%, ${this.secondaryColor})`
-          : `linear-gradient(90deg, ${this.secondaryColor} ${this.splitPercent}%, ${this.primaryColor})`;
+          ? `linear-gradient(90deg, ${this.primaryColor} ${this.splitPercent}%, ${this.secondaryColor} ${this.splitPercent}%, ${this.secondaryColor} 100%)`
+          : `linear-gradient(90deg, ${this.secondaryColor} ${this.splitPercent}%, ${this.primaryColor} ${this.splitPercent}%, ${this.primaryColor} 100%)`;
       }
       const styles = {
         background: gradient,
