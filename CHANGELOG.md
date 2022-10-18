@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### v0.0.31
+
+- Fix: `splitPercent` in `AGradientText` now will work properly, this change may make the existed component behaviour different.
+
 ### v0.0.30
 
 - Feat: `AGradientText` will use primary and secondary colors in the CSS vars first.
