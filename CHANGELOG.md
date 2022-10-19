@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### v0.0.34
+
+- Fix: refuse to resolve `Array` and `ArrayBuffer` in the resolver.
+
 ### v0.0.33
 
 - Feat: export `PositionItem` type in the `AMasonry` component.
