@@ -2,6 +2,16 @@
 
 ## Alpha
 
+### v0.0.35
+
+- Feat: configurable debounce time for scroll events.
+
+- Feat: add throttle to screen width changed event to make experience more smooth.
+
+- Fix: `fit` property not work when the `col` property is not set on `AMasonry`.
+
+- Fix: broken render process of `AMasonry`.
+
 ### v0.0.34
 
 - Fix: refuse to resolve `Array` and `ArrayBuffer` in the resolver.
