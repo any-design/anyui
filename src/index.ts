@@ -97,6 +97,10 @@ export {
   message,
 };
 
+// types
+
+export type { PositionItem } from './packages/masonry';
+
 export type MessageFn = typeof message;
 
 export default buildInstaller(defaultComponentList);

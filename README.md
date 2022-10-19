@@ -17,6 +17,8 @@ IMPORTANT: This project is still working in progress.
 
 ## How to use
 
+<br>
+
 Step 1: Install the `@any-design/anyui` package.
 
 ```bash
@@ -29,6 +31,8 @@ $ npm install @any-design/anyui
 ```bash
 $ yarn add @any-design/anyui
 ```
+
+<br>
 
 Step 2: Import the library into your project.
 
@@ -48,6 +52,61 @@ app.use(AnyUI);
 
 app.mount('#app');
 ```
+
+<br>
+
+### Import on demand
+
+<br>
+
+We've added support for `unplugin-vue-components`, it's easily to enable "Importing on demand" on your project.
+
+To enable this feature, you need to do the following steps:
+
+<br>
+
+Step 1: Install `unplugin-vue-components` and `unplugin-auto-import`.
+
+```bash
+npm i unplugin-vue-components unplugin-auto-import -D
+```
+
+<br>
+
+Step 2: Import the resolver to your project configuration.
+
+```ts
+import { AnyUIResolver } from '@any-design/anyui/lib/resolver';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    AutoImport({
+      resolvers: [AnyUIResolver()],
+    }),
+    Components({
+      resolvers: [AnyUIResolver()],
+    }),
+  ],
+});
+```
+
+<br>
+
+Step 3: Directly using components in the template:
+
+```vue
+<template>
+  <div class="container">
+    <a-button type="primary">Button</a-button>
+  </div>
+</template>
+```
+
+The related component and styles will be imported automatically.
 
 <br>
 

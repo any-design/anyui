@@ -23,6 +23,7 @@
 <script lang="ts">
 import { Timeout } from '@/utils/types';
 import { defineComponent, PropType } from 'vue';
+import { PositionItem } from './types';
 
 interface MasonryItem extends Object {
   _masonryIndex: number;
@@ -33,17 +34,11 @@ interface SectionRecord {
   tail?: number;
 }
 
-interface PositionItem {
-  left?: number;
-  height?: number;
-  top?: number;
-}
-
 export default defineComponent({
   name: 'AMasonry',
   props: {
     itemHeightGetter: {
-      type: Function,
+      type: Function as PropType<(item: unknown) => number>,
       required: true,
     },
     items: {
