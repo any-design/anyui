@@ -14,7 +14,7 @@ import Input from './packages/input';
 import Lottie from './packages/lottie';
 import Loading from './packages/loading';
 import Layout, { Header, Content, Footer, Side } from './packages/layout';
-import Mansory from './packages/masonry';
+import Masonry from './packages/masonry';
 import Message, { message } from './packages/message';
 import Radio from './packages/radio';
 import RadioGroup from './packages/radioGroup';
@@ -80,7 +80,7 @@ export {
   Layout,
   Lottie,
   Loading,
-  Mansory,
+  Masonry,
   Message,
   Popper,
   PopupMenu,
