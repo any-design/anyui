@@ -70,6 +70,18 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    scrollDebounceTime: {
+      type: Number,
+      default: 200,
+    },
+    resizeThrottleTime: {
+      type: Number,
+      default: 100,
+    },
+    resizeDebounceTime: {
+      type: Number,
+      default: 200,
+    },
   },
   data() {
     const heightStore: Record<number, number> = {};
@@ -90,11 +102,13 @@ export default defineComponent({
       currentSectionCount: 0,
       containerWidth: 0,
       maxHeight: 0,
+      restoreContainerWidth: false,
       screenWidth: document.documentElement.clientWidth,
       screenHeight: document.documentElement.clientHeight,
       scrollTop: document.documentElement.scrollTop,
       containerOffset: 0,
       lastScroll: 0,
+      lastResizeTriggered: 0,
       resizeTimer: null as Timeout | null,
       scrollTimer: null as Timeout | null,
     };
@@ -111,7 +125,10 @@ export default defineComponent({
       return this.columns * this.colWidth + (this.columns - 1) * this.gap;
     },
     containerStyle() {
-      const width = this.fit && this.columns ? `${this.containerFitWidth}px` : '';
+      const width =
+        this.fit && this.columns && !this.restoreContainerWidth
+          ? `${this.containerFitWidth}px`
+          : '';
       const height = `${this.maxHeight || 0}px`;
       return {
         width,
@@ -124,12 +141,18 @@ export default defineComponent({
     columns: 'columnsChanged',
     colWidth: 'colWidthChanged',
     screenWidth() {
+      // this debounce is used for ensuring the resize event will be finally triggered
       if (this.resizeTimer) {
         clearTimeout(this.resizeTimer);
       }
       this.resizeTimer = setTimeout(() => {
         this.screenWidthChanged();
-      }, 300);
+      }, this.resizeDebounceTime);
+      // throttle
+      if (Date.now() - this.lastResizeTriggered >= this.resizeThrottleTime) {
+        this.screenWidthChanged();
+        this.lastResizeTriggered = Date.now();
+      }
     },
   },
   created() {
@@ -141,13 +164,17 @@ export default defineComponent({
       passive: true,
     });
   },
-  mounted() {
-    this.containerWidth = this.getContainerWidth();
+  async mounted() {
+    this.containerWidth = await this.getContainerWidth();
     this.containerOffset = this.getContainerOffset();
     this.renderMasonry();
   },
-  updated() {
-    this.containerWidth = this.getContainerWidth();
+  async updated() {
+    // if the col is not speicified, getContainerWidth will restore the original width, which will trigger the updated hook and cause dead loop.
+    if (this.fit && !this.col) {
+      return;
+    }
+    this.containerWidth = await this.getContainerWidth();
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleWindowResize);
@@ -159,16 +186,20 @@ export default defineComponent({
       return this.recycleNode ? index : item._masonryIndex;
     },
     // masonry container
-    getContainerWidth() {
-      if (this.fit && this.col) {
-        return this.containerFitWidth;
+    async getContainerWidth() {
+      if (this.fit) {
+        if (this.col) {
+          return this.containerFitWidth;
+        } else {
+          // need to remove the width style on the container element to get the original width
+          this.restoreContainerWidth = true;
+          await this.$nextTick();
+        }
       }
       const container = this.$refs.container as HTMLDivElement;
-      if (container) {
-        return container.offsetWidth;
-      } else {
-        return 0;
-      }
+      const containerWidth = container ? container.offsetWidth : 0;
+      this.restoreContainerWidth = false;
+      return containerWidth;
     },
     getContainerOffset() {
       const container = this.$refs.container as HTMLDivElement;
@@ -206,8 +237,8 @@ export default defineComponent({
     colWidthChanged() {
       this.renderMasonry();
     },
-    screenWidthChanged() {
-      this.containerWidth = this.getContainerWidth();
+    async screenWidthChanged() {
+      this.containerWidth = await this.getContainerWidth();
     },
     renderMasonry() {
       this.resetGroup();
@@ -387,7 +418,7 @@ export default defineComponent({
       }
       this.scrollTimer = setTimeout(() => {
         this.handleScroll();
-      }, 200);
+      }, this.scrollDebounceTime);
       if (this.lastScroll && Date.now() - this.lastScroll < 200) {
         return;
       }
