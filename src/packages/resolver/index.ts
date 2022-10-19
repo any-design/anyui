@@ -19,7 +19,7 @@ export function AnyUIResolver(options: AnyUIResolverOptions = {}): ComponentReso
   return {
     type: 'component',
     resolve: (name: string) => {
-      if (/^A[A-Za-z]+$/.test(name)) {
+      if (/^A[A-Za-z]+$/.test(name) && !name.startsWith('Array') && !name.startsWith('Audio')) {
         return {
           name: name.slice(1),
           from: '@any-design/anyui',
