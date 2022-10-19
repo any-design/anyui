@@ -7,3 +7,4 @@ AMasonry.install = (app: App) => {
 };
 
 export default AMasonry as SFCWithInstall<typeof AMasonry>;
+export * from './types';
