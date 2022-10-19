@@ -26,6 +26,7 @@
       <CollapseSection />
       <LoadingSection />
       <DrawerSection />
+      <MasonrySection />
     </div>
     <a-split margin="14"></a-split>
     <div class="testground-footer">
@@ -63,6 +64,7 @@ import TagSection from './sections/tag.vue';
 import CollapseSection from './sections/collapse.vue';
 import LoadingSection from './sections/loading.vue';
 import DrawerSection from './sections/drawer.vue';
+import MasonrySection from './sections/masonry.vue';
 import Logo from './icon/Logo.vue';
 
 export default defineComponent({
@@ -89,6 +91,7 @@ export default defineComponent({
     TagSection,
     LoadingSection,
     DrawerSection,
+    MasonrySection,
     Logo,
     Icon,
   },
