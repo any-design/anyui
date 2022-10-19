@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### v0.0.33
+
+- Feat: export `PositionItem` type in the `AMasonry` component.
+
 ### v0.0.32
 
 - Fix: wrong spelling in the `AMasonry` component.
