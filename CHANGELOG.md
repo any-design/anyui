@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### v0.0.32
+
+- Fix: wrong spelling in the `AMasonry` component.
+
 ### v0.0.31
 
 - Fix: `splitPercent` in `AGradientText` now will work properly, this change may make the existed component behaviour different.
