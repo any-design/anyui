@@ -7,14 +7,7 @@
         class="a-masonry__item"
         :style="getItemStyles(item)"
       >
-        <slot
-          :data="item"
-          :position="{
-            ...positionMap[item._masonryIndex],
-            colWidth,
-          }"
-        >
-        </slot>
+        <slot :data="item" :position="positionMap[item._masonryIndex]" :colWidth="colWidth"> </slot>
       </div>
     </template>
   </div>
@@ -22,7 +15,7 @@
 
 <script lang="ts">
 import { Timeout } from '@/utils/types';
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, StyleValue } from 'vue';
 import { PositionItem } from './types';
 
 interface MasonryItem extends Object {
@@ -115,10 +108,10 @@ export default defineComponent({
       }
     },
     containerFitWidth() {
-      return this.col * this.colWidth + (this.col - 1) * this.gap;
+      return this.columns * this.colWidth + (this.columns - 1) * this.gap;
     },
     containerStyle() {
-      const width = this.fit && this.col ? `${this.containerFitWidth}px` : '';
+      const width = this.fit && this.columns ? `${this.containerFitWidth}px` : '';
       const height = `${this.maxHeight || 0}px`;
       return {
         width,
@@ -165,7 +158,7 @@ export default defineComponent({
       // set key to index, vue will auto reuse the dom node.
       return this.recycleNode ? index : item._masonryIndex;
     },
-    // waterfall container
+    // masonry container
     getContainerWidth() {
       if (this.fit && this.col) {
         return this.containerFitWidth;
@@ -187,13 +180,14 @@ export default defineComponent({
       return elRect.top - bodyRect.top;
     },
     getItemStyles(item: MasonryItem) {
-      return {
+      const styles: Partial<StyleValue> = {
         width: `${this.colWidth}px`,
         height: `${this.positionMap[item._masonryIndex].height}px`,
         transform: `translateX(${this.positionMap[item._masonryIndex].left}px) translateY(${
           this.positionMap[item._masonryIndex].top
-        })px`,
+        }px)`,
       };
+      return styles;
     },
     // waterfall items
     itemsChanged() {
@@ -411,6 +405,7 @@ export default defineComponent({
 <style lang="scss">
 .a-masonry {
   position: relative;
+  width: 100%;
   -webkit-overflow-scrolling: touch;
   .a-masonry__item {
     position: absolute;
