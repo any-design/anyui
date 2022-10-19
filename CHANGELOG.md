@@ -2,6 +2,14 @@
 
 ## Alpha
 
+### v0.0.36
+
+- Feat (Masonry): configurable target which the scroll event handler will attach to.
+
+- Feat (Masonry): configurable scroll throttle time.
+
+- Feat (Masonry): avoid outdated data set to display.
+
 ### v0.0.35
 
 - Feat: configurable debounce time for scroll events.
