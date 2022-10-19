@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "author": "any-design",
   "description": "A cute UI components library for Vue 3.",
   "files": [
@@ -55,9 +55,9 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@types/color": "^3.0.3",
-    "@types/node": "^16.11.66",
-    "@typescript-eslint/eslint-plugin": "^5.40.0",
-    "@typescript-eslint/parser": "^5.40.0",
+    "@types/node": "^16.11.68",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
     "@vitejs/plugin-vue": "^3.1.2",
     "chalk": "^4.1.2",
     "cross-env": "^7.0.3",

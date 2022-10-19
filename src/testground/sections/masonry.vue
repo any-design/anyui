@@ -2,7 +2,13 @@
   <div class="testground-content__item">
     <p class="testground-content-title">Masonry</p>
     <div class="testground-flex">
-      <a-masonry :items="items" :itemHeightGetter="itemHeightGetter" :colWidth="296" fit>
+      <a-masonry
+        :items="items"
+        :itemHeightGetter="itemHeightGetter"
+        :colWidth="296"
+        scrollEventTarget="body"
+        fit
+      >
         <div class="card"></div>
       </a-masonry>
     </div>

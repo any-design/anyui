@@ -64,7 +64,7 @@ export default defineComponent({
     },
     additionalDistance: {
       type: Number,
-      default: 300,
+      default: 1600,
     },
     recycleNode: {
       type: Boolean,
@@ -73,6 +73,14 @@ export default defineComponent({
     scrollDebounceTime: {
       type: Number,
       default: 200,
+    },
+    scrollThrottleTime: {
+      type: Number,
+      default: 100,
+    },
+    // if not specified, the scroll event handler will be attached to the window
+    scrollEventTarget: {
+      type: String,
     },
     resizeThrottleTime: {
       type: Number,
@@ -105,12 +113,14 @@ export default defineComponent({
       restoreContainerWidth: false,
       screenWidth: document.documentElement.clientWidth,
       screenHeight: document.documentElement.clientHeight,
+      scrollTarget: null as HTMLElement | null,
       scrollTop: document.documentElement.scrollTop,
       containerOffset: 0,
       lastScroll: 0,
       lastResizeTriggered: 0,
       resizeTimer: null as Timeout | null,
       scrollTimer: null as Timeout | null,
+      setDisplayExecCounter: 0,
     };
   },
   computed: {
@@ -159,10 +169,19 @@ export default defineComponent({
     this.resetWidthStore();
     this.resetHeightStore();
     this.resetPositionMap();
+    if (this.scrollEventTarget) {
+      const scrollTarget = document.querySelector(this.scrollEventTarget);
+      if (scrollTarget) {
+        scrollTarget.addEventListener('scroll', this.handleScroll);
+        this.scrollTarget = scrollTarget as HTMLElement;
+      } else {
+        console.warn('[AMasonry] Cannot find the scroll event target element.');
+      }
+    }
+    if (!this.scrollTarget) {
+      window.addEventListener('scroll', this.handleScroll);
+    }
     window.addEventListener('resize', this.handleWindowResize);
-    window.addEventListener('scroll', this.handleScroll, {
-      passive: true,
-    });
   },
   async mounted() {
     this.containerWidth = await this.getContainerWidth();
@@ -178,7 +197,11 @@ export default defineComponent({
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleWindowResize);
-    window.removeEventListener('scroll', this.handleScroll);
+    if (this.scrollTarget) {
+      this.scrollTarget.removeEventListener('scroll', this.handleScroll);
+    } else {
+      window.removeEventListener('scroll', this.handleScroll);
+    }
   },
   methods: {
     getKey(item: MasonryItem, index: number) {
@@ -250,6 +273,10 @@ export default defineComponent({
       this.setDisplay();
     },
     setDisplay() {
+      this.setDisplayExecCounter += 1;
+      this.updateDisplay(this.setDisplayExecCounter);
+    },
+    updateDisplay(seq: number) {
       const countPerSection = this.rowsPerSection * this.columns;
       const showCondHead = this.scrollTop - this.additionalDistance;
       const showCondTail = this.scrollTop + this.screenHeight + this.additionalDistance;
@@ -273,8 +300,7 @@ export default defineComponent({
           inList[idx] = true;
         }
       }
-
-      if (window.requestAnimationFrame) {
+      if (window.requestAnimationFrame && seq >= this.setDisplayExecCounter) {
         window.requestAnimationFrame(() => {
           this.displayItems = list;
           this.$forceUpdate();
@@ -419,15 +445,13 @@ export default defineComponent({
       this.scrollTimer = setTimeout(() => {
         this.handleScroll();
       }, this.scrollDebounceTime);
-      if (this.lastScroll && Date.now() - this.lastScroll < 200) {
+      if (this.lastScroll && Date.now() - this.lastScroll < this.scrollThrottleTime) {
         return;
       }
-      this.lastScroll = Date.now();
       this.containerOffset = this.getContainerOffset();
       this.scrollTop = document.documentElement.scrollTop - this.containerOffset;
       this.setDisplay();
-      clearTimeout(this.scrollTimer);
-      this.scrollTimer = null;
+      this.lastScroll = Date.now();
     },
   },
 });
