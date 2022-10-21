@@ -1,7 +1,11 @@
 <template>
   <div
     ref="upload"
-    class="a-upload"
+    :class="{
+      'a-upload': true,
+      'a-upload--clickable': clickable,
+    }"
+    @click="handleUploadClick"
     @dragenter="handleDragEnter"
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
@@ -12,6 +16,7 @@
     <slot v-if="compStatus === 'uploading'" name="uploading"></slot>
     <slot v-if="compStatus === 'error'" name="error"></slot>
     <slot v-if="compStatus === 'success'" name="success"></slot>
+    <input ref="fileInput" type="file" hidden />
   </div>
 </template>
 
@@ -27,6 +32,10 @@ export default defineComponent({
     status: {
       type: String as PropType<UploadStatus>,
       default: '',
+    },
+    clickable: {
+      type: Boolean,
+      default: true,
     },
   },
   emits: ['upload'],
@@ -45,6 +54,10 @@ export default defineComponent({
     status(val) {
       this.compStatus = val;
     },
+  },
+  mounted() {
+    const files = this.$refs.fileInput as HTMLElement;
+    files.addEventListener('change', this.handleFileChanged);
   },
   methods: {
     handleDragEnter(e: DragEvent) {
@@ -73,10 +86,18 @@ export default defineComponent({
       e.preventDefault();
       e.stopPropagation();
     },
+    handleUploadClick() {
+      if (!this.clickable) {
+        return;
+      }
+      (this.$refs.fileInput as HTMLElement | undefined)?.click();
+    },
+    handleFileChanged(e: Event) {
+      this.$emit('upload', (e.target as any)?.files?.[0]);
+    },
   },
 });
 </script>
-
 
 <style lang="scss">
 .a-upload {
@@ -84,9 +105,12 @@ export default defineComponent({
   height: 100%;
   border-radius: 24px;
   filter: drop-shadow(2px 2px 4px var(--shadow-10));
-  border: 2px dashed vaR(--border);
+  border: 2px dashed var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.a-upload--clickable {
+  cursor: pointer;
 }
 </style>
