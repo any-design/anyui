@@ -139,15 +139,18 @@ export default defineComponent({
     line-height: 32px;
     padding: 4px 14px;
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
     box-sizing: border-box;
     background: var(--bg-alter);
     font-size: 14px;
-    letter-spacing: 0.025rem;
-    box-shadow: 0px 6px 12px var(--shadow-5);
+    letter-spacing: 0.02rem;
+    box-shadow: 1px 3px 10px var(--shadow-4);
+    transition: border-color 100ms ease-out, box-shadow 100ms ease-out;
+    outline: none !important;
   }
   &__inner:focus {
-    outline: 0;
+    box-shadow: 1px 3px 10px var(--primary-12);
+    border: 1px solid var(--primary-80);
   }
   &__inner::placeholder {
     color: var(--placeholder);
@@ -209,7 +212,10 @@ export default defineComponent({
     line-height: 42px;
     font-size: 16px;
     padding: 6px 18px;
-    box-shadow: 0px 8px 20px var(--shadow-10);
+    box-shadow: 2px 3px 14px var(--shadow-6);
+  }
+  .a-input__inner:focus {
+    box-shadow: 2px 3px 14px var(--primary-20);
   }
 }
 .a-input.a-input--round.a-input--large {
