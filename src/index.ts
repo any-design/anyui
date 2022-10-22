@@ -22,8 +22,10 @@ import Popper from './packages/popper';
 import PopupMenu from './packages/popupMenu';
 import Select from './packages/select';
 import Split from './packages/split';
+import Spinner from './packages/spinner';
 import Step from './packages/step';
 import Tag from './packages/tag';
+import Textarea from './packages/textarea';
 import Upload from './packages/upload';
 
 const defaultComponentList = [
@@ -49,7 +51,9 @@ const defaultComponentList = [
   Split,
   Select,
   Step,
+  Spinner,
   Tag,
+  Textarea,
   Upload,
 ];
 
@@ -89,8 +93,10 @@ export {
   Select,
   Step,
   Split,
+  Spinner,
   Side,
   Tag,
+  Textarea,
   Upload,
   // methods
   buildInstaller,
