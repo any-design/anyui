@@ -62,7 +62,7 @@ export default defineComponent({
   font-size: 14px;
   line-height: 14px;
   border-radius: 14px;
-  box-shadow: 1px 2px 5px rgba(12, 12, 12, 0.06);
+  box-shadow: 1px 2px 8px var(--shadow-6);
   white-space: nowrap;
 }
 .a-tag--small {
