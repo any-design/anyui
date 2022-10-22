@@ -23,8 +23,10 @@
       <MessageSection />
       <LayoutSection />
       <TagSection />
+      <TextareaSection />
       <CollapseSection />
       <LoadingSection />
+      <SpinnerSection />
       <DrawerSection />
       <MasonrySection />
     </div>
@@ -61,9 +63,11 @@ import FormSection from './sections/form.vue';
 import MessageSection from './sections/message.vue';
 import LayoutSection from './sections/layout.vue';
 import TagSection from './sections/tag.vue';
+import TextareaSection from './sections/textarea.vue';
 import CollapseSection from './sections/collapse.vue';
 import LoadingSection from './sections/loading.vue';
 import DrawerSection from './sections/drawer.vue';
+import SpinnerSection from './sections/spinner.vue';
 import MasonrySection from './sections/masonry.vue';
 import Logo from './icon/Logo.vue';
 
@@ -89,6 +93,8 @@ export default defineComponent({
     MessageSection,
     LayoutSection,
     TagSection,
+    TextareaSection,
+    SpinnerSection,
     LoadingSection,
     DrawerSection,
     MasonrySection,

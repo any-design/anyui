@@ -192,6 +192,7 @@ export default defineComponent({
     .a-select__inner {
       .a-input__inner {
         cursor: pointer;
+        border-radius: 8px;
       }
       .a-select__icon {
         transition: transform var(--anim-duration, 200ms) ease;
@@ -206,11 +207,11 @@ export default defineComponent({
   width: 100%;
   .a-select-dropdown {
     width: 100%;
-    border-radius: 4px;
+    border-radius: 8px;
     background: var(--bg-alter);
     box-sizing: border-box;
     padding: 8px 0;
-    box-shadow: 0 4px 12px var(--shadow-10);
+    box-shadow: 2px 5px 12px var(--shadow-8);
     left: 0;
     &__item {
       padding: 4px 16px;
@@ -221,7 +222,7 @@ export default defineComponent({
       cursor: pointer;
     }
     &__item:hover {
-      background: var(--bg);
+      background: var(--bg-semidark);
     }
   }
 }

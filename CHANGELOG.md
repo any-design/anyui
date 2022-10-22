@@ -2,6 +2,16 @@
 
 ## Alpha
 
+### v0.0.37
+
+- Breaking change: `ALoading` now has been divided into two components, the spinner type now divided and renamed as `ASpinner`.
+
+- Feat: enlarge the `border-radius` of the input components, added more interactive styles.
+
+- Feat: tweak the shadow styles of the input components and `ATag`.
+
+- Feat: add `ATextarea` component.
+
 ### v0.0.36
 
 - Feat (Masonry): configurable target which the scroll event handler will attach to.
