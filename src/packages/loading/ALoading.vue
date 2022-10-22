@@ -1,6 +1,6 @@
 <template>
   <div class="a-loading-wrapper">
-    <span v-if="type === 'default'" class="a-loading a-loading-default">
+    <span class="a-loading">
       <i
         v-for="(_, index) in circleCount"
         :key="index"
@@ -10,56 +10,34 @@
         }"
       ></i>
     </span>
-    <span v-if="type === 'spinner'" class="a-loading a-loading-spinner">
-      <Icon :icon="icon"></Icon>
-    </span>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, PropType, getCurrentInstance, ref } from 'vue';
-import { Icon } from '@iconify/vue';
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { Interval, Timeout } from '@/utils/types';
 
 const CIRCLE_COUNT = 4;
 const CIRCLE_ANIM_DURATION = 1200;
 
 export default defineComponent({
-  components: {
-    Icon,
-  },
-  props: {
-    type: {
-      type: String as PropType<'default' | 'spinner'>,
-      default: 'default',
-    },
-    icon: {
-      type: String,
-      default: 'quill:loading-spin',
-    },
-  },
-  setup(props) {
+  setup() {
     const animated = ref(false);
     let animInterval: Interval;
     let animTimeout: Timeout;
 
     onMounted(() => {
-      if (props.type === 'default') {
-        // make anim loop
-        animInterval = setInterval(async () => {
-          animated.value = false;
-          animTimeout = setTimeout(() => {
-            animated.value = true;
-          }, 50);
-        }, CIRCLE_ANIM_DURATION);
-      }
+      animInterval = setInterval(async () => {
+        animated.value = false;
+        animTimeout = setTimeout(() => {
+          animated.value = true;
+        }, 50);
+      }, CIRCLE_ANIM_DURATION);
     });
 
     onUnmounted(() => {
-      if (props.type === 'default') {
-        animInterval && clearInterval(animInterval);
-        animTimeout && clearTimeout(animTimeout);
-      }
+      animInterval && clearInterval(animInterval);
+      animTimeout && clearTimeout(animTimeout);
     });
 
     return {
@@ -120,19 +98,9 @@ export default defineComponent({
   width: max-content;
   height: max-content;
   .a-loading {
-    &-default {
-      display: flex;
-      height: 3em;
-      align-items: center;
-    }
-    &-spinner {
-      width: 1em;
-      height: 1em;
-      position: relative;
-      color: var(--primary);
-      animation: 0.75s a-loading-spinner ease 0s infinite;
-      display: block;
-    }
+    display: flex;
+    height: 3em;
+    align-items: center;
     &-circle {
       background: var(--primary);
       width: 1em;
@@ -144,28 +112,28 @@ export default defineComponent({
       margin-left: 0;
     }
     &-circle__1 {
-      animation: a-loading-circle-1 0.125s cubic-bezier(0, 0, 0.3642, 1) 0s 1,
-        a-loading-circle-2 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.125s 1,
-        a-loading-circle-3 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.25s 1,
-        a-loading-circle-4 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.375s 1;
+      animation: a-loading-circle-1 0.11s cubic-bezier(0, 0, 0.353, 1) 0s 1,
+        a-loading-circle-2 0.13s cubic-bezier(0.61, 0, 1, 1) 0.11s 1,
+        a-loading-circle-3 0.12s cubic-bezier(0, 0, 0.355, 1) 0.24s 1,
+        a-loading-circle-4 0.12s cubic-bezier(0.61, 0, 1, 1) 0.36s 1;
     }
     &-circle__2 {
-      animation: a-loading-circle-1 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.075s 1,
-        a-loading-circle-2 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.2s 1,
-        a-loading-circle-3 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.325s 1,
-        a-loading-circle-4 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.45s 1;
+      animation: a-loading-circle-1 0.11s cubic-bezier(0, 0, 0.353, 1) 0.06s 1,
+        a-loading-circle-2 0.13s cubic-bezier(0.61, 0, 1, 1) 0.17s 1,
+        a-loading-circle-3 0.12s cubic-bezier(0, 0, 0.355, 1) 0.3s 1,
+        a-loading-circle-4 0.12s cubic-bezier(0.65, 0, 1, 1) 0.42s 1;
     }
     &-circle__3 {
-      animation: a-loading-circle-1 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.15s 1,
-        a-loading-circle-2 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.275s 1,
-        a-loading-circle-3 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.4s 1,
-        a-loading-circle-4 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.525s 1;
+      animation: a-loading-circle-1 0.11s cubic-bezier(0, 0, 0.353, 1) 0.14s 1,
+        a-loading-circle-2 0.13s cubic-bezier(0.61, 0, 1, 1) 0.25s 1,
+        a-loading-circle-3 0.11s cubic-bezier(0, 0, 0.355, 1) 0.38s 1,
+        a-loading-circle-4 0.12s cubic-bezier(0.65, 0, 1, 1) 0.49s 1;
     }
     &-circle__4 {
-      animation: a-loading-circle-1 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.225s 1,
-        a-loading-circle-2 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.35s 1,
-        a-loading-circle-3 0.125s cubic-bezier(0, 0, 0.3642, 1) 0.475s 1,
-        a-loading-circle-4 0.125s cubic-bezier(0.6358, 0, 1, 1) 0.6s 1;
+      animation: a-loading-circle-1 0.11s cubic-bezier(0, 0, 0.353, 1) 0.21s 1,
+        a-loading-circle-2 0.13s cubic-bezier(0.61, 0, 1, 1) 0.32s 1,
+        a-loading-circle-3 0.11s cubic-bezier(0, 0, 0.355, 1) 0.45s 1,
+        a-loading-circle-4 0.12s cubic-bezier(0.65, 0, 1, 1) 0.56s 1;
     }
   }
 }
