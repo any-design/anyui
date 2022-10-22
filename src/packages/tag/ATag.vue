@@ -4,7 +4,7 @@
       'a-tag': true,
       'a-tag--round': !!round,
       [`a-tag--${size}`]: true,
-      'a-tag--custom-color': color
+      'a-tag--custom-color': color,
     }"
     :style="tagStyles"
   >
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { CSSProperties, defineComponent, PropType, ref, StyleValue } from "vue";
+import { CSSProperties, defineComponent, PropType, ref, StyleValue } from 'vue';
 import Color from 'color';
 
 export default defineComponent({
@@ -29,7 +29,7 @@ export default defineComponent({
     color: {
       type: String,
       default: null,
-    }
+    },
   },
   setup(props) {
     const hasColor = ref(!!props.color);
@@ -45,7 +45,7 @@ export default defineComponent({
     return {
       tagStyles,
     };
-  }
+  },
 });
 </script>
 
@@ -62,7 +62,7 @@ export default defineComponent({
   font-size: 14px;
   line-height: 14px;
   border-radius: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.075);
+  box-shadow: 1px 2px 5px rgba(12, 12, 12, 0.06);
   white-space: nowrap;
 }
 .a-tag--small {
