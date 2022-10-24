@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "author": "any-design",
   "description": "A cute UI components library for Vue 3.",
   "files": [
@@ -26,6 +26,7 @@
     "url": "https://github.com/any-design/anyui.git"
   },
   "scripts": {
+    "new": "node ./scripts/new.js",
     "start": "npm run dev",
     "dev": "cross-env BUILD_TARGET=TESTGROUND vite",
     "clean": "rimraf ./lib && rimraf ./styles",
@@ -61,12 +62,14 @@
     "@vitejs/plugin-vue": "^3.1.2",
     "chalk": "^4.1.2",
     "cross-env": "^7.0.3",
+    "ejs": "^3.1.8",
     "eslint": "^8.25.0",
     "eslint-config-alloy": "^4.7.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-vue": "^9.6.0",
     "fs-extra": "^10.1.0",
+    "inquirer": "^8.2.4",
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "sass": "^1.55.0",
