@@ -56,7 +56,7 @@ export default defineComponent({
     const container = ref<HTMLElement | undefined>();
     const buttonContainer = ref<HTMLElement | undefined>();
 
-    const selected = ref<string | number | undefined>();
+    const selected = ref<string | number | undefined>(props.modelValue);
     const showBgBlock = ref<boolean>(false);
     const bgBlockPosition = ref<ARadioButtonPosition | undefined>();
 
@@ -102,6 +102,7 @@ export default defineComponent({
     const handleClear = () => {
       selected.value = undefined;
       showBgBlock.value = false;
+      emit('update:modelValue', undefined);
       if (showBgBlock.value) {
         setTimeout(() => {
           bgBlockPosition.value = undefined;
