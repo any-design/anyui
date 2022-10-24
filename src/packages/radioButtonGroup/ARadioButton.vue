@@ -7,7 +7,7 @@
     }"
     @click="handleClicked"
   >
-    {{ item.label }}
+    {{ item?.label || '-' }}
   </div>
 </template>
 
