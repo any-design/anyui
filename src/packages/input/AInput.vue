@@ -35,7 +35,7 @@ import {
   onUnmounted,
   ref,
   useSlots,
-  watchEffect,
+  watch,
 } from 'vue';
 import { formatStyleSize, getCertainParent } from '../../utils';
 import { FormItemEventEmitter } from '../formItem/bus';
@@ -103,9 +103,12 @@ export default defineComponent({
     };
 
     // life hooks
-    watchEffect(() => {
-      storedValue.value = `${props.modelValue}`;
-    });
+    watch(
+      () => props.modelValue,
+      () => {
+        storedValue.value = `${props.modelValue}`;
+      },
+    );
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);

@@ -19,7 +19,7 @@ import {
   onUnmounted,
   PropType,
   ref,
-  watchEffect,
+  watch,
 } from 'vue';
 import { FormItemEventEmitter } from '../formItem/bus';
 import { ARadioGroupItem, ARadioGroupItems } from './types';
@@ -44,9 +44,12 @@ export default defineComponent({
       formItemEventEmitter = formItemParent.exposed?.emitter as FormItemEventEmitter;
     }
 
-    watchEffect(() => {
-      selected.value = props.modelValue;
-    });
+    watch(
+      () => props.modelValue,
+      () => {
+        selected.value = props.modelValue;
+      },
+    );
 
     const handleItemChange = (item: ARadioGroupItem) => {
       selected.value = item.value;

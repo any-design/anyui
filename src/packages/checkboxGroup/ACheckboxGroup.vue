@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watchEffect } from 'vue';
+import { defineComponent, PropType, ref, watch } from 'vue';
 
 export default defineComponent({
   props: {
@@ -44,7 +44,7 @@ export default defineComponent({
       );
     };
 
-    watchEffect(() => {
+    watch([() => props.modelValue, () => props.items], () => {
       props.modelValue?.forEach((item) => {
         storedValues.value[item] = true;
       });
@@ -56,13 +56,16 @@ export default defineComponent({
         });
     });
 
-    watchEffect(() => {
-      props.items.forEach((item) => {
-        if (typeof storedValues.value[item] === 'undefined') {
-          storedValues.value[item] = props.modelValue?.includes(item) ? true : false;
-        }
-      });
-    });
+    watch(
+      () => props.items,
+      () => {
+        props.items.forEach((item) => {
+          if (typeof storedValues.value[item] === 'undefined') {
+            storedValues.value[item] = props.modelValue?.includes(item) ? true : false;
+          }
+        });
+      },
+    );
 
     return {
       storedValues,

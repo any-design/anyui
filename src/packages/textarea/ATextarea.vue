@@ -27,7 +27,7 @@ import {
   computed,
   onUnmounted,
   getCurrentInstance,
-  watchEffect,
+  watch,
 } from 'vue';
 import { FormItemEventEmitter } from '../formItem/bus';
 
@@ -76,9 +76,12 @@ export default defineComponent({
       maxHeight: `${props.maxRows * elementFontSize.value + 2 * paddingHeight}px`,
     }));
 
-    watchEffect(() => {
-      storedValue.value = props.modelValue;
-    });
+    watch(
+      () => props.modelValue,
+      () => {
+        storedValue.value = props.modelValue;
+      },
+    );
 
     const handleInput = (e: Event) => {
       const target = e.target as HTMLInputElement;

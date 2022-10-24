@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watchEffect } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 
 export default defineComponent({
@@ -46,9 +46,12 @@ export default defineComponent({
   setup(props, { emit }) {
     const checked = ref(props.modelValue);
 
-    watchEffect(() => {
-      checked.value = props.modelValue;
-    });
+    watch(
+      () => props.modelValue,
+      () => {
+        checked.value = props.modelValue;
+      },
+    );
 
     const handleClick = () => {
       checked.value = !checked.value;
