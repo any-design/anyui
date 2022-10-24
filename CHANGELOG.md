@@ -8,6 +8,10 @@
 
 - Fix: `ARadioGroup` cannot react right when `modelValue` changed.
 
+- Fix: correct the inner value type in `AInput`.
+
+- Fix: `ATextarea` now support value binding.
+
 ### v0.0.37
 
 - Breaking change: `ALoading` now has been divided into two components, the spinner type now divided and renamed as `ASpinner`.
