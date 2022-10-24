@@ -63,7 +63,7 @@ import {
   onUnmounted,
   PropType,
   ref,
-  watchEffect,
+  watch,
 } from 'vue';
 import { Icon } from '@iconify/vue';
 import { getCertainParent } from '../../utils';
@@ -150,7 +150,7 @@ export default defineComponent({
       clear();
     };
 
-    watchEffect(() => {
+    watch([() => props.items, () => props.modelValue], () => {
       selected.value = props.modelValue;
       if (!props.items) {
         return;

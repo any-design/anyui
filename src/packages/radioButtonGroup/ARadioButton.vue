@@ -14,7 +14,7 @@
 <script lang="ts">
 import { defineComponent, inject, PropType, ref } from 'vue';
 import { ARadioGroupItem } from '../radioGroup/types';
-import { GET_PARENT_CONTAINER_RECT } from './constants';
+import { GET_PARENT_CONTAINER_RECT, GET_PADDING_VALUE } from './constants';
 
 export default defineComponent({
   name: 'ARadioButton',
@@ -33,6 +33,8 @@ export default defineComponent({
     const getParentContainerRect =
       inject<typeof document.body.getBoundingClientRect>(GET_PARENT_CONTAINER_RECT);
 
+    const getPaddingValue = inject<() => number>(GET_PADDING_VALUE);
+
     const getPosition = () => {
       if (!button.value || !getParentContainerRect) {
         return;
@@ -40,7 +42,7 @@ export default defineComponent({
       const buttonRect = button.value.getBoundingClientRect();
       const parentRect = getParentContainerRect();
 
-      const relativeLeft = buttonRect.left - parentRect.left - 6;
+      const relativeLeft = buttonRect.left - parentRect.left - (getPaddingValue?.() || 6);
 
       return {
         width: buttonRect.width,
