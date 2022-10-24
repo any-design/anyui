@@ -18,6 +18,7 @@ import Masonry from './packages/masonry';
 import Message, { message } from './packages/message';
 import Radio from './packages/radio';
 import RadioGroup from './packages/radioGroup';
+import RadioButtonGroup from './packages/radioButtonGroup';
 import Popper from './packages/popper';
 import PopupMenu from './packages/popupMenu';
 import Select from './packages/select';
@@ -48,6 +49,7 @@ const defaultComponentList = [
   PopupMenu,
   Radio,
   RadioGroup,
+  RadioButtonGroup,
   Split,
   Select,
   Step,
@@ -90,6 +92,7 @@ export {
   PopupMenu,
   Radio,
   RadioGroup,
+  RadioButtonGroup,
   Select,
   Step,
   Split,
