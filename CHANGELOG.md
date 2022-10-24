@@ -2,6 +2,12 @@
 
 ## Alpha
 
+### v0.0.38
+
+- Feat: add `ARadioButtonGroup` component.
+
+- Fix: `ARadioGroup` cannot react right when `modelValue` changed.
+
 ### v0.0.37
 
 - Breaking change: `ALoading` now has been divided into two components, the spinner type now divided and renamed as `ASpinner`.
