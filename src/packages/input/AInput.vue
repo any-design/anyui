@@ -12,7 +12,7 @@
     :style="style"
   >
     <input
-      v-model="storedValue"
+      :value="storedValue"
       class="a-input__inner"
       :placeholder="placeholder"
       :disabled="disabled"
@@ -78,7 +78,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'submit'],
   setup(props, { emit }) {
-    const storedValue = ref(props.modelValue);
+    const storedValue = ref<string>(`${props.modelValue}`);
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
     let formItemEventEmitter: FormItemEventEmitter | undefined;
@@ -104,7 +104,7 @@ export default defineComponent({
 
     // life hooks
     watchEffect(() => {
-      storedValue.value = props.modelValue;
+      storedValue.value = `${props.modelValue}`;
     });
 
     onMounted(() => {
