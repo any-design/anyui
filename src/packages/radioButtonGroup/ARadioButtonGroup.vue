@@ -3,6 +3,7 @@
     ref="container"
     :class="{
       'a-radio-button-group': true,
+      'a-radio-button-group--round': round,
       'a-radio-button-group--animated': showBgBlock,
     }"
   >
@@ -29,13 +30,13 @@ import {
   PropType,
   provide,
   ref,
-  watchEffect,
+  watch,
 } from 'vue';
+import { getCertainParent } from '@/utils';
 import { ARadioGroupItems } from '../radioGroup/types';
 import { ARadioButtonPosition } from './types';
-import { GET_PARENT_CONTAINER_RECT } from './constants';
+import { GET_PARENT_CONTAINER_RECT, GET_PADDING_VALUE } from './constants';
 import ARadioButton from './ARadioButton.vue';
-import { getCertainParent } from '@/utils';
 import { FormItemEventEmitter } from '../formItem/bus';
 
 export default defineComponent({
@@ -49,6 +50,10 @@ export default defineComponent({
     },
     modelValue: {
       type: [String, Number],
+    },
+    round: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['update:modelValue'],
@@ -65,6 +70,12 @@ export default defineComponent({
     if (formItemParent) {
       formItemEventEmitter = formItemParent.exposed?.emitter as FormItemEventEmitter;
     }
+
+    // horizontal padding
+    const paddingValue = computed(() => (props.round ? 6 : 4));
+
+    const getPaddingValue = () => paddingValue.value;
+    provide(GET_PADDING_VALUE, getPaddingValue);
 
     const bgBlockStyles = computed(() => {
       if (!bgBlockPosition.value) {
@@ -134,7 +145,7 @@ export default defineComponent({
         return;
       }
 
-      const relativeLeft = buttonRect.left - containerRect.left - 6;
+      const relativeLeft = buttonRect.left - containerRect.left - paddingValue.value;
 
       bgBlockPosition.value = {
         width: buttonRect.width,
@@ -148,10 +159,13 @@ export default defineComponent({
       }
     };
 
-    watchEffect(() => {
-      selected.value = props.modelValue;
-      updateButtonPosition(selected.value);
-    });
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        selected.value = newValue;
+        updateButtonPosition(selected.value);
+      },
+    );
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
@@ -179,9 +193,9 @@ export default defineComponent({
 .a-radio-button-group {
   position: relative;
   width: max-content;
-  padding: 12px 6px;
+  padding: 12px 4px;
   box-sizing: border-box;
-  border-radius: 22px;
+  border-radius: 6px;
   background-color: var(--bg-alter);
   box-shadow: 1px 3px 16px var(--shadow-12);
   &__bg {
@@ -190,7 +204,7 @@ export default defineComponent({
     box-shadow: 2px 3px 5px var(--shadow-12);
     height: 36px;
     top: 4px;
-    border-radius: 18px;
+    border-radius: 4px;
     z-index: 1;
   }
   &__buttons {
@@ -199,6 +213,15 @@ export default defineComponent({
     z-index: 5;
   }
 }
+
+.a-radio-button-group--round {
+  padding: 12px 6px;
+  border-radius: 22px;
+  .a-radio-button-group__bg {
+    border-radius: 18px;
+  }
+}
+
 .a-radio-button-group--animated {
   .a-radio-button-group__bg {
     transition: transform 200ms ease;

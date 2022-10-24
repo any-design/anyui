@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### v0.0.39
+
+- Fix: wrong usage of `watchEffect` in multiple components.
+
 ### v0.0.38
 
 - Feat: add `ARadioButtonGroup` component.

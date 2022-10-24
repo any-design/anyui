@@ -2,18 +2,17 @@
   <div class="testground-content__item">
     <p class="testground-content-title">Radio Button Group</p>
     <div class="testground-flex">
-      <a-radio-button-group v-model="item" :items="items"></a-radio-button-group>
+      <a-radio-button-group :items="items"></a-radio-button-group>
+      <a-radio-button-group :items="items" round></a-radio-button-group>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   setup() {
-    const item = ref<number | undefined>();
-
     return {
       items: [
         {
@@ -29,7 +28,6 @@ export default defineComponent({
           value: 3,
         },
       ],
-      item,
     };
   },
 });
