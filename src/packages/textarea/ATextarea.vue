@@ -7,16 +7,29 @@
     }"
   >
     <textarea
+      :value="storedValue"
       class="a-textarea__inner"
       :style="innerStyles"
       :disabled="disabled"
       :readonly="readonly"
+      @input="handleInput"
+      @keydown.enter="handleEnterDown"
     ></textarea>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, computed } from 'vue';
+import { getCertainParent } from '@/utils';
+import {
+  defineComponent,
+  onMounted,
+  ref,
+  computed,
+  onUnmounted,
+  getCurrentInstance,
+  watchEffect,
+} from 'vue';
+import { FormItemEventEmitter } from '../formItem/bus';
 
 export default defineComponent({
   name: 'ATextarea',
@@ -37,12 +50,25 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    modelValue: {
+      type: String,
+      default: '',
+    },
   },
-  setup(props) {
+  emits: ['update:modelValue', 'submit'],
+  setup(props, { emit }) {
+    const storedValue = ref(props.modelValue);
+
     const paddingHeight = 8;
 
     const elementFontSize = ref(0);
     const wrapper = ref<HTMLElement | null>();
+
+    const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
+    let formItemEventEmitter: FormItemEventEmitter | undefined;
+    if (formItemParent) {
+      formItemEventEmitter = formItemParent.exposed?.emitter as FormItemEventEmitter;
+    }
 
     const innerStyles = computed(() => ({
       height: `${props.minRows * elementFontSize.value + 2 * paddingHeight}px`,
@@ -50,17 +76,44 @@ export default defineComponent({
       maxHeight: `${props.maxRows * elementFontSize.value + 2 * paddingHeight}px`,
     }));
 
+    watchEffect(() => {
+      storedValue.value = props.modelValue;
+    });
+
+    const handleInput = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      emit('update:modelValue', target.value);
+    };
+
+    const handleEnterDown = () => {
+      emit('submit', storedValue.value);
+    };
+
+    const handleClear = () => {
+      storedValue.value = '';
+      emit('update:modelValue', '');
+    };
+
     onMounted(() => {
       if (wrapper.value) {
         const { fontSize } = window.getComputedStyle(wrapper.value);
         const { fontSize: documentFontSize } = window.getComputedStyle(document.documentElement);
         elementFontSize.value = Number(fontSize) || Number(documentFontSize) || 16;
       }
+      // attach listeners
+      formItemEventEmitter?.on('clear', handleClear);
+    });
+
+    onUnmounted(() => {
+      formItemEventEmitter?.off('clear', handleClear);
     });
 
     return {
+      storedValue,
       innerStyles,
       wrapper,
+      handleInput,
+      handleEnterDown,
     };
   },
 });
