@@ -1,0 +1,9 @@
+import { App } from 'vue';
+import { SFCWithInstall } from '@/utils/types';
+import <%= componentName %> from './<%= componentName %>.vue';
+
+<%= componentName %>.install = (app: App) => {
+  app.component('<%= componentName %>', <%= componentName %>);
+};
+
+export default <%= componentName %> as SFCWithInstall<typeof <%= componentName %>>;

@@ -10,6 +10,7 @@
       <InputSection />
       <SelectSection />
       <RadioSection />
+      <RadioButtonGroupSection />
       <CheckboxSection />
       <CardSection />
       <SplitSection />
@@ -50,6 +51,7 @@ import GradientTextSection from './sections/gradientText.vue';
 import InputSection from './sections/input.vue';
 import SelectSection from './sections/select.vue';
 import RadioSection from './sections/radio.vue';
+import RadioButtonGroupSection from './sections/radioButtonGroup.vue';
 import CheckboxSection from './sections/checkbox.vue';
 import CardSection from './sections/card.vue';
 import SplitSection from './sections/split.vue';
@@ -80,6 +82,7 @@ export default defineComponent({
     InputSection,
     SelectSection,
     RadioSection,
+    RadioButtonGroupSection,
     CheckboxSection,
     CardSection,
     SplitSection,
