@@ -1,17 +1,18 @@
 <template>
   <div class="a-checkbox-group">
     <a-checkbox
-      v-for="item in items"
+      v-for="(item, index) in items"
       :key="item"
       v-model="storedValues[item]"
       :label="item"
+      :style="index !== items.length - 1 ? checkboxItemStyles : undefined"
       @change="changeMethodFactory(item)"
     ></a-checkbox>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue';
+import { defineComponent, PropType, ref, watch, computed } from 'vue';
 
 export default defineComponent({
   props: {
@@ -21,6 +22,10 @@ export default defineComponent({
     },
     modelValue: {
       type: Object as PropType<(string | number)[]>,
+    },
+    gap: {
+      type: Number,
+      default: 16,
     },
   },
   emits: ['update:modelValue'],
@@ -48,6 +53,15 @@ export default defineComponent({
       );
     };
 
+    const checkboxItemStyles = computed(() => {
+      if (!props.gap) {
+        return undefined;
+      }
+      return {
+        marginRight: `${props.gap}px`,
+      };
+    });
+
     watch([() => props.modelValue, () => props.items], () => {
       props.modelValue?.forEach((item) => {
         storedValues.value[item] = true;
@@ -73,6 +87,7 @@ export default defineComponent({
 
     return {
       storedValues,
+      checkboxItemStyles,
       changeMethodFactory,
       handleItemChange,
     };
