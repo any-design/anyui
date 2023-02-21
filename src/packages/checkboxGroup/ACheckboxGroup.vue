@@ -5,7 +5,7 @@
       :key="item"
       v-model="storedValues[item]"
       :label="item"
-      @change="(checked: boolean) => handleItemChange(checked, item)"
+      @change="changeMethodFactory(item)"
     ></a-checkbox>
   </div>
 </template>
@@ -34,6 +34,10 @@ export default defineComponent({
       }
       storedValues.value[item] = false;
     });
+
+    const changeMethodFactory = (item: string | number) => {
+      return (checked: boolean) => handleItemChange(checked, item);
+    };
 
     const handleItemChange = (checked: boolean, item: string | number) => {
       storedValues.value[item] = checked;
@@ -69,6 +73,7 @@ export default defineComponent({
 
     return {
       storedValues,
+      changeMethodFactory,
       handleItemChange,
     };
   },
