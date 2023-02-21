@@ -5,3 +5,5 @@ lib/**/*
 node_modules/**/*
 .history/**/*
 docs/**/*
+.eslintrc.js
+.prettierrc.js
