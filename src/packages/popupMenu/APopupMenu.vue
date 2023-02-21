@@ -121,7 +121,8 @@ export default defineComponent({
     transition: all var(--anim-duration, 200ms) ease;
   }
   &__item:hover {
-    background: var(--bg);
+    background: var(--bg-semidark);
+    cursor: pointer;
   }
 }
 </style>
