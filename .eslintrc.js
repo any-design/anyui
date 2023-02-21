@@ -2,7 +2,7 @@ module.exports = {
   parser: 'vue-eslint-parser',
   parserOptions: {
     parser: '@typescript-eslint/parser',
-    ecmaVersion: 2021,
+    ecmaVersion: 'latest',
     sourceType: 'module',
   },
   extends: ['plugin:vue/vue3-essential', 'alloy', 'alloy/typescript', 'alloy/vue', 'prettier'],
