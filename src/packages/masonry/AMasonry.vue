@@ -225,7 +225,7 @@ export default defineComponent({
       return elRect.top - bodyRect.top;
     },
     getItemStyles(item: MasonryItem) {
-      if (!item._masonryIndex) {
+      if (typeof item._masonryIndex === 'undefined') {
         return;
       }
       const styles: Partial<StyleValue> = {
