@@ -7,12 +7,14 @@
     @click="handleClick"
   >
     <div class="a-checkbox-checker">
-      <Icon
-        v-if="checked"
-        class="a-checkbox-checker__icon"
-        :icon="checkIcon"
-        color="var(--primary)"
-      />
+      <transition :name="iconTransition">
+        <Icon
+          v-show="checked"
+          class="a-checkbox-checker__icon"
+          :icon="checkIcon"
+          color="var(--primary)"
+        />
+      </transition>
     </div>
     <div class="a-checkbox-label">
       {{ label }}
@@ -40,6 +42,10 @@ export default defineComponent({
     modelValue: {
       type: Boolean,
       default: false,
+    },
+    iconTransition: {
+      type: String,
+      default: 'a-trans-check-icon',
     },
   },
   emits: ['change', 'update:modelValue'],
@@ -72,6 +78,8 @@ export default defineComponent({
   display: inline-flex;
   align-items: center;
   cursor: pointer;
+  position: relative;
+
   &-checker {
     width: 20px;
     height: 20px;
@@ -84,14 +92,20 @@ export default defineComponent({
     box-shadow: 0px 2px 8px var(--shadow-5);
     border-radius: 4px;
     box-sizing: border-box;
+    position: relative;
+
     &__icon {
       width: 14px;
+      display: block;
+      text-shadow: 2px 2px 2px var(--shadow-8);
+      position: absolute;
+      top: 1px;
+      left: 2px;
     }
   }
 }
 .a-checkbox:hover {
   .a-checkbox-checker {
-    transition: var(--anim-duration, 200ms) ease;
     border: 1px solid var(--primary-70);
   }
 }
@@ -99,5 +113,21 @@ export default defineComponent({
   .a-checkbox-checker {
     border: 1px solid var(--primary-70);
   }
+}
+
+.a-trans-check-icon-enter-active,
+.a-trans-check-icon-leave-active {
+  transition: all var(--anim-duration-quick, 100ms) ease-out;
+}
+.a-trans-check-icon-enter-to {
+  top: 0px;
+  opacity: 1;
+  transform: scale(1);
+}
+.a-trans-check-icon-enter-from,
+.a-trans-check-icon-leave-to {
+  top: 2px;
+  transform: scale(0);
+  opacity: 0;
 }
 </style>

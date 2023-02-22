@@ -2,48 +2,38 @@
   <span ref="trigger" class="a-popper__trigger">
     <slot></slot>
     <teleport v-if="appendToBody" to="body">
-      <transition v-if="transition" :name="transition" mode="out-in">
-        <div
-          v-show="popupShowed"
-          ref="popup"
-          :class="['a-popper__popup', popupClass]"
-          :style="{ zIndex }"
-        >
+      <div
+        v-show="popupRendered"
+        ref="popup"
+        :class="['a-popper__popup', popupClass]"
+        :style="{ zIndex }"
+      >
+        <transition v-if="transition" :name="transition" mode="out-in">
+          <span v-show="popupShowed">
+            <slot name="popup"></slot>
+          </span>
+        </transition>
+        <template v-else>
           <slot name="popup"></slot>
-        </div>
-      </transition>
-      <template v-else>
-        <div
-          v-show="popupShowed"
-          ref="popup"
-          :class="['a-popper__popup', popupClass]"
-          :style="{ zIndex }"
-        >
-          <slot name="popup"></slot>
-        </div>
-      </template>
+        </template>
+      </div>
     </teleport>
     <template v-else>
-      <transition v-if="transition" :name="transition" mode="out-in">
-        <div
-          v-show="popupShowed"
-          ref="popup"
-          :class="['a-popper__popup', popupClass]"
-          :style="{ zIndex }"
-        >
+      <div
+        v-show="popupRendered"
+        ref="popup"
+        :class="['a-popper__popup', popupClass]"
+        :style="{ zIndex }"
+      >
+        <transition v-if="transition" :name="transition" mode="out-in">
+          <span v-show="popupShowed">
+            <slot name="popup"></slot>
+          </span>
+        </transition>
+        <template v-else>
           <slot name="popup"></slot>
-        </div>
-      </transition>
-      <template v-else>
-        <div
-          v-show="popupShowed"
-          ref="popup"
-          :class="['a-popper__popup', popupClass]"
-          :style="{ zIndex }"
-        >
-          <slot name="popup"></slot>
-        </div>
-      </template>
+        </template>
+      </div>
     </template>
   </span>
 </template>
@@ -61,6 +51,7 @@ import {
 import { Placement } from '@popperjs/core';
 import { createPopperInstance } from './popper';
 import { APopperTriggerType } from './types';
+import { getStyleNumVarInCSS } from '@/utils';
 
 export default defineComponent({
   name: 'APopper',
@@ -99,12 +90,14 @@ export default defineComponent({
   emits: ['popupStatusChanged'],
   setup(props, { expose, emit }) {
     const popupShowed = ref(false);
+    const popupRendered = ref(false);
     const trigger = ref(null);
     const popup = ref(null);
 
     const sideEffectCleaners: (() => void)[] = [];
 
-    let hideTimeout: ReturnType<typeof window.setTimeout> | null;
+    let hideTimeout: ReturnType<typeof window.setTimeout>;
+    let renderTimeout: ReturnType<typeof window.setTimeout>;
 
     let triggerEl: HTMLElement;
     let popupEl: HTMLElement;
@@ -144,20 +137,26 @@ export default defineComponent({
         const enterShow = () => {
           if (hideTimeout) {
             clearTimeout(hideTimeout);
-            hideTimeout = null;
           }
-          popupShowed.value = true;
+          if (renderTimeout) {
+            clearTimeout(renderTimeout);
+          }
+          popupRendered.value = true;
           popperIns.update();
+          popupShowed.value = true;
           getCurrentInstance()?.proxy?.$forceUpdate();
         };
 
         const delayHide = (e: Event) => {
           if (hideTimeout) {
             clearTimeout(hideTimeout);
-            hideTimeout = null;
           }
           hideTimeout = setTimeout(() => {
             popupShowed.value = false;
+            const animationDurationQuick = getStyleNumVarInCSS('animation-duration-quick') || 100;
+            renderTimeout = setTimeout(() => {
+              popupRendered.value = false;
+            }, animationDurationQuick);
           }, props.hideDelay);
         };
 
@@ -183,10 +182,18 @@ export default defineComponent({
       if (props.triggerType === 'click') {
         const handleTriggerClick = () => {
           if (!popupShowed.value) {
-            popupShowed.value = true;
+            if (renderTimeout) {
+              clearTimeout(renderTimeout);
+            }
+            popupRendered.value = true;
             popperIns.update();
+            popupShowed.value = true;
           } else {
             popupShowed.value = false;
+            const animationDurationQuick = getStyleNumVarInCSS('animation-duration-quick') || 100;
+            renderTimeout = setTimeout(() => {
+              popupRendered.value = false;
+            }, animationDurationQuick);
           }
         };
         triggerEl.addEventListener('click', handleTriggerClick);
@@ -213,8 +220,15 @@ export default defineComponent({
       if (popupShowed.value || !popperIns) {
         return;
       }
-      popupShowed.value = true;
+      if (hideTimeout) {
+        clearTimeout(hideTimeout);
+      }
+      if (renderTimeout) {
+        clearTimeout(renderTimeout);
+      }
+      popupRendered.value = true;
       popperIns.update();
+      popupShowed.value = true;
     };
 
     const hide = () => {
@@ -223,15 +237,22 @@ export default defineComponent({
       }
       if (hideTimeout) {
         clearTimeout(hideTimeout);
-        hideTimeout = null;
+      }
+      if (renderTimeout) {
+        clearTimeout(renderTimeout);
       }
       popupShowed.value = false;
+      const animationDurationQuick = getStyleNumVarInCSS('animation-duration-quick') || 100;
+      renderTimeout = setTimeout(() => {
+        popupRendered.value = false;
+      }, animationDurationQuick);
     };
 
     expose({ show, hide });
 
     return {
       popupShowed,
+      popupRendered,
       trigger,
       popup,
       show,

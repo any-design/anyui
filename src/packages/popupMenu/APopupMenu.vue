@@ -64,6 +64,7 @@ export default defineComponent({
     },
     transition: {
       type: String,
+      default: 'a-trans-popmenu',
     },
     popupClass: {
       type: String,
@@ -113,16 +114,37 @@ export default defineComponent({
   box-sizing: border-box;
   padding: 8px 0;
   box-shadow: 0 4px 12px var(--shadow-10);
+  overflow: hidden;
+
   &__item {
     padding: 8px 16px;
     line-height: 24px;
     font-size: 15px;
     user-select: none;
-    transition: all var(--anim-duration, 200ms) ease;
+    transition: background-color var(--anim-duration, 200ms) ease;
   }
+
   &__item:hover {
-    background: var(--bg-semidark);
+    background-color: var(--bg-semidark);
     cursor: pointer;
   }
+}
+
+.a-trans-popmenu-enter-active,
+.a-trans-popmenu-leave-active {
+  transition: opacity var(--anim-duration-quick, 100ms) ease-out,
+    transform var(--anim-duration-quick, 100ms) ease-out,
+    max-height var(--anim-duration-quick, 100ms) ease-out;
+}
+.a-trans-popmenu-enter-to {
+  opacity: 1;
+  transform: translateY(0px);
+  max-height: max-content;
+}
+.a-trans-popmenu-enter-from,
+.a-trans-popmenu-leave-to {
+  opacity: 0.4;
+  transform: translateY(-12px);
+  max-height: 0;
 }
 </style>

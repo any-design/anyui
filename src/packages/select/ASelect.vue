@@ -85,7 +85,7 @@ export default defineComponent({
     },
     size: {
       type: String,
-      default: 'medium',
+      default: 'default',
     },
     round: {
       type: Boolean,
@@ -194,8 +194,28 @@ export default defineComponent({
         cursor: pointer;
         border-radius: 8px;
       }
-      .a-select__icon {
-        transition: transform var(--anim-duration, 200ms) ease;
+      .a-input__postfix {
+        padding-right: 8px;
+        pointer-events: none;
+        .a-select__icon {
+          width: 24px;
+          height: 24px;
+          color: var(--icon-fill);
+          transition: transform var(--anim-duration, 200ms) ease,
+            color var(--anim-duration, 200ms) ease;
+          path {
+            stroke: var(--icon-fill);
+            transition: stroke var(--anim-duration, 200ms) ease;
+          }
+        }
+      }
+      .a-input__inner:focus + .a-input__postfix {
+        .a-select__icon {
+          color: var(--primary-80);
+          path {
+            stroke: var(--primary-80);
+          }
+        }
       }
       .a-select__icon--expanded {
         transform: rotate(180deg);
