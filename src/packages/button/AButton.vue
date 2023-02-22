@@ -191,7 +191,7 @@ export default defineComponent({
   }
 }
 .a-button--round.a-button--icon {
-  padding: 6px 11px;
+  padding: 6px 11.375px;
   svg {
     font-size: 1.375em;
   }
