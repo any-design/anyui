@@ -276,7 +276,7 @@ export default defineComponent({
   }
 }
 .a-button--round.a-button--large.a-button--icon-trailing {
-  padding: 8px 16px 8px 24px;
+  padding: 8px 16px 8px 22px;
   svg {
     margin-left: 6px;
   }
