@@ -120,14 +120,12 @@ export default defineComponent({
   transition: all var(--anim-duration-quick, 100ms) ease-out;
 }
 .a-trans-check-icon-enter-to {
-  top: 0px;
   opacity: 1;
   transform: scale(1);
 }
 .a-trans-check-icon-enter-from,
 .a-trans-check-icon-leave-to {
-  top: 2px;
-  transform: scale(0);
   opacity: 0;
+  transform: scale(0);
 }
 </style>
