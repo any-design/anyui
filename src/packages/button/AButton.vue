@@ -9,18 +9,21 @@
       'a-button--anim': anim,
       'a-button--disabled': disabled,
       'a-button--icon': !!icon,
-      'a-button--icon-text': !!icon && hasContent,
+      'a-button--icon-leading': !!icon && hasContent && iconPosition === 'leading',
+      'a-button--icon-trailing': !!icon && hasContent && iconPosition === 'trailing',
     }"
     :disabled="disabled"
   >
-    <Icon v-if="icon" :icon="icon" />
+    <Icon v-if="icon && iconPosition === 'leading'" :icon="icon" />
     <slot></slot>
+    <Icon v-if="icon && iconPosition === 'trailing'" :icon="icon" />
   </button>
 </template>
 
 <script lang="ts">
-import { defineComponent, useSlots } from 'vue';
+import { defineComponent, useSlots, PropType } from 'vue';
 import { Icon } from '@iconify/vue';
+import { IconPosition } from './types';
 
 export default defineComponent({
   name: 'AButton',
@@ -55,6 +58,10 @@ export default defineComponent({
     icon: {
       type: String,
       default: '',
+    },
+    iconPosition: {
+      type: String as PropType<IconPosition>,
+      default: 'leading',
     },
   },
   setup() {
@@ -163,9 +170,9 @@ export default defineComponent({
 .a-button--icon {
   display: flex;
   align-items: center;
-  padding: 6px 14px;
+  padding: 6px 12px;
   svg {
-    font-size: 1.2em;
+    font-size: 1.25em;
     flex-shrink: 0;
   }
 }
@@ -176,13 +183,13 @@ export default defineComponent({
   }
 }
 .a-button--large.a-button--icon {
-  padding: 8px 18px;
+  padding: 8px 14px;
   svg {
     font-size: 1.375em;
   }
 }
 .a-button--round.a-button--icon {
-  padding: 6px 12px;
+  padding: 6px 11px;
   svg {
     font-size: 1.375em;
   }
@@ -191,45 +198,85 @@ export default defineComponent({
   padding: 4px 8px;
 }
 .a-button--large.a-button--round.a-button--icon {
-  padding: 8px 16px;
+  padding: 8px 15px;
   svg {
     font-size: 1.375em;
   }
 }
-.a-button--icon-text {
+
+// leading position icon with text
+.a-button--icon-leading {
   padding: 6px 18px 6px 16px;
   svg {
     margin-right: 4px;
   }
 }
-.a-button--small.a-button--icon-text {
+.a-button--small.a-button--icon-leading {
   padding: 4px 12px 4px 10px;
   svg {
     margin-right: 3px;
   }
 }
-.a-button--large.a-button--icon-text {
+.a-button--large.a-button--icon-leading {
   padding: 8px 24px 8px 18px;
   svg {
     margin-right: 6px;
   }
 }
-.a-button--round.a-button--icon-text {
+.a-button--round.a-button--icon-leading {
   padding: 6px 16px 6px 12px;
   svg {
     margin-right: 4px;
   }
 }
-.a-button--round.a-button--small.a-button--icon-text {
+.a-button--round.a-button--small.a-button--icon-leading {
   padding: 4px 10px 4px 8px;
   svg {
     margin-right: 3px;
   }
 }
-.a-button--round.a-button--large.a-button--icon-text {
-  padding: 8px 22px 8px 16px;
+.a-button--round.a-button--large.a-button--icon-leading {
+  padding: 8px 20px 8px 16px;
   svg {
     margin-right: 6px;
+  }
+}
+
+// trailing position icon with text
+.a-button--icon-trailing {
+  padding: 6px 16px 6px 18px;
+  svg {
+    margin-left: 4px;
+  }
+}
+.a-button--small.a-button--icon-trailing {
+  padding: 4px 10px 4px 12px;
+  svg {
+    margin-left: 3px;
+  }
+}
+.a-button--large.a-button--icon-trailing {
+  padding: 8px 18px 8px 22px;
+  svg {
+    margin-left: 6px;
+  }
+}
+.a-button--round.a-button--icon-trailing {
+  padding: 6px 12px 6px 18px;
+  svg {
+    margin-left: 4px;
+  }
+}
+.a-button--round.a-button--small.a-button--icon-trailing {
+  padding: 4px 8px 4px 12px;
+  svg {
+    margin-left: 3px;
+  }
+}
+.a-button--round.a-button--large.a-button--icon-trailing {
+  padding: 8px 16px 8px 24px;
+  svg {
+    margin-left: 6px;
   }
 }
 </style>

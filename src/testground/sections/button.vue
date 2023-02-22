@@ -12,7 +12,7 @@
       <a-button size="large" round>Large</a-button>
       <a-button type="primary" round disabled>Disabled</a-button>
     </div>
-    <div class="testground-flex" style="margin-top: 20px">
+    <div class="testground-flex" style="margin-top: 24px">
       <a-button type="primary" size="small" icon="eva:alert-circle-fill"></a-button>
       <a-button type="primary" icon="eva:alert-circle-fill"></a-button>
       <a-button type="primary" size="large" icon="eva:alert-circle-fill"></a-button>
@@ -27,12 +27,42 @@
         >Large Icon Button</a-button
       >
     </div>
-    <div class="testground-flex" style="margin-top: 20px">
+    <div class="testground-flex" style="margin-top: 24px">
       <a-button type="primary" size="small" icon="eva:alert-circle-fill" round
         >Small Icon Button</a-button
       >
       <a-button type="primary" icon="eva:alert-circle-fill" round>Icon Button</a-button>
       <a-button type="primary" size="large" icon="eva:alert-circle-fill" round
+        >Large Icon Button</a-button
+      >
+      <a-button type="primary" size="small" icon="eva:alert-circle-fill" iconPosition="trailing"
+        >Small Icon Button</a-button
+      >
+      <a-button type="primary" icon="eva:alert-circle-fill" iconPosition="trailing"
+        >Icon Button</a-button
+      >
+      <a-button type="primary" size="large" icon="eva:alert-circle-fill" iconPosition="trailing"
+        >Large Icon Button</a-button
+      >
+    </div>
+    <div class="testground-flex" style="margin-top: 24px">
+      <a-button
+        type="primary"
+        size="small"
+        icon="eva:alert-circle-fill"
+        iconPosition="trailing"
+        round
+        >Small Icon Button</a-button
+      >
+      <a-button type="primary" icon="eva:alert-circle-fill" iconPosition="trailing" round
+        >Icon Button</a-button
+      >
+      <a-button
+        type="primary"
+        size="large"
+        icon="eva:alert-circle-fill"
+        iconPosition="trailing"
+        round
         >Large Icon Button</a-button
       >
     </div>
