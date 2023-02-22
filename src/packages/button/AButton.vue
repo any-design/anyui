@@ -117,7 +117,7 @@ export default defineComponent({
 }
 .a-button.a-button--small {
   font-size: 12px;
-  line-height: 28px;
+  line-height: 30px;
   padding: 3px 14px;
   height: 32px;
   border-radius: 5px;
