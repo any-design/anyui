@@ -1,6 +1,20 @@
 # CHANGELOG
 
-## Alpha
+## [0.0.40](https://github.com/any-design/anyui/compare/v0.0.39...v0.0.40) (2023-02-21)
+
+### Bug Fixes
+
+- (resolver) add blacklist and fix wrong resolving of style files ([8c62ade](https://github.com/any-design/anyui/commit/8c62adeb738ce5dac21f825aef6b0e25182a75d4))
+
+### Features
+
+- (checkboxGroup) add gap property ([e9f006b](https://github.com/any-design/anyui/commit/e9f006b228dc856a60536f4a143af57eab8054d8))
+- (checkboxGroup) export component and fix eslint issue ([a7be5ea](https://github.com/any-design/anyui/commit/a7be5eacfadb4f8ebb79ce2c2efd70ef60c1d77c))
+- (input) optimize prefix and postfix icon styles and large style ([64be8b7](https://github.com/any-design/anyui/commit/64be8b7b93f8658a88706015c2e5a9c4e711efc6))
+- (popmenu) add cursor style and tweak item background color ([2ec68ec](https://github.com/any-design/anyui/commit/2ec68ecff33ed40443b9959a749fba7b7a213b9d))
+- (testground) add checkbox group ([a0a665e](https://github.com/any-design/anyui/commit/a0a665e12c3adb381da3d3820c91416d261518b3))
+
+## Legacy versions
 
 ### v0.0.39
 

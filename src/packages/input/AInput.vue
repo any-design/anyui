@@ -178,43 +178,44 @@ export default defineComponent({
 .a-input.a-input--has-prefix {
   .a-input__prefix {
     left: 0;
-    padding-left: 8px;
+    padding-left: 12px;
     @include input-inserted();
     svg {
-      width: 22px;
-      height: 22px;
+      width: 14px;
+      height: 14px;
       path {
         stroke: var(--placeholder);
       }
     }
   }
   .a-input__inner {
-    padding-left: 32px;
+    padding-left: 36px;
   }
 }
 .a-input.a-input--has-postfix {
   .a-input__postfix {
     right: 0;
-    padding-right: 8px;
+    padding-right: 12px;
     @include input-inserted();
     svg {
-      width: 22px;
-      height: 22px;
+      width: 14px;
+      height: 14px;
       path {
         stroke: var(--placeholder);
       }
     }
   }
   .a-input__inner {
-    padding-right: 32px;
+    padding-right: 36px;
   }
 }
 .a-input--large {
   height: var(--comp-height--large);
   .a-input__inner {
-    line-height: 42px;
+    line-height: 40px;
     font-size: 16px;
-    padding: 6px 18px;
+    padding: 4px 18px;
+    border-radius: 8px;
     box-shadow: 2px 3px 14px var(--shadow-6);
   }
   .a-input__inner:focus {

@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Masonry } from '../../index';
+import { Masonry } from '../../';
 
 export default defineComponent({
   components: {

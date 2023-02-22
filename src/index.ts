@@ -2,6 +2,7 @@ import { App } from 'vue';
 import Button from './packages/button';
 import Card from './packages/card';
 import Checkbox from './packages/checkbox';
+import CheckboxGroup from './packages/checkboxGroup';
 import ClickableText from './packages/clickableText';
 import Collapse from './packages/collapse';
 import Drawer from './packages/drawer';
@@ -33,6 +34,7 @@ const defaultComponentList = [
   Button,
   Card,
   Checkbox,
+  CheckboxGroup,
   ClickableText,
   Collapse,
   Drawer,
@@ -71,6 +73,7 @@ export {
   Button,
   Card,
   Checkbox,
+  CheckboxGroup,
   ClickableText,
   Collapse,
   Content,

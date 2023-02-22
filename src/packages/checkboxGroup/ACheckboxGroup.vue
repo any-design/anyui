@@ -1,17 +1,18 @@
 <template>
   <div class="a-checkbox-group">
     <a-checkbox
-      v-for="item in items"
+      v-for="(item, index) in items"
       :key="item"
       v-model="storedValues[item]"
       :label="item"
-      @change="(checked: boolean) => handleItemChange(checked, item)"
+      :style="index !== items.length - 1 ? checkboxItemStyles : undefined"
+      @change="changeMethodFactory(item)"
     ></a-checkbox>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue';
+import { defineComponent, PropType, ref, watch, computed } from 'vue';
 
 export default defineComponent({
   props: {
@@ -21,6 +22,10 @@ export default defineComponent({
     },
     modelValue: {
       type: Object as PropType<(string | number)[]>,
+    },
+    gap: {
+      type: Number,
+      default: 16,
     },
   },
   emits: ['update:modelValue'],
@@ -35,6 +40,10 @@ export default defineComponent({
       storedValues.value[item] = false;
     });
 
+    const changeMethodFactory = (item: string | number) => {
+      return (checked: boolean) => handleItemChange(checked, item);
+    };
+
     const handleItemChange = (checked: boolean, item: string | number) => {
       storedValues.value[item] = checked;
       // update array to modelValue with checked values
@@ -43,6 +52,15 @@ export default defineComponent({
         props.items.filter((item) => storedValues.value[item]),
       );
     };
+
+    const checkboxItemStyles = computed(() => {
+      if (!props.gap) {
+        return undefined;
+      }
+      return {
+        marginRight: `${props.gap}px`,
+      };
+    });
 
     watch([() => props.modelValue, () => props.items], () => {
       props.modelValue?.forEach((item) => {
@@ -69,6 +87,8 @@ export default defineComponent({
 
     return {
       storedValues,
+      checkboxItemStyles,
+      changeMethodFactory,
       handleItemChange,
     };
   },
