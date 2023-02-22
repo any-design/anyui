@@ -185,7 +185,7 @@ export default defineComponent({
   }
 }
 .a-button--large.a-button--icon {
-  padding: 8px 14px;
+  padding: 8px 15px;
   svg {
     font-size: 1.375em;
   }
@@ -220,13 +220,13 @@ export default defineComponent({
   }
 }
 .a-button--large.a-button--icon-leading {
-  padding: 8px 24px 8px 18px;
+  padding: 8px 22px 8px 18px;
   svg {
     margin-right: 6px;
   }
 }
 .a-button--round.a-button--icon-leading {
-  padding: 6px 16px 6px 12px;
+  padding: 6px 14px 6px 12px;
   svg {
     margin-right: 4px;
   }
@@ -270,13 +270,13 @@ export default defineComponent({
   }
 }
 .a-button--round.a-button--small.a-button--icon-trailing {
-  padding: 4px 8px 4px 12px;
+  padding: 4px 8px 4px 11px;
   svg {
     margin-left: 3px;
   }
 }
 .a-button--round.a-button--large.a-button--icon-trailing {
-  padding: 8px 16px 8px 22px;
+  padding: 8px 16px 8px 21px;
   svg {
     margin-left: 6px;
   }
