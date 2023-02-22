@@ -85,7 +85,7 @@ export default defineComponent({
   padding: 4px 20px;
   background: var(--bg);
   color: var(--primary);
-  border-radius: 4px;
+  border-radius: 6px;
   box-shadow: 0px 6px 12px var(--shadow-5);
   font-size: 14px;
   font-weight: 600;
@@ -110,6 +110,7 @@ export default defineComponent({
   line-height: 36px;
   padding: 6px 24px;
   height: 52px;
+  border-radius: 8px;
 }
 .a-button.a-button--large.a-button--round {
   border-radius: 30px;
@@ -119,6 +120,7 @@ export default defineComponent({
   line-height: 28px;
   padding: 3px 14px;
   height: 32px;
+  border-radius: 5px;
 }
 .a-button.a-button--small.a-button--round {
   border-radius: 18px;
