@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [0.0.41](https://github.com/any-design/anyui/compare/v0.0.40...v0.0.41) (2023-02-22)
+
+### Bug Fixes
+
+- (popper) now popper can be animated with transform ([652d485](https://github.com/any-design/anyui/commit/652d4854e784486ac13af97d4ac5ed234ce42de5))
+- (select) fix icon color and animation are not synchronized ([72219e8](https://github.com/any-design/anyui/commit/72219e80ec5e81dba4dcb2292326c21d9a58a338))
+
+### Features
+
+- (button) add depth button type and change the gradient of gradient type to 42deg ([e665175](https://github.com/any-design/anyui/commit/e665175c56ad11b1f5abfcd51b4bc52f4343899d))
+- (button) border-radius now will be more harmony with other components ([1489b00](https://github.com/any-design/anyui/commit/1489b00e5386cb396fbd4dfe586fda8bb30f7d4d))
+- (button) support "iconPosition" property to set whether icon will be displayed on leading or trailing ([25984f5](https://github.com/any-design/anyui/commit/25984f5332deed4fcc4cc60158beb5dcae3355f1))
+- (checkbox) optimize checkbox styles and add default animation when checked ([fb3541a](https://github.com/any-design/anyui/commit/fb3541aee20041b45c0e4ebdc6036ad0f52af66e))
+- (popmenu) add default transition ([dd87d4e](https://github.com/any-design/anyui/commit/dd87d4e651b269ef5bc63863fac621b07936f45f))
+- (radio) add checked animation for radio ([228478c](https://github.com/any-design/anyui/commit/228478c2cf8a9118ac2ea82a4a7616de65c9396f))
+- (theme) extract more vars and fix unused vars issue ([95d1cf1](https://github.com/any-design/anyui/commit/95d1cf13a4010f8301b9050c91dc127fd8ef0a86))
+- (theme) font smoothing changed to subpixel-antialiased ([e9f25ec](https://github.com/any-design/anyui/commit/e9f25ecd38630cf7d940c7759a382e29debf06e1))
+
 ## [0.0.40](https://github.com/any-design/anyui/compare/v0.0.39...v0.0.40) (2023-02-21)
 
 ### Bug Fixes
