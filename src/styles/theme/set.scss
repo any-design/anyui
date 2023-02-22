@@ -14,6 +14,8 @@
   --primary-8: #{rgba($primary, 0.08)};
   --primary-6: #{rgba($primary, 0.06)};
   --primary-4: #{rgba($primary, 0.04)};
+  --primary-l-6: #{adjust-color($primary, $lightness: 6%)};
+  --primary-d-4: #{adjust-color($primary, $lightness: -4%)};
   --secondary: #{$secondary};
   --secondary-90: #{rgba($secondary, 0.9)};
   --secondary-80: #{rgba($secondary, 0.8)};
@@ -48,14 +50,15 @@
   --disabled: #e3e3e3;
   --btn: #fff;
   --text: #{$text};
-  --text-secondary: #909293;
-  --text-disabled: #bcbdbf;
+  --text-secondary: #{$text-secondary};
+  --text-disabled: #{$text-disabled};
   --text-white: #fafbfd;
   --text-80: #{rgba($text, 0.8)};
   --text-70: #{rgba($text, 0.7)};
   --text-secondary-80: #{rgba($text-secondary, 0.8)};
   --text-secondary-70: #{rgba($text-secondary, 0.7)};
-  --placeholder: #aeaeae;
+  --placeholder: #{$text-placeholder};
+  --icon-fill: #{$icon-fill};
   --border: #cecdd0;
   --border-lighter: #d6d8da;
   --line: #eff2f3;
@@ -68,6 +71,7 @@
   --shadow-8: #{rgba($shadow, 0.08)};
   --shadow-10: #{rgba($shadow, 0.1)};
   --shadow-12: #{rgba($shadow, 0.12)};
+  --shadow-18: #{rgba($shadow, 0.18)};
   --shadow-20: #{rgba($shadow, 0.2)};
   --shadow-24: #{rgba($shadow, 0.24)};
   --shadow-25: #{rgba($shadow, 0.25)};

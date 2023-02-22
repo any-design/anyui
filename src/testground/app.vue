@@ -34,7 +34,10 @@
     <a-split margin="14"></a-split>
     <div class="testground-footer">
       <Logo class="logo" />
-      <span class="text">Any Design</span>
+      <span class="text"
+        >Any Design <span class="text" style="margin-left: 12px">v{{ version }}</span></span
+      >
+
       <a href="https://github.com/any-design/anyui" target="_blank">
         <Icon class="github" icon="mdi:github" />
       </a>
@@ -45,6 +48,9 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Icon } from '@iconify/vue';
+
+import { version } from '../../package.json';
+
 import ButtonSection from './sections/button.vue';
 import ClickableTextSection from './sections/clickableText.vue';
 import GradientTextSection from './sections/gradientText.vue';
@@ -103,6 +109,11 @@ export default defineComponent({
     MasonrySection,
     Logo,
     Icon,
+  },
+  setup() {
+    return {
+      version,
+    };
   },
 });
 </script>
