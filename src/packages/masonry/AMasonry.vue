@@ -16,16 +16,7 @@
 <script lang="ts">
 import { Timeout } from '@/utils/types';
 import { defineComponent, PropType, StyleValue } from 'vue';
-import { PositionItem } from './types';
-
-interface MasonryItem extends Object {
-  _masonryIndex: number;
-}
-
-interface SectionRecord {
-  head?: number;
-  tail?: number;
-}
+import { MasonryItem, PositionItem, SectionRecord } from './types';
 
 export default defineComponent({
   name: 'AMasonry',
@@ -234,6 +225,9 @@ export default defineComponent({
       return elRect.top - bodyRect.top;
     },
     getItemStyles(item: MasonryItem) {
+      if (typeof item._masonryIndex === 'undefined') {
+        return;
+      }
       const styles: Partial<StyleValue> = {
         width: `${this.colWidth}px`,
         height: `${this.positionMap[item._masonryIndex].height}px`,

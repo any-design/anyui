@@ -6,10 +6,10 @@
     }"
     @click="handleClick"
   >
-    <div class="a-checkbox-before">
+    <div class="a-checkbox-checker">
       <Icon
         v-if="checked"
-        class="a-checkbox-before__icon"
+        class="a-checkbox-checker__icon"
         :icon="checkIcon"
         color="var(--primary)"
       />
@@ -72,7 +72,7 @@ export default defineComponent({
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  &-before {
+  &-checker {
     width: 20px;
     height: 20px;
     border: 1px solid var(--border-lighter);
@@ -90,13 +90,13 @@ export default defineComponent({
   }
 }
 .a-checkbox:hover {
-  .a-checkbox-before {
+  .a-checkbox-checker {
     transition: var(--anim-duration, 200ms) ease;
     border: 1px solid var(--primary-70);
   }
 }
 .a-checkbox--checked {
-  .a-checkbox-before {
+  .a-checkbox-checker {
     border: 1px solid var(--primary-70);
   }
 }
