@@ -14,6 +14,8 @@
   --primary-8: #{rgba($primary, 0.08)};
   --primary-6: #{rgba($primary, 0.06)};
   --primary-4: #{rgba($primary, 0.04)};
+  --primary-l-6: #{adjust-color($primary, $lightness: 6%)};
+  --primary-d-4: #{adjust-color($primary, $lightness: -4%)};
   --secondary: #{$secondary};
   --secondary-90: #{rgba($secondary, 0.9)};
   --secondary-80: #{rgba($secondary, 0.8)};

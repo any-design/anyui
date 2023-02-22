@@ -65,6 +65,11 @@
         round
         >Large Icon Button</a-button
       >
+      <a-button type="primary" textShadow>Text Shadow 1</a-button>
+      <a-button textShadow>Text Shadow 2</a-button>
+      <a-button type="depth">Depth</a-button>
+      <a-button type="gradient">Gradient</a-button>
+      <a-button type="gradient-reverse">Gradient (Reverse)</a-button>
     </div>
   </div>
 </template>

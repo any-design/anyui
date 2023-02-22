@@ -4,6 +4,7 @@
       'a-button': true,
       [`a-button--${size}`]: size && size !== 'default',
       [`a-button--${type}`]: !!type,
+      'a-button--text-shadow': textShadow,
       'a-button--round': round,
       'a-button--fill': fill,
       'a-button--anim': anim,
@@ -23,7 +24,7 @@
 <script lang="ts">
 import { defineComponent, useSlots, PropType } from 'vue';
 import { Icon } from '@iconify/vue';
-import { IconPosition } from './types';
+import { ButtonType, IconPosition } from './types';
 
 export default defineComponent({
   name: 'AButton',
@@ -32,8 +33,8 @@ export default defineComponent({
   },
   props: {
     type: {
-      type: String,
-      default: '',
+      type: String as PropType<ButtonType>,
+      default: 'default',
     },
     round: {
       type: Boolean,
@@ -52,6 +53,10 @@ export default defineComponent({
       default: false,
     },
     fill: {
+      type: Boolean,
+      default: false,
+    },
+    textShadow: {
       type: Boolean,
       default: false,
     },
@@ -86,7 +91,7 @@ export default defineComponent({
   background: var(--bg);
   color: var(--primary);
   border-radius: 6px;
-  box-shadow: 0px 6px 12px var(--shadow-5);
+  box-shadow: 0px 4px 10px var(--shadow-6);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.05rem;
@@ -128,22 +133,33 @@ export default defineComponent({
 .a-button.a-button--fill {
   width: 100%;
 }
+.a-button.a-button--depth {
+  text-shadow: 2px 2px 4px var(--shadow-12);
+}
+.a-button.a-button--text-shadow {
+  text-shadow: 2px 2px 4px var(--shadow-12);
+}
 .a-button.a-button--primary {
   background: var(--primary);
   color: var(--btn);
-  box-shadow: 0 3px 14px var(--shadow-18);
   border: none;
 }
 .a-button.a-button--gradient {
-  background: linear-gradient(90deg, var(--primary), var(--secondary));
-  color: var(--btn);
   box-shadow: 0 3px 14px var(--shadow-18);
+  background: linear-gradient(42deg, var(--primary), var(--secondary));
+  color: var(--btn);
   border: none;
 }
-.a-button.a-button--gradient-reserve {
-  background: linear-gradient(90deg, var(--secondary), var(--primary));
-  color: var(--btn);
+.a-button.a-button--gradient-reverse {
+  background: linear-gradient(42deg, var(--secondary), var(--primary));
   box-shadow: 0 3px 14px var(--shadow-18);
+  color: var(--btn);
+  border: none;
+}
+.a-button.a-button--depth {
+  background: linear-gradient(180deg, var(--primary-l-6) 36%, var(--primary-d-4));
+  box-shadow: 0 3px 14px var(--shadow-18);
+  color: var(--btn);
   border: none;
 }
 .a-button.a-button--primary:hover {
