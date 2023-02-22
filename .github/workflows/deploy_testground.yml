@@ -25,10 +25,12 @@ jobs:
         run: git reset --hard
 
       - name: Deploy to remote
-        uses: SamKirkland/FTP-Deploy-Action@3.1.1
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          ftp-server: ${{ secrets.DEPLOY_REMOTE_SERVER }}
-          ftp-username: ${{ secrets.DEPLOY_REMOTE_USER }}
-          ftp-password: ${{ secrets.DEPLOY_REMOTE_PASSWORD }}
-          local-dir: dist-testground
-          git-ftp-args: --insecure
+          server: ${{ secrets.DEPLOY_REMOTE_SERVER }}
+          username: ${{ secrets.DEPLOY_REMOTE_USER }}
+          password: ${{ secrets.DEPLOY_REMOTE_PASSWORD }}
+          local_path: "./dist-testground/*"
+          remote_path: ${{ secrets.DEPLOY_REMOTE_PATH }}
+          sftp_only: true
+          sftpArgs: "-o ConnectTimeout=10"
