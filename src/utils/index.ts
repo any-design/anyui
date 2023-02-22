@@ -20,3 +20,6 @@ export const getCertainParent = (
   }
   return parent.type.name === name ? parent : getCertainParent(name, parent);
 };
+
+export const getStyleNumVarInCSS = (varName: string) =>
+  parseInt(window.getComputedStyle(document.documentElement).getPropertyValue(`--${varName}`), 10);
