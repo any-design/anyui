@@ -49,7 +49,7 @@ export default defineComponent({
     },
     size: {
       type: String,
-      default: 'medium',
+      default: 'default',
     },
     round: {
       type: Boolean,
