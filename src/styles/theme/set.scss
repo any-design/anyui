@@ -9,6 +9,7 @@
   --primary-40: #{rgba($primary, 0.4)};
   --primary-30: #{rgba($primary, 0.3)};
   --primary-20: #{rgba($primary, 0.2)};
+  --primary-18: #{rgba($primary, 0.18)};
   --primary-12: #{rgba($primary, 0.12)};
   --primary-10: #{rgba($primary, 0.1)};
   --primary-8: #{rgba($primary, 0.08)};
@@ -62,7 +63,7 @@
   --border: #cecdd0;
   --border-lighter: #d6d8da;
   --line: #eff2f3;
-  --scroll-bar: #c0c2c3;
+  --scroll-bar: #{$scrollbar};
   --mask: rgba(0, 0, 0, 0.8);
   --shadow-2: #{rgba($shadow, 0.02)};
   --shadow-4: #{rgba($shadow, 0.04)};
