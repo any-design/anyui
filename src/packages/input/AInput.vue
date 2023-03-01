@@ -137,6 +137,7 @@ export default defineComponent({
   height: var(--comp-height--default);
   position: relative;
   box-sizing: border-box;
+
   &__inner {
     width: 100%;
     line-height: 32px;
@@ -151,14 +152,17 @@ export default defineComponent({
     transition: border-color 100ms ease-out, box-shadow 100ms ease-out;
     outline: none !important;
   }
+
   &__inner:focus {
     box-shadow: 1px 3px 10px var(--primary-12);
     border: 1px solid var(--primary-80);
   }
+
   &__inner::placeholder {
     color: var(--placeholder);
   }
 }
+
 .a-input.a-input--round {
   .a-input__inner {
     border-radius: 20px;
@@ -179,7 +183,9 @@ export default defineComponent({
   .a-input__prefix {
     left: 0;
     padding-left: 12px;
+
     @include input-inserted();
+
     svg {
       width: 14px;
       height: 14px;
@@ -196,7 +202,9 @@ export default defineComponent({
   .a-input__postfix {
     right: 0;
     padding-right: 12px;
+
     @include input-inserted();
+
     svg {
       width: 14px;
       height: 14px;
@@ -205,12 +213,14 @@ export default defineComponent({
       }
     }
   }
+
   .a-input__inner {
     padding-right: 36px;
   }
 }
 .a-input--large {
   height: var(--comp-height--large);
+
   .a-input__inner {
     line-height: 40px;
     font-size: 16px;
@@ -218,6 +228,7 @@ export default defineComponent({
     border-radius: 8px;
     box-shadow: 2px 3px 14px var(--shadow-6);
   }
+
   .a-input__inner:focus {
     box-shadow: 2px 3px 14px var(--primary-20);
   }
@@ -228,6 +239,7 @@ export default defineComponent({
     padding: 4px 22px;
   }
 }
+
 .a-input.a-input--large.a-input--has-prefix {
   .a-input__prefix {
     line-height: var(--comp-height--large);
@@ -240,6 +252,7 @@ export default defineComponent({
     padding-left: 36px;
   }
 }
+
 .a-input.a-input--large.a-input--has-postfix {
   .a-input__postfix {
     line-height: var(--comp-height--large);
@@ -252,6 +265,7 @@ export default defineComponent({
     padding-right: 36px;
   }
 }
+
 .a-input.a-input--round.a-input--large.a-input--has-prefix {
   .a-input__prefix {
     padding-left: 12px;
@@ -260,6 +274,7 @@ export default defineComponent({
     padding-left: 40px;
   }
 }
+
 .a-input.a-input--round.a-input--large.a-input--has-postfix {
   .a-input__postfix {
     padding-right: 12px;
@@ -268,6 +283,7 @@ export default defineComponent({
     padding-right: 40px;
   }
 }
+
 .a-input.a-input--disabled {
   .a-input__inner {
     color: var(--text-disabled);
@@ -275,6 +291,7 @@ export default defineComponent({
     cursor: not-allowed;
   }
 }
+
 .a-input.a-input--readonly {
   .a-input__inner {
     background: var(--readonly);
