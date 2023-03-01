@@ -12,6 +12,7 @@
       :style="innerStyles"
       :disabled="disabled"
       :readonly="readonly"
+      :placeholder="placeholder"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     ></textarea>
@@ -51,6 +52,10 @@ export default defineComponent({
       default: false,
     },
     modelValue: {
+      type: String,
+      default: '',
+    },
+    placeholder: {
       type: String,
       default: '',
     },
@@ -126,6 +131,7 @@ export default defineComponent({
 .a-textarea {
   width: 100%;
   position: relative;
+
   &__inner {
     width: 100%;
     resize: none;
@@ -139,9 +145,14 @@ export default defineComponent({
     outline: none !important;
     box-shadow: 1px 4px 14px var(--shadow-4);
   }
+
   &__inner:focus {
     border: 1px solid var(--primary-80);
     box-shadow: 1px 4px 14px var(--primary-20);
+  }
+
+  &__inner::placeholder {
+    color: var(--placeholder);
   }
 }
 
