@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.0.42](https://github.com/any-design/anyui/compare/v0.0.41...v0.0.42) (2023-03-01)
+
+### Bug Fixes
+
+- (textarea) textarea is not included in layout font styles ([c057c84](https://github.com/any-design/anyui/commit/c057c848021cb64803c4fc72e3236891de805838))
+
+### Features
+
+- (checkbox) remove position transform in checked animation ([d41dac4](https://github.com/any-design/anyui/commit/d41dac4a762ac0c092188ff4d10a35e778a30d15))
+- (textarea) add placeholder property ([c6b8b9a](https://github.com/any-design/anyui/commit/c6b8b9ab9affc5f6532dfcea79913678735e3cf5))
+- (textarea) more accurate height limit and customizable scroll bar styles ([810d7be](https://github.com/any-design/anyui/commit/810d7bea9613c513a39c2604873f1c86665bace2))
+
 ## [0.0.41](https://github.com/any-design/anyui/compare/v0.0.40...v0.0.41) (2023-02-22)
 
 ### Bug Fixes
