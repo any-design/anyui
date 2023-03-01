@@ -16,29 +16,33 @@ body {
   overflow-y: auto;
 }
 
-#app {
-  min-height: 100vh;
-}
-
 $scroll-width: 8px;
 
 body::-webkit-scrollbar {
   width: $scroll-width;
   height: $scroll-width;
 }
+
 body::-webkit-scrollbar-button {
   display: none;
 }
+
 body::-webkit-scrollbar-thumb {
   width: $scroll-width;
   border-radius: $scroll-width;
   background: var(--scroll-bar);
 }
+
 body::-webkit-scrollbar-track {
   background: var(--bg);
 }
+
 body::-webkit-scrollbar-corner {
   background: var(--bg);
+}
+
+#app {
+  min-height: 100vh;
 }
 
 div,
@@ -47,6 +51,7 @@ p,
 a,
 input,
 button,
+textarea,
 pre {
   color: var(--text);
   font-family: var(--font-normal);
