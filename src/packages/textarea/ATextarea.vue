@@ -64,8 +64,7 @@ export default defineComponent({
       default: '',
     },
     maxlength: {
-      type: String,
-      default: '',
+      type: Number,
     },
     lineHeight: {
       type: Number,
