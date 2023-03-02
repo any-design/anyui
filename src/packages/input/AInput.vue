@@ -17,6 +17,7 @@
       :placeholder="placeholder"
       :disabled="disabled"
       :readonly="readonly || !editable"
+      :maxlength="maxlength"
       autocomplete="off"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
@@ -62,6 +63,9 @@ export default defineComponent({
     placeholder: {
       type: String,
       default: '',
+    },
+    maxlength: {
+      type: Number,
     },
     disabled: {
       type: Boolean,

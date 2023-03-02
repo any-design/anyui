@@ -14,6 +14,7 @@
       :disabled="disabled"
       :readonly="readonly"
       :placeholder="placeholder"
+      :maxlength="maxlength"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     ></textarea>
@@ -61,6 +62,9 @@ export default defineComponent({
     placeholder: {
       type: String,
       default: '',
+    },
+    maxlength: {
+      type: Number,
     },
     lineHeight: {
       type: Number,
