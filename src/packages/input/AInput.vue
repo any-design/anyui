@@ -18,8 +18,11 @@
       :disabled="disabled"
       :readonly="readonly || !editable"
       :maxlength="maxlength"
+      :minlength="minlength"
+      :max="max"
+      :min="min"
       :type="type"
-      autocomplete="off"
+      :autocomplete="autocomplete"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     />
@@ -65,9 +68,6 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    maxlength: {
-      type: Number,
-    },
     disabled: {
       type: Boolean,
       default: false,
@@ -82,6 +82,22 @@ export default defineComponent({
     },
     type: {
       type: String,
+    },
+    max: {
+      type: Number,
+    },
+    min: {
+      type: Number,
+    },
+    maxlength: {
+      type: Number,
+    },
+    minlength: {
+      type: Number,
+    },
+    autocomplete: {
+      type: String,
+      default: 'off',
     },
   },
   emits: ['update:modelValue', 'submit'],
