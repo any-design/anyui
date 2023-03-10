@@ -18,6 +18,10 @@
       <a-input placeholder="Disabled" disabled></a-input>
       <a-input v-model="readOnlyText" placeholder="Read Only" readonly></a-input>
     </div>
+    <div class="testground-flex" style="margin-top: 16px">
+      <a-input placeholder="Password" type="password"></a-input>
+      <a-input placeholder="Password" type="file"></a-input>
+    </div>
   </div>
 </template>
 
