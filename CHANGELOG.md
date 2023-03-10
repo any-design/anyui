@@ -1,11 +1,18 @@
 # CHANGELOG
 
+## [0.0.44](https://github.com/any-design/anyui/compare/v0.0.43...v0.0.44) (2023-03-10)
+
+### Features
+
+- (input) support type property ([89b0233](https://github.com/any-design/anyui/commit/89b023393658d06535cadffdf05d3f2ff46b1520))
+- (popper) add closeWhenClickOutside property ([c986474](https://github.com/any-design/anyui/commit/c98647473addbe8e6bdd8524d5e7ec68dd766cc5))
+
 ## [0.0.43](https://github.com/any-design/anyui/compare/v0.0.42...v0.0.43) (2023-03-02)
 
 ### Features
 
-* (input) add max length property ([24a47eb](https://github.com/any-design/anyui/commit/24a47eb1367bd74f5687689ab1b8bb965aa6ee9e))
-* (textarea) add max length property ([1d02318](https://github.com/any-design/anyui/commit/1d02318b183d1e7b7cb3f33cac00c56170da3221))
+- (input) add max length property ([24a47eb](https://github.com/any-design/anyui/commit/24a47eb1367bd74f5687689ab1b8bb965aa6ee9e))
+- (textarea) add max length property ([1d02318](https://github.com/any-design/anyui/commit/1d02318b183d1e7b7cb3f33cac00c56170da3221))
 
 ## [0.0.42](https://github.com/any-design/anyui/compare/v0.0.41...v0.0.42) (2023-03-01)
 
