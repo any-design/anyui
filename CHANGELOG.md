@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.0.43](https://github.com/any-design/anyui/compare/v0.0.42...v0.0.43) (2023-03-02)
+
+### Features
+
+* (input) add max length property ([24a47eb](https://github.com/any-design/anyui/commit/24a47eb1367bd74f5687689ab1b8bb965aa6ee9e))
+* (textarea) add max length property ([1d02318](https://github.com/any-design/anyui/commit/1d02318b183d1e7b7cb3f33cac00c56170da3221))
+
 ## [0.0.42](https://github.com/any-design/anyui/compare/v0.0.41...v0.0.42) (2023-03-01)
 
 ### Bug Fixes
