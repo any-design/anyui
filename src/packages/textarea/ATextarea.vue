@@ -15,6 +15,10 @@
       :readonly="readonly"
       :placeholder="placeholder"
       :maxlength="maxlength"
+      :autocomplete="autocomplete"
+      :autocorrect="autocorrect"
+      :spellcheck="spellcheck"
+      :wrap="wrap"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     ></textarea>
@@ -23,6 +27,7 @@
 
 <script lang="ts">
 import { getCertainParent } from '@/utils';
+import { Booleanish } from '@/utils/types';
 import {
   defineComponent,
   onMounted,
@@ -31,6 +36,7 @@ import {
   onUnmounted,
   getCurrentInstance,
   watch,
+  PropType,
 } from 'vue';
 import { FormItemEventEmitter } from '../formItem/bus';
 
@@ -63,12 +69,29 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    maxlength: {
-      type: Number,
-    },
     lineHeight: {
       type: Number,
       default: 1.5,
+    },
+    maxlength: {
+      type: Number,
+    },
+    minlength: {
+      type: Number,
+    },
+    autocomplete: {
+      type: String,
+      default: 'off',
+    },
+    autocorrect: {
+      type: String,
+      default: 'off',
+    },
+    spellcheck: {
+      type: [String, Boolean] as PropType<Booleanish>,
+    },
+    wrap: {
+      type: String,
     },
   },
   emits: ['update:modelValue', 'submit'],
