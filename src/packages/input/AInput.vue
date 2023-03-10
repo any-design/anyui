@@ -18,6 +18,7 @@
       :disabled="disabled"
       :readonly="readonly || !editable"
       :maxlength="maxlength"
+      :type="type"
       autocomplete="off"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
@@ -78,6 +79,9 @@ export default defineComponent({
     editable: {
       type: Boolean,
       default: true,
+    },
+    type: {
+      type: String,
     },
   },
   emits: ['update:modelValue', 'submit'],

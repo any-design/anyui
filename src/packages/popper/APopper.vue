@@ -49,9 +49,10 @@ import {
   watch,
 } from 'vue';
 import { Placement } from '@popperjs/core';
+import { getStyleNumVarInCSS } from '@/utils';
+import { attachClickOutsideListener } from '@/utils/clickOutside';
 import { createPopperInstance } from './popper';
 import { APopperTriggerType } from './types';
-import { getStyleNumVarInCSS } from '@/utils';
 
 export default defineComponent({
   name: 'APopper',
@@ -86,6 +87,11 @@ export default defineComponent({
     transition: {
       type: String,
     },
+    // only effect when triggerType is "click"
+    closeWhenClickOutside: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['popupStatusChanged'],
   setup(props, { expose, emit }) {
@@ -95,6 +101,7 @@ export default defineComponent({
     const popup = ref(null);
 
     const sideEffectCleaners: (() => void)[] = [];
+    const eventEffectCleaners: (() => void)[] = [];
 
     let hideTimeout: ReturnType<typeof window.setTimeout>;
     let renderTimeout: ReturnType<typeof window.setTimeout>;
@@ -179,6 +186,16 @@ export default defineComponent({
         });
       }
 
+      let clickOutsideHandler: ((e: MouseEvent) => void) | undefined;
+
+      const hidePopupByClick = () => {
+        popupShowed.value = false;
+        const animationDurationQuick = getStyleNumVarInCSS('animation-duration-quick') || 100;
+        renderTimeout = setTimeout(() => {
+          popupRendered.value = false;
+        }, animationDurationQuick);
+      };
+
       if (props.triggerType === 'click') {
         const handleTriggerClick = () => {
           if (!popupShowed.value) {
@@ -188,12 +205,16 @@ export default defineComponent({
             popupRendered.value = true;
             popperIns.update();
             popupShowed.value = true;
+            if (props.closeWhenClickOutside) {
+              clickOutsideHandler = attachClickOutsideListener([popupEl, triggerEl]);
+              popupEl.addEventListener('clickOutside', hidePopupByClick);
+            }
           } else {
-            popupShowed.value = false;
-            const animationDurationQuick = getStyleNumVarInCSS('animation-duration-quick') || 100;
-            renderTimeout = setTimeout(() => {
-              popupRendered.value = false;
-            }, animationDurationQuick);
+            hidePopupByClick();
+            popupEl.removeEventListener('clickOutside', hidePopupByClick);
+            if (clickOutsideHandler) {
+              window.removeEventListener('click', clickOutsideHandler);
+            }
           }
         };
         triggerEl.addEventListener('click', handleTriggerClick);
@@ -202,8 +223,19 @@ export default defineComponent({
             e.stopPropagation();
           });
         }
+        // add cleaners
         sideEffectCleaners.push(() => {
           triggerEl?.removeEventListener('click', handleTriggerClick);
+          popupEl?.removeEventListener('clickOutside', hidePopupByClick);
+          if (clickOutsideHandler) {
+            window.removeEventListener('click', clickOutsideHandler);
+          }
+        });
+        eventEffectCleaners.push(() => {
+          popupEl?.removeEventListener('clickOutside', hidePopupByClick);
+          if (clickOutsideHandler) {
+            window.removeEventListener('click', clickOutsideHandler);
+          }
         });
       }
     });
@@ -246,6 +278,8 @@ export default defineComponent({
       renderTimeout = setTimeout(() => {
         popupRendered.value = false;
       }, animationDurationQuick);
+      // do event effect clean
+      eventEffectCleaners.forEach((f) => f());
     };
 
     expose({ show, hide });
