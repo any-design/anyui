@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [0.0.45](https://github.com/any-design/anyui/compare/v0.0.44...v0.0.45) (2023-03-26)
+
+### Features
+
+- (button) optimize hover and focus filter, add transition ([c5c130b](https://github.com/any-design/anyui/commit/c5c130b1d9dc316de9522555db054986704ab778))
+- (input) add borderless property and post-button slot ([962504f](https://github.com/any-design/anyui/commit/962504f65e3e6ac91b00538edfc19925fd9bd736))
+- (input) port more native properties to component ([7919c83](https://github.com/any-design/anyui/commit/7919c83952781825121d4d5f29f5b380fe66f3b3))
+- (textarea) port more native properties to component ([f9079ff](https://github.com/any-design/anyui/commit/f9079fff6a536a78965f01d8d50458e7e44590df))
+
 ## [0.0.44](https://github.com/any-design/anyui/compare/v0.0.43...v0.0.44) (2023-03-10)
 
 ### Features
