@@ -19,6 +19,41 @@
       <a-input v-model="readOnlyText" placeholder="Read Only" readonly></a-input>
     </div>
     <div class="testground-flex" style="margin-top: 16px">
+      <a-input placeholder="Borderless" borderless></a-input>
+      <a-input placeholder="With post button">
+        <template #post-button>
+          <a-button>Submit</a-button>
+        </template>
+      </a-input>
+      <a-input placeholder="With post button">
+        <template #post-button>
+          <a-button type="gradient" size="small">Submit</a-button>
+        </template>
+      </a-input>
+      <a-input placeholder="With post button" borderless>
+        <template #post-button>
+          <a-button type="gradient" size="small" icon="ri:search-2-line" />
+        </template>
+      </a-input>
+    </div>
+    <div class="testground-flex" style="margin-top: 16px">
+      <a-input placeholder="With rounded post button">
+        <template #post-button>
+          <a-button type="gradient" size="small" round icon="ri:search-2-line" />
+        </template>
+      </a-input>
+      <a-input placeholder="With rounded post button" borderless round>
+        <template #post-button>
+          <a-button type="gradient" size="small" round icon="ri:search-2-line" />
+        </template>
+      </a-input>
+      <a-input placeholder="With rounded post button" borderless round>
+        <template #post-button>
+          <a-button type="gradient" size="small" round icon="ri:search-2-line">Search</a-button>
+        </template>
+      </a-input>
+    </div>
+    <div class="testground-flex" style="margin-top: 16px">
       <a-input placeholder="Password" type="password"></a-input>
       <a-input placeholder="Password" type="file"></a-input>
     </div>

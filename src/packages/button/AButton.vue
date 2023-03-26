@@ -100,9 +100,10 @@ export default defineComponent({
   user-select: none;
   box-sizing: border-box;
   white-space: nowrap;
+  transition: filter 100ms ease;
 }
 .a-button:hover {
-  filter: brightness(1.08);
+  filter: brightness(1.1);
 }
 .a-button:active {
   filter: brightness(1.05);
