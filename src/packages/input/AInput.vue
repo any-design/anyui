@@ -4,8 +4,10 @@
       'a-input': true,
       'a-input--large': size === 'large',
       'a-input--round': round,
+      'a-input--borderless': borderless,
       'a-input--has-prefix': hasPrefix,
       'a-input--has-postfix': hasPostfix,
+      'a-input--has-post-button': hasPostButton,
       'a-input--disabled': disabled,
       'a-input--readonly': readonly,
     }"
@@ -28,6 +30,7 @@
     />
     <div v-if="hasPrefix" class="a-input__prefix"><slot name="prefix"></slot></div>
     <div v-if="hasPostfix" class="a-input__postfix"><slot name="postfix"></slot></div>
+    <div v-if="hasPostButton" class="a-input__post-button"><slot name="post-button"></slot></div>
   </div>
 </template>
 
@@ -57,6 +60,10 @@ export default defineComponent({
       default: 'default',
     },
     round: {
+      type: Boolean,
+      default: false,
+    },
+    borderless: {
       type: Boolean,
       default: false,
     },
@@ -146,6 +153,7 @@ export default defineComponent({
       storedValue,
       hasPrefix: !!useSlots().prefix,
       hasPostfix: !!useSlots().postfix,
+      hasPostButton: !!useSlots()['post-button'],
       style: {
         width: formatStyleSize(props.width),
       },
@@ -191,6 +199,12 @@ export default defineComponent({
   .a-input__inner {
     border-radius: 20px;
     padding: 4px 18px;
+  }
+}
+
+.a-input.a-input--borderless {
+  .a-input__inner {
+    border: none;
   }
 }
 
@@ -319,6 +333,24 @@ export default defineComponent({
 .a-input.a-input--readonly {
   .a-input__inner {
     background: var(--readonly);
+  }
+}
+
+.a-input.a-input--has-post-button {
+  .a-input__post-button {
+    position: absolute;
+    right: 4px;
+    top: 0px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    box-sizing: border-box;
+
+    .a-button {
+      height: 100%;
+      line-height: calc(100% - 8px);
+    }
   }
 }
 </style>
