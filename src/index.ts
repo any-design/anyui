@@ -29,6 +29,7 @@ import Step from './packages/step';
 import Tag from './packages/tag';
 import Textarea from './packages/textarea';
 import Upload from './packages/upload';
+import VirtualList from './packages/virtualList';
 
 const defaultComponentList = [
   Button,
@@ -104,6 +105,7 @@ export {
   Tag,
   Textarea,
   Upload,
+  VirtualList,
   // methods
   buildInstaller,
   message,
@@ -111,7 +113,8 @@ export {
 
 // types
 
-export type { PositionItem } from './packages/masonry';
+export * from './packages/masonry/types';
+export * from './packages/virtualList/types';
 
 export type MessageFn = typeof message;
 
