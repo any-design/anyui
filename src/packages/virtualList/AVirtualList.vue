@@ -215,24 +215,30 @@ const refreshBatch = debounce(props.refreshDebounce, () => {
   renderBatchIdx.value += 1;
 });
 
+let updateFrame: ReturnType<typeof window.requestAnimationFrame> | undefined;
+
 const refreshDisplayItems = () => {
-  const scrollTop = Math.floor(containerRef.value?.scrollTop || 0);
-  if (typeof scrollTop === 'undefined') {
-    return;
-  }
-  const startTop = Math.max(scrollTop - scorllBuffer.value, 0);
-  const startIndex = getDisplayStartIndex(startTop);
-  const endIndex = getDisplayEndIndex(startTop, startIndex);
-  displayItems.value = markRaw(
-    transformedItems.slice(
-      Math.max(startIndex, 0),
-      Math.min(endIndex + 1, transformedItems.length),
-    ),
-  );
-  if (!props.reuseNodes) {
-    return;
-  }
-  refreshBatch();
+  updateFrame && window.cancelAnimationFrame(updateFrame);
+  updateFrame = window.requestAnimationFrame(() => {
+    const scrollTop = Math.floor(containerRef.value?.scrollTop || 0);
+    if (typeof scrollTop === 'undefined') {
+      return;
+    }
+    const startTop = Math.max(scrollTop - scorllBuffer.value, 0);
+    const startIndex = getDisplayStartIndex(startTop);
+    const endIndex = getDisplayEndIndex(startTop, startIndex);
+    displayItems.value = markRaw(
+      transformedItems.slice(
+        Math.max(startIndex, 0),
+        Math.min(endIndex + 1, transformedItems.length),
+      ),
+    );
+    updateFrame = undefined;
+    if (!props.reuseNodes) {
+      return;
+    }
+    refreshBatch();
+  });
 };
 
 watch(originalItems, () => {
