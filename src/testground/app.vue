@@ -4,7 +4,7 @@
       <span>AnyUI Component TestGround</span>
     </div>
     <div class="testground-content">
-      <!-- <ButtonSection />
+      <ButtonSection />
       <ClickableTextSection />
       <GradientTextSection />
       <InputSection />
@@ -28,9 +28,10 @@
       <CollapseSection />
       <LoadingSection />
       <SpinnerSection />
-      <DrawerSection /> -->
+      <DrawerSection />
       <VirtualListSection />
-      <!-- <MasonrySection /> -->
+      <ChatSection />
+      <MasonrySection />
     </div>
     <a-split margin="14"></a-split>
     <div class="testground-footer">
@@ -79,37 +80,39 @@ import DrawerSection from './sections/drawer.vue';
 import SpinnerSection from './sections/spinner.vue';
 import MasonrySection from './sections/masonry.vue';
 import VirtualListSection from './sections/virtualList.vue';
+import ChatSection from './sections/chat.vue';
 import Logo from './icon/Logo.vue';
 
 export default defineComponent({
   components: {
-    // ButtonSection,
-    // ClickableTextSection,
-    // CollapseSection,
-    // GradientTextSection,
-    // InputSection,
-    // SelectSection,
-    // RadioSection,
-    // RadioButtonGroupSection,
-    // CheckboxSection,
-    // CardSection,
-    // SplitSection,
-    // FloatSection,
-    // StepSection,
-    // UploadSection,
-    // ImageSection,
-    // PopperSection,
-    // PopMenuSection,
-    // FormSection,
-    // MessageSection,
-    // LayoutSection,
-    // TagSection,
-    // TextareaSection,
-    // SpinnerSection,
-    // LoadingSection,
-    // DrawerSection,
-    // MasonrySection,
+    ButtonSection,
+    ClickableTextSection,
+    CollapseSection,
+    GradientTextSection,
+    InputSection,
+    SelectSection,
+    RadioSection,
+    RadioButtonGroupSection,
+    CheckboxSection,
+    CardSection,
+    SplitSection,
+    FloatSection,
+    StepSection,
+    UploadSection,
+    ImageSection,
+    PopperSection,
+    PopMenuSection,
+    FormSection,
+    MessageSection,
+    LayoutSection,
+    TagSection,
+    TextareaSection,
+    SpinnerSection,
+    LoadingSection,
+    DrawerSection,
+    MasonrySection,
     VirtualListSection,
+    ChatSection,
     Logo,
     Icon,
   },
