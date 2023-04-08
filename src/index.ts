@@ -1,5 +1,6 @@
 import { App } from 'vue';
 import Button from './packages/button';
+import Chat from './packages/chat';
 import Card from './packages/card';
 import Checkbox from './packages/checkbox';
 import CheckboxGroup from './packages/checkboxGroup';
@@ -72,6 +73,7 @@ const buildInstaller = (components: any[]) => {
 
 export {
   Button,
+  Chat,
   Card,
   Checkbox,
   CheckboxGroup,
@@ -115,6 +117,7 @@ export {
 
 export * from './packages/masonry/types';
 export * from './packages/virtualList/types';
+export * from './packages/chat/types';
 
 export type MessageFn = typeof message;
 
