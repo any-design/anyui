@@ -327,6 +327,8 @@ const computeScrollBuffer = (containerHeight?: number) => {
       : actualContainerHeight * 2;
 };
 
+let firstRendered = false;
+
 const firstRender = () => {
   // no items
   if (!props.items?.length) {
@@ -363,8 +365,19 @@ const firstRender = () => {
     estimatedItemHeight.value = Math.floor(cumulatedHeight / elements.length);
     // rerender the current screen
     refreshItems();
+    firstRendered = true;
   });
 };
+
+// render items at first set
+const items = computed(() => props.items);
+
+const stopItemWatching = watch(items, (newVal) => {
+  if (Array.isArray(newVal) && newVal.length && !estimatedItemHeight.value && !firstRendered) {
+    firstRender();
+    stopItemWatching();
+  }
+});
 
 const containerResizeObserver = new ResizeObserver((entries) => {
   const [container] = entries;
