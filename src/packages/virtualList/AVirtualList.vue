@@ -1,6 +1,6 @@
 <template>
   <div ref="containerRef" class="a-virtual-list">
-    <div ref="innerRef" class="a-virtual-list__inner" :style="innerStyles">
+    <div ref="innerRef" class="a-virtual-list__inner a-scroll-shadows" :style="innerStyles">
       <template v-if="displayItems.length">
         <a-virtual-list-item
           v-for="(item, index) in displayItems"
@@ -439,10 +439,33 @@ onBeforeUnmount(() => {
   position: relative;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 
   &__inner {
     width: 100%;
     position: relative;
   }
+}
+
+.a-virtual-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.a-virtual-list::-webkit-scrollbar-button {
+  display: none;
+}
+
+.a-virtual-list::-webkit-scrollbar-thumb {
+  width: 6px;
+  border-radius: 6px;
+  background: var(--scroll-bar);
+}
+
+.a-virtual-list::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+.a-virtual-list::-webkit-scrollbar-corner {
+  background: var(--bg);
 }
 </style>
