@@ -43,10 +43,12 @@
   --info: #{$info};
   --info-80: #{rgba($info, 0.8)};
   --info-60: #{rgba($info, 0.6)};
-  --bg: #fafafa;
-  --bg-alter: #fdfdfd;
-  --bg-semidark: #f3f4f6;
-  --bg-darker: #eaeaea;
+  --bg-bright: #{adjust-color($bg, $lightness: 5%)};
+  --bg-light: #{adjust-color($bg, $lightness: 2%)};
+  --bg: #{$bg};
+  --bg-alter: #{adjust-color($bg, $lightness: -2%)};
+  --bg-semidark: #{adjust-color($bg, $lightness: -4%)};
+  --bg-darker: #{adjust-color($bg, $lightness: -6%)};
   --readonly: #f4f4f4;
   --disabled: #e3e3e3;
   --btn: #fff;
