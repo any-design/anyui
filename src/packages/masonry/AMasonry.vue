@@ -456,6 +456,7 @@ export default defineComponent({
   position: relative;
   width: 100%;
   -webkit-overflow-scrolling: touch;
+
   .a-masonry__item {
     position: absolute;
     top: 0;
