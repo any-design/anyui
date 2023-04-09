@@ -124,7 +124,7 @@ export default defineComponent({
   }
   .a-card-footer {
     padding: 0;
-    background: var(----bg-semi-light);
+    background: var(--bg-semi-light);
     border: none;
   }
 }

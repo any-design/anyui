@@ -255,7 +255,7 @@ export default defineComponent({
     padding: 8px 12px;
     border: 1px solid var(--border-lighter);
     border-radius: 8px;
-    background: var(----bg-semi-light);
+    background: var(--bg-semi-light);
     color: var(--text);
     text-shadow: 1px 1px 2px var(--shadow-2);
     transition: border-color 100ms ease-out, box-shadow 100ms ease-out;

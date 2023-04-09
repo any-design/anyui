@@ -110,7 +110,7 @@ export default defineComponent({
 <style lang="scss">
 .a-popup-menu {
   border-radius: 12px;
-  background: var(----bg-semi-light);
+  background: var(--bg-semi-light);
   box-sizing: border-box;
   padding: 8px 0;
   box-shadow: 0 4px 12px var(--shadow-10);
