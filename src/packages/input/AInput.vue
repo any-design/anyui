@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="inputWrapperRef"
     :class="{
       'a-input': true,
       'a-input--large': size === 'large',
@@ -11,7 +12,7 @@
       'a-input--disabled': disabled,
       'a-input--readonly': readonly,
     }"
-    :style="style"
+    :style="wrapperStyle"
   >
     <input
       :value="storedValue"
@@ -25,12 +26,13 @@
       :min="min"
       :type="type"
       :autocomplete="autocomplete"
+      :style="extraInnerStyles"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     />
     <div v-if="hasPrefix" class="a-input__prefix"><slot name="prefix"></slot></div>
-    <div v-if="hasPostfix" class="a-input__postfix"><slot name="postfix"></slot></div>
     <div v-if="hasPostButton" class="a-input__post-button"><slot name="post-button"></slot></div>
+    <div v-else-if="hasPostfix" class="a-input__postfix"><slot name="postfix"></slot></div>
   </div>
 </template>
 
@@ -44,6 +46,7 @@ import {
   ref,
   useSlots,
   watch,
+  computed,
 } from 'vue';
 import { formatStyleSize, getCertainParent } from '../../utils';
 import { FormItemEventEmitter } from '../formItem/bus';
@@ -109,6 +112,10 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'submit'],
   setup(props, { emit }) {
+    // refs
+    const inputWrapperRef = ref<HTMLDivElement | undefined>();
+
+    // form related
     const storedValue = ref<string>(`${props.modelValue}`);
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
@@ -141,22 +148,62 @@ export default defineComponent({
       },
     );
 
+    // styles
+    const hasPostButton = computed(() => !!useSlots()['post-button']);
+    const postButtonWidth = ref(0);
+    let postButtonObserver: ResizeObserver | undefined;
+
+    const extraPaddingOnPostButton = computed(() => {
+      if (props.size === 'large') {
+        return 12;
+      }
+      return 8;
+    });
+
+    const extraInnerStyles = computed(() => {
+      if (hasPostButton.value && postButtonWidth.value) {
+        return {
+          paddingRight: `${postButtonWidth.value + extraPaddingOnPostButton.value}px`,
+        };
+      }
+      return undefined;
+    });
+
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
+      if (hasPostButton.value && inputWrapperRef.value) {
+        const postButton = inputWrapperRef.value.querySelector('.a-input__post-button');
+        if (!postButton) {
+          console.error('Cannot get the element of post button.');
+          return;
+        }
+        postButtonWidth.value = postButton?.clientWidth || 0;
+        postButtonObserver = new ResizeObserver((entries) => {
+          const button = entries?.[0];
+          if (!postButton || !button) {
+            return;
+          }
+          postButtonWidth.value = postButton?.clientWidth;
+        });
+        postButtonObserver.observe(postButton);
+      }
     });
 
     onUnmounted(() => {
       formItemEventEmitter?.off('clear', handleClear);
+      postButtonObserver?.disconnect();
     });
 
     return {
+      inputWrapperRef,
       storedValue,
       hasPrefix: !!useSlots().prefix,
       hasPostfix: !!useSlots().postfix,
-      hasPostButton: !!useSlots()['post-button'],
-      style: {
+      hasPostButton: hasPostButton,
+      wrapperStyle: {
         width: formatStyleSize(props.width),
       },
+      extraInnerStyles,
       handleInput,
       handleEnterDown,
     };
@@ -177,7 +224,7 @@ export default defineComponent({
     border: 1px solid var(--border);
     border-radius: 8px;
     box-sizing: border-box;
-    background: var(--bg-alter);
+    background: var(--bg-semi-light);
     font-size: 14px;
     letter-spacing: 0.02rem;
     box-shadow: 1px 3px 10px var(--shadow-4);
