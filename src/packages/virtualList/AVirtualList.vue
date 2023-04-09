@@ -396,7 +396,9 @@ onMounted(() => {
     throw new Error('Cannot get the container reference.');
   }
   containerHeight.value = containerRef.value.clientHeight;
-  containerResizeObserver.observe(containerRef.value);
+  containerResizeObserver.observe(containerRef.value, {
+    box: 'border-box',
+  });
   // init scroll handler
   const scrollHandler = () => {
     refreshDisplayItems();
