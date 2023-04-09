@@ -24,12 +24,14 @@ import {
   provide,
   onMounted,
   onBeforeUnmount,
-  getCurrentInstance,
   watch,
   nextTick,
   markRaw,
+  StyleValue,
 } from 'vue';
 import { debounce, throttle } from '@antfu/utils';
+
+import { useRefreshableComputed } from '../hooks/useRefreshable';
 
 import { RawVirtualListItem, VirtualListItem } from './types';
 
@@ -70,8 +72,6 @@ const props = defineProps({
 
 const DEFAULT_SCROLL_BUFFER = 600;
 
-let currentInstance: ReturnType<typeof getCurrentInstance> | undefined;
-
 let transformedItems: VirtualListItem<unknown>[] = [];
 
 // Before vue rfc #436 landed, this line remains any for safety scoped slots typings
@@ -92,9 +92,11 @@ const estimatedItemHeight = ref(props.estimatedItemHeight || 0);
 
 const originalItems = computed(() => props.items);
 
-const innerStyles = computed(() => ({
-  height: `${scrollHeight.value}px`,
-}));
+const { computed: innerStyles, refresh: refreshInnerStyles } = useRefreshableComputed<StyleValue>(
+  () => ({
+    height: `${scrollHeight.value}px`,
+  }),
+);
 
 // maps
 let itemHeightMap: Record<string, number> = {};
@@ -344,7 +346,7 @@ const firstRender = () => {
     0,
     Math.min(transformedItems.length, props.firstScreenThreshold),
   );
-  currentInstance?.proxy?.$forceUpdate();
+  refreshInnerStyles();
   // measure height of the first batch
   nextTick(() => {
     const elements = innerRef.value?.children;
@@ -389,8 +391,6 @@ const containerResizeObserver = new ResizeObserver((entries) => {
 });
 
 onMounted(() => {
-  // set current instance
-  currentInstance = getCurrentInstance();
   // setup container
   if (!containerRef.value) {
     throw new Error('Cannot get the container reference.');
