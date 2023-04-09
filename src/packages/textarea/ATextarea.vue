@@ -8,6 +8,7 @@
       'a-textarea--borderless': borderless,
     }"
   >
+    <slot name="before"></slot>
     <textarea
       ref="innerRef"
       class="a-textarea__inner"
@@ -24,6 +25,7 @@
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     ></textarea>
+    <slot name="after"></slot>
   </div>
 </template>
 
