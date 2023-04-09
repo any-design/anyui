@@ -83,7 +83,7 @@ export default defineComponent({
   box-shadow: 0px 2px 8px var(--shadow-10);
   box-sizing: border-box;
   margin-bottom: 12px;
-  background: var(--bg-alter);
+  background: var(----bg-semi-light);
   user-select: none;
   &__icon {
     width: 18px;

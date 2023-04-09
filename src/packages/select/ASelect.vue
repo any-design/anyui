@@ -228,7 +228,7 @@ export default defineComponent({
   .a-select-dropdown {
     width: 100%;
     border-radius: 8px;
-    background: var(--bg-alter);
+    background: var(----bg-semi-light);
     box-sizing: border-box;
     padding: 8px 0;
     box-shadow: 2px 5px 12px var(--shadow-8);
@@ -242,7 +242,7 @@ export default defineComponent({
       cursor: pointer;
     }
     &__item:hover {
-      background: var(--bg-semidark);
+      background: var(--bg-semi-dark);
     }
   }
 }
