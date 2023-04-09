@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.0.46](https://github.com/any-design/anyui/compare/v0.0.45...v0.0.46) (2023-04-09)
+
+### Bug Fixes
+
+- (virtual-list) trigger first render at first data set ([b3c31b3](https://github.com/any-design/anyui/commit/b3c31b313a8597e385719d5118442fe77a53811a))
+
+### Features
+
+- (chat) add chat component ([42a9deb](https://github.com/any-design/anyui/commit/42a9deb28213d4db84795187a1d7e7f255c2e072))
+- (theme) configurable bg color set ([fdad4ff](https://github.com/any-design/anyui/commit/fdad4ff0113f2468ac208e4c076f86f6a7fa9f1c))
+- (virtual-list) add crazy fast virtual list component ([9f86cd3](https://github.com/any-design/anyui/commit/9f86cd352a48606b9fb1e7becd453fd13531bdc7))
+
 ## [0.0.45](https://github.com/any-design/anyui/compare/v0.0.44...v0.0.45) (2023-03-26)
 
 ### Features
