@@ -3,7 +3,9 @@
     ref="wrapperRef"
     :class="{
       'a-textarea': true,
-      'a-textarea--resizable': minRows !== maxRows,
+      'a-textarea--resizable': showResizeCorner,
+      'a-textarea--not-resizable': disableResizeCorner,
+      'a-textarea--borderless': borderless,
     }"
   >
     <textarea
@@ -37,8 +39,10 @@ import {
   getCurrentInstance,
   watch,
   PropType,
+  StyleValue,
 } from 'vue';
 import { FormItemEventEmitter } from '../formItem/bus';
+import { useRefreshableComputed } from '../hooks/useRefreshable';
 
 const INNER_PADDING_HEIGHT = 8;
 
@@ -93,14 +97,26 @@ export default defineComponent({
     wrap: {
       type: String,
     },
+    disableResizeCorner: {
+      type: Boolean,
+      default: false,
+    },
+    autoMatchHeight: {
+      type: Boolean,
+      default: false,
+    },
+    borderless: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['update:modelValue', 'submit'],
   setup(props, { emit }) {
     const storedValue = ref(props.modelValue);
 
     const elementFontSize = ref(0);
-    const wrapperRef = ref<HTMLElement | null>(null);
-    const innerRef = ref<HTMLElement | null>(null);
+    const wrapperRef = ref<HTMLDivElement | undefined>();
+    const innerRef = ref<HTMLTextAreaElement | undefined>();
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
     let formItemEventEmitter: FormItemEventEmitter | undefined;
@@ -109,17 +125,38 @@ export default defineComponent({
     }
 
     // Tip: add 0.5px to against the wrong calculation result due to the subpixel rendering.
-    const innerStyles = computed(() => {
-      const minHeight =
-        props.minRows * (elementFontSize.value + 0.5) * props.lineHeight + 2 * INNER_PADDING_HEIGHT;
-      const maxHeight =
-        props.maxRows * (elementFontSize.value + 0.5) * props.lineHeight + 2 * INNER_PADDING_HEIGHT;
-      return {
-        minHeight: `${minHeight}px`,
-        maxHeight: `${maxHeight}px`,
-        lineHeight: `${props.lineHeight}`,
-      };
-    });
+    const { computed: innerStyles, refresh: refreshInnerStyles } =
+      useRefreshableComputed<StyleValue>(() => {
+        const lineHeightInPX = (elementFontSize.value + 0.5) * props.lineHeight;
+        const minHeight = props.minRows * lineHeightInPX + 2 * INNER_PADDING_HEIGHT;
+        const maxHeight = props.maxRows * lineHeightInPX + 2 * INNER_PADDING_HEIGHT;
+        // auto match the height
+        let currentHeight = 0;
+        if (innerRef.value) {
+          // restore the height before measuring
+          innerRef.value.style.height = `${minHeight}px`;
+        }
+        if (props.autoMatchHeight) {
+          currentHeight = Math.min(
+            maxHeight,
+            Math.max(
+              minHeight,
+              Math.floor((innerRef.value?.scrollHeight || 0) / lineHeightInPX) * lineHeightInPX +
+                2 * INNER_PADDING_HEIGHT,
+            ),
+          );
+        }
+        return {
+          minHeight: `${minHeight}px`,
+          maxHeight: `${maxHeight}px`,
+          lineHeight: `${props.lineHeight}`,
+          ...(props.autoMatchHeight ? { height: `${currentHeight}px` } : null),
+        };
+      });
+
+    const showResizeCorner = computed(
+      () => props.minRows !== props.maxRows && props.disableResizeCorner,
+    );
 
     watch(
       () => props.modelValue,
@@ -131,6 +168,7 @@ export default defineComponent({
     const handleInput = (e: Event) => {
       const target = e.target as HTMLInputElement;
       storedValue.value = target.value;
+      refreshInnerStyles();
       emit('update:modelValue', target.value);
     };
 
@@ -171,12 +209,12 @@ export default defineComponent({
         mutations.forEach((mutation) => {
           if (
             mutation.type === 'attributes' &&
-            ![wrapperRef.value, innerRef.value].includes(mutation.target as HTMLElement)
+            ![wrapperRef.value, innerRef.value].includes(mutation.target as HTMLTextAreaElement)
           ) {
             return;
           }
           // record is wrapper or inner textarea tag
-          const nodeTarget = mutation.target as HTMLElement;
+          const nodeTarget = mutation.target as HTMLTextAreaElement;
           if (nodeTarget.tagName === 'textarea') {
             // directly update elementFontSize when inner font-size changed
             const fontSize = parseInt(window.getComputedStyle(nodeTarget).fontSize, 10);
@@ -238,6 +276,7 @@ export default defineComponent({
       innerRef,
       handleInput,
       handleEnterDown,
+      showResizeCorner,
     };
   },
 });
@@ -311,6 +350,18 @@ export default defineComponent({
 .a-textarea--resizable {
   .a-textarea__inner {
     resize: vertical;
+  }
+}
+
+.a-textarea--not-resizable {
+  .a-textarea__inner {
+    resize: none;
+  }
+}
+
+.a-textarea--borderless {
+  .a-textarea__inner {
+    border: none;
   }
 }
 </style>
