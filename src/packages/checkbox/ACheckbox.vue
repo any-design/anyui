@@ -87,7 +87,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--bg-alter);
+    background-color: var(--bg-semi-light);
     margin-right: 10px;
     box-shadow: 0px 2px 8px var(--shadow-5);
     border-radius: 4px;

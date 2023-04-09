@@ -196,17 +196,19 @@ export default defineComponent({
   padding: 12px 4px;
   box-sizing: border-box;
   border-radius: 6px;
-  background-color: var(--bg-alter);
-  box-shadow: 1px 3px 16px var(--shadow-12);
+  background-color: var(--bg-semi-light);
+  box-shadow: 1px 3px 16px var(--shadow-8);
+
   &__bg {
     position: absolute;
     background-color: var(--primary-80);
-    box-shadow: 2px 3px 5px var(--shadow-12);
+    box-shadow: 2px 3px 5px var(--shadow-10);
     height: 36px;
     top: 4px;
     border-radius: 4px;
     z-index: 1;
   }
+
   &__buttons {
     display: flex;
     align-items: center;
@@ -217,6 +219,7 @@ export default defineComponent({
 .a-radio-button-group--round {
   padding: 12px 6px;
   border-radius: 22px;
+
   .a-radio-button-group__bg {
     border-radius: 18px;
   }

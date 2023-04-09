@@ -32,7 +32,10 @@ onMounted(() => {
     for (let i = 0; i < 10; i++) {
       value.push(...list);
     }
-    displayMessages.value = value;
+    displayMessages.value = value.map((item, index) => ({
+      ...item,
+      id: `${index}`,
+    }));
   }, 3000);
 });
 </script>
