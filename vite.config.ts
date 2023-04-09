@@ -1,12 +1,13 @@
 import { defineConfig } from 'vite';
 import path from 'path';
 import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 import dts from 'vite-plugin-dts';
 import gfont from 'vite-plugin-gfont';
 
 const BUILD_CONFIGS = {
   LIBRARY: {
-    plugins: [vue(), dts()],
+    plugins: [vue(), vueJsx(), dts()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './src'),
@@ -67,6 +68,7 @@ const BUILD_CONFIGS = {
     },
     plugins: [
       vue(),
+      vueJsx(),
       gfont({
         fonts: [
           {

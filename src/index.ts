@@ -1,5 +1,6 @@
 import { App } from 'vue';
 import Button from './packages/button';
+import Chat from './packages/chat';
 import Card from './packages/card';
 import Checkbox from './packages/checkbox';
 import CheckboxGroup from './packages/checkboxGroup';
@@ -29,6 +30,7 @@ import Step from './packages/step';
 import Tag from './packages/tag';
 import Textarea from './packages/textarea';
 import Upload from './packages/upload';
+import VirtualList from './packages/virtualList';
 
 const defaultComponentList = [
   Button,
@@ -71,6 +73,7 @@ const buildInstaller = (components: any[]) => {
 
 export {
   Button,
+  Chat,
   Card,
   Checkbox,
   CheckboxGroup,
@@ -104,6 +107,7 @@ export {
   Tag,
   Textarea,
   Upload,
+  VirtualList,
   // methods
   buildInstaller,
   message,
@@ -111,7 +115,9 @@ export {
 
 // types
 
-export type { PositionItem } from './packages/masonry';
+export * from './packages/masonry/types';
+export * from './packages/virtualList/types';
+export * from './packages/chat/types';
 
 export type MessageFn = typeof message;
 

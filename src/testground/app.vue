@@ -29,6 +29,8 @@
       <LoadingSection />
       <SpinnerSection />
       <DrawerSection />
+      <VirtualListSection />
+      <ChatSection />
       <MasonrySection />
     </div>
     <a-split margin="14"></a-split>
@@ -77,6 +79,8 @@ import LoadingSection from './sections/loading.vue';
 import DrawerSection from './sections/drawer.vue';
 import SpinnerSection from './sections/spinner.vue';
 import MasonrySection from './sections/masonry.vue';
+import VirtualListSection from './sections/virtualList.vue';
+import ChatSection from './sections/chat.vue';
 import Logo from './icon/Logo.vue';
 
 export default defineComponent({
@@ -107,6 +111,8 @@ export default defineComponent({
     LoadingSection,
     DrawerSection,
     MasonrySection,
+    VirtualListSection,
+    ChatSection,
     Logo,
     Icon,
   },
