@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [0.0.47](https://github.com/any-design/anyui/compare/0.0.46...0.0.47) (2023-04-09)
+
+### Bug Fixes
+
+- (input) auto calculate the padding right when there's a post button ([0b1213a](https://github.com/any-design/anyui/commit/0b1213a46f397079432f059af61f9223a424ffd8))
+- (virtual-list) observe border-box ([b504305](https://github.com/any-design/anyui/commit/b5043051af4e93c7c4f630f03ec0e923ffee7cef))
+
+### Features
+
+- (textarea) add before and after slots that allow you to insert something ([54d6a63](https://github.com/any-design/anyui/commit/54d6a63e49b78b0ff7e0577413ddfbd207e28ccc))
+- (textarea) add borderless, disableResizeCorner, autoMatchHeight properties ([6deb72c](https://github.com/any-design/anyui/commit/6deb72c11bbc51855c295f8f2549457da6b4fb40))
+- (theme) migrate bg-alter to bg-semi-light ([546442d](https://github.com/any-design/anyui/commit/546442d6fc3ba089b4e6598061f6d990a71fef21))
+- (virtual-list) migrate forceUpdate to refreshable computed ([f878bb0](https://github.com/any-design/anyui/commit/f878bb01d15e784070c07b2beb5d54f8a655149b))
+
 ## [0.0.46](https://github.com/any-design/anyui/compare/v0.0.45...v0.0.46) (2023-04-09)
 
 ### Bug Fixes
