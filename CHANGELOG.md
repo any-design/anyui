@@ -1,3 +1,7 @@
+## [0.0.48](https://github.com/any-design/anyui/compare/v0.0.47...v0.0.48) (2023-04-10)
+
+- ⚠ (chat) BREAKING: `user` message now migrated to `self` message for better understanding.
+
 # CHANGELOG
 
 ## [0.0.47](https://github.com/any-design/anyui/compare/0.0.46...0.0.47) (2023-04-09)
