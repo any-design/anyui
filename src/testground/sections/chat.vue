@@ -20,7 +20,7 @@ const list = [
   },
   {
     content: 'AnyUI is a fantastic cute UI library for Vue 3.',
-    role: 'user',
+    role: 'self',
   },
 ] as AChatMessage[];
 
