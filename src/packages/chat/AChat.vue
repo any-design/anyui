@@ -5,7 +5,7 @@
         <div
           :class="{
             'a-chat__message': true,
-            'a-chat__message--user': scope.item.role === 'user',
+            'a-chat__message--self': scope.item.role === 'self',
             'a-chat__message--target': scope.item.role === 'target',
           }"
         >
@@ -85,7 +85,7 @@ const virtualListItems = computed(() => props.messages as RawVirtualListItem<ACh
     }
   }
 
-  &__message--user {
+  &__message--self {
     justify-content: flex-end;
 
     .a-chat__content {
