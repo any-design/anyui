@@ -20,6 +20,7 @@
 import {
   PropType,
   ref,
+  reactive,
   computed,
   provide,
   onMounted,
@@ -40,12 +41,17 @@ import AVirtualListItem from './AVirtualListItem.vue';
 const props = defineProps({
   items: {
     type: Array as PropType<RawVirtualListItem<unknown>[]>,
+    default: () => [],
   },
   buffer: {
     type: Number,
   },
   estimatedItemHeight: {
     type: Number,
+  },
+  enableDeepWatch: {
+    type: Boolean,
+    default: false,
   },
   // how many elements will be used for height measure
   firstScreenThreshold: {
@@ -89,8 +95,6 @@ let isScrolling = false;
 
 // item layout related
 const estimatedItemHeight = ref(props.estimatedItemHeight || 0);
-
-const originalItems = computed(() => props.items);
 
 const { computed: innerStyles, refresh: refreshInnerStyles } = useRefreshableComputed<StyleValue>(
   () => ({
@@ -243,9 +247,13 @@ const refreshDisplayItems = () => {
   });
 };
 
-watch(originalItems, () => {
-  refreshItems();
-});
+watch(
+  props.items,
+  () => {
+    refreshItems();
+  },
+  { deep: props.enableDeepWatch },
+);
 
 const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: number } = {}) => {
   if (!itemId || typeof height === 'undefined') {
@@ -388,6 +396,10 @@ const containerResizeObserver = new ResizeObserver((entries) => {
     computeScrollBuffer(container.contentRect.height);
   }
   containerHeight.value = container.contentRect.height;
+});
+
+defineExpose({
+  refresh: refreshItems,
 });
 
 onMounted(() => {
