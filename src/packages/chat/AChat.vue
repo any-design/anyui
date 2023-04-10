@@ -53,7 +53,7 @@ const virtualListItems = computed(() => props.messages as RawVirtualListItem<ACh
     margin-bottom: 24px;
 
     .a-chat__content {
-      max-width: 45%;
+      max-width: 84%;
       padding: 14px 20px;
       box-sizing: border-box;
       position: relative;
