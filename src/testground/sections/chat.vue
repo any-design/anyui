@@ -5,12 +5,15 @@
       <div class="chat-container">
         <a-chat :messages="displayMessages"></a-chat>
       </div>
+      <div class="chat-action">
+        <a-button type="primary" small @click="addMessage">Add Message</a-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted, reactive } from 'vue';
 import { Chat as AChat, AChatMessage } from '../../index';
 
 const list = [
@@ -24,20 +27,26 @@ const list = [
   },
 ] as AChatMessage[];
 
-const displayMessages = ref<AChatMessage[]>([]);
+let displayMessages = reactive<AChatMessage[]>([]);
 
 onMounted(() => {
-  setTimeout(() => {
-    const value = [];
-    for (let i = 0; i < 10; i++) {
-      value.push(...list);
-    }
-    displayMessages.value = value.map((item, index) => ({
-      ...item,
-      id: `${index}`,
-    }));
-  }, 3000);
+  for (let i = 0; i < 3; i++) {
+    displayMessages.push(
+      ...list.map((item) => ({
+        ...item,
+        id: `${Date.now()}_${Math.random()}`,
+      })),
+    );
+  }
 });
+
+const addMessage = () => {
+  displayMessages.push({
+    id: `${Date.now()}_${Math.random()}`,
+    content: `Random content in ${Date.now()}`,
+    role: Math.random() > 0.5 ? 'self' : 'target',
+  });
+};
 </script>
 
 <style lang="scss" scoped>
