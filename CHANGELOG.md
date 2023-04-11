@@ -1,8 +1,19 @@
+# CHANGELOG
+
+## [0.0.49](https://github.com/any-design/anyui/compare/v0.0.48...v0.0.49) (2023-04-11)
+
+### Bug Fixes
+
+- (chat) & (virtual-list) fix wrong watcher implementation ([dd7bc53](https://github.com/any-design/anyui/commit/dd7bc539123b03c06531c1b4ab3b9eef9a07c603))
+- (chat) wrong style of chat message ([bd1a69c](https://github.com/any-design/anyui/commit/bd1a69cf69b5dffd550fbbc488f616a67d50f5b4))
+
+### Features
+
+- (chat) better typing for role ([d5f7744](https://github.com/any-design/anyui/commit/d5f7744e20d004ddeee5861244063af86932ad8f))
+
 ## [0.0.48](https://github.com/any-design/anyui/compare/v0.0.47...v0.0.48) (2023-04-10)
 
 - ⚠ (chat) BREAKING: `user` message now migrated to `self` message for better understanding.
-
-# CHANGELOG
 
 ## [0.0.47](https://github.com/any-design/anyui/compare/0.0.46...0.0.47) (2023-04-09)
 
