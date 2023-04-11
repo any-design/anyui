@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, reactive, ref, watch, nextTick } from 'vue';
+import { PropType, ref, watch } from 'vue';
 
 import AVirtualList, { RawVirtualListItem } from '../virtualList';
 
