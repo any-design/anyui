@@ -20,7 +20,6 @@
 import {
   PropType,
   ref,
-  reactive,
   computed,
   provide,
   onMounted,
