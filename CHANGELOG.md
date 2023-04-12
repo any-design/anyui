@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.0.51](https://github.com/any-design/anyui/compare/0.0.49...0.0.51) (2023-04-12)
+
+### Bug Fixes
+
+- (popper) wrong watcher usage ([abfe634](https://github.com/any-design/anyui/commit/abfe63404116c91e38b50f73f8a922ebb851aa48))
+- (select) wrong watcher usage ([13586a4](https://github.com/any-design/anyui/commit/13586a4768a41be52ba1dc78fe44786478315efc))
+- (virtual-list) wrong watcher usage & add scrollToBottom API ([7fffca9](https://github.com/any-design/anyui/commit/7fffca91851e6ce7580bbd333bc4b9de7775d744))
+
+### Features
+
+- (chat) optimize styles and auto scroll to bottom ([eb3c32b](https://github.com/any-design/anyui/commit/eb3c32bf87d31f7f60bc130e268cd8372a831864))
+- (hooks) export hooks ([452d912](https://github.com/any-design/anyui/commit/452d9126f41005827613f54685bc40f3fd1be556))
+
 ## [0.0.50](https://github.com/any-design/anyui/compare/0.0.49...0.0.50) (2023-04-11)
 
 ### Features
