@@ -3,7 +3,7 @@
     <a-virtual-list
       ref="virtualListRef"
       :items="(messages as RawVirtualListItem<AChatMessage>[])"
-      enable-deep-watch
+      :enable-deep-watch="enableDeepWatch"
     >
       <template #default="scope">
         <div
@@ -33,6 +33,10 @@ const props = defineProps({
   messages: {
     type: Array as PropType<AChatMessage[]>,
     default: () => [],
+  },
+  enableDeepWatch: {
+    type: Boolean,
+    default: false,
   },
 });
 
