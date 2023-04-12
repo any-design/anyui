@@ -247,7 +247,7 @@ const refreshDisplayItems = () => {
 };
 
 watch(
-  () => props.items,
+  () => [...props.items],
   () => {
     refreshItems();
   },
