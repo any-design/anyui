@@ -247,7 +247,7 @@ const refreshDisplayItems = () => {
 };
 
 watch(
-  props.items,
+  () => props.items,
   () => {
     refreshItems();
   },
@@ -397,8 +397,19 @@ const containerResizeObserver = new ResizeObserver((entries) => {
   containerHeight.value = container.contentRect.height;
 });
 
+const scrollToBottom = (smooth = true) => {
+  if (!containerRef.value) {
+    return;
+  }
+  containerRef.value.scrollTo({
+    top: containerRef.value.scrollHeight,
+    behavior: smooth ? 'smooth' : 'auto',
+  });
+};
+
 defineExpose({
   refresh: refreshItems,
+  scrollToBottom,
 });
 
 onMounted(() => {

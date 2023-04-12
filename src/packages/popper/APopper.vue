@@ -244,9 +244,12 @@ export default defineComponent({
       sideEffectCleaners.forEach((f) => f());
     });
 
-    watch(popupShowed, () => {
-      emit('popupStatusChanged', popupShowed.value);
-    });
+    watch(
+      () => popupShowed,
+      () => {
+        emit('popupStatusChanged', popupShowed.value);
+      },
+    );
 
     const show = () => {
       if (popupShowed.value || !popperIns) {
