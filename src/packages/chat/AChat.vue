@@ -1,6 +1,10 @@
 <template>
   <div class="a-chat">
-    <a-virtual-list ref="virtualListRef" :items="(messages as RawVirtualListItem<AChatMessage>[])">
+    <a-virtual-list
+      ref="virtualListRef"
+      :items="(messages as RawVirtualListItem<AChatMessage>[])"
+      :enable-deep-watch="enableDeepWatch"
+    >
       <template #default="scope">
         <div
           :class="{
@@ -19,24 +23,24 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, ref, watch } from 'vue';
+import { PropType, ref } from 'vue';
 
 import AVirtualList, { RawVirtualListItem } from '../virtualList';
 
 import type { AChatMessage } from './types';
 
-const props = defineProps({
+defineProps({
   messages: {
     type: Array as PropType<AChatMessage[]>,
     default: () => [],
   },
+  enableDeepWatch: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const virtualListRef = ref<typeof AVirtualList | undefined>();
-
-watch(props.messages, () => {
-  virtualListRef.value?.refresh();
-});
 </script>
 
 <style lang="scss" scoped>
