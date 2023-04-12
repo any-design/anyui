@@ -150,18 +150,21 @@ export default defineComponent({
       clear();
     };
 
-    watch([() => props.items, () => props.modelValue], () => {
-      selected.value = props.modelValue;
-      if (!props.items) {
-        return;
-      }
-      const selectedItem = props.items.find((item) => item.value === props.modelValue);
-      if (selectedItem) {
-        selectedText.value = selectedItem.value;
-      } else {
-        selectedText.value = '';
-      }
-    });
+    watch(
+      () => [props.items, props.modelValue],
+      () => {
+        selected.value = props.modelValue;
+        if (!props.items) {
+          return;
+        }
+        const selectedItem = props.items.find((item) => item.value === props.modelValue);
+        if (selectedItem) {
+          selectedText.value = selectedItem.value;
+        } else {
+          selectedText.value = '';
+        }
+      },
+    );
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
