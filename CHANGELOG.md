@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [0.0.52](https://github.com/any-design/anyui/compare/v0.0.51...v0.0.52) (2023-04-12)
+
+### Bug Fixes
+
+- (virtual-list) use expand op in watcher ([4cef724](https://github.com/any-design/anyui/commit/4cef724e3df8c5ef7155aaca0607ae08dad38201))
+
+### Features
+
+- (chat) add enableDeepWatch property ([9301325](https://github.com/any-design/anyui/commit/93013253628ed39710bf7704b2d9491949ee6339))
+
 ## [0.0.51](https://github.com/any-design/anyui/compare/0.0.49...0.0.51) (2023-04-12)
 
 ### Bug Fixes
