@@ -40,11 +40,3 @@ onBeforeUnmount(() => {
   observer?.unobserve(itemRef.value);
 });
 </script>
-
-<style lang="scss">
-.a-virtual-list__item {
-  position: absolute;
-  left: 0;
-  right: 0;
-}
-</style>
