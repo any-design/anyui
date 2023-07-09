@@ -63,9 +63,9 @@ watch(
     padding: 0 12px;
     overflow-y: overlay;
 
-    .a-virtual-list-item:last-child {
+    .a-virtual-list__item:last-child {
       .a-chat__message {
-        margin-bottom: 0;
+        padding-bottom: 12px;
       }
     }
   }
@@ -75,7 +75,7 @@ watch(
     display: flex;
     align-items: center;
     position: relative;
-    margin-bottom: 24px;
+    padding-bottom: 24px;
 
     .a-chat__content {
       max-width: 84%;

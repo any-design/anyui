@@ -1,16 +1,16 @@
 <template>
-  <div ref="containerRef" class="a-virtual-list">
-    <div ref="innerRef" class="a-virtual-list__inner a-scroll-shadows" :style="innerStyles">
+  <div ref="containerRef" class="a-virtual-list" @scroll.passive="refreshDisplayItems">
+    <div class="a-virtual-list__inner a-scroll-shadows" :style="innerStyles">
       <template v-if="displayItems.length">
-        <a-virtual-list-item
-          v-for="(item, index) in displayItems"
-          :key="reuseNodes ? getItemKey(index) : `${item.id}_${index}`"
-          :item="item"
-          :style="`top: ${item.__itemScrollTop}px`"
-          @init-height="handleInitItemHeight"
-        >
-          <slot :item="item"></slot>
-        </a-virtual-list-item>
+        <div ref="fillerRef" class="a-virtual-list__filler" :style="{
+          transform: `translateY(${firstItemTop}px)`,
+        }">
+          <a-virtual-list-item v-for="(item, index) in displayItems"
+            :key="reuseNodes ? getItemKey(index) : `${item.id}_${index}`" :item="item"
+            @init-height="handleInitItemHeight">
+            <slot :item="item"></slot>
+          </a-virtual-list-item>
+        </div>
       </template>
     </div>
   </div>
@@ -29,13 +29,14 @@ import {
   markRaw,
   StyleValue,
 } from 'vue';
-import { debounce, throttle } from '@antfu/utils';
 
 import { useRefreshableComputed } from '../hooks/useRefreshable';
 
 import { RawVirtualListItem, VirtualListItem } from './types';
 
 import AVirtualListItem from './AVirtualListItem.vue';
+
+import BinaryIndexedTree from './BinaryIndexedTree';
 
 const props = defineProps({
   items: {
@@ -59,7 +60,7 @@ const props = defineProps({
   },
   reuseNodes: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   refreshDebounce: {
     type: Number,
@@ -69,13 +70,7 @@ const props = defineProps({
     type: String as PropType<'batch' | 'screen' | 'both' | 'none'>,
     default: 'none',
   },
-  renderThrottle: {
-    type: Number,
-    default: 100,
-  },
 });
-
-const DEFAULT_SCROLL_BUFFER = 600;
 
 let transformedItems: VirtualListItem<unknown>[] = [];
 
@@ -85,15 +80,19 @@ const displayItems = ref<VirtualListItem<any>[]>([]);
 // container layout related
 const containerRef = ref<HTMLElement | undefined>();
 const containerHeight = ref(0);
-const innerRef = ref<HTMLElement | undefined>();
-const scrollHeight = ref(0);
-const scorllBuffer = ref(props.buffer || 0);
-const scrollTop = ref(0);
+const fillerRef = ref<HTMLElement | undefined>();
 
-let isScrolling = false;
+const scrollHeight = ref(0);
+const scrollTop = ref(0);
+// first item scroll top value in display area
+const firstItemTop = ref(0);
+
+const biTree = ref<BinaryIndexedTree | undefined>();
 
 // item layout related
 const estimatedItemHeight = ref(props.estimatedItemHeight || 0);
+
+let isScrolling = false;
 
 const { computed: innerStyles, refresh: refreshInnerStyles } = useRefreshableComputed<StyleValue>(
   () => ({
@@ -113,6 +112,7 @@ const clearVars = () => {
   displayItems.value = [];
   itemIdIndexMap = {};
   itemHeightMap = {};
+  biTree.value = undefined;
 };
 
 const getItemKey = (index: number) => {
@@ -137,11 +137,16 @@ const refreshItems = ({
     clearVars();
     return;
   }
+
   // compute new height map
   const newHeightMap: Record<string, number> = {};
   const newItemIdIndexMap: Record<string, number> = {};
-  let cumulatedHeight = 0;
+
   const items: VirtualListItem<unknown>[] = [];
+  const itemHeightList: number[] = [];
+
+  let cumulatedHeight = 0;
+
   for (let index = 0; index < props.items.length; index++) {
     const item = props.items[index];
     if (!item.id) {
@@ -163,13 +168,17 @@ const refreshItems = ({
       ...item,
       ...additionalProperties,
     });
+    itemHeightList.push(itemHeight);
   }
+
+  biTree.value = new BinaryIndexedTree(itemHeightList);
   // reset the height map
   itemHeightMap = newHeightMap;
   itemIdIndexMap = newItemIdIndexMap;
   // set new items to vars
   transformedItems = items;
-  scrollHeight.value = items.reduce((sum, item) => sum + item.__itemHeight, 0);
+  scrollHeight.value = biTree.value.prefixSum();
+
   // recompute the items that should be displayed
   if (!refreshDisplay) {
     return;
@@ -178,78 +187,66 @@ const refreshItems = ({
 };
 
 // which one is the first one to display in current viewport
-const getDisplayStartIndex = (startTop: number) => {
+const getDisplayStart = (startTop: number) => {
   if (!startTop) {
-    return 0;
+    return {
+      start: 0,
+      scrolledHeight: 0,
+    };
   }
-  // do a binary search
-  let firstIndex = 0;
-  let lastIndex = transformedItems.length - 1;
-
-  while (firstIndex <= lastIndex) {
-    const midIndex = Math.floor((firstIndex + lastIndex) / 2);
-    if (
-      transformedItems[midIndex].__itemScrollTop <= startTop &&
-      transformedItems[midIndex].__itemScrollTop + transformedItems[midIndex].__itemHeight >
-        startTop
-    ) {
-      return midIndex;
-    } else if (transformedItems[midIndex].__itemScrollTop > startTop) {
-      lastIndex = midIndex - 1;
-    } else if (transformedItems[midIndex].__itemScrollTop < startTop) {
-      firstIndex = midIndex + 1;
-    }
+  let start = 0;
+  let scrolledHeight = 0;
+  if (biTree.value) {
+    start = Math.max(biTree.value.findGe(startTop) - 1, 0);
+    scrolledHeight = biTree.value.prefixSum(start);
   }
-
-  return firstIndex;
+  return {
+    start,
+    scrolledHeight,
+  };
 };
 
-const getDisplayEndIndex = (startTop: number, startIdx: number) => {
-  const actualStartTop = startTop || 0;
-  const endLine = actualStartTop + window.innerHeight + scorllBuffer.value;
-  let endIdx = startIdx + 1;
-  let currentTop = actualStartTop + transformedItems[startIdx].__itemHeight;
-  while (currentTop < endLine && endIdx < transformedItems.length) {
-    currentTop += transformedItems[endIdx].__itemHeight;
-    endIdx += 1;
-  }
-  return endIdx;
-};
-
-const refreshBatch = debounce(props.refreshDebounce, () => {
-  renderBatchIdx.value += 1;
-});
-
-let updateFrame: ReturnType<typeof window.requestAnimationFrame> | undefined;
+let updateFrame: ReturnType<typeof requestAnimationFrame> | undefined;
 
 const refreshDisplayItems = () => {
+  if (isScrolling) {
+    return;
+  }
   updateFrame && window.cancelAnimationFrame(updateFrame);
   updateFrame = window.requestAnimationFrame(() => {
-    const scrollTop = Math.floor(containerRef.value?.scrollTop || 0);
-    if (typeof scrollTop === 'undefined') {
-      return;
+    scrollTop.value = containerRef.value?.scrollTop || 0;
+    const buffer = estimatedItemHeight.value * (props.buffer || 0);
+    const startTop = Math.max(scrollTop.value, 0);
+    const { start, scrolledHeight } = getDisplayStart(Math.max(startTop - buffer, 0));
+
+    let end = start;
+    let visibleHeight = -transformedItems[start].__itemHeight;
+
+    while (visibleHeight <= containerHeight.value + buffer && end < transformedItems.length) {
+      visibleHeight += transformedItems[end].__itemHeight;
+      end += 1;
     }
-    const startTop = Math.max(scrollTop - scorllBuffer.value, 0);
-    const startIndex = getDisplayStartIndex(startTop);
-    const endIndex = getDisplayEndIndex(startTop, startIndex);
-    displayItems.value = markRaw(
-      transformedItems.slice(
-        Math.max(startIndex, 0),
-        Math.min(endIndex + 1, transformedItems.length),
-      ),
-    );
-    updateFrame = undefined;
+
+    displayItems.value = markRaw(transformedItems.slice(start, end));
+    firstItemTop.value = scrolledHeight;
+
     if (!props.reuseNodes) {
       return;
     }
-    refreshBatch();
+
+    renderBatchIdx.value += 1;
+    updateFrame = undefined;
   });
 };
 
 watch(
   () => [...props.items],
   () => {
-    refreshItems();
+    if (firstRendered) {
+      refreshItems();
+    } else {
+      firstRender();
+    }
   },
   { deep: props.enableDeepWatch },
 );
@@ -258,27 +255,37 @@ const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: nu
   if (!itemId || typeof height === 'undefined') {
     return;
   }
+
   const oldHeight = itemHeightMap[itemId] || 0;
   if (Math.floor(height) === Math.floor(oldHeight)) {
     return;
   }
   itemHeightMap[itemId] = height;
+
   const itemIndex = itemIdIndexMap[itemId];
   transformedItems[itemIndex].__itemHeight = height;
+
   const diff = height - oldHeight;
   scrollHeight.value += diff;
-  updateScrollTop(itemIndex);
-  // refresh display
-  if (!isScrolling) {
-    refreshDisplayItems();
+
+  // update diff to tree
+  biTree.value?.update(itemIndex + 1, diff);
+
+  // choose the min one as the estimated height
+  if (height && height < estimatedItemHeight.value) {
+    estimatedItemHeight.value = height;
   }
+
+  refreshDisplayItems();
 };
 
 const onItemResized = (entries: ResizeObserverEntry[]) => {
   let scrollHeightDiff = 0;
   let minUpdateIndex = Infinity;
+
   // update item height
   let needRefresh = false;
+
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
@@ -297,44 +304,22 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     const itemIndex = itemIdIndexMap[itemId];
     transformedItems[itemIndex].__itemHeight = height;
     minUpdateIndex = Math.min(itemIndex, minUpdateIndex);
+    biTree.value?.update(itemIndex + 1, heightDiff);
   }
+
   if (!needRefresh) {
     return;
   }
-  updateScrollTop(minUpdateIndex);
+
   // update scroll height
   scrollHeight.value += scrollHeightDiff;
-  // refresh display
-  if (!isScrolling) {
-    refreshDisplayItems();
-  }
-};
 
-const updateScrollTop = (updateIndex: number) => {
-  for (let i = updateIndex + 1; i < transformedItems.length; i++) {
-    transformedItems[i].__itemScrollTop =
-      transformedItems[i - 1].__itemScrollTop + transformedItems[i - 1].__itemHeight;
-  }
+  refreshDisplayItems();
 };
 
 const itemResizeObserver = new ResizeObserver(onItemResized);
 
 provide('getResizeObserver', itemResizeObserver);
-
-const computeScrollBuffer = (containerHeight?: number) => {
-  if (props.buffer) {
-    return;
-  }
-  const actualContainerHeight = containerHeight || containerRef.value?.clientHeight;
-  if (!actualContainerHeight) {
-    scorllBuffer.value = DEFAULT_SCROLL_BUFFER;
-    return;
-  }
-  scorllBuffer.value =
-    actualContainerHeight * 2 <= DEFAULT_SCROLL_BUFFER
-      ? DEFAULT_SCROLL_BUFFER
-      : actualContainerHeight * 2;
-};
 
 let firstRendered = false;
 
@@ -347,31 +332,31 @@ const firstRender = () => {
     refreshItems();
     return;
   }
-  // measure the first screen elements
+  // render the first screen elements
   refreshItems({ refreshDisplay: false, stopAt: props.firstScreenThreshold });
-  displayItems.value = transformedItems.slice(
+  displayItems.value = props.items.slice(
     0,
-    Math.min(transformedItems.length, props.firstScreenThreshold),
+    Math.min(props.items.length, props.firstScreenThreshold),
   );
   refreshInnerStyles();
   // measure height of the first batch
   nextTick(() => {
-    const elements = innerRef.value?.children;
+    const elements = fillerRef.value?.children;
     if (!elements) {
       // no children
       return;
     }
-    let cumulatedHeight = 0;
+    const heights: number[] = [];
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < elements.length; i++) {
       const { clientHeight } = elements[i];
       transformedItems[i].__itemHeight = clientHeight;
       itemHeightMap[transformedItems[i].id] = clientHeight;
-      cumulatedHeight += clientHeight;
       itemIdIndexMap[transformedItems[i].id] = i;
+      heights.push(clientHeight);
     }
     // remove the sub pixel value
-    estimatedItemHeight.value = Math.floor(cumulatedHeight / elements.length);
+    estimatedItemHeight.value = Math.min(...heights.filter((item) => !!item));
     // rerender the current screen
     refreshItems();
     firstRendered = true;
@@ -390,20 +375,23 @@ const stopItemWatching = watch(items, (newVal) => {
 
 const containerResizeObserver = new ResizeObserver((entries) => {
   const [container] = entries;
-  // recompute buffer when container size changed
-  if (containerHeight.value !== container.contentRect.height) {
-    computeScrollBuffer(container.contentRect.height);
-  }
   containerHeight.value = container.contentRect.height;
 });
 
-const scrollToBottom = (smooth = true) => {
-  if (!containerRef.value) {
-    return;
-  }
-  containerRef.value.scrollTo({
-    top: containerRef.value.scrollHeight,
-    behavior: smooth ? 'smooth' : 'auto',
+let scrollToBottomTimeout: ReturnType<typeof setTimeout> | undefined;
+
+const scrollToBottom = () => {
+  scrollToBottomTimeout && clearTimeout(scrollToBottomTimeout);
+  scrollToBottomTimeout = setTimeout(() => {
+    if (!containerRef.value) {
+      return;
+    }
+    isScrolling = true;
+    containerRef.value.scrollTo({
+      top: containerRef.value.scrollHeight,
+    });
+    isScrolling = false;
+    scrollToBottomTimeout = undefined;
   });
 };
 
@@ -417,33 +405,12 @@ onMounted(() => {
   if (!containerRef.value) {
     throw new Error('Cannot get the container reference.');
   }
+
   containerHeight.value = containerRef.value.clientHeight;
   containerResizeObserver.observe(containerRef.value, {
     box: 'border-box',
   });
-  // init scroll handler
-  const scrollHandler = () => {
-    refreshDisplayItems();
-    scrollTop.value = containerRef.value?.scrollTop || 0;
-  };
-  const debounceHandler = debounce(props.renderThrottle || 20, () => {
-    isScrolling = false;
-  });
-  if (props.renderThrottle) {
-    const throttleHandler = throttle(props.renderThrottle, scrollHandler);
-    containerRef.value.addEventListener('scroll', () => {
-      isScrolling = true;
-      throttleHandler();
-      debounceHandler();
-    });
-  } else {
-    containerRef.value.addEventListener('scroll', () => {
-      isScrolling = true;
-      scrollHandler();
-      debounceHandler();
-    });
-  }
-  computeScrollBuffer(containerHeight.value);
+
   // initialize rendering
   firstRender();
 });
@@ -464,8 +431,15 @@ onBeforeUnmount(() => {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   box-sizing: border-box;
+  will-change: transform;
 
   &__inner {
+    width: 100%;
+    position: relative;
+    overflow-anchor: none;
+  }
+
+  &__filler {
     width: 100%;
     position: relative;
   }
