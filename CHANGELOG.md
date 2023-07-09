@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.0.53](https://github.com/any-design/anyui/compare/v0.0.52...v0.0.53) (2023-07-07)
+
+### Features
+
+- (virtual-list) optimize scroll performance ([b0df975](https://github.com/any-design/anyui/commit/b0df975c454dde09c60454ab92d3958ec06630a8))
+- 
 ## [0.0.52](https://github.com/any-design/anyui/compare/v0.0.51...v0.0.52) (2023-04-12)
 
 ### Bug Fixes
