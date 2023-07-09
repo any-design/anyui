@@ -2,12 +2,19 @@
   <div ref="containerRef" class="a-virtual-list" @scroll.passive="refreshDisplayItems">
     <div class="a-virtual-list__inner a-scroll-shadows" :style="innerStyles">
       <template v-if="displayItems.length">
-        <div ref="fillerRef" class="a-virtual-list__filler" :style="{
-          transform: `translateY(${firstItemTop}px)`,
-        }">
-          <a-virtual-list-item v-for="(item, index) in displayItems"
-            :key="reuseNodes ? getItemKey(index) : `${item.id}_${index}`" :item="item"
-            @init-height="handleInitItemHeight">
+        <div
+          ref="fillerRef"
+          class="a-virtual-list__filler"
+          :style="{
+            transform: `translateY(${firstItemTop}px)`,
+          }"
+        >
+          <a-virtual-list-item
+            v-for="(item, index) in displayItems"
+            :key="reuseNodes ? getItemKey(index) : `${item.id}_${index}`"
+            :item="item"
+            @init-height="handleInitItemHeight"
+          >
             <slot :item="item"></slot>
           </a-virtual-list-item>
         </div>
@@ -92,7 +99,9 @@ const biTree = ref<BinaryIndexedTree | undefined>();
 // item layout related
 const estimatedItemHeight = ref(props.estimatedItemHeight || 0);
 
-let isScrolling = false;
+// is items refreshing now
+const isRefreshing = ref(false);
+const shouldScrollBottomWhenRefreshing = ref(false);
 
 const { computed: innerStyles, refresh: refreshInnerStyles } = useRefreshableComputed<StyleValue>(
   () => ({
@@ -209,10 +218,8 @@ const getDisplayStart = (startTop: number) => {
 let updateFrame: ReturnType<typeof requestAnimationFrame> | undefined;
 
 const refreshDisplayItems = () => {
-  if (isScrolling) {
-    return;
-  }
   updateFrame && window.cancelAnimationFrame(updateFrame);
+  isRefreshing.value = true;
   updateFrame = window.requestAnimationFrame(() => {
     scrollTop.value = containerRef.value?.scrollTop || 0;
     const buffer = estimatedItemHeight.value * (props.buffer || 0);
@@ -230,12 +237,23 @@ const refreshDisplayItems = () => {
     displayItems.value = markRaw(transformedItems.slice(start, end));
     firstItemTop.value = scrolledHeight;
 
+    if (shouldScrollBottomWhenRefreshing.value) {
+      nextTick(() => {
+        if (!containerRef.value) {
+          return;
+        }
+        containerRef.value.scrollTop = containerRef.value.scrollHeight;
+      });
+    }
+
     if (!props.reuseNodes) {
+      isRefreshing.value = false;
       return;
     }
 
     renderBatchIdx.value += 1;
     updateFrame = undefined;
+    isRefreshing.value = false;
   });
 };
 
@@ -386,11 +404,11 @@ const scrollToBottom = () => {
     if (!containerRef.value) {
       return;
     }
-    isScrolling = true;
-    containerRef.value.scrollTo({
-      top: containerRef.value.scrollHeight,
-    });
-    isScrolling = false;
+    if (isRefreshing.value) {
+      shouldScrollBottomWhenRefreshing.value = true;
+      return;
+    }
+    containerRef.value.scrollTop = containerRef.value.scrollHeight;
     scrollToBottomTimeout = undefined;
   });
 };
