@@ -43,7 +43,6 @@
   "sideEffects": false,
   "license": "MIT",
   "dependencies": {
-    "@antfu/utils": "^0.7.2",
     "async-validator": "^4.2.5",
     "color": "^4.2.3",
     "mitt": "^3.0.0",
