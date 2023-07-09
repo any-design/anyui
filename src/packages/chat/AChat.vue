@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, ref, watch } from 'vue';
+import { PropType, nextTick, ref, watch } from 'vue';
 
 import AVirtualList, { RawVirtualListItem } from '../virtualList';
 
@@ -45,7 +45,7 @@ const virtualListRef = ref<typeof AVirtualList | undefined>();
 watch(
   () => props.messages,
   () => {
-    setTimeout(() => {
+    nextTick(() => {
       virtualListRef.value?.scrollToBottom();
     });
   },
