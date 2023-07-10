@@ -2,7 +2,6 @@
 
 ## [0.0.54](https://github.com/any-design/anyui/compare/v0.0.52...v0.0.54) (2023-07-10)
 
-
 ### Bug Fixes
 
 * (chat) scroll bottom sometimes will not work correctly ([7b44e85](https://github.com/any-design/anyui/commit/7b44e857cd7b72d792219f8aff6736e049fba213))
