@@ -30,20 +30,25 @@ export default defineComponent({
     Icon,
   },
   props: {
+    // type of the message, can be 'default', 'info', 'warning', 'success', 'error'
     type: {
       type: String as PropType<MessageType>,
     },
+    //
     content: {
       type: String,
     },
+    // the icon which will be used as a prefix, if remains empty, there will be no icon
     icon: {
       type: String,
       default: '',
     },
+    // whether to show the icon
     showIcon: {
       type: Boolean,
       default: true,
     },
+    // if true, the message will be rounded style
     round: {
       type: Boolean,
       default: false,

@@ -21,18 +21,22 @@ const TRANSITION_DURATION = 200;
 
 export default defineComponent({
   props: {
+    // if true, the content in default slot will be visible.
     visible: {
       type: Boolean,
       default: false,
     },
+    // the direction of the collapse, can be 'horizontal' or 'vertical'.
     direction: {
       type: String as PropType<'horizontal' | 'vertical'>,
       default: 'vertical',
     },
+    // if true, the collapse will not be destroyed when it is collapsed.
     alwaysRender: {
       type: Boolean,
       default: false,
     },
+    // A render delay after the value changed, in milliseconds.
     renderWaitTime: {
       type: Number,
       default: 100,

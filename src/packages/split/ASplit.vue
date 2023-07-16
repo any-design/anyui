@@ -9,18 +9,22 @@ import { formatStyleSize } from '../../utils';
 export default defineComponent({
   name: 'ASplit',
   props: {
+    // the height of the split, can be a percentage or a number
     height: {
       type: [String, Number],
       default: 2,
     },
+    // the color of the split line
     color: {
       type: String,
       default: 'var(--line)',
     },
+    // the top and bottom margin of the split line, can be a percentage or a number
     margin: {
       type: [String, Number],
       default: 12,
     },
+    // if true, the split line will have a rounded border
     round: {
       type: Boolean,
       default: false,

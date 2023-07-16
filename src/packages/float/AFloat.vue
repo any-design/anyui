@@ -93,7 +93,9 @@ export default defineComponent({
   },
   methods: {
     onClose() {
+      // will be emitted when the float has been closed.
       this.$emit('close');
+      // will be emitted when the visibility value changed.
       this.$emit('update:visible', false);
     },
   },

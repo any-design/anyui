@@ -16,6 +16,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'AClickableText',
   props: {
+    // the type of clickable text, available values: 'primary', 'secondary'.
     type: {
       type: String,
       default: '',
@@ -24,6 +25,7 @@ export default defineComponent({
   emits: ['click'],
   methods: {
     handleClick() {
+      // will be emitted when the text is clicked by user.
       this.$emit('click');
     },
   },
