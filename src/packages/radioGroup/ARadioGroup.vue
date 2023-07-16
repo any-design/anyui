@@ -27,9 +27,11 @@ import { ARadioGroupItem, ARadioGroupItems } from './types';
 export default defineComponent({
   name: 'ARadioGroup',
   props: {
+    // an array includes objects which match the type { label: string, value: string }, it will be rendered as a group of radio
     items: {
       type: Array as PropType<ARadioGroupItems>,
     },
+    // the value of the radio group, it will be bound to the component.
     modelValue: {
       type: [String, Number],
     },
@@ -53,6 +55,7 @@ export default defineComponent({
 
     const handleItemChange = (item: ARadioGroupItem) => {
       selected.value = item.value;
+      // will be emitted when the value is changed or be cleared.
       emit('update:modelValue', item.value);
     };
 

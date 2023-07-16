@@ -14,6 +14,7 @@ import { onMounted, onBeforeUnmount, PropType, ref, inject, nextTick } from 'vue
 import { VirtualListItem } from './types';
 
 const props = defineProps({
+  // the item passed in from the virtual list.
   item: {
     type: Object as PropType<VirtualListItem<unknown>>,
   },
@@ -27,6 +28,7 @@ onMounted(() => {
   if (!itemRef.value) {
     throw new Error('Cannot get the reference of virtual list item.');
   }
+  // will be emitted when the item was first rendered to correct its height in the list.
   emit('initHeight', {
     itemId: props.item?.id,
     height: itemRef.value.clientHeight,

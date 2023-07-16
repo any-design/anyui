@@ -151,6 +151,12 @@ AnyDesign 团队成员均利用业余时间维护本项目，无论贡献大小�
 
 <br>
 
+## 文档
+
+所有文档均使用 [`document-writer`](https://github.com/any-design/document-writer)，基于 `gpt-3.5-turbo-16k` 生成。
+
+**在快速迭代阶段，我们暂不保证文档的绝对准确性，文档仅供参考。**
+
 ## 组件预览
 
 你可以在我们部署的 Testground 内预览我们现有的所有组件：

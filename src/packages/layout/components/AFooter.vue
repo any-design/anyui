@@ -9,6 +9,7 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
+    // height of the footer, need to be a valid CSS height string
     height: {
       type: [Number, String],
       default: '',
@@ -25,7 +26,6 @@ export default defineComponent({
   },
 });
 </script>
-
 
 <style lang="scss">
 .a-footer {

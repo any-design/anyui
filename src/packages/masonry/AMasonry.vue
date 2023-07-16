@@ -21,50 +21,62 @@ import { MasonryItem, PositionItem, SectionRecord } from './types';
 export default defineComponent({
   name: 'AMasonry',
   props: {
+    // a getter method for getting the height of the item
     itemHeightGetter: {
       type: Function as PropType<(item: unknown) => number>,
       required: true,
     },
+    // items to be rendered in the masonry
     items: {
       type: Array as PropType<MasonryItem[]>,
       required: true,
     },
+    // the width of the column
     colWidth: {
       type: Number,
       required: true,
     },
+    // total columns count
     col: {
       type: Number,
       default: 0,
     },
+    // gap between cards
     gap: {
       type: Number,
       default: 16,
     },
+    // if true, the masonry will fit the container automatically
     fit: {
       type: Boolean,
       default: false,
     },
+    // the number of rows in one render section
     rowsPerSection: {
       type: Number,
       default: 3,
     },
+    // how much items will be included in a render group
     groupSize: {
       type: Number,
       default: 100,
     },
+    // the additional render distance out of the screen
     additionalDistance: {
       type: Number,
       default: 1600,
     },
+    // if true, the DOM node will be reused.
     recycleNode: {
       type: Boolean,
       default: false,
     },
+    // the debounce time for scroll handler execution
     scrollDebounceTime: {
       type: Number,
       default: 200,
     },
+    // the throttle time for scroll handler execution
     scrollThrottleTime: {
       type: Number,
       default: 100,
@@ -73,10 +85,12 @@ export default defineComponent({
     scrollEventTarget: {
       type: String,
     },
+    // the resize throttle time
     resizeThrottleTime: {
       type: Number,
       default: 100,
     },
+    // the resize debounce time
     resizeDebounceTime: {
       type: Number,
       default: 200,

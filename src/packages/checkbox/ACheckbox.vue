@@ -32,17 +32,21 @@ export default defineComponent({
     Icon,
   },
   props: {
+    // a label text after the checkbox.
     label: {
       type: String,
     },
+    // the icon which will showed when the checkbox is checked.
     checkIcon: {
       type: String,
       default: 'si-glyph:checked',
     },
+    // the value which will be bound to this component.
     modelValue: {
       type: Boolean,
       default: false,
     },
+    // the class name of icon for transition, defaultValue is 'a-trans-check-icon'.
     iconTransition: {
       type: String,
       default: 'a-trans-check-icon',
@@ -61,7 +65,9 @@ export default defineComponent({
 
     const handleClick = () => {
       checked.value = !checked.value;
+      // will be emitted when value changed, it will update the value in parent.
       emit('update:modelValue', checked.value);
+      // will be emitted when value changed, with the new value.
       emit('change', checked.value);
     };
 

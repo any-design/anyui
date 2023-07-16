@@ -33,18 +33,22 @@ import { defineComponent, useSlots } from 'vue';
 export default defineComponent({
   name: 'ACard',
   props: {
+    // the title of the card, it not empty, the card will have a default header.
     title: {
       type: String,
       default: '',
     },
+    // the width of the card, can be a percentage or a number.
     width: {
       type: [Number, String],
       default: 240,
     },
+    // if true, the card will not have any border and padding.
     clean: {
       type: Boolean,
       default: false,
     },
+    // if true, the card will be applied with "cursor: pointer" style.
     link: {
       type: String,
       default: '',

@@ -20,25 +20,31 @@ import { Handler } from 'mitt';
 export default defineComponent({
   name: 'AImage',
   props: {
+    // image source url
     src: {
       type: String,
     },
+    // the width of the image, can be a percentage or a number
     width: {
       type: [String, Number],
       default: '100%',
     },
+    // the height of the image, can be a percentage or a number
     height: {
       type: [String, Number],
       default: '100%',
     },
+    // the size style string, same as background-size
     size: {
       type: String,
       default: 'cover',
     },
+    // the position style string, same as background-position
     position: {
       type: String,
       default: 'center',
     },
+    // the repeat mode, same as background-repeat
     repeat: {
       type: String,
       default: 'no-repeat',

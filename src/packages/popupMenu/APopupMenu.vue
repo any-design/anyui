@@ -28,50 +28,64 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { formatStyleSize } from '../../utils';
-import { PopMenuItem } from './types';
+
 import type APopper from '../popper';
 
+import { PopMenuItem } from './types';
+
+// This component is a menu based on popper.
 export default defineComponent({
   name: 'APopupMenu',
   props: {
+    // The placement position of the popper, same as the APopper component.
     placement: {
       type: String,
       default: 'bottom',
     },
+    // the menu position offset to the trigger element, unit is px
     offset: {
       type: Number,
       default: 12,
     },
+    // items to render in the menu
     items: {
       type: Array as PropType<string[] | PopMenuItem[]>,
       default: () => [],
     },
+    // menu width
     width: {
       type: Number,
       default: 180,
     },
+    // menu hide delay when mouse move out the menu popper
     hideDelay: {
       type: Number,
       default: 100,
     },
+    // the z-index of the menu popper
     zIndex: {
       type: Number,
       default: 3000,
     },
+    // if true, the menu will be appended to body
     appendToBody: {
       type: Boolean,
       default: true,
     },
+    // the transition class name
     transition: {
       type: String,
       default: 'a-trans-popmenu',
     },
+    // the class applied to the popup
     popupClass: {
       type: String,
     },
+    // the class applied to the menu
     menuClass: {
       type: String,
     },
+    // if true, menu will hide itself automatically
     hideAfterClick: {
       type: Boolean,
       default: false,
@@ -101,6 +115,7 @@ export default defineComponent({
       if (this.$refs.popper && this.hideAfterClick) {
         (this.$refs.popper as InstanceType<typeof APopper>).hide();
       }
+      // will be emitted when user click on a menu item
       this.$emit('command', key);
     },
   },

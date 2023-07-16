@@ -11,10 +11,12 @@ const DEFAULT_WIDTH = 300;
 
 export default defineComponent({
   props: {
+    // height of the width, need to be a valid CSS height string
     width: {
       type: [Number, String],
       default: 300,
     },
+    // if true, the default style will not be applied to the component
     noDefault: {
       type: Boolean,
       default: false,
