@@ -10,13 +10,13 @@ The AChat component is used to display a chat interface. It is built using Vue3 
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import AChat from '@any-design/anyui/AChat.vue';
+  import { reactive } from 'vue';
+  import AChat from '@any-design/anyui/AChat.vue';
 
-const messages = reactive([
-  { id: 1, content: "Hello", role: "self" },
-  { id: 2, content: "Hi", role: "target" }
-]);
+  const messages = reactive([
+    { id: 1, content: 'Hello', role: 'self' },
+    { id: 2, content: 'Hi', role: 'target' },
+  ]);
 </script>
 ```
 
@@ -33,10 +33,12 @@ Default: `[]`
 Usage:
 
 ```html
-<a-chat :messages="[
+<a-chat
+  :messages="[
   { id: 1, content: 'Hello', role: 'self' },
   { id: 2, content: 'Hi', role: 'target' },
-]"></a-chat>
+]"
+></a-chat>
 ```
 
 ### enableDeepWatch
@@ -52,11 +54,3 @@ Usage:
 ```html
 <a-chat :messages="data.messages" :enable-deep-watch="true"></a-chat>
 ```
-
-## Events
-
-The AChat component does not emit any event.
-
-## Exposed Methods or Values
-
-The AChat component does not have any exposed methods or values.

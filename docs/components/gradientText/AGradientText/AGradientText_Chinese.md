@@ -16,15 +16,15 @@
 
 该组件接受以下 props：
 
-| 属性名          | 类型    | 默认值                | 说明                                                                                              |
-| --------------- | ------- | --------------------- | ------------------------------------------------------------------------------------------------- |
-| gradient        | String  | ''                    | 自定义的渐变色样式，如果该值存在，则直接通过该值渲染背景色，无视其他计算结果                    |
-| reverseGradient | Boolean | false                 | 是否颠倒主次渐变色                                                                                 |
-| size            | String  | ''                    | 文字大小                                                                                          |
-| primaryColor    | String  | 'var(--primary)'      | 主渐变色，可以是任何合法的 CSS 颜色值，必须是一个可渐变的颜色值                                    |
-| secondaryColor  | String  | 'var(--secondary)'    | 次渐变色，可以是任何合法的 CSS 颜色值，必须是一个可渐变的颜色值                                  |
-| splitPercent    | Number  | 30                    | 渐变的分界点位置，一个百分比数值。如果参数为 30，则渐变按照由 primaryColor 向 secondaryColor 渐变 |
-| styles          | Object  | {...background: ''}   | 自定义样式，所有 CSS 属性都可以被绑定到组件上                                                  |
+| 属性名          | 类型    | 默认值              | 说明                                                                                              |
+| --------------- | ------- | ------------------- | ------------------------------------------------------------------------------------------------- |
+| gradient        | String  | ''                  | 自定义的渐变色样式，如果该值存在，则直接通过该值渲染背景色，无视其他计算结果                      |
+| reverseGradient | Boolean | false               | 是否颠倒主次渐变色                                                                                |
+| size            | String  | ''                  | 文字大小                                                                                          |
+| primaryColor    | String  | 'var(--primary)'    | 主渐变色，可以是任何合法的 CSS 颜色值，必须是一个可渐变的颜色值                                   |
+| secondaryColor  | String  | 'var(--secondary)'  | 次渐变色，可以是任何合法的 CSS 颜色值，必须是一个可渐变的颜色值                                   |
+| splitPercent    | Number  | 30                  | 渐变的分界点位置，一个百分比数值。如果参数为 30，则渐变按照由 primaryColor 向 secondaryColor 渐变 |
+| styles          | Object  | {...background: ''} | 自定义样式，所有 CSS 属性都可以被绑定到组件上                                                     |
 
 ### gradient
 
@@ -91,11 +91,3 @@
 ## Slots
 
 该组件接受 default slot，允许添加其它的 HTML 内容。
-
-## 不会产生的事件
-
-该组件不会发出任何事件。
-
-## 不会暴露的方法和属性
-
-该组件不会暴露任何方法或属性。

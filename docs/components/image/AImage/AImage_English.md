@@ -6,7 +6,7 @@ The `AImage` component is designed to display an image with customized styles an
 
 ```vue
 <template>
-  <AImage src="[Image URL]"/>
+  <AImage src="[Image URL]" />
 </template>
 
 <script lang="ts">
@@ -82,7 +82,3 @@ Emitted when the image has finished loading.
 #### error
 
 Emitted when an error occurs during the loading process.
-
-### Exposed Methods and Values
-
-The `AImage` component does not expose any additional methods or values.
