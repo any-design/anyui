@@ -57,33 +57,41 @@ import { APopperTriggerType } from './types';
 export default defineComponent({
   name: 'APopper',
   props: {
+    // the hide delay in milliseconds
     hideDelay: {
       type: Number,
       default: 100,
     },
+    // the placement of the popper, same as the popperjs
     placement: {
       type: String as PropType<Placement>,
       default: 'bottom',
     },
+    // the trigger type of the popper, can be 'hover', 'click', 'manual'
     triggerType: {
       type: String as PropType<APopperTriggerType>,
       default: 'hover',
     },
+    // the offset between trigger element and the popup
     offset: {
       type: Number,
       default: 18,
     },
+    // the z-index value of the popup
     zIndex: {
       type: Number,
       default: 3000,
     },
+    // if true, the popup will be appended to the body
     appendToBody: {
       type: Boolean,
       default: true,
     },
+    // the class name of the popup
     popupClass: {
       type: String,
     },
+    // the transition class name of the popup
     transition: {
       type: String,
     },
@@ -247,6 +255,7 @@ export default defineComponent({
     watch(
       () => popupShowed,
       () => {
+        // will be emitted when the popup visibility state changed
         emit('popupStatusChanged', popupShowed.value);
       },
     );

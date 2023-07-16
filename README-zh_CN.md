@@ -57,6 +57,45 @@ app.mount('#app');
 
 <br>
 
+### 按需导入
+
+<br>
+
+我们增加了对 `unplugin-vue-components` 的支持，你可以轻松在你的项目中启用 "按需导入" 的功能。
+
+要启用此功能，你需要执行以下步骤：
+
+<br>
+
+步骤 1：安装 `unplugin-vue-components` 和 `unplugin-auto-import`。
+
+```bash
+npm i unplugin-vue-components unplugin-auto-import -D
+```
+
+<br>
+
+步骤 2：将解析器导入到你的项目配置中。
+
+```ts
+import { AnyUIResolver } from '@any-design/anyui/lib/resolver';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    AutoImport({
+      resolvers: [AnyUIResolver()],
+    }),
+    Components({
+      resolvers: [AnyUIResolver()],
+    }),
+  ],
+});
+```
+
 ### TypeScript 支持
 
 <br>
@@ -107,10 +146,16 @@ AnyDesign 团队成员均利用业余时间维护本项目，无论贡献大小�
 > 在参与社区讨论之前，我们强烈推荐阅读[《提问的智慧》](https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way)、[《如何向开源社区提问题》](https://github.com/seajs/seajs/issues/545)，以助于获取到更有效的帮助。
 
 1. [GitHub Issues](https://github.com/any-design/anyui/issues)
-2. [Telegram HashGeek IT民工社区群组](https://t.me/HashGeekCoder)
+2. [Telegram HashGeek IT 民工社区群组](https://t.me/HashGeekCoder)
 3. Coming soon...
 
 <br>
+
+## 文档
+
+所有文档均使用 [`document-writer`](https://github.com/any-design/document-writer)，基于 `gpt-3.5-turbo-16k` 生成。
+
+**在快速迭代阶段，我们暂不保证文档的绝对准确性，文档仅供参考。**
 
 ## 组件预览
 

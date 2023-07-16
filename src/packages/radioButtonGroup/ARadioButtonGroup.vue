@@ -45,12 +45,15 @@ export default defineComponent({
     ARadioButton,
   },
   props: {
+    // an array includes objects which match the type { label: string, value: string }, it will be rendered as a group of radio button
     items: {
       type: Array as PropType<ARadioGroupItems>,
     },
+    // the value of the radio button group, it will be bound to the component.
     modelValue: {
       type: [String, Number],
     },
+    // if true, the radio button group will be applied with a rounded border style.
     round: {
       type: Boolean,
       default: false,
@@ -102,6 +105,7 @@ export default defineComponent({
     }) => {
       selected.value = value;
       bgBlockPosition.value = position;
+      // will be emitted when some button in the group is clicked by user or the value has been cleared.
       emit('update:modelValue', value);
       if (!showBgBlock.value) {
         setTimeout(() => {

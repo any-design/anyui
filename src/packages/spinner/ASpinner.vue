@@ -13,6 +13,7 @@ export default defineComponent({
     Icon,
   },
   props: {
+    // the icon name of the spinner
     icon: {
       type: String,
       default: 'quill:loading-spin',

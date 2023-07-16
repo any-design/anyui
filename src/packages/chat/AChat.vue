@@ -30,10 +30,12 @@ import AVirtualList, { RawVirtualListItem } from '../virtualList';
 import type { AChatMessage } from './types';
 
 const props = defineProps({
+  // the messages which match the AChatMessage ({ id: string | number; content: string; role: AChatMessageRole; }) type.
   messages: {
     type: Array as PropType<AChatMessage[]>,
     default: () => [],
   },
+  // if true, the component will watch the changes of messages deeply.
   enableDeepWatch: {
     type: Boolean,
     default: false,

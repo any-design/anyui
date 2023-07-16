@@ -24,6 +24,11 @@
 </template>
 
 <script setup lang="ts">
+/*
+ * This component is a blazing fast virtual scroll list, which based on a binary indexed tree to search the scroll top, it's performance is excellent.
+ * Unlike other components that have same functions, our virtual list will not query user to set a item height getter, it will measure the suitable item height automatically.
+ * Also it support dynamic item height by default.
+ */
 import {
   PropType,
   ref,
@@ -46,16 +51,20 @@ import AVirtualListItem from './AVirtualListItem.vue';
 import BinaryIndexedTree from './BinaryIndexedTree';
 
 const props = defineProps({
+  // the data list which will be rendered in the virtual list, it will be passed to the AVirutalListItem component, and will be finally passed in your custom component. Be sure that all the item in the list will have an unique id.
   items: {
     type: Array as PropType<RawVirtualListItem<unknown>[]>,
     default: () => [],
   },
+  // the scroll buffer of the list, larger number means more items will be rendered. this property accept a number in px.
   buffer: {
     type: Number,
   },
+  // if you already know the proper height of your item, you can set it here to skip the height measurement.
   estimatedItemHeight: {
     type: Number,
   },
+  // if true, the component will watch the items deeply.
   enableDeepWatch: {
     type: Boolean,
     default: false,
@@ -65,14 +74,12 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  // if true, the DOM node will be reused to avoid frequent DOM node creation and removing.
   reuseNodes: {
     type: Boolean,
     default: true,
   },
-  refreshDebounce: {
-    type: Number,
-    default: 50,
-  },
+  // the key type of the item, it will affect the refreshing. can be 'batch' (the index of render batch), 'screen' (a series indexes based on the screen height and the items count), 'both' (use both of previous two indexes), 'none' (use none of previous indexes, just use the natural index of the item).
   keyType: {
     type: String as PropType<'batch' | 'screen' | 'both' | 'none'>,
     default: 'none',

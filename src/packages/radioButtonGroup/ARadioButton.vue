@@ -19,9 +19,11 @@ import { GET_PARENT_CONTAINER_RECT, GET_PADDING_VALUE } from './constants';
 export default defineComponent({
   name: 'ARadioButton',
   props: {
+    // a object match the type { label: string, value: string }, it will be rendered as a radio button
     item: {
       type: Object as PropType<ARadioGroupItem>,
     },
+    // if this button has been selected
     selected: {
       type: Boolean,
     },
@@ -54,6 +56,7 @@ export default defineComponent({
       if (typeof props.item?.value === 'undefined' || props.item?.value === null || !button.value) {
         return;
       }
+      // will be emitted when user clicked the button
       emit('click', {
         value: props.item.value,
         position: getPosition(),
