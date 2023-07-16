@@ -13,7 +13,6 @@ import FormItem from './packages/formItem';
 import Image from './packages/image';
 import GradientText from './packages/gradientText';
 import Input from './packages/input';
-import Lottie from './packages/lottie';
 import Loading from './packages/loading';
 import Layout, { Header, Content, Footer, Side } from './packages/layout';
 import Masonry from './packages/masonry';
@@ -90,7 +89,6 @@ export {
   GradientText,
   Header,
   Layout,
-  Lottie,
   Loading,
   Masonry,
   Message,

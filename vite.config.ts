@@ -26,7 +26,6 @@ const BUILD_CONFIGS = {
       rollupOptions: {
         external: [
           'vue',
-          'lottie-web',
           '@iconify/vue',
           '@popperjs/core',
           '@popperjs/core/lib/popper-lite',

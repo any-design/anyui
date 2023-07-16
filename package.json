@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui",
-  "version": "0.0.54",
+  "version": "0.0.55",
   "author": "any-design",
   "description": "A cute UI components library for Vue 3.",
   "files": [
@@ -50,8 +50,7 @@
   },
   "optionalDependencies": {
     "@iconify/vue": "^3.2.1",
-    "@popperjs/core": "^2.11.7",
-    "lottie-web": "^5.11.0"
+    "@popperjs/core": "^2.11.7"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.21.3",
