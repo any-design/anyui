@@ -1,10 +1,10 @@
 # @any-design/anyui APopupMenu Component
 
-The @any-design/anyui APopupMenu component is a menu based on the Popper component. This component provides a dropdown menu that appears when the user interacts with it. It is highly customizable and allows you to specify various placement and styling options. 
+The @any-design/anyui APopupMenu component is a menu based on the Popper component. This component provides a dropdown menu that appears when the user interacts with it. It is highly customizable and allows you to specify various placement and styling options.
 
 ## Basic Usage
 
-```html
+```vue
 <template>
   <a-popup-menu :items="myMenuItems">
     <span>Open Menu</span>
@@ -29,19 +29,19 @@ export default {
 
 The following props can be passed to the @any-design/anyui APopupMenu component:
 
-| Prop         | Type                     | Default  | Description                                                                                        |
-| ------------ | ------------------------| -------- | -------------------------------------------------------------------------------------------------- |
-| placement    | String                   | 'bottom' | The placement position of the popper.                                                              |
-| offset       | Number                   | 12       | The menu position offset to the trigger element, unit is px.                                        |
-| items        | Array of strings/objects | []       | An array of items to render in the menu. Each item can be a string or an object with the PopMenuItem type |
-| width        | Number                   | 180      | The width of the menu.                                                                             |
-| hideDelay    | Number                   | 100      | The menu hide delay when the mouse moves out of the menu popper.                                    |
-| zIndex       | Number                   | 3000     | The z-index of the menu popper.                                                                    |
-| appendToBody | Boolean                  | true     | If true, the menu will be appended to the body.                                                    |
-| transition   | String                   | 'a-trans-popmenu' | The transition class name.                                                               |
-| popupClass   | String                   | N/A      | The class applied to the popup.                                                                    |
-| menuClass    | String                   | N/A      | The class applied to the menu.                                                                     |
-| hideAfterClick | Boolean                | false    | If true, menu will hide itself automatically after user clicking a menu item.                      |
+| Prop           | Type                     | Default           | Description                                                                                               |
+| -------------- | ------------------------ | ----------------- | --------------------------------------------------------------------------------------------------------- |
+| placement      | String                   | 'bottom'          | The placement position of the popper.                                                                     |
+| offset         | Number                   | 12                | The menu position offset to the trigger element, unit is px.                                              |
+| items          | Array of strings/objects | []                | An array of items to render in the menu. Each item can be a string or an object with the PopMenuItem type |
+| width          | Number                   | 180               | The width of the menu.                                                                                    |
+| hideDelay      | Number                   | 100               | The menu hide delay when the mouse moves out of the menu popper.                                          |
+| zIndex         | Number                   | 3000              | The z-index of the menu popper.                                                                           |
+| appendToBody   | Boolean                  | true              | If true, the menu will be appended to the body.                                                           |
+| transition     | String                   | 'a-trans-popmenu' | The transition class name.                                                                                |
+| popupClass     | String                   | N/A               | The class applied to the popup.                                                                           |
+| menuClass      | String                   | N/A               | The class applied to the menu.                                                                            |
+| hideAfterClick | Boolean                  | false             | If true, menu will hide itself automatically after user clicking a menu item.                             |
 
 ## Events
 
@@ -55,21 +55,21 @@ The @any-design/anyui APopupMenu component emits a single 'command' event with a
 </template>
 
 <script>
-import APopupMenu from '@any-design/anyui/components/popup-menu';
+  import APopupMenu from '@any-design/anyui/components/popup-menu';
 
-export default {
-  components: { APopupMenu },
-  data() {
-    return {
-      myMenuItems: ['Option A', 'Option B', 'Option C'],
-    };
-  },
-  methods: {
-    onCommand(key) {
-      // Handle the clicked menu item
+  export default {
+    components: { APopupMenu },
+    data() {
+      return {
+        myMenuItems: ['Option A', 'Option B', 'Option C'],
+      };
     },
-  },
-};
+    methods: {
+      onCommand(key) {
+        // Handle the clicked menu item
+      },
+    },
+  };
 </script>
 ```
 
@@ -89,21 +89,21 @@ Returns an object that sets the width of the menu based on the width prop. The v
 </template>
 
 <script>
-import APopupMenu from '@any-design/anyui/components/popup-menu';
+  import APopupMenu from '@any-design/anyui/components/popup-menu';
 
-export default {
-  components: { APopupMenu },
-  data() {
-    return {
-      myMenuItems: ['Option A', 'Option B', 'Option C'],
-    };
-  },
-  computed: {
-    menuStyle() {
-      return { width: '300px' };
+  export default {
+    components: { APopupMenu },
+    data() {
+      return {
+        myMenuItems: ['Option A', 'Option B', 'Option C'],
+      };
     },
-  },
-};
+    computed: {
+      menuStyle() {
+        return { width: '300px' };
+      },
+    },
+  };
 </script>
 ```
 
@@ -123,27 +123,27 @@ Retrieves the key of the given item in the menu. The method returns the value of
 </template>
 
 <script>
-import APopupMenu from '@any-design/anyui/components/popup-menu';
+  import APopupMenu from '@any-design/anyui/components/popup-menu';
 
-export default {
-  components: { APopupMenu },
-  data() {
-    return {
-      myMenuItems: [
-        { key: 'option-a', name: 'Option A' },
-        { key: 'option-b', name: 'Option B' },
-        'Option C',
-      ],
-    };
-  },
-  methods: {
-    handleItemClick(item) {
-      const key = this.getItemKey(item);
-      
-      // ...
+  export default {
+    components: { APopupMenu },
+    data() {
+      return {
+        myMenuItems: [
+          { key: 'option-a', name: 'Option A' },
+          { key: 'option-b', name: 'Option B' },
+          'Option C',
+        ],
+      };
     },
-  },
-};
+    methods: {
+      handleItemClick(item) {
+        const key = this.getItemKey(item);
+
+        // ...
+      },
+    },
+  };
 </script>
 ```
 
@@ -159,23 +159,23 @@ Retrieves the name of the given item in the menu. The method returns the 'name' 
 </template>
 
 <script>
-import APopupMenu from '@any-design/anyui/components/popup-menu';
+  import APopupMenu from '@any-design/anyui/components/popup-menu';
 
-export default {
-  components: { APopupMenu },
-  data() {
-    return {
-      myMenuItems: ['Option A', 'Option B', 'Option C'],
-    };
-  },
-  methods: {
-    handleItemClick(item) {
-      const name = this.getItemName(item);
-      
-      // ...
+  export default {
+    components: { APopupMenu },
+    data() {
+      return {
+        myMenuItems: ['Option A', 'Option B', 'Option C'],
+      };
     },
-  },
-};
+    methods: {
+      handleItemClick(item) {
+        const name = this.getItemName(item);
+
+        // ...
+      },
+    },
+  };
 </script>
 ```
 
@@ -208,9 +208,10 @@ The following CSS can be used to style the @any-design/anyui APopupMenu componen
 
 .a-trans-popmenu-enter-active,
 .a-trans-popmenu-leave-active {
-  transition: opacity var(--anim-duration-quick, 100ms) ease-out,
-    transform var(--anim-duration-quick, 100ms) ease-out,
-    max-height var(--anim-duration-quick, 100ms) ease-out;
+  transition: opacity var(--anim-duration-quick, 100ms) ease-out, transform var(
+        --anim-duration-quick,
+        100ms
+      ) ease-out, max-height var(--anim-duration-quick, 100ms) ease-out;
 }
 .a-trans-popmenu-enter-to {
   opacity: 1;
@@ -224,4 +225,5 @@ The following CSS can be used to style the @any-design/anyui APopupMenu componen
   max-height: 0;
 }
 ```
+
 Note: Any variable that starts with "--" is a CSS custom property and needs to be defined elsewhere in the CSS.

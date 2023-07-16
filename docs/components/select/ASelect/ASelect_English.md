@@ -9,33 +9,34 @@ The ASelect component is a dropdown select component. It display a list of optio
   <a-select :modelValue="value" @update:modelValue="handleUpdateModelValue" :items="items" />
 </template>
 <script>
-import { defineComponent } from 'vue';
-import ASelect from '@any-design/anyui/ASelect';
+  import { defineComponent } from 'vue';
+  import ASelect from '@any-design/anyui/ASelect';
 
-export default defineComponent({
-  name: 'MyComponent',
-  components: {
-    ASelect,
-  },
-  data() {
-    return {
-      value: '',
-      items: [
-        { value: 'option1', text: 'Option 1' },
-        { value: 'option2', text: 'Option 2' },
-        { value: 'option3', text: 'Option 3' },
-        { value: 'option4', text: 'Option 4' },
-      ],
-    };
-  },
-  methods: {
-    handleUpdateModelValue(newValue) {
-      this.value = newValue;
+  export default defineComponent({
+    name: 'MyComponent',
+    components: {
+      ASelect,
     },
-  },
-});
+    data() {
+      return {
+        value: '',
+        items: [
+          { value: 'option1', text: 'Option 1' },
+          { value: 'option2', text: 'Option 2' },
+          { value: 'option3', text: 'Option 3' },
+          { value: 'option4', text: 'Option 4' },
+        ],
+      };
+    },
+    methods: {
+      handleUpdateModelValue(newValue) {
+        this.value = newValue;
+      },
+    },
+  });
 </script>
 ```
+
 Here, on click on the ASelect component, a dropdown list of 4 options (option1 to option4) will be shown and user can select only one of them.
 
 ## Props
@@ -110,11 +111,13 @@ Whether the select component should be disabled or not.
 An array of objects. Each object represents an option in the dropdown. Each object must have the properties `value` (the unique identifier of the option) and `text` (the text to display for the option).
 
 ```html
-<a-select :items="[
+<a-select
+  :items="[
   { value: 'option1', text: 'Option 1' },
   { value: 'option2', text: 'Option 2' },
   { value: 'option3', text: 'Option 3' },
-]" />
+]"
+/>
 ```
 
 ### expandIcon
@@ -139,9 +142,3 @@ Emitted when the user selects an option. It sends the new selected value as a pa
 ```html
 <a-select @update:modelValue="handleUpdateModelValue" />
 ```
-
-## Exposed Methods and Values
-
-### None
-
-The ASelect component doesn't have any exposed methods or values.

@@ -1,170 +1,132 @@
-# 虚拟滚动列表组件 AVirtualList 文档
+# @any-design/anyui - 虚拟滚动列表组件
 
-这个组件是一个性能优越、支持自适应和动态高度且使用二叉索引树进行滚动位置查询的虚拟滚动列表组件。其他与其相似的组件需要在组件中设置项高获取器，但是这个组件会自动进行测量并计算出合适的高度。此外，它还支持动态计算项高度。
+这是一个非常快速的虚拟滚动列表组件，它基于二叉索引树来搜索滚动列表，性能十分卓越。与其他具有相同功能的组件不同，我们的虚拟列表不需要用户设置项目高度，它会自动测量适合的项目高度。此外，默认支持动态项目高度。
 
-## 基本用法和示例
+## 基本使用和示例
 
-使用 `AVirtualList` 组件，可以创建一个虚拟滚动列表：
-
-```vue
+```
 <template>
-  <AVirtualList
-    :items="itemList"
-    :estimatedItemHeight="60"
-    keyType="screen"
-    :firstScreenThreshold="20"
-    @scrollToBottom="loadMore"
+  <a-virtual-list // 插入你代码里的标签名
+    :items="list"
+    :buffer="bufferHeight"
   >
-    <template v-slot="{ item }">
-      <div>{{ item }}</div>
-    </template>
-  </AVirtualList>
+    <div slot-scope="{ item }" :style="..." /> // 自定义的组件或模板
+  </a-virtual-list>
 </template>
 
 <script>
-import { ref } from 'vue';
-import { AVirtualList } from '@any-design/anyui';
+  import { defineComponent, ref } from 'vue';
+  import AVirtualList from '@any-design/anyui/dist/AVirtualList'; // 引入组件
 
-export default {
-  components: {
-    AVirtualList,
-  },
-  setup() {
-    const randomData = () => {
-      const arr = Array.from({ length: 2000 }, (_, index) => index);
-      return arr.sort(() => Math.random() - 0.5);
-    };
-
-    const itemList = ref(randomData());
-
-    const loadMore = () => {
-      itemList.value = [...itemList.value, ...randomData()];
-    };
-
-    return {
-      itemList,
-      loadMore,
-    };
-  },
-};
+  export default defineComponent({
+    name: 'Example',
+    middleware() {
+      return [
+        async (resolve) => {
+          const listData = await someData();
+          resolve({ listData });
+        },
+      ];
+    },
+    setup(props) {
+      const list = ref(props.listData);
+      const bufferHeight = 4;
+      return { list, bufferHeight };
+    },
+    components: {
+      AVirtualList, // 注册组件
+    },
+  });
 </script>
 ```
 
-## Props
+## 属性
 
-该组件接受以下 props：
+### items
 
-| 属性名                  | 类型                                          | 默认值                  | 说明                                                               |
-| ----------------------- | --------------------------------------------- | ----------------------- | ------------------------------------------------------------------ |
-| items                   | Array<RawVirtualListItem<unknown>>             | []                      | 需要渲染的数据列表。其元素需要被包装成可虚拟渲染项 `VirtualListItem` |
-| buffer                  | Number                                        | 0                       | 渲染列表时预留下部分的像素                                         |
-| estimatedItemHeight     | Number                                        | undefined               | 估计每个渲染项的高度，组件将在第一次渲染前自动测量出一个合适的高度   |
-| enableDeepWatch         | Boolean                                       | false                   | 是否开启深度侦听                                                   |
-| firstScreenThreshold    | Number                                        | 10                      | 第一屏的渲染元素个数                                               |
-| reuseNodes              | Boolean                                       | true                    | 是否要复用列表项的 DOM 节点                                         |
-| keyType                 | 'batch' \| 'screen' \| 'both' \| 'none'        | 'none'                  | 指定用于唯一确定一个渲染项的键的类型，可选值为 `batch`, `screen`, `both`, `none`。 |
-| @scrollToBottom         | function                                      | -                       | 列表滚动到底部触发的回调函数                                         |
+- 类型: `Array`
+- 默认值: `[]`
+- 必填: 否
 
-## 事件
+包含渲染虚拟列表的数据数组。它将传递给 AVirtualListItem 组件，并最终传递到您的自定义组件。请确保列表中的所有项目都具有唯一的 `id`。
 
-该组件会触发以下事件：
+### buffer
 
-| 事件名          | 说明                   |
-| --------------- | ---------------------- |
-| @scrollToBottom | 列表滚动到底部触发事件 |
+- 类型: `Number`
+- 默认值: `0`
+- 必填: 否
 
-## 通过插槽自定义渲染项
+列表的滚动缓冲区，较大的数字表示渲染的项目数量更多。此属性接受以像素为单位的数字。
 
-使用 `AVirtualList` 渲染列表项时，可以通过设置插槽自定义渲染项。默认情况下，Vue 会将标准化的 `item` 作为插槽的默认作用域。因此，在插槽内直接使用 `item` 即可获取到渲染列表项的数据：
+### estimatedItemHeight
 
-```vue
-<script>
-export default {
-  components: {
-    AVirtualList,
-  },
-  setup() {
-    const itemList = ref([
-      { id: '1', name: 'Peter' },
-      { id: '2', name: 'John' },
-      { id: '3', name: 'Lucy' },
-      { id: '4', name: 'Linda' },
-      { id: '5', name: 'David' },
-    ]);
-    return {
-      itemList,
-    };
-  },
-};
-</script>
+- 类型: `Number`
+- 默认值: `0`
+- 必填: 否
 
-<template>
-  <AVirtualList :items="itemList" :estimatedItemHeight="60">
-    <template v-slot="{ item }">
-      <div>{{ item.name }}</div>
-    </template>
-  </AVirtualList>
-</template>
+如果您已经知道项目的适当高度，则可以在此处设置它以跳过测量高度。
+
+### enableDeepWatch
+
+- 类型: `Boolean`
+- 默认值: `false`
+- 必填: 否
+
+如果设置为 `true`，则组件将对项目进行深度侦听。
+
+### firstScreenThreshold
+
+- 类型: `Number`
+- 默认值: `10`
+- 必填: 否
+
+首屏要显示的元素数量。
+
+### reuseNodes
+
+- 类型: `Boolean`
+- 默认值: `true`
+- 必填: 否
+
+如果设置为 `true`，则此组件将重用 DOM 节点以避免频繁创建和删除 DOM 节点。
+
+### keyType
+
+- 类型: `String`
+- 默认值: `'none'`
+- 必填: 否
+
+项的键类型，它将影响刷新。可以是 `'batch'`（渲染批次的索引），`'screen'`（基于屏幕高度和项目数的一系列索引），`'both'`（使用上述两个索引之一），`'none'`（不使用以前的任何索引，仅使用项的自然索引）。
+
+## 暴露的方法
+
+### refresh
+
+刷新列表，当你的数据源更新时需要调用此方法。
+
 ```
+  <a-button @click="() => list = mockData" />
+  <!-- ... -->
+  <a-virtual-list ref="virtualList" :items="list" />
 
-## 通过 provide/inject 注入 ResizeObserver
-
-当组件中的元素发生大小变化时，可能需要重新计算相应的位置信息。本组件对此封装了 ResizeObserver，并在应用级别通过 `provide/inject` 的方式，将这个观察器注入每个 `VirtualListItem` 组件中，可以方便地自由使用 ResizeObserver 提供的接口。
-
-使用案例：
-
-```vue
-<template>
-  <AVirtualList :items="itemList" :estimatedItemHeight="60">
-    <template v-slot="{ item }">
-      <div class="my-custom-item" data-id="{{ item.id }}" v-resize-observer @init-height="onItemHeightInit">
-        {{ item.name }}
-      </div>
-    </template>
-  </AVirtualList>
-</template>
-
-<script>
-import { ref } from 'vue';
-import { AVirtualList } from '@any-design/anyui';
-
-export default {
-  components: {
-    AVirtualList,
-  },
-  setup() {
+  <script>
     // ...
-    const onItemHeightInit = (payload) => {
-      console.log('Item height is ready:', payload.itemId, payload.height);
+    const refreshList = () => {
+      const { value: virtualList } = refs.virtualList;
+      virtualList.refresh();
     };
-
-    return {
-      // ...
-      onItemHeightInit,
-    };
-  },
-};
-</script>
-
-<style>
-.my-custom-item {
-  font-size: 14px;
-  line-height: 1.5;
-}
-</style>
+  </script>
 ```
 
+### scrollToBottom
 
-## 注意事项
+滚动到底部。
 
-- 组件原则上只应该渲染自身和不依赖其他第三方包的子组件。
-
-- 在组件中，不要渲染 <style> 标签中的样式。
-
-- 组件在内部使用了二叉索引树来计算滚动位置，请勿自行干预。
-
-- 插槽的默认作用域为渲染列表项的数据 `item`。
-
-- 在使用了动态高度的情况下，组件会经过两次渲染。在第一次渲染时如果发现没有提供 `estimatedItemHeight` 属性，那么它会先根据 `firstScreenThreshold` 属性设置的值仅渲染列表的第一批元素，然后测量这些元素的高度并根据统计结果来自动计算合理的 `estimatedItemHeight` 的高度。第二次渲染时将使用新的 `estimatedItemHeight` 属性重新渲染所有元素。
-
-- 通过 provide/inject 方式注入 ResizeObserver 后，会在 AVirtualListItem 中初始化一个 ResizeObserver，并通过 @init-height 事件传递数据。请注意数据格式。
+```
+  <a-button @click="() => scrollToBottom()" />
+
+  <script>
+    // ...
+    const { scrollToBottom } = useContext();
+  </script>
+```

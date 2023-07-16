@@ -6,13 +6,9 @@ The `ARadioButtonGroup` component is part of the `@any-design/anyui` package and
 
 To use `ARadioButtonGroup`, include it in your Vue component like this:
 
-```html
+```vue
 <template>
-  <ARadioButtonGroup
-    :items="radioItems"
-    v-model="selectedItem"
-    :round="isRound"
-  />
+  <ARadioButtonGroup :items="radioItems" v-model="selectedItem" :round="isRound" />
 </template>
 
 <script>

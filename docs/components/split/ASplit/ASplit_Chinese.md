@@ -10,28 +10,18 @@
 <template>
   <ASplit :height="4" color="red" :round="true" margin="20px"></ASplit>
 </template>
-
-<script>
-import { ASplit } from '@any-design/anyui';
-
-export default {
-  components: {
-    ASplit,
-  },
-};
-</script>
 ```
 
 ## Props
 
 该组件接受以下 props：
 
-| 属性名   | 类型                           | 默认值  | 说明                                               |
-| -------- | ------------------------------ | ------- | -------------------------------------------------- |
-| height   | `String`或`Number`类型         | `2`     | 分割线的高度，可以是百分比或数字                   |
-| color    | `String`类型                   | `'var(--line)'`  | 分割线的颜色                                       |
-| margin   | `String`或`Number`类型         | `12`    | 分割线的上下外边距，可以是百分比或数字             |
-| round    | `Boolean`类型                  | `false` | 分割线是否显示带圆角边框                           |
+| 属性名 | 类型                   | 默认值          | 说明                                   |
+| ------ | ---------------------- | --------------- | -------------------------------------- |
+| height | `String`或`Number`类型 | `2`             | 分割线的高度，可以是百分比或数字       |
+| color  | `String`类型           | `'var(--line)'` | 分割线的颜色                           |
+| margin | `String`或`Number`类型 | `12`            | 分割线的上下外边距，可以是百分比或数字 |
+| round  | `Boolean`类型          | `false`         | 分割线是否显示带圆角边框               |
 
 分割线高度示例:
 
@@ -67,7 +57,7 @@ export default {
   },
 };
 </script>
-``` 
+```
 
 ## 暴露的方法与值
 

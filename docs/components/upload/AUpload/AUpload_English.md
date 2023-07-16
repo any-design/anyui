@@ -12,7 +12,7 @@ To use the component, you need to import it from the "@any-design/anyui" package
 </template>
 
 <script setup lang="ts">
-import { AUpload } from '@any-design/anyui';
+  import { AUpload } from '@any-design/anyui';
 </script>
 ```
 
@@ -31,10 +31,10 @@ You can also add slots inside AUpload component based on its status.
 
 The following props are available in the `AUpload` component.
 
-| Prop | Type | Default | Description |
-| ---- | ---- | ------- | ----------- |
-| status | String | `''` | The upload status of the uploader, can be `'default'`, `'uploading'`, `'error'`, `'success'`. |
-| clickable | Boolean | `true` | If `true`, the uploader will be clickable. |
+| Prop      | Type    | Default | Description                                                                                   |
+| --------- | ------- | ------- | --------------------------------------------------------------------------------------------- |
+| status    | String  | `''`    | The upload status of the uploader, can be `'default'`, `'uploading'`, `'error'`, `'success'`. |
+| clickable | Boolean | `true`  | If `true`, the uploader will be clickable.                                                    |
 
 ### status
 
@@ -60,7 +60,7 @@ The `clickable` prop determines whether the AUpload component is clickable or no
 
 The `AUpload` component emits only one event, which is `'upload'`. This event is triggered when a file is chosen by the user or be dropped in the uploader by the user. The first argument of the event is the File object.
 
-```html
+```vue
 <template>
   <a-upload @upload="handleUpload" />
 </template>
@@ -70,7 +70,7 @@ import { AUpload } from '@any-design/anyui';
 
 const handleUpload = (file) => {
   console.log('Selected file: ', file);
-}
+};
 </script>
 ```
 

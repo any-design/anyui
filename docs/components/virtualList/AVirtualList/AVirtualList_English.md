@@ -1,8 +1,8 @@
 # @any-design/anyui Virtual List Component
 
-The **Virtual List Component** is a blazing fast component for scrolling through lists with a large number of items. This component is based on a binary indexed tree to search the scroll top. It provides excellent performance and is suitable for rendering a large amount of data. 
+The **Virtual List Component** is a blazing fast component for scrolling through lists with a large number of items. This component is based on a binary indexed tree to search the scroll top. It provides excellent performance and is suitable for rendering a large amount of data.
 
-One of its key features is that it measures the suitable item height automatically, which makes it unnecessary for you to set the item height getter. This component supports dynamic item height by default and also features an optional scroll buffer for rendering more number of items. 
+One of its key features is that it measures the suitable item height automatically, which makes it unnecessary for you to set the item height getter. This component supports dynamic item height by default and also features an optional scroll buffer for rendering more number of items.
 
 ## Basic Usage
 
@@ -16,12 +16,10 @@ After importing the component, you can use it in your template by including the 
 
 ```vue
 <AVirtualList :items="yourItems" :estimatedItemHeight="35">
-  
   <!-- Use this slot to define the template of item in the list -->
   <template v-slot="{ item }">
     <div>{{ item.title }}</div>
   </template>
-
 </AVirtualList>
 ```
 
@@ -79,20 +77,11 @@ reuseNodes?: boolean;
 
 ### keyType
 
-The key type of the item which will affect the refreshing. It can be  `batch`  (the index of render batch),  `screen`  (a series indexes based on the screen height and the items count),  `both`  (use both of previous two indexes),  `none`  (use none of previous indexes, just use the natural index of the item). This is an optional string property and is `none`  by default.
+The key type of the item which will affect the refreshing. It can be `batch` (the index of render batch), `screen` (a series indexes based on the screen height and the items count), `both` (use both of previous two indexes), `none` (use none of previous indexes, just use the natural index of the item). This is an optional string property and is `none` by default.
 
 ```typescript
 keyType?: 'batch' | 'screen' | 'both' | 'none';
 ```
-
-### Events
-
-The **Virtual List Component** emits two types of events:
-
-- `init-height`: This event is emitted when the initialized height of an item is measured.
-- `update-height`: This event is emitted when the height of an item is updated.
-
-These events are useful when your item height varies depending on the provided data.
 
 ### Exposed Methods
 
@@ -113,7 +102,3 @@ This method scrolls down the list to the bottom of the container.
 ```typescript
 scrollToBottom(): void;
 ```
-
-### Exposed Values
-
-The **Virtual List Component** doesn't have any exposed values.
