@@ -1,26 +1,28 @@
 # AFloat
 
-`<AFloat>` is a Vue component of "@any-design/anyui" package. 
+`<AFloat>` is a Vue component of "@any-design/anyui" package.
 
 ## Usage
 
 Here is an example of how to use `<AFloat>` component :
 
-```html
-<a-float
-  :visible="true"
-  top="200"
-  padding="20"
-  width="400"
-  round-radius="10"
-  z-index="30"
-  lock-scroll="true"
-  :scroll-lock-target="'#app'"
-  @close="handleClose"
-  @update:visible="handleVisible"
->
-  <p>This is the content of AFloat component.</p>
-</a-float>
+```vue
+<template>
+  <a-float
+    :visible="true"
+    top="200"
+    padding="20"
+    width="400"
+    round-radius="10"
+    z-index="30"
+    lock-scroll="true"
+    :scroll-lock-target="'#app'"
+    @close="handleClose"
+    @update:visible="handleVisible"
+  >
+    <p>This is the content of AFloat component.</p>
+  </a-float>
+</template>
 ```
 
 ## Props
@@ -103,7 +105,7 @@ Emitted when the visibility value of the component changes.
 
 ## Methods
 
-`<AFloat>` component exposes no methods.  
+`<AFloat>` component exposes no methods.
 
 ## CSS Classes
 

@@ -1,12 +1,12 @@
 # ACheckbox Component
 
-The `ACheckbox` component is a Vue component that allows the user to select an item by clicking an icon. The component provides an option for a label after the checkbox, a check icon to be shown if the checkbox is checked, and a bound value to the component. 
+The `ACheckbox` component is a Vue component that allows the user to select an item by clicking an icon. The component provides an option for a label after the checkbox, a check icon to be shown if the checkbox is checked, and a bound value to the component.
 
 ## Basic Usage
 
-```
+```vue
 <template>
-  <a-checkbox label="anyui checkbox" v-model="checked"/>
+  <a-checkbox label="anyui checkbox" v-model="checked" />
 </template>
 
 <script>
@@ -38,7 +38,7 @@ A label text after the checkbox.
 
 Example:
 
-```
+```vue
 <a-checkbox label="anyui checkbox" />
 ```
 
@@ -51,7 +51,7 @@ The icon which will be showed when the checkbox is checked.
 
 Example:
 
-```
+```vue
 <a-checkbox check-icon="fas fa-check-circle" />
 ```
 
@@ -64,7 +64,7 @@ The value which will be bound to this component.
 
 Example:
 
-```
+```vue
 <a-checkbox v-model="checked" />
 ```
 
@@ -77,7 +77,7 @@ The class name of icon for transition.
 
 Example:
 
-```
+```vue
 <a-checkbox icon-transition="a-example-icon-transition" />
 ```
 
@@ -91,7 +91,7 @@ Emits when the value changed. With the new value.
 
 Example:
 
-```
+```vue
 <a-checkbox @change="onChange" />
 
 <script>
@@ -101,7 +101,7 @@ export default {
       console.log(newValue);
     },
   },
-}
+};
 </script>
 ```
 
@@ -113,7 +113,7 @@ Emits when the value changed and will update the value in parent.
 
 Example:
 
-```
+```vue
 <a-checkbox v-model="checked" />
 
 <script>
@@ -123,7 +123,7 @@ export default {
       checked: false,
     };
   },
-}
+};
 </script>
 ```
 
@@ -137,7 +137,7 @@ The value of the checkbox, and it is reactive.
 
 Example:
 
-```
+```vue
 <template>
   <a-checkbox v-model="checked" />
   {{ checked }} // true/false

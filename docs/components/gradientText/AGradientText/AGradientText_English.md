@@ -14,8 +14,8 @@ To use the `AGradientText` component, import it from "@any-design/anyui" and add
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { AGradientText } from "@any-design/anyui";
+import { defineComponent } from 'vue';
+import { AGradientText } from '@any-design/anyui';
 
 export default defineComponent({
   components: {
@@ -118,11 +118,3 @@ Example:
   Text with split positioned at 50% of gradient
 </a-gradient-text>
 ```
-
-### Events
-
-The `AGradientText` component does not emit any events.
-
-### Exposed Methods and Values
-
-The `AGradientText` component does not have any exposed methods or values.

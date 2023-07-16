@@ -6,17 +6,15 @@ The `AButton` component is a UI button that can be used in Vue3 and can be custo
 
 ```html
 <template>
-  <AButton type="primary" round size="large" anim>
-    Click me!
-  </AButton>
+  <AButton type="primary" round size="large" anim> Click me! </AButton>
 </template>
 
 <script>
-import AButton from '@any-design/anyui';
+  import AButton from '@any-design/anyui';
 
-export default {
-  components: { AButton },
-};
+  export default {
+    components: { AButton },
+  };
 </script>
 ```
 
@@ -133,11 +131,3 @@ This `iconPosition` prop sets the position of the icon inside the button. The fo
 ```html
 <AButton iconPosition="trailing">Trailing Icon Button</AButton>
 ```
-
-## Events
-
-The `AButton` component does not emit any events.
-
-## Exposed Methods or Values
-
-The `AButton` component doesn't have any exposed methods or values.

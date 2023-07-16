@@ -31,28 +31,28 @@ export default {
 
 该组件接受以下 props：
 
-| 属性名          | 类型                  | 默认值    | 说明                                     |
-| --------------- | --------------------- | --------- | ---------------------------------------- |
-| drawerClass     | String                |           | 应用于抽屉的 class                        |
-| maskClass       | String                |           | 应用于抽屉遮罩的 class                    |
-| bodyClass       | String                |           | 应用于抽屉主体的 class                    |
-| appendToBody    | Boolean               | true      | 是否移动到 body 上                       |
-| position        | DrawerPosition(String) | 'left'    | 抽屉的位置                               |
-| modelValue      | Boolean               | false     | 表示抽屉是否可见的 Boolean 值             |
-| withMask        | Boolean               | true      | 是否显示遮罩                             |
-| width           | String/Number         | '30%'     | 抽屉的宽度                               |
-| zIndex          | Number                | 100       | 抽屉的 z-index                           |
-| maskZIndex      | Number                |           | 遮罩的 z-index                           |
-| transitionName  | String                |           | 抽屉过渡效果的名称                       |
-| lockScroll      | Boolean               | true      | 是否锁定抽屉展开时，父容器不可滚动       |
-| lockTarget      | String                | 'document.body' | 容器锁定的元素                      |
+| 属性名         | 类型                   | 默认值          | 说明                               |
+| -------------- | ---------------------- | --------------- | ---------------------------------- |
+| drawerClass    | String                 |                 | 应用于抽屉的 class                 |
+| maskClass      | String                 |                 | 应用于抽屉遮罩的 class             |
+| bodyClass      | String                 |                 | 应用于抽屉主体的 class             |
+| appendToBody   | Boolean                | true            | 是否移动到 body 上                 |
+| position       | DrawerPosition(String) | 'left'          | 抽屉的位置                         |
+| modelValue     | Boolean                | false           | 表示抽屉是否可见的 Boolean 值      |
+| withMask       | Boolean                | true            | 是否显示遮罩                       |
+| width          | String/Number          | '30%'           | 抽屉的宽度                         |
+| zIndex         | Number                 | 100             | 抽屉的 z-index                     |
+| maskZIndex     | Number                 |                 | 遮罩的 z-index                     |
+| transitionName | String                 |                 | 抽屉过渡效果的名称                 |
+| lockScroll     | Boolean                | true            | 是否锁定抽屉展开时，父容器不可滚动 |
+| lockTarget     | String                 | 'document.body' | 容器锁定的元素                     |
 
 ### position
 
 该属性用于设置抽屉的位置。可以是以下值:
 
-* left(默认)，表示抽屉出现在左侧
-* right，表示抽屉出现在右侧
+- left(默认)，表示抽屉出现在左侧
+- right，表示抽屉出现在右侧
 
 ### width
 
@@ -74,8 +74,8 @@ export default {
 
 该组件将会触发以下事件：
 
-| 事件名          | 说明               |
-| --------------- | ------------------ |
+| 事件名            | 说明             |
+| ----------------- | ---------------- |
 | update:modelValue | 更改视图是否可见 |
 
 ## Slots
@@ -99,22 +99,22 @@ export default {
   <div>
     <button @click="isDrawerVisible = true">打开抽屉</button>
     <ADrawer v-model="isDrawerVisible">
-        <p>这是一个抽屉</p>
+      <p>这是一个抽屉</p>
     </ADrawer>
   </div>
 </template>
 
 <script>
-import { ADrawer } from "@any-design/anyui";
+import { ADrawer } from '@any-design/anyui';
 export default {
   components: {
-    ADrawer
+    ADrawer,
   },
   data() {
     return {
-      isDrawerVisible: false
+      isDrawerVisible: false,
     };
-  }
+  },
 };
 </script>
 ```

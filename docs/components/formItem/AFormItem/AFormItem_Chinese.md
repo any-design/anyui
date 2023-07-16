@@ -8,11 +8,8 @@
 
 ```vue
 <template>
-  <AFormItem 
-    label="用户名"
-    prop="username"
-  >
-    <input type="text" v-model="formData.username">
+  <AFormItem label="用户名" prop="username">
+    <input type="text" v-model="formData.username" />
   </AFormItem>
 </template>
 
@@ -38,8 +35,8 @@ export default {
 
 该组件接受以下 props：
 
-| 属性名 | 类型   | 默认值 | 说明       |
-| ------ | ------ | ------ | ---------- |
+| 属性名 | 类型   | 默认值 | 说明                     |
+| ------ | ------ | ------ | ------------------------ |
 | prop   | String | -      | 表单项在表单数据中的名称 |
 | label  | String | -      | 表单项的标签文本         |
 
@@ -47,11 +44,8 @@ export default {
 
 ```vue
 <template>
-  <AFormItem 
-    label="用户名"
-    prop="username"
-  >
-    <input type="text" v-model="formData.username">
+  <AFormItem label="用户名" prop="username">
+    <input type="text" v-model="formData.username" />
   </AFormItem>
 </template>
 ```
