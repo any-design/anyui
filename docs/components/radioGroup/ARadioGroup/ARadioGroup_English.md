@@ -1,9 +1,10 @@
 # ARadioGroup Component
 
-The `ARadioGroup` component is used to render multiple radio buttons as a group. It accepts an array of objects with `label` and `value` properties as `items` prop. The value of the selected radio button will be bound to the `modelValue` prop. 
+The `ARadioGroup` component is used to render multiple radio buttons as a group. It accepts an array of objects with `label` and `value` properties as `items` prop. The value of the selected radio button will be bound to the `modelValue` prop.
 
 ## Basic Usage
-```html
+
+```vue
 <template>
   <a-radio-group v-model="selected">
     <a-radio :label="1">Radio 1</a-radio>
@@ -22,17 +23,20 @@ export default defineComponent({
 });
 </script>
 ```
+
 In the above example, `a-radio-group` component is used to render a group of radio buttons. The `v-model` directive binds the selected value to `selected` data property. So, initially the first radio button will be selected.
 
 ## Props
 
 ### items
+
 - **Type:** `Array`
 - **Required:** `true`
 
 This prop contains an array of objects with `label` and `value` properties. It is used to render a group of radio buttons.
 
 ### modelValue
+
 - **Type:** `String | Number`
 - **Required:** `false`
 

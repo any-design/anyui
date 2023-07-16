@@ -11,15 +11,3 @@
   <ALoading></ALoading>
 </template>
 ```
-
-## Props
-
-该组件没有 props。
-
-## Events
-
-该组件没有 events。
-
-## 暴露的方法和值
-
-该组件没有暴露的方法或值。

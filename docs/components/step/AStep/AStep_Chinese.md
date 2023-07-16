@@ -8,7 +8,7 @@
 
 ```vue
 <template>
-  <AStep :steps="3" :current="2"/>
+  <AStep :steps="3" :current="2" />
 </template>
 ```
 
@@ -16,16 +16,16 @@
 
 该组件接受以下 props：
 
-| 属性名   | 类型                    | 默认值 | 说明               |
-| -------- | ----------------------- | ------ | ------------------ |
-| steps    | Number \| Array<string> | 2      | 步骤条每一项的文本 |
-| current  | Number                  | 1      | 当前步骤的 index   |
+| 属性名  | 类型                    | 默认值 | 说明               |
+| ------- | ----------------------- | ------ | ------------------ |
+| steps   | Number \| Array<string> | 2      | 步骤条每一项的文本 |
+| current | Number                  | 1      | 当前步骤的 index   |
 
 示例：
 
 ```vue
 <template>
-  <AStep :steps="['step1', 'step2', 'step3']" :current="2"/>
+  <AStep :steps="['step1', 'step2', 'step3']" :current="2" />
 </template>
 
 <script>

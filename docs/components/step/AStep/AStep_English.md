@@ -1,6 +1,6 @@
 # AStep
 
-The `AStep` component is a Vue3 component, which allows you to create a step progress bar. 
+The `AStep` component is a Vue3 component, which allows you to create a step progress bar.
 
 ## Basic Usage
 
@@ -14,8 +14,7 @@ The following example shows how to use this component.
 </template>
 
 <script setup>
-import AStep from '@any-design/anyui';
-
+  import AStep from '@any-design/anyui';
 </script>
 ```
 
@@ -37,8 +36,7 @@ The `steps` prop is used to pass the array or number of steps. The default value
 </template>
 
 <script setup>
-import AStep from '@any-design/anyui';
-
+  import AStep from '@any-design/anyui';
 </script>
 ```
 
@@ -56,8 +54,7 @@ The `current` prop is used to pass the current step number. The default value fo
 </template>
 
 <script setup>
-import AStep from '@any-design/anyui';
-
+  import AStep from '@any-design/anyui';
 </script>
 ```
 

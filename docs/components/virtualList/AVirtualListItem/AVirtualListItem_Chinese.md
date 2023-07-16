@@ -1,54 +1,42 @@
-# AVirtualListItem 组件文档
+# @any-design/anyui VirtualListItem
 
-`AVirtualListItem` 组件用于渲染虚拟列表中的列表项。
+The `VirtualListItem` component is used within the `VirtualList` component to represent an individual item. This component can receive an object of an item that will be passed down from the `VirtualList` component, and will use that object to generate a list item.
 
-## 基本用法和示例
+## 基础用法
 
-使用 `AVirtualListItem` 组件，可以在虚拟列表中渲染每一项：
+在模板中使用 `VirtualListItem`：
 
 ```vue
 <template>
-  <AVirtualListItem :item="item">
-    <div>{{ item.text }}</div>
-  </AVirtualListItem>
+  <VirtualListItem :item="item" @initHeight="handleInitHeight">
+    {{ item.text }}
+  </VirtualListItem>
 </template>
 
-<script>
-import { AVirtualListItem } from '@any-design/anyui';
+<script setup lang="ts">
+import { reactive } from 'vue';
+import { VirtualListItem } from '@any-design/anyui';
 
-export default {
-  components: {
-    AVirtualListItem,
-  },
-  setup() {
-    const item = {
-      id: 'item-1',
-      text: '列表项 1',
-    };
-    return {
-      item,
-    };
-  },
+const item = reactive({ id: '1', text: '列表项' });
+
+const handleInitHeight = (data: { itemId: string; height: number }) => {
+  console.log(`列表项 ${data.itemId} 的高度是 ${data.height}px。`);
 };
 </script>
 ```
 
 ## Props
 
-该组件接受以下 props：
-
-| 属性名 | 类型              | 默认值 | 说明                                                                                        |
-| ------ | ----------------- | ------ | ------------------------------------------------------------------------------------------- |
-| item   | `VirtualListItem` | -      | 虚拟列表中的列表项。此对象应包含 `id` 属性，用于识别列表项并与虚拟列表中其他元素进行交互。 |
+| Name | 类型 | 描述 |
+| ---- | ---- | ---- |
+| item *(required)* | `Object` | 要在列表项中呈现的对象。 |
 
 ## Events
 
-该组件发出以下事件：
+| Name | 描述 |
+| ---- | ---- |
+| initHeight | `initHeight` 事件被用于在列表中被渲染时检查其高度。 当列表项高度的值发生变化时会被重新呈现。 所以 `VirtualListItem` 组件需要检查并在高度发生变化时更新组件中的状态。 这里 `initHeight` 事件会传递一个包含被呈现的项目的 ID 和其高度值的对象。 |
 
-| 事件名     | 说明                         |
-| ---------- | ---------------------------- |
-| `initHeight` | 列表项在首次渲染时触发的事件。 |
+## Exposed Methods or Values
 
-## Methods
-
-该组件并未暴露任何方法和值。
+`VirtualListItem` 组件没有暴露方法或值。

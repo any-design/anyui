@@ -1,70 +1,96 @@
-# @any-design/anyui AMessage Component Documentation
+# AMessage - Message Box
 
-## Introduction
-
-`AMessage` is a message component which provides a border padded dialog that can be aligned with text. It can also incorporate an icon at the beginning of the message. It's mainly used to show contextual messages, notifications and alerts.
+The `AMessage` component is used to display messages to users in a message box format. It offers types for different message boxes, including 'default', 'info', 'warning', 'success', and 'error'. You can use an icon along with your messages to make them more expressive.
 
 ## Basic Usage
 
-```vue
+Here is a basic example of how to use the `AMessage` component:
+
+```html
 <template>
-  <AMessage type="info" content="This is a notification message." />
+  <AMessage type="success" content="Your payment was successful" />
 </template>
+
 <script>
-import AMessage from '@any-design/anyui/lib/AMessage';  //imports the component
+import { AMessage } from '@any-design/anyui';
 
 export default {
-  name: 'myComponent',
-  components: { AMessage },
+  components: {
+    AMessage,
+  },
 };
 </script>
 ```
 
+You can replace "success" with other types, including `info`, `warning`, and `error`.
+
 ## Props
+
+The following props can be passed to the `AMessage` component:
 
 ### type
 
-- Type: `string`
-- Required: `false`
+- Type: String
+- Default: 'default'
+- This prop sets the type of the message box. The available options are 'default', 'info', 'warning', 'success', and 'error'.
 
-Defines the type of the message. It can have `default`, `info`, `warning`, `success` and `error` values. Default value is `default`.
+```html
+<template>
+  <AMessage type="warning" />
+</template>
+```
 
 ### content
 
-- Type: `string`
-- Required: `false`
+- Type: String
+- This prop defines the message to be displayed in the box.
 
-Defines the text content of the message.
+```html
+<template>
+  <AMessage content="Warning: Unauthorized access" />
+</template>
+```
 
 ### icon
 
-- Type: `string`
-- Required: `false`
+- Type: String
+- Default: ''
+- If you want to add an icon to your message, you can set the name of the icon file to this prop.
 
-Defines the icon that will be displayed. If not provided , the message won't display any icon.
+```html
+<template>
+  <AMessage icon="warning-filled" />
+</template>
+```
 
 ### showIcon
 
-- Type: `boolean`
-- Required: `false`
+- Type: Boolean
+- Default: true
+- This prop determines whether the icon should be shown. If you want to hide the icon, you can set this prop to `false`.
 
-Determines whether to show the icon in the message or not. If not provided, the default value is `true`.
+```html
+<template>
+  <AMessage show-icon="false" />
+</template>
+```
 
 ### round
 
-- Type: `boolean`
-- Required: `false`
+- Type: Boolean
+- Default: false
+- If you want to display the message box with a circular shape, you can set this prop to `true`.
 
-Determines whether the message should have a round style or not. If not provided, the default value is `false`.
+```html
+<template>
+  <AMessage round />
+</template>
+```
 
 ## Events
 
 The `AMessage` component doesn't emit any events.
 
-## Exposed Methods or Values
+## Exposed Methods and Values
 
 The `AMessage` component doesn't expose any methods or values.
-
-## Style
-
-The `AMessage` component has various CSS classes that can be used to customize the appearance of the component. However, it could create unwanted effects since the style code is not directly exposed to the user. Therefore, customizing the style is not recommended.

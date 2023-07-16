@@ -16,11 +16,11 @@
 
 该组件接受以下 props：
 
-| 属性名 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| round | Boolean | false | 是否显示圆角 |
-| size | String | 'default' | tag 的尺寸，可以是 'default'，'small'，'large' 中的一种 |
-| color | String | null | tag 的颜色值（hex 格式），如 '#1faeff' |
+| 属性名 | 类型    | 默认值    | 说明                                                    |
+| ------ | ------- | --------- | ------------------------------------------------------- |
+| round  | Boolean | false     | 是否显示圆角                                            |
+| size   | String  | 'default' | tag 的尺寸，可以是 'default'，'small'，'large' 中的一种 |
+| color  | String  | null      | tag 的颜色值（hex 格式），如 '#1faeff'                  |
 
 示例：
 

@@ -10,28 +10,17 @@ AUpload 组件是一个基于 Vue3 开发的 UI 组件。此组件为一个上�
 
 在 Vue3 项目中，可以使用以下方式引入 AUpload 组件：
 
-```
+```vue
 <template>
-  <div>
-    <a-upload @upload="handleUpload">上传文件</a-upload>
-  </div>
+  <a-upload @upload="handleUpload" />
 </template>
 
-<script>
-import { defineComponent } from 'vue';
-import AUpload from '@any-design/anyui/lib/AUpload';
+<script setup lang="ts">
+import { AUpload } from '@any-design/anyui';
 
-export default defineComponent({
-  name: 'MyComponent',
-  components: {
-    AUpload,
-  },
-  methods: {
-    handleUpload(file) {
-      console.log('file:', file);
-    },
-  },
-});
+const handleUpload = (file) => {
+  console.log('Selected file: ', file);
+};
 </script>
 ```
 
@@ -52,7 +41,3 @@ export default defineComponent({
 ## 事件
 
 AUpload 组件会触发 `upload` 事件，当用户选择文件或者将文件拖拽到此组件中时，事件中会传入一个 file 对象，开发者可以处理该文件。
-
-## 方法
-
-AUpload 组件未对外暴露任何方法。
