@@ -23,10 +23,12 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'AStep',
   props: {
+    // the text which will show on every step item
     steps: {
       type: [Number, Array],
       default: 2,
     },
+    // current step
     current: {
       type: Number,
       default: 1,

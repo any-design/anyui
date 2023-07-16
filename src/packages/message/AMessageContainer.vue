@@ -22,6 +22,7 @@ export default defineComponent({
     AMessage,
   },
   props: {
+    // the z-index value of the message
     zIndex: {
       type: Number,
     },

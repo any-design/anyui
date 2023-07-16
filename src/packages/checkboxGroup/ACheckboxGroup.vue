@@ -16,13 +16,16 @@ import { defineComponent, PropType, ref, watch, computed } from 'vue';
 
 export default defineComponent({
   props: {
+    // the values which will be bound to this component.
+    modelValue: {
+      type: Object as PropType<(string | number)[]>,
+    },
+    // the pairing labels to the values.
     items: {
       type: Array as PropType<(string | number)[]>,
       required: true,
     },
-    modelValue: {
-      type: Object as PropType<(string | number)[]>,
-    },
+    // gap between the checkboxes, the unit is px.
     gap: {
       type: Number,
       default: 16,
@@ -46,7 +49,7 @@ export default defineComponent({
 
     const handleItemChange = (checked: boolean, item: string | number) => {
       storedValues.value[item] = checked;
-      // update array to modelValue with checked values
+      // will be emitted when some item was checked or unchecked, to update new values to parent
       emit(
         'update:modelValue',
         props.items.filter((item) => storedValues.value[item]),

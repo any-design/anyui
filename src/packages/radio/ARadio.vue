@@ -23,10 +23,12 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'ARadio',
   props: {
+    // the label of the radio
     label: {
       type: String,
       default: '',
     },
+    // the value of the radio
     checked: {
       type: Boolean,
       default: false,
@@ -38,6 +40,7 @@ export default defineComponent({
       if (props.checked) {
         return;
       }
+      // will be emitted when the value changed
       emit('change', !props.checked);
     };
     return {

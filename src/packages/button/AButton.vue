@@ -26,44 +26,54 @@ import { defineComponent, useSlots, PropType } from 'vue';
 import { Icon } from '@iconify/vue';
 import { ButtonType, IconPosition } from './types';
 
+// This ui component is a button.
 export default defineComponent({
   name: 'AButton',
   components: {
     Icon,
   },
   props: {
+    // Style type of the button
     type: {
       type: String as PropType<ButtonType>,
       default: 'default',
     },
+    // If true, a rounded border will be applied to the button
     round: {
       type: Boolean,
       default: false,
     },
+    // If true, the button will perform an move up animation on hover
     anim: {
       type: Boolean,
       default: false,
     },
+    // Button size
     size: {
       type: String,
       default: 'default',
     },
+    // If true, the button will be disabled
     disabled: {
       type: Boolean,
       default: false,
     },
+    // If true, the button will fill the parent container
     fill: {
       type: Boolean,
       default: false,
     },
+    // If true, the text in the button will have be applied a text-shadow.
     textShadow: {
       type: Boolean,
       default: false,
     },
+    // The icon in the button
     icon: {
       type: String,
       default: '',
     },
+    // The position of the icon
     iconPosition: {
       type: String as PropType<IconPosition>,
       default: 'leading',

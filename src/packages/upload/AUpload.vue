@@ -29,10 +29,12 @@ import type { UploadStatus } from './types';
 export default defineComponent({
   name: 'AUpload',
   props: {
+    // the upload status of the uploader, can be 'default', 'uploading', 'error', 'success'.
     status: {
       type: String as PropType<UploadStatus>,
       default: '',
     },
+    // if true, the uploader will be clickable
     clickable: {
       type: Boolean,
       default: true,
@@ -80,6 +82,7 @@ export default defineComponent({
       }
       const files = e.dataTransfer.files;
       if (files?.length) {
+        // will be emitted when a file is chosen by user or be dropped in the uploader by user.
         this.$emit('upload', files[0]);
       }
       this.dragging = false;

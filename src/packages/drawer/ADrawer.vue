@@ -44,45 +44,71 @@ import { DrawerPosition } from './types';
 
 export default defineComponent({
   props: {
+    // the class will be applied to the drawer.
     drawerClass: {
       type: String,
     },
+    // the class will be applied to the mask layer.
     maskClass: {
       type: String,
     },
+    // the class will be applied to the drawer body.
     bodyClass: {
       type: String,
     },
+    // if true, the drawer will be teleported to body.
     appendToBody: {
       type: Boolean,
       default: true,
     },
+    // the position of the drawer. can be 'left' or 'right'.
     position: {
       type: String as PropType<DrawerPosition>,
       default: 'left',
     },
+    // the visibility value which will be bound to the component.
     modelValue: {
       type: Boolean,
       default: false,
     },
+    // if false, the mask layer will not render.
     withMask: {
       type: Boolean,
       default: true,
     },
+    // the width of the drawer, can be a percentage or a number.
     width: {
       type: [String, Number],
       default: '30%',
     },
+    // the z-index value of the drawer, default value is 100.
     zIndex: {
       type: Number,
       default: 100,
     },
+    // the z-index value of the mask, default value is (z-index - 1).
     maskZIndex: {
       type: Number,
     },
+    // the class name of the drawer transition when it is opening or closing.
     transitionName: {
       type: String,
     },
+    /**
+     * The content of SCROLL_LOCK_PROPS:
+     *
+     * if true, the lockTarget cannot be scrolled when the drawer is opening.
+     * lockScroll: {
+     *   type: Boolean,
+     *   default: true,
+     * },
+     *
+     * The element which will be locked.
+     * lockTarget: {
+     *   type: String,
+     *   default: 'document.body',
+     * },
+     */
     ...SCROLL_LOCK_PROPS,
   },
   emits: ['update:modelValue'],
@@ -131,6 +157,7 @@ export default defineComponent({
     const onMaskClicked = () => {
       useScrollLock(scrollLockTarget.value, false);
       visible.value = false;
+      // will be emitted when the visibility value changed.
       emit('update:modelValue', false);
     };
 

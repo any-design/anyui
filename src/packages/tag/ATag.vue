@@ -13,27 +13,28 @@
 </template>
 
 <script lang="ts">
-import { CSSProperties, defineComponent, PropType, ref, StyleValue } from 'vue';
+import { CSSProperties, defineComponent, PropType, ref } from 'vue';
 import Color from 'color';
 
 export default defineComponent({
   props: {
+    // if true, the tag will have a rounded border
     round: {
       type: Boolean,
       default: false,
     },
+    // size of the tag, can be 'default', 'small', 'large'
     size: {
       type: String as PropType<'default' | 'small' | 'large'>,
       default: 'default',
     },
+    // a color in hex, like '#1faeff'.
     color: {
       type: String,
       default: null,
     },
   },
   setup(props) {
-    const hasColor = ref(!!props.color);
-
     let tagStyles = ref<Partial<CSSProperties> | undefined>();
     if (props.color) {
       tagStyles.value = {

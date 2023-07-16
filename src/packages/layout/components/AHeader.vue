@@ -9,6 +9,7 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
+    // height of the header, need to be a valid CSS height string
     height: {
       type: [Number, String],
       default: '',

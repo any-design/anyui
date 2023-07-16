@@ -30,9 +30,11 @@ import formItemEventEmitterFactory from './bus';
 export default defineComponent({
   name: 'AFormItem',
   props: {
+    // prop name in the form data
     prop: {
       type: String,
     },
+    // the label text in the form item
     label: {
       type: String,
     },

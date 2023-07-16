@@ -11,26 +11,32 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'AGradientText',
   props: {
+    // a full grdient style string
     gradient: {
       type: String,
       default: '',
     },
+    // if true, the gradient will be set to gradient from the secondary color to the primary color
     reverseGradient: {
       type: Boolean,
       default: false,
     },
+    // the text size
     size: {
       type: [String, Number],
       default: '',
     },
+    // the primary color, by default it's the primary color in the theme
     primaryColor: {
       type: String,
       default: 'var(--primary)',
     },
+    // the secondary color, by default it's the secondary color in the theme
     secondaryColor: {
       type: String,
       default: 'var(--secondary)',
     },
+    // the split position in the gradient, a percentage
     splitPercent: {
       type: Number,
       default: 30,

@@ -1,17 +1,23 @@
 # CHANGELOG
 
+## [0.0.55](https://github.com/any-design/anyui/compare/v0.0.53...v0.0.55) (2023-07-16)
+
+### Breaking
+
+- (lottie) remove lottie package, will be replaced with a standalone one.
+
 ## [0.0.54](https://github.com/any-design/anyui/compare/v0.0.52...v0.0.54) (2023-07-10)
 
 ### Bug Fixes
 
-* (chat) scroll bottom sometimes will not work correctly ([7b44e85](https://github.com/any-design/anyui/commit/7b44e857cd7b72d792219f8aff6736e049fba213))
+- (chat) scroll bottom sometimes will not work correctly ([7b44e85](https://github.com/any-design/anyui/commit/7b44e857cd7b72d792219f8aff6736e049fba213))
 
 ## [0.0.53](https://github.com/any-design/anyui/compare/v0.0.52...v0.0.53) (2023-07-07)
 
 ### Features
 
 - (virtual-list) optimize scroll performance ([b0df975](https://github.com/any-design/anyui/commit/b0df975c454dde09c60454ab92d3958ec06630a8))
-- 
+
 ## [0.0.52](https://github.com/any-design/anyui/compare/v0.0.51...v0.0.52) (2023-04-12)
 
 ### Bug Fixes

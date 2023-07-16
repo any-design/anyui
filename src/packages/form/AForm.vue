@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { PropType, defineComponent } from 'vue';
 import ValidateSchema, { Rules } from 'async-validator';
 import type { Rule, ValidateError } from 'async-validator/dist-types/interface';
 import { formatStyleSize } from '../../utils';
@@ -19,16 +19,20 @@ import formEventEmitterFactory from './bus';
 export default defineComponent({
   name: 'AForm',
   props: {
+    // form values which will be bound to this component
     modelValue: {
       type: Object,
     },
+    // a validation rules which can be used in async-validator
     rules: {
       type: Object,
     },
+    // layout type of the component, can be 'default' or 'inline'
     layout: {
-      type: String,
+      type: String as PropType<'default' | 'inline'>,
       default: 'default',
     },
+    // the width of the label. can be percentage or number.
     labelWidth: {
       type: [String, Number],
       default: '20%',
@@ -71,7 +75,6 @@ export default defineComponent({
       });
     };
 
-    // exposed methods
     const validate = async () => {
       if (!props.rules || !Object.keys(props.rules).length) {
         console.warn('[AnyUI][Form] Form has no rules.');
@@ -82,7 +85,7 @@ export default defineComponent({
         await validator.validate(formData);
         handleValidatePassed();
         return true;
-      } catch ({ errors }) {
+      } catch ({ errors }: any) {
         handleValidateErrors(errors);
         return false;
       }
@@ -104,7 +107,7 @@ export default defineComponent({
         await validator.validate(formData);
         handleValidatePassed(field);
         return true;
-      } catch ({ errors }) {
+      } catch ({ errors }: any) {
         handleValidateErrors(errors);
         return false;
       }
@@ -124,13 +127,21 @@ export default defineComponent({
       handleValidatePassed(field);
     };
 
+    // exposed methods and values
     const exposed = {
+      // the event bus of the form.
       emitter,
+      // the formatted label width of the form.
       formattedLabelWidth: formatStyleSize(props.labelWidth),
+      // a method to validate all the form items by rules.
       validate,
+      // a method to validate a single form item by rule.
       validateField,
+      // a method to clear the value of some form item.
       clearField,
+      // a method to clear all the values.
       clearFields,
+      // a method to clear the validation states.
       clearValidation,
     };
 
