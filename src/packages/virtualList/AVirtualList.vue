@@ -250,6 +250,7 @@ const refreshDisplayItems = () => {
           return;
         }
         containerRef.value.scrollTop = containerRef.value.scrollHeight;
+        shouldScrollBottomWhenRefreshing.value = false;
       });
     }
 
