@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.0.56](https://github.com/any-design/anyui/compare/v0.0.55...v0.0.56) (2023-08-10)
+
+
+### Bug Fixes
+
+* virtual list scroll not work issue ([3c42670](https://github.com/any-design/anyui/commit/3c42670c9070a3f94c1ce8a86ceb901c660e006a))
+
 ## [0.0.55](https://github.com/any-design/anyui/compare/v0.0.53...v0.0.55) (2023-07-16)
 
 ### Breaking
