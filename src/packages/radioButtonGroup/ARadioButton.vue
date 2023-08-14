@@ -81,7 +81,7 @@ export default defineComponent({
   transition: color 200ms ease;
 }
 .a-radio-button--selected {
-  color: var(--text-white);
+  color: var(--text-btn);
   cursor: default;
 }
 </style>

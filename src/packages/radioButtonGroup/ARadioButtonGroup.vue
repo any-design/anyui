@@ -200,7 +200,7 @@ export default defineComponent({
   padding: 12px 4px;
   box-sizing: border-box;
   border-radius: 6px;
-  background-color: var(--bg-semi-light);
+  background-color: var(--bg-bright);
   box-shadow: 1px 3px 16px var(--shadow-8);
 
   &__bg {
