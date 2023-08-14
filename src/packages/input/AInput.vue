@@ -372,14 +372,14 @@ export default defineComponent({
 .a-input.a-input--disabled {
   .a-input__inner {
     color: var(--text-disabled);
-    background: var(--disabled);
+    background: var(--bg-disabled);
     cursor: not-allowed;
   }
 }
 
 .a-input.a-input--readonly {
   .a-input__inner {
-    background: var(--readonly);
+    background: var(--bg-readonly);
   }
 }
 

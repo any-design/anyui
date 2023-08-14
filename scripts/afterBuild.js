@@ -70,7 +70,7 @@ const collectDirScss = (dirName) => {
 
 // compile scss to css
 compileToCss(
-  ['./index.css', './default.scss', './responsive.scss']
+  ['./index.scss', './responsive.scss']
     .concat(
       // compile scss in sub folders
       ['basic', 'responsive'].reduce((res, dirName) => {

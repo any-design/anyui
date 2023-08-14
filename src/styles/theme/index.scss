@@ -1,0 +1,28 @@
+@import './global/vars.scss';
+
+@import './color/vars.scss';
+@import './color/generator.scss';
+@import './color/getters.scss';
+
+:root {
+  @include generate-colors($colors, $alphas, $lightness-adjustments);
+  --a-header-height: #{$header-height};
+  --a-footer-height: #{$footer-height};
+  --font-normal: #{$main-font}, -apple-system, BlinkMacSystemFont, 'Microsoft Yahei UI',
+    'Microsoft Yahei', 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol';
+  --anim-duration: #{$anim-duration};
+}
+
+#{$dark-theme-selector} {
+  @include generate-colors($dark-colors, $alphas, $lightness-adjustments);
+}
+
+@if ($enable-prefer-query) {
+  // prefer dark media query
+  @media (prefers-color-scheme: dark) {
+    :root {
+      @include generate-colors($dark-colors, $alphas, $lightness-adjustments);
+    }
+  }
+}

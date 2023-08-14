@@ -30,7 +30,7 @@ body::-webkit-scrollbar-button {
 body::-webkit-scrollbar-thumb {
   width: $scroll-width;
   border-radius: $scroll-width;
-  background: var(--scroll-bar);
+  background: var(--scrollbar);
 }
 
 body::-webkit-scrollbar-track {

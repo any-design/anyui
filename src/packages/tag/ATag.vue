@@ -54,7 +54,7 @@ export default defineComponent({
 .a-tag {
   height: 26px;
   padding: 6px 16px;
-  background: #fff;
+  background: var(--bg-bright);
   color: var(--text);
   box-sizing: border-box;
   display: flex;

@@ -1,0 +1,21 @@
+@function color($name, $alpha) {
+  @return map-get($colors, $name);
+}
+
+@function get-color-with-alpha($color-name, $alpha: 1) {
+  $color-value: map-get($colors, $color-name);
+  @if $color-value != null {
+    @return rgba($color-value, $alpha);
+  } @else {
+    @error "Color named #{$color-name} is not defined in the color map.";
+  }
+}
+
+@function get-color-with-lightness($color-name, $lightness-adjustment: 0%) {
+  $color-value: map-get($colors, $color-name);
+  @if $color-value != null {
+    @return adjust-color($color-value, $lightness: $lightness-adjustment);
+  } @else {
+    @error "Color named #{$color-name} is not defined in the color map.";
+  }
+}

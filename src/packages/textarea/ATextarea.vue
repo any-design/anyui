@@ -334,7 +334,7 @@ export default defineComponent({
     width: 12px;
     height: 12px;
     border-radius: 12px;
-    background-color: var(--scroll-bar);
+    background-color: var(--scrollbar);
     transition: background-color 100ms ease-out;
     border: 3px solid var(--bg);
   }
