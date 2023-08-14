@@ -5,10 +5,6 @@
   @each $name, $value in $colors {
     --#{$name}: #{$value};
 
-    @if $name == 'danger' {
-      --error: #{$value};
-    }
-
     @if map-has-key($alphas, $name) {
       $alpha-values: map-get($alphas, $name);
       @each $alpha in $alpha-values {
