@@ -29,8 +29,8 @@ export default defineComponent({
 
 <style lang="scss">
 .a-header {
-  height: var(--a-header-height);
-  line-height: var(--a-header-height);
+  height: var(--a-header-height, 64px);
+  line-height: var(--a-header-height, 64px);
   box-sizing: border-box;
 }
 </style>

@@ -29,8 +29,8 @@ export default defineComponent({
 
 <style lang="scss">
 .a-footer {
-  height: var(--a-footer-height);
-  line-height: var(--a-footer-height);
+  height: var(--a-footer-height, 64px);
+  line-height: var(--a-footer-height, 64px);
   box-sizing: border-box;
 }
 </style>
