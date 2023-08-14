@@ -110,6 +110,23 @@ The related component and styles will be imported automatically.
 
 <br>
 
+Step 4 (Optional): Import styles on demand:
+
+In the main file you imported `@any-design/anyui`, replace `@any-design/anyui/style/index.css` to `@any-design/anyui/style/theme.css`.
+
+```ts
+import { createApp } from 'vue';
+import AnyUI from '@any-design/anyui';
+// Modify the following line:
+import '@any-design/anyui/styles/theme.css'; // or '@any-design/anyui/styles/theme.scss'
+
+const app = createApp(App);
+
+app.use(AnyUI);
+
+app.mount('#app');
+```
+
 ### Custom Theme
 
 TODO
