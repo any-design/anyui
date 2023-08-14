@@ -17,13 +17,13 @@
 <style lang="scss" scoped>
 .a-layout-inner {
   background-color: var(--primary);
-  color: #fff;
+  color: var(--bg-light);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .a-side {
-  background-color: #fff;
+  background-color: var(--bg-light);
   color: var(--primary);
 }
 .a-content {

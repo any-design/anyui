@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import AnyUI from '../index';
 import App from './app.vue';
-import '../styles/default.scss';
+import '../styles/index.scss';
 
 const app = createApp(App);
 

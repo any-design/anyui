@@ -44,7 +44,7 @@ This is a minimal example:
 import { createApp } from 'vue';
 import AnyUI from '@any-design/anyui';
 // Don't forget to import the style file
-import '@any-design/anyui/styles/default.scss';
+import '@any-design/anyui/styles/index.scss';
 
 const app = createApp(App);
 

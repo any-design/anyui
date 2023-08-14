@@ -482,7 +482,7 @@ onBeforeUnmount(() => {
 .a-virtual-list::-webkit-scrollbar-thumb {
   width: 6px;
   border-radius: 6px;
-  background: var(--scroll-bar);
+  background: var(--scrollbar);
 }
 
 .a-virtual-list::-webkit-scrollbar-track {

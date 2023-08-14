@@ -55,7 +55,7 @@ const addMessage = () => {
   height: 400px;
   padding: 20px 8px;
   box-sizing: border-box;
-  background-color: #fafafa;
+  background: var(--bg-alter);
   box-shadow: 1px 1px 12px var(--shadow-8);
   border-radius: 20px;
 }
