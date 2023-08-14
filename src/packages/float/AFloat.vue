@@ -142,10 +142,14 @@ export default defineComponent({
   opacity: 0;
 }
 
-@media screen and (max-width: 767px) {
-  .a-float {
-    &__content {
-      width: 90% !important;
+@if (not variable-exists(__anyui__enable-responsive-styles__)) or
+  $__anyui__enable-responsive-styles__
+{
+  @media screen and (max-width: 767px) {
+    .a-float {
+      &__content {
+        width: 90% !important;
+      }
     }
   }
 }
