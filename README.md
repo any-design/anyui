@@ -43,8 +43,8 @@ This is a minimal example:
 ```js
 import { createApp } from 'vue';
 import AnyUI from '@any-design/anyui';
-// Don't forget to import the style file
-import '@any-design/anyui/styles/index.scss';
+// DON'T forget to import the style file
+import '@any-design/anyui/styles/index.css'; // or '@any-design/anyui/styles/index.scss'
 
 const app = createApp(App);
 
@@ -109,6 +109,10 @@ Step 3: Directly using components in the template:
 The related component and styles will be imported automatically.
 
 <br>
+
+### Custom Theme
+
+TODO
 
 ### TypeScript Support
 

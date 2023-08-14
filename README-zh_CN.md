@@ -46,7 +46,7 @@ $ yarn add @any-design/anyui
 import { createApp } from 'vue';
 import AnyUI from '@any-design/anyui';
 // 引入默认主题，如果你需要自定义主题，请参考文档做样式引入
-import '@any-design/anyui/styles/index.scss';
+import '@any-design/anyui/styles/index.scss'; // or '@any-design/anyui/styles/index.css'
 
 const app = createApp(App);
 
@@ -95,6 +95,10 @@ export default defineConfig({
   ],
 });
 ```
+
+### 自定义主题
+
+TODO
 
 ### TypeScript 支持
 
