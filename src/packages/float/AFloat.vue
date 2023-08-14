@@ -141,4 +141,12 @@ export default defineComponent({
 .a-float-fade-leave-to {
   opacity: 0;
 }
+
+@media screen and (max-width: 767px) {
+  .a-float {
+    &__content {
+      width: 90% !important;
+    }
+  }
+}
 </style>
