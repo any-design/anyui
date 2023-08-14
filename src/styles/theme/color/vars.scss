@@ -1,0 +1,164 @@
+// colors
+@use 'sass:list';
+@use 'sass:map';
+
+@import './hct.scss';
+
+$gray-chroma-limit: 20 !default;
+$white-tone-limit: 90 !default;
+$black-tone-limit: 25 !default;
+$bright-color-tone-limit: 75 !default;
+$invert-text-btn: false !default;
+
+@function get-dark-colors($colors) {
+  $dark-colors: ();
+  @each $name, $value in $colors {
+    $hct: hct_from_color($value);
+    $hue: nth($hct, 1);
+    $chroma: nth($hct, 2);
+    $tone: nth($hct, 3);
+    $dark-color: null;
+
+    @if $chroma <= $gray-chroma-limit {
+      // invert black and white
+      @if $tone >= $white-tone-limit or $tone <= $black-tone-limit {
+        // specific rules
+        @if $name == 'text-btn' and $tone >= 90 {
+          @if $invert-text-btn {
+            $dark-color: hct($hue, $chroma, 100 - $tone * 0.98);
+          } @else {
+            $dark-color: hct($hue, $chroma, $tone * 0.92);
+          }
+        } @else if (($name == 'shadow' or $name == 'shadow-w')) {
+          @if $tone <= 10 {
+            $dark-color: hct($hue, $chroma * 0.6, $tone + 14);
+          } @else {
+            $dark-color: hct($hue, $chroma * 0.9, $tone * 0.4);
+          }
+        } @else {
+          // general rules
+          $dark-color: hct($hue, $chroma * 0.9, 100 - $tone * 0.98);
+        }
+      } @else {
+        @debug $name, $chroma, $tone;
+        // specifc
+        @if ($name == 'bg-disabled' and $tone >= 80) {
+          $dark-color: hct($hue, $chroma * 0.8, $tone * 0.16);
+        } @else {
+          // make gray color deeper
+          @if $tone > 75 {
+            $dark-color: hct($hue, $chroma * 0.8, $tone * 0.4);
+          } @else {
+            $dark-color: hct($hue, $chroma * 0.8, $tone * 0.58);
+          }
+        }
+      }
+    } @else {
+      @if ($tone >= $bright-color-tone-limit) {
+        $dark-color: hct($hue, $chroma * 0.72, $tone * 0.82);
+      } @else {
+        // to the colors is already dark, there is no need to make it way more darker
+        $dark-color: hct($hue, $chroma * 0.98, $tone * 0.98);
+      }
+    }
+
+    $dark-colors: map.set($dark-colors, $name, $dark-color);
+  }
+  @return $dark-colors;
+}
+
+$default-colors: (
+  primary: rgba(15, 111, 239, 90),
+  secondary: rgba(17, 205, 239, 90),
+  bg: #fbfbfc,
+  bg-readonly: #f2f3f4,
+  bg-disabled: #dadadc,
+  text: #202426,
+  text-secondary: #909293,
+  text-disabled: #a0a1a4,
+  text-placeholder: #aeaeae,
+  text-btn: #fdfdfe,
+  text-white: #fafbfd,
+  icon-fill: #a6a8a9,
+  scrollbar: #c0c2c3,
+  success: rgb(96, 211, 50),
+  warn: rgb(243, 189, 41),
+  danger: rgb(231, 63, 51),
+  info: rgb(47, 124, 224),
+  border: #cecdd0,
+  border-lighter: #d6d8da,
+  line: #eff2f3,
+  shadow: #001220,
+  shadow-w: #fff,
+);
+
+$default-dark-colors: get-dark-colors($default-colors);
+
+// static colors
+$mask-color: rgba(0, 0, 0, 0.8) !default;
+$static-colors: (
+  mask: $mask-color,
+);
+
+$default-alphas: (
+  primary: 100 85 80 75 70 60 40 30 20 18 12 10 8 6 4,
+  secondary: 90 80 70 60 40 30 20,
+  success: 80 60,
+  warn: 80 60,
+  danger: 80 60,
+  error: 80 60,
+  info: 80 60,
+  shadow: 2 4 5 6 8 10 12 18 20 24 25 30 36 40,
+  shadow-w: 10 20 24,
+);
+
+$default-lightness-adjustments: (
+  primary: (
+    l-6: 6%,
+    d-4: -4%,
+  ),
+  bg: (
+    bright: 4.5%,
+    light: 2.5%,
+    semi-light: 1.5%,
+    alter: -0.625%,
+    semi-dark: -1.5%,
+    darker: -3%,
+  ),
+);
+
+// globals
+$colors: ();
+$dark-colors: ();
+$alphas: ();
+$lightness-adjustments: ();
+$enable-prefer-query: true !default;
+$dark-theme-selector: 'html[theme="dark"]' !default;
+
+// merge with user configs
+@if variable-exists(colors) {
+  $colors: map-merge($default-colors, $colors);
+} @else {
+  $colors: $default-colors;
+}
+
+@if variable-exists(alphas) {
+  $alphas: map-merge($default-alphas, $alphas);
+} @else {
+  $alphas: $default-alphas;
+}
+
+@if variable-exists(lightness-adjustments) {
+  $lightness-adjustments: map-merge($default-lightness-adjustments, $lightness-adjustments);
+} @else {
+  $lightness-adjustments: $default-lightness-adjustments;
+}
+
+@if variable-exists(dark-colors) {
+  $dark-colors: map-merge($default-dark-colors, $dark-colors);
+} @else {
+  $dark-colors: $default-dark-colors;
+}
+
+$colors: map-merge($colors, $static-colors);
+$dark-colors: map-merge($dark-colors, $static-colors);

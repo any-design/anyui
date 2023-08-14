@@ -107,7 +107,7 @@ watch(
       background-color: var(--primary-80);
 
       pre {
-        color: var(--text-white);
+        color: var(--text-btn);
       }
     }
   }

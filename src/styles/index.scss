@@ -1,5 +1,9 @@
 @import './basic/variables.scss';
 @import './basic/layout.scss';
 @import './basic/anim.scss';
-// components inject
+
+// components related
 @import './responsive.scss';
+
+// theme
+@import './theme/index.scss';

@@ -1,0 +1,28 @@
+@use 'sass:list';
+@use 'sass:map';
+
+@mixin generate-colors($colors, $alphas, $lightness-adjustments: ()) {
+  @each $name, $value in $colors {
+    --#{$name}: #{$value};
+
+    @if $name == 'danger' {
+      --error: #{$value};
+    }
+
+    @if map-has-key($alphas, $name) {
+      $alpha-values: map-get($alphas, $name);
+      @each $alpha in $alpha-values {
+        --#{$name}-#{$alpha}: #{rgba($value, $alpha * 0.01)};
+      }
+    }
+
+    @if variable-exists(lightness-adjustments) {
+      $adjustments: map-get($lightness-adjustments, $name);
+      @each $adjustment-name, $adjustment-value in $adjustments {
+        @if $adjustment-value != null {
+          --#{$name}-#{$adjustment-name}: #{adjust-color($value, $lightness: $adjustment-value)};
+        }
+      }
+    }
+  }
+}

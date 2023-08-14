@@ -152,25 +152,25 @@ export default defineComponent({
 }
 .a-button.a-button--primary {
   background: var(--primary);
-  color: var(--btn);
+  color: var(--text-btn);
   border: none;
 }
 .a-button.a-button--gradient {
   box-shadow: 0 3px 14px var(--shadow-18);
   background: linear-gradient(42deg, var(--primary), var(--secondary));
-  color: var(--btn);
+  color: var(--text-btn);
   border: none;
 }
 .a-button.a-button--gradient-reverse {
   background: linear-gradient(42deg, var(--secondary), var(--primary));
   box-shadow: 0 3px 14px var(--shadow-18);
-  color: var(--btn);
+  color: var(--text-btn);
   border: none;
 }
 .a-button.a-button--depth {
   background: linear-gradient(180deg, var(--primary-l-6) 36%, var(--primary-d-4));
   box-shadow: 0 3px 14px var(--shadow-18);
-  color: var(--btn);
+  color: var(--text-btn);
   border: none;
 }
 .a-button.a-button--primary:hover {
@@ -191,7 +191,7 @@ export default defineComponent({
 .a-button.a-button--disabled {
   transition: none;
   border: none;
-  background: var(--disabled) !important;
+  background: var(--bg-disabled) !important;
   color: var(--text-disabled) !important;
   box-shadow: 0 3px 12px var(--shadow-5);
   cursor: not-allowed;
