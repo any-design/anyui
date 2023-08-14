@@ -88,7 +88,7 @@ export default defineComponent({
   box-shadow: 0px 2px 8px var(--shadow-10);
   box-sizing: border-box;
   margin-bottom: 12px;
-  background: var(--bg-semi-light);
+  background: var(--bg-bright);
   user-select: none;
   &__icon {
     width: 18px;
@@ -128,13 +128,13 @@ export default defineComponent({
   }
 }
 .a-message--error {
-  background: var(--error);
+  background: var(--danger);
   .a-message__text {
     color: var(--text-white);
   }
 }
 .a-message--warning {
-  background: var(--warning);
+  background: var(--warn);
   .a-message__text {
     color: var(--text-white);
   }
