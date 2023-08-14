@@ -75,7 +75,7 @@ export default defineComponent({
         width: 42px;
         height: 42px;
         line-height: 42px;
-        background: var(--disabled);
+        background: var(--bg-disabled);
         color: var(--text-disabled);
         border-radius: 50%;
         display: flex;
@@ -95,7 +95,7 @@ export default defineComponent({
     }
     .a-step-item--current {
       .a-step-item__circle {
-        background: var(--primary-full);
+        background: var(--primary-100);
         color: var(--bg);
       }
       .a-step-item__name {

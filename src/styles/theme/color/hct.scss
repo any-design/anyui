@@ -1,0 +1,498 @@
+// Copyright 2021 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@use 'sass:list';
+@use 'sass:color';
+@use 'sass:math';
+
+@function lerp($a, $b, $amount) {
+  @return $a + (($b - $a) * $amount);
+}
+
+@function signum($num) {
+  @if $num < 0 {
+    @return -1;
+  } @else if $num == 0 {
+    @return 0;
+  } @else {
+    @return 1;
+  }
+}
+
+@function whitePoint_D65() {
+  @return (95.047, 100, 108.883);
+}
+
+@function srgb_linear($rgb0to255) {
+  $rgb0to1: math.div($rgb0to255, 255);
+  @if ($rgb0to1 <= 0.04045) {
+    @return math.div($rgb0to1, 12.92) * 100;
+  } @else {
+    @return math.pow(math.div($rgb0to1 + 0.055, 1.055), 2.4) * 100;
+  }
+}
+
+@function srgb_delinear($rgb0to100) {
+  $normalized: $rgb0to100 * 0.01;
+  $delinearized: 0;
+  @if ($normalized <= 0.0031308) {
+    $delinearized: $normalized * 12.92;
+  } @else {
+    $delinearized: 1.055 * math.pow($normalized, math.div(1, 2.4)) - 0.055;
+  }
+  @return clamp_num(math.round($delinearized * 255), 0, 255);
+}
+
+@function xyz_from_srgb($rgb) {
+  $r1: srgb_linear(color.red($rgb));
+  $g1: srgb_linear(color.green($rgb));
+  $b1: srgb_linear(color.blue($rgb));
+  $x: 0.41233895 * $r1 + 0.35762064 * $g1 + 0.18051042 * $b1;
+  $y: 0.2126 * $r1 + 0.7152 * $g1 + 0.0722 * $b1;
+  $z: 0.01932141 * $r1 + 0.11916382 * $g1 + 0.95034478 * $b1;
+  @return ($x, $y, $z);
+}
+
+@function srgb_from_xyz($x, $y, $z) {
+  $rL: 3.2406 * $x + -1.5372 * $y + -0.4986 * $z;
+  $gL: -0.9689 * $x + 1.8758 * $y + 0.0415 * $z;
+  $bL: 0.0557 * $x + -0.204 * $y + 1.057 * $z;
+  $r: srgb_delinear($rL);
+  $g: srgb_delinear($gL);
+  $b: srgb_delinear($bL);
+  @return rgba($r, $g, $b, 1);
+}
+
+@function set_alpha($color, $a) {
+  $r: color.red($color);
+  $g: color.green($color);
+  $b: color.blue($color);
+  @return rgba($r, $g, $b, $a);
+}
+
+@function srgb_from_lstar($lstar) {
+  $fy: math.div($lstar + 16, 116);
+  $fz: $fy;
+  $fx: $fy;
+  $kappa: math.div(24389, 27);
+  $epsilon: math.div(216, 24389);
+  $lExceedsEpsilonKappa: $lstar > 8;
+
+  $y: 0;
+  @if $lExceedsEpsilonKappa {
+    $y: $fy * $fy * $fy;
+  } @else {
+    $y: math.div($lstar, $kappa);
+  }
+
+  $cubeExceedEpsilon: $fy * $fy * $fy > $epsilon;
+  $x: 0;
+  $z: 0;
+  @if $cubeExceedEpsilon {
+    $x: $fx * $fx * $fx;
+    $z: $x;
+  } @else {
+    $x: math.div($lstar, $kappa);
+    $z: $x;
+  }
+  $whitePoint: whitePoint_D65();
+  @return srgb_from_xyz(
+    $x * list.nth($whitePoint, 1),
+    $y * list.nth($whitePoint, 2),
+    $z * list.nth($whitePoint, 3)
+  );
+}
+
+@function y_from_lstar($lstar) {
+  $ke: 8;
+  @if $lstar > $ke {
+    @return math.pow(math.div($lstar + 16, 116), 3) * 100;
+  } @else {
+    @return math.div(math.div($lstar, 24389), 27) * 100;
+  }
+}
+
+@function lstar_from_srgb($rgb) {
+  $y: list.nth(xyz_from_srgb($rgb), 2);
+  $y: $y * 0.01;
+  $e: math.div(216, 24389);
+  $y_intermediate: 0;
+  @if $y <= $e {
+    @return math.div(24389, 27) * $y;
+  } @else {
+    $y_intermediate: math.pow($y, math.div(1, 3));
+  }
+  @return (116 * $y_intermediate) - 16;
+}
+
+@function cam16_from_srgb($srgb) {
+  $xyz: xyz_from_srgb($srgb);
+  $x: list.nth($xyz, 1);
+  $y: list.nth($xyz, 2);
+  $z: list.nth($xyz, 3);
+
+  $rC: +0.401288 * $x + 0.650173 * $y - 0.051461 * $z;
+  $gC: -0.250268 * $x + 1.204414 * $y + 0.045854 * $z;
+  $bC: -0.002079 * $x + 0.048952 * $y + 0.953127 * $z;
+
+  $viewing_conditions: srgb_viewing_conditions();
+  $rgbD: list.nth($viewing_conditions, 12);
+  $rD: list.nth($rgbD, 1) * $rC;
+  $gD: list.nth($rgbD, 2) * $gC;
+  $bD: list.nth($rgbD, 3) * $bC;
+
+  $fl: list.nth($viewing_conditions, 13);
+  $rAF: math.pow($fl * math.abs($rD) * 0.01, 0.42);
+  $gAF: math.pow($fl * math.abs($gD) * 0.01, 0.42);
+  $bAF: math.pow($fl * math.abs($bD) * 0.01, 0.42);
+
+  $rA: math.div(signum($rD) * 400 * $rAF, $rAF + 27.13);
+  $gA: math.div(signum($gD) * 400 * $gAF, $gAF + 27.13);
+  $bA: math.div(signum($bD) * 400 * $bAF, $bAF + 27.13);
+
+  $a: math.div(11 * $rA + -12 * $gA + $bA, 11);
+  $b: math.div($rA + $gA - 2 * $bA, 9);
+  $u: (20 * $rA + 20 * $gA + 21 * $bA) * 0.05;
+  $p2: (40 * $rA + 20 * $gA + $bA) * 0.05;
+
+  $atanDegrees: math.atan2($b, $a);
+  $hue: $atanDegrees;
+  @if $hue < 0 {
+    $hue: $hue + 360;
+  } @else if $hue >= 360 {
+    $hue: $hue - 360;
+  }
+
+  $ncb: list.nth($viewing_conditions, 9);
+  $nbb: list.nth($viewing_conditions, 8);
+  $z: list.nth($viewing_conditions, 15);
+  $aw: list.nth($viewing_conditions, 7);
+  $c: list.nth($viewing_conditions, 10);
+  $nC: list.nth($viewing_conditions, 11);
+  $flRoot: list.nth($viewing_conditions, 14);
+  $n: list.nth($viewing_conditions, 6);
+
+  $ac: $p2 * $nbb;
+  $j: 100 * math.pow(math.div($ac, $aw), $c * $z);
+  $q: math.div(4, $c) * math.sqrt($j * 0.01) * ($aw + 4) * $flRoot;
+  $huePrime: 0;
+  @if $hue < 20.14 {
+    $huePrime: $hue + 360;
+  } @else {
+    $huePrime: $hue;
+  }
+  $eHue: (1 * 0.25) * (math.cos($huePrime + 114.592) + 3.8);
+  $p1: math.div(50000, 13) * $eHue * $nC * $ncb;
+  $t: math.div($p1 * math.sqrt($a * $a + $b * $b), $u + 0.305);
+  $alpha: math.pow($t, 0.9) * math.pow(1.64 - math.pow(0.29, $n), 0.73);
+  $chroma: $alpha * math.sqrt($j * 0.01);
+  $m: $chroma * $flRoot;
+  $s: 50 * math.sqrt(math.div($alpha * $c, $aw + 4));
+
+  $jstar: math.div((1 + 100 * 0.007) * $j, 1 + 0.007 * $j);
+  $mstar: math.div(1, 0.0228) * math.log(1 + 0.0228 * $m);
+  $astar: $mstar * math.cos($hue);
+  $bstar: $mstar * math.sin($hue);
+  @return ($hue, $chroma, $j, $q, $m, $s, $jstar, $astar, $bstar);
+}
+
+@function cam16_from_jch($j, $chroma, $hue, $viewing_conditions) {
+  $aw: list.nth($viewing_conditions, 7);
+  $c: list.nth($viewing_conditions, 10);
+  $flRoot: list.nth($viewing_conditions, 14);
+
+  $q: math.div(4, $c) * math.sqrt($j * 0.01) * ($aw + 4) * $flRoot;
+  $m: $chroma * $flRoot;
+  $alpha: math.div($chroma, math.sqrt($j * 0.01));
+  $s: 50 * math.sqrt(math.div($alpha * $c, $aw + 4));
+
+  $jstar: math.div((1 + 100 * 0.007) * $j, 1 + 0.007 * $j);
+  $mstar: math.div(1, 0.0228) * math.log(1 + 0.0228 * $m);
+  $astar: $mstar * math.cos($hue);
+  $bstar: $mstar * math.sin($hue);
+  @return ($hue, $chroma, $j, $q, $m, $s, $jstar, $astar, $bstar);
+}
+
+@function srgb_from_cam16($cam16, $viewing_conditions) {
+  $hue: list.nth($cam16, 1);
+  $chroma: list.nth($cam16, 2);
+  $j: list.nth($cam16, 3);
+  $n: list.nth($viewing_conditions, 6);
+  $aw: list.nth($viewing_conditions, 7);
+  $nbb: list.nth($viewing_conditions, 8);
+  $ncb: list.nth($viewing_conditions, 9);
+  $c: list.nth($viewing_conditions, 10);
+  $nC: list.nth($viewing_conditions, 11);
+  $rgbD: list.nth($viewing_conditions, 12);
+  $fl: list.nth($viewing_conditions, 13);
+  $z: list.nth($viewing_conditions, 15);
+
+  $alpha: 0;
+  @if $chroma != 0 and $j != 0 {
+    $alpha: math.div($chroma, math.sqrt($j * 0.01));
+  }
+
+  $t: math.pow(math.div($alpha, math.pow(1.64 - math.pow(0.29, $n), 0.73)), math.div(1, 0.9));
+  $eHue: 0.25 * (math.cos($hue + 114.592) + 3.8);
+  $ac: $aw * math.pow($j * 0.01, math.div(math.div(1, $c), $z));
+  $p1: $eHue * math.div(50000, 13) * $nC * $ncb;
+  $p2: math.div($ac, $nbb);
+
+  $hSin: math.sin($hue);
+  $hCos: math.cos($hue);
+
+  $gamma: math.div(23 * ($p2 + 0.305) * $t, 23 * $p1 + 11 * $t * $hCos + 108 * $t * $hSin);
+  $a: $gamma * $hCos;
+  $b: $gamma * $hSin;
+  $rA: math.div(460 * $p2 + 451 * $a + 288 * $b, 1403);
+  $gA: math.div(460 * $p2 - 891 * $a - 261 * $b, 1403);
+  $bA: math.div(460 * $p2 - 220 * $a - 6300 * $b, 1403);
+
+  $rCBase: math.max(0, math.div(27.13 * math.abs($rA), 400 - math.abs($rA)));
+  $rC: signum($rA) * math.div(100, $fl) * math.pow($rCBase, math.div(1, 0.42));
+  $gCBase: math.max(0, math.div(27.13 * math.abs($gA), 400 - math.abs($gA)));
+  $gC: signum($gA) * math.div(100, $fl) * math.pow($gCBase, math.div(1, 0.42));
+  $bCBase: math.max(0, math.div(27.13 * math.abs($bA), 400 - math.abs($bA)));
+  $bC: signum($bA) * math.div(100, $fl) * math.pow($bCBase, math.div(1, 0.42));
+  $rF: math.div($rC, list.nth($rgbD, 1));
+  $gF: math.div($gC, list.nth($rgbD, 2));
+  $bF: math.div($bC, list.nth($rgbD, 3));
+
+  $x: +1.86206786 * $rF - 1.01125463 * $gF + 0.14918677 * $bF;
+  $y: +0.38752654 * $rF + 0.62144744 * $gF - 0.00897398 * $bF;
+  $z: -0.0158415 * $rF - 0.03412294 * $gF + 1.04996444 * $bF;
+
+  @return srgb_from_xyz($x, $y, $z);
+}
+
+@function clamp_num($num, $min, $max) {
+  @if $num < $min {
+    @return $min;
+  }
+  @if $num > $max {
+    @return $max;
+  }
+
+  @return $num;
+}
+
+@function srgb_viewing_conditions() {
+  @return viewing_conditions(
+    whitePoint_D65(),
+    (math.div(200, math.$pi) * 18.42 * 0.01),
+    50,
+    2,
+    false
+  );
+}
+@function viewing_conditions(
+  $whitePoint,
+  $adaptingLuminance,
+  $backgroundLstar,
+  $surround,
+  $discountingIlluminant
+) {
+  @if list.length($whitePoint) < 3 {
+    $whitePoint: whitePoint_D65();
+  }
+
+  $rW: list.nth($whitePoint, 1) * 0.401288 + list.nth($whitePoint, 2) * 0.650173 +
+    list.nth($whitePoint, 3) * -0.051461;
+  $gW: list.nth($whitePoint, 1) * -0.250268 + list.nth($whitePoint, 2) * 1.204414 +
+    list.nth($whitePoint, 3) * 0.045854;
+  $bW: list.nth($whitePoint, 1) * -0.002079 + list.nth($whitePoint, 2) * 0.048952 +
+    list.nth($whitePoint, 3) * 0.953127;
+  $f: 0.8 + ($surround * 0.1);
+  $c: 0;
+  @if $f >= 0.9 {
+    $c: lerp(0.59, 0.69, (($f - 0.9) * 10));
+  } @else {
+    $c: lerp(0.525, 0.59, (($f - 0.8) * 10));
+  }
+
+  $d: 0;
+  @if $discountingIlluminant {
+    $d: 1;
+  } @else {
+    $d: $f *
+      (1 - (math.div(1, 3.6) * math.pow(math.$e, math.div(-1 * $adaptingLuminance - 42, 92))));
+  }
+  $d: clamp_num($d, 0, 1);
+  $nc: $f;
+  $rgbD: (
+    $d * math.div(100, $rW) + 1 - $d,
+    $d * math.div(100, $gW) + 1 - $d,
+    $d * math.div(100, $bW) + 1 - $d
+  );
+  $k: math.div(1, 5 * $adaptingLuminance + 1);
+  $k4: $k * $k * $k * $k;
+  $k4F: 1 - $k4;
+  $fl: ($k4 * $adaptingLuminance) +
+    (0.1 * $k4F * $k4F * math.pow(5 * $adaptingLuminance, math.div(1, 3)));
+  $n: math.div(y_from_lstar($backgroundLstar), list.nth($whitePoint, 2));
+  $z: 1.48 + math.sqrt($n);
+  $nbb: math.div(0.725, math.pow($n, 0.2));
+  $ncb: $nbb;
+
+  // Discounted cone responses to the white point, adjusted for post-saturationtic
+  // adaptation perceptual nonlinearities.
+  $rgbAFactors: (
+    math.pow($fl * list.nth($rgbD, 1) * $rW * 0.01, 0.42),
+    math.pow($fl * list.nth($rgbD, 2) * $gW * 0.01, 0.42),
+    math.pow($fl * list.nth($rgbD, 3) * $bW * 0.01, 0.42)
+  );
+
+  $rgbA: (
+    math.div(400 * list.nth($rgbAFactors, 1), list.nth($rgbAFactors, 1) + 27.13),
+    math.div(400 * list.nth($rgbAFactors, 2), list.nth($rgbAFactors, 2) + 27.13),
+    math.div(400 * list.nth($rgbAFactors, 3), list.nth($rgbAFactors, 3) + 27.13)
+  );
+
+  $aw: (40 * list.nth($rgbA, 1) + 20 * list.nth($rgbA, 2) + list.nth($rgbA, 3)) * 0.05 * $nbb;
+
+  @return (
+    $whitePoint,
+    $adaptingLuminance,
+    $backgroundLstar,
+    $surround,
+    $discountingIlluminant,
+    $n,
+    $aw,
+    $nbb,
+    $ncb,
+    $c,
+    $nc,
+    $rgbD,
+    $fl,
+    math.pow($fl, 0.25),
+    $z
+  );
+}
+
+@function cam16_from_hct($hue, $chroma, $tone, $viewing_conditions) {
+  @if $chroma < 1 or math.round($tone) <= 0 or math.round($tone) >= 100 {
+    @return cam16_from_srgb(srgb_from_lstar($tone));
+  }
+
+  $hue: clamp_num($hue, 0, 360);
+  $high: $chroma;
+  $mid: $chroma;
+  $low: 0;
+  $isFirstLoop: true;
+  $answer: false;
+
+  $CHROMA_SEARCH_ENDPOINT: 0.4;
+  @while math.abs($low - $high) >= $CHROMA_SEARCH_ENDPOINT {
+    $possibleAnswer: cam16_by_j($hue, $mid, $tone, $viewing_conditions);
+
+    @if $isFirstLoop {
+      @if $possibleAnswer != false {
+        @return $possibleAnswer;
+      } @else {
+        $isFirstLoop: false;
+        $mid: $low + (($high - $low) * 0.5);
+      }
+    } @else {
+      @if $possibleAnswer == false {
+        $high: $mid;
+      } @else {
+        $answer: $possibleAnswer;
+        $low: $mid;
+      }
+      $mid: $low + (($high - $low) * 0.5);
+    }
+  }
+
+  @if $answer == false {
+    @return cam16_from_srgb(srgb_from_lstar($tone));
+  }
+  @return $answer;
+}
+
+@function cam16_deltaE($a, $b) {
+  $dj: list.nth($a, 7) - list.nth($b, 7);
+  $da: list.nth($a, 8) - list.nth($b, 8);
+  $db: list.nth($a, 9) - list.nth($b, 9);
+  $dePrime: math.sqrt($dj * $dj + $da * $da + $db * $db);
+  $de: 1.41 * math.pow($dePrime, 0.63);
+  @return $de;
+}
+
+@function cam16_by_j($hue, $chroma, $tone, $viewing_conditions) {
+  $low: 0;
+  $mid: 0;
+  $high: 100;
+
+  $bestdL: 1000;
+  $bestdE: 1000;
+
+  $dlMax: 0.2;
+  $deMax: 1;
+  $deMaxError: 0.000000001;
+  $bestCam: false;
+
+  $LIGHTNESS_SEARCH_ENDPOINT: 0.4;
+  @while math.abs($low - $high) >= $LIGHTNESS_SEARCH_ENDPOINT {
+    $mid: $low + (($high - $low) * 0.5);
+    $camBeforeClip: cam16_from_jch($mid, $chroma, $hue, $viewing_conditions);
+    $clipped: srgb_from_cam16($camBeforeClip, $viewing_conditions);
+    $clippedLstar: lstar_from_srgb($clipped);
+    $dl: math.abs($tone - $clippedLstar);
+    @if $dl < $dlMax {
+      $camClipped: cam16_from_srgb($clipped);
+      $de: cam16_deltaE(
+        $camClipped,
+        cam16_from_jch(
+          list.nth($camClipped, 3),
+          list.nth($camClipped, 2),
+          $hue,
+          $viewing_conditions
+        )
+      );
+      @if (($de <= $deMax and $de < $bestdE) and $dl < $dlMax) {
+        $bestdL: $dl;
+        $bestdE: $de;
+        $bestCam: $camClipped;
+      }
+    }
+
+    @if $bestdL == 0 and $bestdE < $deMaxError {
+      @return $bestCam;
+    }
+
+    @if $clippedLstar < $tone {
+      $low: $mid;
+    } @else {
+      $high: $mid;
+    }
+  }
+
+  @return $bestCam;
+}
+
+@function hct($hue, $chroma, $tone) {
+  $vc: srgb_viewing_conditions();
+  @return srgb_from_cam16(cam16_from_hct($hue, $chroma, $tone, $vc), $vc);
+}
+
+@function hcta($hue, $chroma, $tone, $alpha) {
+  @return set_alpha(hct($hue, $chroma, $tone), $alpha);
+}
+
+@function hct_from_color($color) {
+  $vc: srgb_viewing_conditions();
+  $cam16: cam16_from_srgb($color);
+  $lstar: lstar_from_srgb($color);
+  @return (list.nth($cam16, 1), list.nth($cam16, 2), $lstar);
+}
