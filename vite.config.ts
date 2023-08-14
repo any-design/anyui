@@ -37,6 +37,13 @@ const BUILD_CONFIGS = {
       },
       cssCodeSplit: false,
     },
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@import "@/styles/global/vars.scss";`,
+        },
+      },
+    },
   },
   RESOLVER: {
     plugins: [dts()],
