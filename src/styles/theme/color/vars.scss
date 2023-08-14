@@ -40,7 +40,6 @@ $invert-text-btn: false !default;
           $dark-color: hct($hue, $chroma * 0.9, 100 - $tone * 0.98);
         }
       } @else {
-        @debug $name, $chroma, $tone;
         // specifc
         @if ($name == 'bg-disabled' and $tone >= 80) {
           $dark-color: hct($hue, $chroma * 0.8, $tone * 0.16);
