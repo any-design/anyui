@@ -76,7 +76,7 @@ export default defineComponent({
   box-shadow: 0 8px 12px var(--shadow-5);
   border-radius: 16px;
   overflow: hidden;
-  background: var(--bg-semi-light);
+  background: var(--bg-bright);
   display: block;
   text-decoration: none;
   user-select: none;
@@ -116,7 +116,7 @@ export default defineComponent({
     height: max-content;
     position: relative;
     padding: 10px 18px 11px 18px;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--border-semi-dark);
   }
 }
 .a-card--has-link {
@@ -128,7 +128,6 @@ export default defineComponent({
   }
   .a-card-footer {
     padding: 0;
-    background: var(--bg-semi-light);
     border: none;
   }
 }
