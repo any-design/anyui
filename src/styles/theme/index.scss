@@ -18,7 +18,7 @@
   @include generate-colors($dark-colors, $alphas, $lightness-adjustments);
 }
 
-@if ($enable-prefer-query) {
+@if $enable-prefer-query {
   // prefer dark media query
   @media (prefers-color-scheme: dark) {
     :root {
