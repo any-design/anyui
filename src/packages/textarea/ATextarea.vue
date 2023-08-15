@@ -294,9 +294,9 @@ export default defineComponent({
     resize: none;
     box-sizing: border-box;
     padding: 8px 12px;
-    border: 1px solid var(--border-lighter);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: var(--bg-semi-light);
+    background: var(--bg-light);
     color: var(--text);
     text-shadow: 1px 1px 2px var(--shadow-2);
     transition: border-color 100ms ease-out, box-shadow 100ms ease-out;

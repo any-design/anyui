@@ -89,11 +89,11 @@ export default defineComponent({
   &-checker {
     width: 20px;
     height: 20px;
-    border: 1px solid var(--border-lighter);
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--bg-semi-light);
+    background-color: var(--bg-light);
     margin-right: 10px;
     box-shadow: 0px 2px 8px var(--shadow-5);
     border-radius: 4px;

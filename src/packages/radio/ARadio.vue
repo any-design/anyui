@@ -60,9 +60,9 @@ export default defineComponent({
     width: 20px;
     height: 20px;
     border-radius: 10px;
-    background: var(--bg-semi-light);
+    background: var(--bg-light);
     box-shadow: 0px 2px 8px var(--shadow-5);
-    border: 1px solid var(--border-lighter);
+    border: 1px solid var(--border);
     margin-right: 10px;
     display: flex;
     align-items: center;

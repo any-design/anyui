@@ -85,7 +85,7 @@ $default-colors: (
   danger: rgb(231, 63, 51),
   info: rgb(47, 124, 224),
   border: #cecdd0,
-  border-lighter: #d6d8da,
+
   line: #eff2f3,
   shadow: #001220,
   shadow-w: #fff,
@@ -123,6 +123,14 @@ $default-lightness-adjustments: (
     alter: -0.625%,
     semi-dark: -1.5%,
     darker: -3%,
+  ),
+  border: (
+    lighter: 6%,
+    light: 4%,
+    semi-light: 2%,
+    semi-dark: -2.5%,
+    dark: -4.75%,
+    darker: -6%,
   ),
 );
 
