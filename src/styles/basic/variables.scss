@@ -1,7 +1,9 @@
 $comp-height--default: 40px;
 $comp-height--large: 48px;
+$scroll-width: var(--scroll-width, 8px);
 
 :root {
   --comp-height--default: #{$comp-height--default};
   --comp-height--large: #{$comp-height--large};
+  --scroll-width: #{$scroll-width};
 }

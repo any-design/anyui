@@ -1,4 +1,4 @@
-$main-font: 'Quicksand' !default;
-$header-height: 64px !default;
-$footer-height: 64px !default;
+$main-font: var(--main-font, 'Quicksand') !default;
+$header-height: var(--header-height, 64px) !default;
+$footer-height: var(--footer-height, 64px) !default;
 $anim-duration: var(--anim-duration, 200ms) !default;
