@@ -94,9 +94,8 @@ $default-colors: (
 $default-dark-colors: get-dark-colors($default-colors);
 
 // static colors
-$mask-color: rgba(0, 0, 0, 0.8) !default;
-$static-colors: (
-  mask: $mask-color,
+$default-static-colors: (
+  mask: rgba(0, 0, 0, 0.8),
 );
 
 $default-alphas: (
@@ -137,10 +136,17 @@ $default-lightness-adjustments: (
 // globals
 $colors: ();
 $dark-colors: ();
+$static-colors: ();
 $alphas: ();
 $lightness-adjustments: ();
 $enable-prefer-query: true !default;
 $dark-theme-selector: 'html[theme="dark"]' !default;
+
+@if variable-exists(static-colors) {
+  $static-colors: map-merge($default-static-colors, $static-colors);
+} @else {
+  $static-colors: $default-static-colors;
+}
 
 // merge with user configs
 @if variable-exists(colors) {

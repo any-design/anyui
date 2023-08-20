@@ -16,8 +16,6 @@ body {
   overflow-y: auto;
 }
 
-$scroll-width: 8px;
-
 body::-webkit-scrollbar {
   width: $scroll-width;
   height: $scroll-width;
