@@ -129,7 +129,7 @@ app.mount('#app');
 
 ### Custom Theme
 
-TODO
+See [Theme Customization](./docs/theme/customization.md) for more details.
 
 ### TypeScript Support
 
