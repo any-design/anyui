@@ -6,7 +6,7 @@ The AChat component is used to display a chat interface. It is built using Vue3 
 
 ```html
 <template>
-  <a-chat :messages="messages" :enable-deep-watch="true"></a-chat>
+  <a-chat :messages="messages" :enable-deep-watch="false"></a-chat>
 </template>
 
 <script setup>
@@ -27,6 +27,8 @@ The AChat component is used to display a chat interface. It is built using Vue3 
 Type: `Array<AChatMessage>`
 
 An array of objects that contains messages to be displayed in the chat. Each object has the following AChatMessage type: `{ id: string | number; content: string; role: AChatMessageRole; }`.
+
+Tip: Each message should have an unique id.
 
 Default: `[]`
 
