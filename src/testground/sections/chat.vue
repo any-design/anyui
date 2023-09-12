@@ -29,6 +29,14 @@ const list = [
 
 let displayMessages = reactive<AChatMessage[]>([]);
 
+const composeContent = (lines: number) => {
+  let str = '';
+  for (let i = 0; i < lines; i++) {
+    str = str + `${str ? '\n' : ''}Random content in ${Date.now()}`;
+  }
+  return str;
+};
+
 onMounted(() => {
   for (let i = 0; i < 3; i++) {
     displayMessages.push(
@@ -43,7 +51,7 @@ onMounted(() => {
 const addMessage = () => {
   displayMessages.push({
     id: `${Date.now()}_${Math.random()}`,
-    content: `Random content in ${Date.now()}`,
+    content: composeContent(Math.floor(Math.random() * 10) + 1),
     role: Math.random() > 0.5 ? 'self' : 'target',
   });
 };
