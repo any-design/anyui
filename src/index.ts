@@ -115,10 +115,10 @@ export {
 export * from './packages/hooks';
 
 // types
-
+export * from './packages/chat/types';
+export * from './packages/helper';
 export * from './packages/masonry/types';
 export * from './packages/virtualList/types';
-export * from './packages/chat/types';
 
 export type MessageFn = typeof message;
 
