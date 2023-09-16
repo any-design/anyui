@@ -25,6 +25,7 @@ import {
   computed,
   defineComponent,
   getCurrentInstance,
+  onBeforeMount,
   onMounted,
   onUnmounted,
   PropType,
@@ -64,7 +65,7 @@ export default defineComponent({
     const container = ref<HTMLElement | undefined>();
     const buttonContainer = ref<HTMLElement | undefined>();
 
-    const selected = ref<string | number | undefined>(props.modelValue);
+    const selected = ref<string | number | undefined>(undefined);
     const showBgBlock = ref<boolean>(false);
     const bgBlockPosition = ref<ARadioButtonPosition | undefined>();
 
@@ -170,6 +171,10 @@ export default defineComponent({
         updateButtonPosition(selected.value);
       },
     );
+
+    onBeforeMount(() => {
+      selected.value = props.modelValue;
+    });
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
