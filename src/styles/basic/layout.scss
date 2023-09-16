@@ -1,4 +1,5 @@
 // basic layout styles
+@import './variables.scss';
 
 html,
 body {
@@ -17,8 +18,8 @@ body {
 }
 
 body::-webkit-scrollbar {
-  width: $scroll-width;
-  height: $scroll-width;
+  width: #{$scroll-width};
+  height: #{$scroll-width};
 }
 
 body::-webkit-scrollbar-button {
@@ -26,8 +27,8 @@ body::-webkit-scrollbar-button {
 }
 
 body::-webkit-scrollbar-thumb {
-  width: $scroll-width;
-  border-radius: $scroll-width;
+  width: #{$scroll-width};
+  border-radius: #{$scroll-width};
   background: var(--scrollbar);
 }
 
