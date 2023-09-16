@@ -20,6 +20,7 @@ import {
   PropType,
   ref,
   watch,
+  onBeforeMount,
 } from 'vue';
 import { FormItemEventEmitter } from '../formItem/bus';
 import { ARadioGroupItem, ARadioGroupItems } from './types';
@@ -38,7 +39,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const selected = ref<string | number | undefined>(props.modelValue);
+    const selected = ref<string | number | undefined>(undefined);
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
     let formItemEventEmitter: FormItemEventEmitter | undefined;
@@ -63,6 +64,10 @@ export default defineComponent({
       selected.value = undefined;
       emit('update:modelValue', undefined);
     };
+
+    onBeforeMount(() => {
+      selected.value = props.modelValue;
+    });
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
