@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, computed, CSSProperties, watch } from 'vue';
+import { defineComponent, PropType, ref, computed, CSSProperties, watch, onBeforeMount } from 'vue';
 import { SCROLL_LOCK_PROPS, useScrollLock } from '../hooks/useScrollLock';
 import { DrawerPosition } from './types';
 
@@ -113,8 +113,9 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const visible = ref(props.modelValue);
+    const visible = ref(false);
     const wrapper = ref<HTMLElement | null>(null);
+
     const maskStyles = computed<CSSProperties>(() => {
       return {
         zIndex: props.maskZIndex || props.zIndex - 1,
@@ -131,6 +132,7 @@ export default defineComponent({
         zIndex: props.zIndex,
       };
     });
+
     const transitionForUse = computed<string>(() => {
       if (!props.transitionName) {
         return 'a-drawer';
@@ -160,6 +162,10 @@ export default defineComponent({
       // will be emitted when the visibility value changed.
       emit('update:modelValue', false);
     };
+
+    onBeforeMount(() => {
+      visible.value = props.modelValue;
+    });
 
     return {
       visible,
