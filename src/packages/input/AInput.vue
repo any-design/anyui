@@ -41,6 +41,7 @@ import { Handler } from 'mitt';
 import {
   defineComponent,
   getCurrentInstance,
+  onBeforeMount,
   onMounted,
   onUnmounted,
   ref,
@@ -116,7 +117,7 @@ export default defineComponent({
     const inputWrapperRef = ref<HTMLDivElement | undefined>();
 
     // form related
-    const storedValue = ref<string>(`${props.modelValue}`);
+    const storedValue = ref<string>('');
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
     let formItemEventEmitter: FormItemEventEmitter | undefined;
@@ -172,6 +173,10 @@ export default defineComponent({
     const wrapperStyle = computed(() => ({
       width: formatStyleSize(props.width),
     }));
+
+    onBeforeMount(() => {
+      storedValue.value = `${props.modelValue}`;
+    });
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
