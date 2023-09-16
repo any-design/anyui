@@ -10,10 +10,12 @@ import {
   IconifyBrowserCacheType,
 } from '@iconify/vue';
 
-export interface IconMeta {
-  name: string;
-  icon: IconifyIcon;
-}
+export type IconMeta =
+  | {
+      name: string;
+      icon: IconifyIcon;
+    }
+  | [string, IconifyIcon];
 
 export interface IconSetupOptions {
   // for offline usage
@@ -32,9 +34,15 @@ export const setupIcons = (setupOptions: IconSetupOptions = {}) => {
   const { icons, collections, prefetchIcons, enableCache, cacheType } = setupOptions;
 
   if (Array.isArray(icons)) {
-    icons.forEach(({ name, icon }) => {
+    icons.forEach((meta) => {
       try {
-        addIcon(name, icon);
+        if (Array.isArray(meta)) {
+          addIcon(meta[0], meta[1]);
+        } else if (typeof meta === 'object') {
+          addIcon(meta.name, meta.icon);
+        } else {
+          throw new Error('Invalid icon meta data.');
+        }
       } catch (error) {
         console.error('Failed to intialize icons:', error);
       }
