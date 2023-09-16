@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent } from 'vue';
+import { PropType, defineComponent, computed } from 'vue';
 import ValidateSchema, { Rules } from 'async-validator';
 import type { Rule, ValidateError } from 'async-validator/dist-types/interface';
 import { formatStyleSize } from '../../utils';
@@ -40,8 +40,12 @@ export default defineComponent({
   },
   setup(props, { expose }) {
     const formData = props.modelValue as Record<string, unknown>;
+
     // exposed data
     const emitter = formEventEmitterFactory();
+
+    // styles
+    const formattedLabelWidth = computed(() => formatStyleSize(props.labelWidth));
 
     const handleValidatePassed = (field?: string) => {
       if (!props.rules) {
@@ -132,7 +136,7 @@ export default defineComponent({
       // the event bus of the form.
       emitter,
       // the formatted label width of the form.
-      formattedLabelWidth: formatStyleSize(props.labelWidth),
+      formattedLabelWidth,
       // a method to validate all the form items by rules.
       validate,
       // a method to validate a single form item by rule.
