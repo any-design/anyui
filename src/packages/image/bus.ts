@@ -7,6 +7,7 @@ type ImageEvents = {
   };
   loaded: {
     imageId: string;
+    src: string;
   };
   error: {
     imageId: string;
