@@ -1,9 +1,9 @@
 <template>
-  <div class="a-split" :style="styles"></div>
+  <div class="a-split" :style="splitStyle"></div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, CSSProperties, computed } from 'vue';
 import { formatStyleSize } from '../../utils';
 
 export default defineComponent({
@@ -31,27 +31,34 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const margin = formatStyleSize(props.margin);
-    const styles = {
-      height: formatStyleSize(props.height),
-      'background-color': props.color,
-      'margin-top': margin,
-      'margin-bottom': margin,
-    };
-    if (props.round) {
-      let radius;
-      if (typeof props.height === 'string') {
-        let template = props.height.replace(/d+/, '{size}');
-        radius = template.replace('{size}', `${parseFloat(props.height) / 2}`);
-      } else {
-        radius = `${props.height / 2}px`;
+    const splitStyle = computed<CSSProperties>(() => {
+      const margin = formatStyleSize(props.margin);
+
+      const style = {
+        height: formatStyleSize(props.height),
+        'background-color': props.color,
+        'margin-top': margin,
+        'margin-bottom': margin,
+      };
+
+      if (props.round) {
+        let radius;
+        if (typeof props.height === 'string') {
+          let template = props.height.replace(/d+/, '{size}');
+          radius = template.replace('{size}', `${parseFloat(props.height) / 2}`);
+        } else {
+          radius = `${props.height / 2}px`;
+        }
+        Object.assign(style, {
+          'border-radius': radius,
+        });
       }
-      Object.assign(styles, {
-        'border-radius': radius,
-      });
-    }
+
+      return style;
+    });
+
     return {
-      styles,
+      splitStyle,
     };
   },
 });
