@@ -1,29 +1,55 @@
 import emitter from './bus';
 
-export default new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) {
-        return;
-      }
-      const div = entry.target as HTMLDivElement;
-      if (!div.id.startsWith('a-image') && !div.dataset.src) {
-        return;
-      }
-      const image = new Image();
-      image.onload = () => {
-        emitter.emit('loaded', {
-          imageId: div.id,
-        });
-      };
-      image.onerror = () => {
-        emitter.emit('error', { imageId: div.id });
-      };
-      image.src = div.dataset.src!;
-      emitter.emit('load', { imageId: div.id });
+export const DEFAULT_THRESHOLD = 0.2;
+
+export interface AImageObserverOptions {
+  threshold?: number;
+}
+
+export const loadImage = (imageId: string, targetSrc: string) => {
+  const image = new Image();
+  image.onload = () => {
+    emitter.emit('loaded', {
+      imageId,
+      src: targetSrc!,
     });
-  },
-  {
-    threshold: 0.1,
-  },
-);
+  };
+  image.onerror = () => {
+    emitter.emit('error', { imageId });
+  };
+  image.src = targetSrc!;
+  emitter.emit('load', { imageId });
+};
+
+export const getObserver = (options: AImageObserverOptions) =>
+  new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const div = entry.target as HTMLDivElement;
+        const targetSrc = div.dataset.src;
+
+        // not the target
+        if (!div.id.startsWith('a-image') || !targetSrc) {
+          return;
+        }
+
+        // set intersecting flag
+        if (!entry.isIntersecting) {
+          div.dataset.intersecting = 'false';
+          return;
+        }
+
+        div.dataset.intersecting = 'true';
+
+        // already loaded
+        if (div.style.backgroundImage) {
+          return;
+        }
+
+        loadImage(div.id, targetSrc!);
+      });
+    },
+    {
+      threshold: options.threshold || DEFAULT_THRESHOLD,
+    },
+  );

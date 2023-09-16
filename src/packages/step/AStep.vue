@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 
 export default defineComponent({
   name: 'AStep',
@@ -35,10 +35,12 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const displaySteps =
-      typeof props.steps === 'number'
+    const displaySteps = computed(() => {
+      return typeof props.steps === 'number'
         ? new Array(props.steps).fill(null)
         : (props.steps as string[]);
+    });
+
     return {
       displaySteps,
     };

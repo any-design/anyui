@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch, computed } from 'vue';
+import { defineComponent, PropType, ref, watch, computed, onBeforeMount } from 'vue';
 
 export default defineComponent({
   props: {
@@ -34,14 +34,6 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const storedValues = ref<Record<string, boolean>>({});
-
-    props.items.forEach((item: string | number) => {
-      if (props.modelValue?.includes(item)) {
-        storedValues.value[item] = true;
-        return;
-      }
-      storedValues.value[item] = false;
-    });
 
     const changeMethodFactory = (item: string | number) => {
       return (checked: boolean) => handleItemChange(checked, item);
@@ -87,6 +79,17 @@ export default defineComponent({
         });
       },
     );
+
+    onBeforeMount(() => {
+      // init values from modelValue if set
+      props.items.forEach((item: string | number) => {
+        if (props.modelValue?.includes(item)) {
+          storedValues.value[item] = true;
+          return;
+        }
+        storedValues.value[item] = false;
+      });
+    });
 
     return {
       storedValues,

@@ -40,6 +40,7 @@ import {
   nextTick,
   markRaw,
   StyleValue,
+  onBeforeMount,
 } from 'vue';
 
 import { useRefreshableComputed } from '../hooks/useRefreshable';
@@ -104,7 +105,7 @@ const firstItemTop = ref(0);
 const biTree = ref<BinaryIndexedTree | undefined>();
 
 // item layout related
-const estimatedItemHeight = ref(props.estimatedItemHeight || 0);
+const estimatedItemHeightRef = ref(0);
 
 // is items refreshing now
 const isRefreshing = ref(false);
@@ -171,7 +172,7 @@ const refreshItems = ({
     if (stopAt && index >= stopAt) {
       break;
     }
-    const itemHeight = itemHeightMap[item.id] || estimatedItemHeight.value || 0;
+    const itemHeight = itemHeightMap[item.id] || estimatedItemHeightRef.value || 0;
     const additionalProperties = {
       __listIndex: index,
       __itemHeight: itemHeight,
@@ -229,7 +230,7 @@ const refreshDisplayItems = () => {
   isRefreshing.value = true;
   updateFrame = window.requestAnimationFrame(() => {
     scrollTop.value = containerRef.value?.scrollTop || 0;
-    const buffer = estimatedItemHeight.value * (props.buffer || 0);
+    const buffer = estimatedItemHeightRef.value * (props.buffer || 0);
     const startTop = Math.max(scrollTop.value, 0);
     const { start, scrolledHeight } = getDisplayStart(Math.max(startTop - buffer, 0));
 
@@ -265,18 +266,6 @@ const refreshDisplayItems = () => {
   });
 };
 
-watch(
-  () => [...props.items],
-  () => {
-    if (firstRendered) {
-      refreshItems();
-    } else {
-      firstRender();
-    }
-  },
-  { deep: props.enableDeepWatch },
-);
-
 const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: number } = {}) => {
   if (!itemId || typeof height === 'undefined') {
     return;
@@ -298,8 +287,8 @@ const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: nu
   biTree.value?.update(itemIndex + 1, diff);
 
   // choose the min one as the estimated height
-  if (height && height < estimatedItemHeight.value) {
-    estimatedItemHeight.value = height;
+  if (height && height < estimatedItemHeightRef.value) {
+    estimatedItemHeightRef.value = height;
   }
 
   refreshDisplayItems();
@@ -354,7 +343,7 @@ const firstRender = () => {
   if (!props.items?.length) {
     return;
   }
-  if (estimatedItemHeight.value) {
+  if (estimatedItemHeightRef.value) {
     refreshItems();
     return;
   }
@@ -382,7 +371,7 @@ const firstRender = () => {
       heights.push(clientHeight);
     }
     // remove the sub pixel value
-    estimatedItemHeight.value = Math.min(...heights.filter((item) => !!item));
+    estimatedItemHeightRef.value = Math.min(...heights.filter((item) => !!item));
     // rerender the current screen
     refreshItems();
     firstRendered = true;
@@ -393,7 +382,7 @@ const firstRender = () => {
 const items = computed(() => props.items);
 
 const stopItemWatching = watch(items, (newVal) => {
-  if (Array.isArray(newVal) && newVal.length && !estimatedItemHeight.value && !firstRendered) {
+  if (Array.isArray(newVal) && newVal.length && !estimatedItemHeightRef.value && !firstRendered) {
     firstRender();
     stopItemWatching();
   }
@@ -424,6 +413,23 @@ const scrollToBottom = () => {
 defineExpose({
   refresh: refreshItems,
   scrollToBottom,
+});
+
+onBeforeMount(() => {
+  if (props.estimatedItemHeight) {
+    estimatedItemHeightRef.value = props.estimatedItemHeight;
+  }
+  watch(
+    () => [...props.items],
+    () => {
+      if (firstRendered) {
+        refreshItems();
+      } else {
+        firstRender();
+      }
+    },
+    { deep: props.enableDeepWatch },
+  );
 });
 
 onMounted(() => {

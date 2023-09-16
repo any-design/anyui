@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref, watch, onBeforeMount } from 'vue';
 import { Icon } from '@iconify/vue';
 
 export default defineComponent({
@@ -54,7 +54,7 @@ export default defineComponent({
   },
   emits: ['change', 'update:modelValue'],
   setup(props, { emit }) {
-    const checked = ref(props.modelValue);
+    const checked = ref(false);
 
     watch(
       () => props.modelValue,
@@ -70,6 +70,10 @@ export default defineComponent({
       // will be emitted when value changed, with the new value.
       emit('change', checked.value);
     };
+
+    onBeforeMount(() => {
+      checked.value = props.modelValue;
+    });
 
     return {
       checked,

@@ -34,6 +34,7 @@ import { getCertainParent } from '@/utils';
 import { Booleanish } from '@/utils/types';
 import {
   defineComponent,
+  onBeforeMount,
   onMounted,
   ref,
   computed,
@@ -114,7 +115,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'submit'],
   setup(props, { emit }) {
-    const storedValue = ref(props.modelValue);
+    const storedValue = ref('');
 
     const elementFontSize = ref(0);
     const wrapperRef = ref<HTMLDivElement | undefined>();
@@ -256,6 +257,10 @@ export default defineComponent({
       wrapperRef.value && styleObserver.observe(wrapperRef.value, observerConfig);
       innerRef.value && styleObserver.observe(innerRef.value, observerConfig);
     };
+
+    onBeforeMount(() => {
+      storedValue.value = props.modelValue;
+    });
 
     onMounted(() => {
       // init font size
