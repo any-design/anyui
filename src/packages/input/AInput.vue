@@ -26,7 +26,7 @@
       :min="min"
       :type="type"
       :autocomplete="autocomplete"
-      :style="extraInnerStyles"
+      :style="extraInnerStyle"
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     />
@@ -160,7 +160,7 @@ export default defineComponent({
       return 8;
     });
 
-    const extraInnerStyles = computed(() => {
+    const extraInnerStyle = computed(() => {
       if (hasPostButton.value && postButtonWidth.value) {
         return {
           paddingRight: `${postButtonWidth.value + extraPaddingOnPostButton.value}px`,
@@ -168,6 +168,10 @@ export default defineComponent({
       }
       return undefined;
     });
+
+    const wrapperStyle = computed(() => ({
+      width: formatStyleSize(props.width),
+    }));
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
@@ -200,10 +204,8 @@ export default defineComponent({
       hasPrefix: !!useSlots().prefix,
       hasPostfix: !!useSlots().postfix,
       hasPostButton: hasPostButton,
-      wrapperStyle: {
-        width: formatStyleSize(props.width),
-      },
-      extraInnerStyles,
+      wrapperStyle,
+      extraInnerStyle,
       handleInput,
       handleEnterDown,
     };
