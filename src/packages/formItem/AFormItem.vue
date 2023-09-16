@@ -22,7 +22,15 @@
 
 <script lang="ts">
 import { Handler } from 'mitt';
-import { defineComponent, getCurrentInstance, onMounted, onUnmounted, ref } from 'vue';
+import {
+  defineComponent,
+  getCurrentInstance,
+  onMounted,
+  onUnmounted,
+  ref,
+  computed,
+  ComputedRef,
+} from 'vue';
 import { ClearEventPayload, FormEventEmitter, SetValidEventPayload } from '../form/bus';
 import { getCertainParent } from '../../utils';
 import formItemEventEmitterFactory from './bus';
@@ -47,13 +55,15 @@ export default defineComponent({
     if (!formEventEmitter) {
       console.warn('[AnyUI][FormItem] Cannot get emitter from parent node.');
     }
-    const formattedLabelWidth = formParent?.exposed?.formattedLabelWidth as string | number;
-    if (!formattedLabelWidth) {
+    const formattedLabelWidth = formParent?.exposed?.formattedLabelWidth as ComputedRef<
+      string | number
+    >;
+    if (!formattedLabelWidth.value) {
       console.warn('[AnyUI][FormItem] Cannot get label width from parent node.');
     }
-    const labelStyle = {
-      width: formattedLabelWidth,
-    };
+    const labelStyle = computed(() => ({
+      width: formattedLabelWidth.value,
+    }));
 
     const isValid = ref(true);
     const inValidMessage = ref('');

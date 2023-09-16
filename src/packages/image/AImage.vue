@@ -11,11 +11,21 @@
 </template>
 
 <script lang="ts">
-import { CSSProperties, defineComponent, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
-import { formatStyleSize } from '../../utils';
-import observer from './observer';
-import emitter from './bus';
 import { Handler } from 'mitt';
+import {
+  CSSProperties,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  onUpdated,
+  ref,
+  computed,
+  watch,
+  onBeforeMount,
+} from 'vue';
+import { formatStyleSize } from '../../utils';
+import emitter from './bus';
+import { getObserver, loadImage, DEFAULT_THRESHOLD } from './observer';
 
 export default defineComponent({
   name: 'AImage',
@@ -49,21 +59,27 @@ export default defineComponent({
       type: String,
       default: 'no-repeat',
     },
+    threshold: {
+      type: Number,
+      default: DEFAULT_THRESHOLD,
+    },
   },
   setup(props) {
     const isLoading = ref(false);
     const isError = ref(false);
-    const containerRef = ref(null);
+    const containerRef = ref<HTMLElement | undefined>(undefined);
+    const backgroundPicUrl = ref('');
 
-    const containerStyles = {
+    const containerStyles = computed<CSSProperties>(() => ({
       width: formatStyleSize(props.width),
       height: formatStyleSize(props.height),
-    };
-    const picStyles: CSSProperties = {
+    }));
+    const picStyles = computed<CSSProperties>(() => ({
       'background-position': props.position,
       'background-size': props.size,
       'background-repeat': props.repeat,
-    };
+      ...(backgroundPicUrl.value ? { backgroundImage: `url(${backgroundPicUrl.value})` } : {}),
+    }));
 
     const imageId = `a-image__${Math.random() + Date.now()}`;
 
@@ -75,11 +91,11 @@ export default defineComponent({
       }
       isLoading.value = true;
     };
-    const loadedHandler: Handler<{ imageId: string }> = (e) => {
-      if (imageId !== e.imageId) {
+    const loadedHandler: Handler<{ imageId: string; src: string }> = (e) => {
+      if (imageId !== e.imageId || e.src !== props.src) {
         return;
       }
-      picStyles['background-image'] = `url('${props.src}')`;
+      backgroundPicUrl.value = e.src;
       isLoading.value = false;
     };
     const errorHandler: Handler<{ imageId: string }> = (e) => {
@@ -89,6 +105,26 @@ export default defineComponent({
       isLoading.value = false;
       isError.value = true;
     };
+
+    watch(
+      () => props.src,
+      () => {
+        if (!backgroundPicUrl.value || typeof props.src !== 'string' || !props.src) {
+          return;
+        }
+        backgroundPicUrl.value = '';
+        if (containerRef.value?.dataset.intersecting !== 'true') {
+          return;
+        }
+        loadImage(imageId, props.src);
+      },
+    );
+
+    let observer: IntersectionObserver | undefined;
+
+    onBeforeMount(() => {
+      observer = getObserver({ threshold: props.threshold });
+    });
 
     onMounted(() => {
       if (!props.src) {
@@ -102,18 +138,18 @@ export default defineComponent({
       emitter.on('load', loadHandler);
       emitter.on('loaded', loadedHandler);
       emitter.on('error', errorHandler);
-      observer.observe(containerRef.value);
+      observer?.observe(containerRef.value);
       observed = true;
     });
 
     onUpdated(() => {
       if (!observed) {
-        containerRef.value && observer.observe(containerRef.value);
+        containerRef.value && observer?.observe(containerRef.value);
       }
     });
 
     onBeforeUnmount(() => {
-      containerRef.value && observer.unobserve(containerRef.value);
+      containerRef.value && observer?.unobserve(containerRef.value);
       emitter.off('load', loadHandler);
       emitter.off('loaded', loadedHandler);
       emitter.off('error', errorHandler);

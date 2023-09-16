@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useSlots } from 'vue';
+import { defineComponent, useSlots, computed } from 'vue';
 
 export default defineComponent({
   name: 'ACard',
@@ -57,9 +57,11 @@ export default defineComponent({
   setup(props) {
     const hasHeader = !!useSlots().header || !!props.title;
     const hasFooter = !!useSlots().footer;
-    const cardStyle = {
+
+    const cardStyle = computed(() => ({
       width: typeof props.width === 'number' ? `${props.width}px` : props.width,
-    };
+    }));
+
     return {
       hasHeader,
       hasFooter,

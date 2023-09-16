@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { Timeout } from '@/utils/types';
-import { computed } from 'vue';
+import { computed, onBeforeMount } from 'vue';
 import { CSSProperties, defineComponent, nextTick, PropType, ref, watch } from 'vue';
 
 const TRANSITION_DURATION = 200;
@@ -43,8 +43,8 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const collapsed = ref(!props.visible);
-    const rendered = ref(props.visible);
+    const collapsed = ref(true);
+    const rendered = ref(false);
     const element = ref<Element | undefined>();
     const elementStyle = ref<Partial<CSSProperties> | undefined>();
     const renderComponent = computed(() => {
@@ -95,6 +95,11 @@ export default defineComponent({
         }, TRANSITION_DURATION);
       },
     );
+
+    onBeforeMount(() => {
+      collapsed.value = !props.visible;
+      rendered.value = props.visible;
+    });
 
     return {
       collapsed,
