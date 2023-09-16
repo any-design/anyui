@@ -59,6 +59,7 @@ import { Handler } from 'mitt';
 import {
   defineComponent,
   getCurrentInstance,
+  onBeforeMount,
   onMounted,
   onUnmounted,
   PropType,
@@ -113,7 +114,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const selected = ref(props.modelValue);
+    const selected = ref<string | number | null | undefined>(undefined);
     const selectedText = ref('');
     const expanded = ref(false);
     const popperRef = ref(null);
@@ -165,6 +166,10 @@ export default defineComponent({
         }
       },
     );
+
+    onBeforeMount(() => {
+      selected.value = props.modelValue;
+    });
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
