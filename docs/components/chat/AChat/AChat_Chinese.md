@@ -8,7 +8,7 @@
 
 ```vue
 <template>
-  <AChat :messages="messages" :enableDeepWatch="true" />
+  <AChat :messages="messages" :enableDeepWatch="false" />
 </template>
 
 <script>
@@ -43,7 +43,7 @@ export default {
 
 | 属性名  | 类型    | 说明     |
 | ------- | ------- | -------- | ------------------ |
-| id      | `string | number`  | 消息 id            |
+| id      | `string | number`  | 消息 id (Unique)   |
 | content | string  | 消息内容 |
 | role    | `self   | target`  | 消息是否为自己发送 |
 
