@@ -40,6 +40,7 @@ import {
   nextTick,
   markRaw,
   StyleValue,
+  onBeforeMount,
 } from 'vue';
 
 import { useRefreshableComputed } from '../hooks/useRefreshable';
@@ -104,7 +105,7 @@ const firstItemTop = ref(0);
 const biTree = ref<BinaryIndexedTree | undefined>();
 
 // item layout related
-const estimatedItemHeight = ref(props.estimatedItemHeight || 0);
+const estimatedItemHeight = ref(0);
 
 // is items refreshing now
 const isRefreshing = ref(false);
@@ -265,18 +266,6 @@ const refreshDisplayItems = () => {
   });
 };
 
-watch(
-  () => [...props.items],
-  () => {
-    if (firstRendered) {
-      refreshItems();
-    } else {
-      firstRender();
-    }
-  },
-  { deep: props.enableDeepWatch },
-);
-
 const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: number } = {}) => {
   if (!itemId || typeof height === 'undefined') {
     return;
@@ -424,6 +413,23 @@ const scrollToBottom = () => {
 defineExpose({
   refresh: refreshItems,
   scrollToBottom,
+});
+
+onBeforeMount(() => {
+  if (props.estimatedItemHeight) {
+    estimatedItemHeight.value = props.estimatedItemHeight;
+  }
+  watch(
+    () => [...props.items],
+    () => {
+      if (firstRendered) {
+        refreshItems();
+      } else {
+        firstRender();
+      }
+    },
+    { deep: props.enableDeepWatch },
+  );
 });
 
 onMounted(() => {
