@@ -9,6 +9,7 @@
     :zIndex="zIndex"
     :popupClass="popupClass"
     :triggerType="triggerType"
+    :group="group"
   >
     <slot></slot>
     <template #popup>
@@ -95,6 +96,10 @@ export default defineComponent({
     triggerType: {
       type: String as PropType<APopperTriggerType>,
       default: 'hover',
+    },
+    group: {
+      type: String,
+      default: '',
     },
   },
   emits: ['command'],
