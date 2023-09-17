@@ -43,7 +43,7 @@
         triggerType="click"
         hideAfterClick
       >
-        <span>trigger (click)</span>
+        <span>trigger (click) (grouped)</span>
       </a-popup-menu>
       <a-popup-menu
         group="test"
@@ -51,7 +51,7 @@
         triggerType="contextmenu"
         hideAfterClick
       >
-        <span>trigger (contextmenu)</span>
+        <span>trigger (contextmenu) (grouped)</span>
       </a-popup-menu>
     </div>
   </div>
