@@ -357,6 +357,8 @@ export default defineComponent({
       popup,
       show,
       hide,
+      getTriggerEl,
+      getPopupEl,
     };
   },
 });
