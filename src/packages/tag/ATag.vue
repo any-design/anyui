@@ -6,14 +6,14 @@
       [`a-tag--${size}`]: true,
       'a-tag--custom-color': color,
     }"
-    :style="tagStyles"
+    :style="tagStyle"
   >
     <slot></slot>
   </div>
 </template>
 
 <script lang="ts">
-import { CSSProperties, defineComponent, PropType, ref } from 'vue';
+import { CSSProperties, defineComponent, PropType, computed } from 'vue';
 import Color from 'color';
 
 export default defineComponent({
@@ -28,25 +28,30 @@ export default defineComponent({
       type: String as PropType<'default' | 'small' | 'large'>,
       default: 'default',
     },
-    // a color in hex, like '#1faeff'.
+    // a color in hex, like '#1faeff', or a css variable.
     color: {
       type: String,
-      default: null,
+      default: '',
+    },
+    // a color in hex, like '#1faeff', or a css variable.
+    bgColor: {
+      type: String,
+      default: '',
     },
   },
   setup(props) {
-    let tagStyles = ref<Partial<CSSProperties> | undefined>();
-    if (props.color) {
-      tagStyles.value = {
-        backgroundColor: props.color.startsWith('var')
-          ? props.color
-          : new Color(props.color).alpha(0.2).toString(),
+    const tagStyle = computed<Partial<CSSProperties> | undefined>(() => {
+      const bgColorVal = props.bgColor || props.color;
+      return {
+        backgroundColor: bgColorVal.startsWith('var')
+          ? bgColorVal
+          : new Color(bgColorVal).alpha(0.2).toString(),
         color: props.color,
       };
-    }
+    });
 
     return {
-      tagStyles,
+      tagStyle,
     };
   },
 });
