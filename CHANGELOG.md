@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [0.1.4](https://github.com/any-design/anyui/compare/v0.1.3...v0.1.4) (2023-09-17)
+
+### Bug Fixes
+
+- (tag) wrong class name apply condition ([e3a92c4](https://github.com/any-design/anyui/commit/e3a92c4568a4cc62e7cf51be5b9e500a8aa29935))
+
+### Features
+
+- (popper) allow mutex by group ([2629746](https://github.com/any-design/anyui/commit/2629746dd74b6705e97760db974942fa51080a10))
+
 ## [0.1.3](https://github.com/any-design/anyui/compare/v0.1.2...v0.1.3) (2023-09-17)
 
 ### Bug Fixes
