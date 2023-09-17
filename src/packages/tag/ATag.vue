@@ -38,7 +38,9 @@ export default defineComponent({
     let tagStyles = ref<Partial<CSSProperties> | undefined>();
     if (props.color) {
       tagStyles.value = {
-        backgroundColor: new Color(props.color).alpha(0.2).toString(),
+        backgroundColor: props.color.startsWith('var')
+          ? props.color
+          : new Color(props.color).alpha(0.2).toString(),
         color: props.color,
       };
     }
