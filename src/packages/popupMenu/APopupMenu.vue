@@ -8,6 +8,7 @@
     :transition="transition"
     :zIndex="zIndex"
     :popupClass="popupClass"
+    :triggerType="triggerType"
   >
     <slot></slot>
     <template #popup>
@@ -32,6 +33,7 @@ import { formatStyleSize } from '../../utils';
 import type APopper from '../popper';
 
 import { PopMenuItem } from './types';
+import { APopperTriggerType } from '../popper/types';
 
 // This component is a menu based on popper.
 export default defineComponent({
@@ -89,6 +91,10 @@ export default defineComponent({
     hideAfterClick: {
       type: Boolean,
       default: false,
+    },
+    triggerType: {
+      type: String as PropType<APopperTriggerType>,
+      default: 'hover',
     },
   },
   emits: ['command'],

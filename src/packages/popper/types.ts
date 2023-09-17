@@ -1,1 +1,1 @@
-export type APopperTriggerType = 'hover' | 'click' | 'manual';
+export type APopperTriggerType = 'hover' | 'click' | 'contextmenu' | 'manual';
