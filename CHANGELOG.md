@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [0.1.3](https://github.com/any-design/anyui/compare/v0.1.2...v0.1.3) (2023-09-17)
+
+### Bug Fixes
+
+- (tag) now the style will be reactive ([97f44e0](https://github.com/any-design/anyui/commit/97f44e065c9836c1aedbe35b13a7d019bb4b983f))
+
+### Features
+
+- (tag) allow CSS var background color ([82d10c6](https://github.com/any-design/anyui/commit/82d10c6d3c3174f45e9fdb9652b1df636d1af850))
+
+## [0.1.2](https://github.com/any-design/anyui/compare/v0.1.1...v0.1.2) (2023-09-17)
+
+### Features
+
+- (popper) support contextmenu trigger ([8f30709](https://github.com/any-design/anyui/commit/8f30709bc1a6bfaee10ec8954d62a35923263ddf))
+
 ## [0.1.1](https://github.com/any-design/anyui/compare/v0.1.0...v0.1.1) (2023-09-16)
 
 ### Bug Fixes
