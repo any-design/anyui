@@ -204,8 +204,8 @@ export default defineComponent({
         }, animationDurationQuick);
       };
 
-      if (props.triggerType === 'click') {
-        const handleTriggerClick = () => {
+      if (['click', 'contextmenu'].includes(props.triggerType)) {
+        const handleTriggerClick = (e: Event) => {
           if (!popupShowed.value) {
             if (renderTimeout) {
               clearTimeout(renderTimeout);
@@ -224,8 +224,10 @@ export default defineComponent({
               window.removeEventListener('click', clickOutsideHandler);
             }
           }
+          e.stopPropagation();
+          e.preventDefault();
         };
-        triggerEl.addEventListener('click', handleTriggerClick);
+        triggerEl.addEventListener(props.triggerType, handleTriggerClick);
         if (!props.appendToBody) {
           popupEl.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -233,7 +235,7 @@ export default defineComponent({
         }
         // add cleaners
         sideEffectCleaners.push(() => {
-          triggerEl?.removeEventListener('click', handleTriggerClick);
+          triggerEl?.removeEventListener(props.triggerType, handleTriggerClick);
           popupEl?.removeEventListener('clickOutside', hidePopupByClick);
           if (clickOutsideHandler) {
             window.removeEventListener('click', clickOutsideHandler);
