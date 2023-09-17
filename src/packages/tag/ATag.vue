@@ -4,7 +4,7 @@
       'a-tag': true,
       'a-tag--round': !!round,
       [`a-tag--${size}`]: true,
-      'a-tag--custom-color': color,
+      'a-tag--custom-color': color || bgColor,
     }"
     :style="tagStyle"
   >
