@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [0.1.1](https://github.com/any-design/anyui/compare/v0.1.0...v0.1.1) (2023-09-16)
+
+### Bug Fixes
+
+- (card) style now will be reactive ([2e082ee](https://github.com/any-design/anyui/commit/2e082eed0980a5e8ead841f7ab02e5ad9798be08))
+- (form) labelWidth now will be reactive ([69effea](https://github.com/any-design/anyui/commit/69effeabd0477a6fd76edb5534bb0282db1c1c4d))
+- (image) src now is reactive and the image will not be loaded again when intersecting ([7669b26](https://github.com/any-design/anyui/commit/7669b265fc03db534522311c707dfa845fac2773))
+- (input) wrapper style now will be reactive ([0bcde57](https://github.com/any-design/anyui/commit/0bcde577b0808f51f2585f4af8a12c702fd71043))
+- (split) now the style will be reactive ([3cf399a](https://github.com/any-design/anyui/commit/3cf399a272839f8ca3589c6c9da9fdd8e447a94a))
+- (step) now the steps will be reactive ([3f06bce](https://github.com/any-design/anyui/commit/3f06bceaeb5f1f0992a5c8ecad15914a86f4ba9b))
+- (theme) build error ([99ebc99](https://github.com/any-design/anyui/commit/99ebc99acdec93c0fe8ce7d7cd5b807c76583387))
+
+### Features
+
+- (helper) add icon setup helper ([fa0ad6b](https://github.com/any-design/anyui/commit/fa0ad6b49c052f8091ef9e6906ef95e74c9b8c87))
+- (helper) support array style icon meta ([829c14b](https://github.com/any-design/anyui/commit/829c14b5c1307af3aaf3739ca80998157d8e13d3))
+- (testground) add multiple line text generation ([b4b00fe](https://github.com/any-design/anyui/commit/b4b00fe27d17bba1001abad74c7bed7998e890ee))
+
 ## [0.1.0](https://github.com/any-design/anyui/compare/v0.0.56...v0.1.0) (2023-08-14)
 
 - ⚠ (theme) BREAKING: add support to dark theme and theme customization in a easy way. See [migration document](./docs/migration/v0.0.56 - v0.1.0.md) for more details.
