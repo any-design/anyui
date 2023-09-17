@@ -56,7 +56,6 @@ import bus from './bus';
 import { createPopperInstance } from './popper';
 import { APopperTriggerType } from './types';
 import { Handler } from 'mitt';
-import { group } from 'console';
 
 export default defineComponent({
   name: 'APopper',
@@ -261,19 +260,16 @@ export default defineComponent({
       }
     });
 
-    watch(
-      () => popupShowed,
-      () => {
-        // will be emitted when the popup visibility state changed
-        emit('popupStatusChanged', popupShowed.value);
-        if (props.group) {
-          bus.emit('show', {
-            group: props.group,
-            popperId,
-          });
-        }
-      },
-    );
+    watch(popupShowed, (newVal) => {
+      // will be emitted when the popup visibility state changed
+      emit('popupStatusChanged', popupShowed.value);
+      if (props.group && newVal) {
+        bus.emit('show', {
+          group: props.group,
+          popperId,
+        });
+      }
+    });
 
     const mutexHandler: Handler<{ group: string; popperId: string }> = (payload) => {
       const { group, popperId: instanceId } = payload;
@@ -283,13 +279,28 @@ export default defineComponent({
       hide();
     };
 
+    let groupListenerCleaner = () => {
+      bus.off('show', mutexHandler);
+    };
+    let groupListenerAttached = false;
+
     watch(
       () => props.group,
       (newVal) => {
         if (newVal) {
+          if (groupListenerAttached) {
+            return;
+          }
           bus.on('show', mutexHandler);
+          sideEffectCleaners.push(groupListenerCleaner);
+          groupListenerAttached = true;
         } else {
           bus.off('show', mutexHandler);
+          groupListenerAttached = false;
+          const idx = sideEffectCleaners.indexOf(groupListenerCleaner);
+          if (idx >= 0) {
+            sideEffectCleaners.splice(idx, 1);
+          }
         }
       },
       { immediate: true },
