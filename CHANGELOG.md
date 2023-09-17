@@ -2,6 +2,10 @@
 
 ## [0.1.3](https://github.com/any-design/anyui/compare/v0.1.2...v0.1.3) (2023-09-17)
 
+### Bug Fixes
+
+- (tag) now the style will be reactive ([97f44e0](https://github.com/any-design/anyui/commit/97f44e065c9836c1aedbe35b13a7d019bb4b983f))
+
 ### Features
 
 - (tag) allow CSS var background color ([82d10c6](https://github.com/any-design/anyui/commit/82d10c6d3c3174f45e9fdb9652b1df636d1af850))
