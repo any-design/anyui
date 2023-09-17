@@ -43,9 +43,13 @@ export default defineComponent({
     const tagStyle = computed<Partial<CSSProperties> | undefined>(() => {
       const bgColorVal = props.bgColor || props.color;
       return {
-        backgroundColor: bgColorVal.startsWith('var')
-          ? bgColorVal
-          : new Color(bgColorVal).alpha(0.2).toString(),
+        ...(bgColorVal
+          ? {
+              backgroundColor: bgColorVal.startsWith('var')
+                ? bgColorVal
+                : new Color(bgColorVal).alpha(0.2).toString(),
+            }
+          : null),
         color: props.color,
       };
     });
