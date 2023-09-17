@@ -51,8 +51,11 @@ import {
 import { Placement } from '@popperjs/core';
 import { getStyleNumVarInCSS } from '@/utils';
 import { attachClickOutsideListener } from '@/utils/clickOutside';
+
+import bus from './bus';
 import { createPopperInstance } from './popper';
 import { APopperTriggerType } from './types';
+import { Handler } from 'mitt';
 
 export default defineComponent({
   name: 'APopper',
@@ -100,6 +103,11 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
+    // group id for mutex
+    group: {
+      type: String,
+      default: '',
+    },
   },
   emits: ['popupStatusChanged'],
   setup(props, { expose, emit }) {
@@ -107,6 +115,8 @@ export default defineComponent({
     const popupRendered = ref(false);
     const trigger = ref(null);
     const popup = ref(null);
+
+    const popperId = `${Date.now()}_${Math.random()}`;
 
     const sideEffectCleaners: (() => void)[] = [];
     const eventEffectCleaners: (() => void)[] = [];
@@ -250,16 +260,50 @@ export default defineComponent({
       }
     });
 
-    onBeforeUnmount(() => {
-      sideEffectCleaners.forEach((f) => f());
+    watch(popupShowed, (newVal) => {
+      // will be emitted when the popup visibility state changed
+      emit('popupStatusChanged', popupShowed.value);
+      if (props.group && newVal) {
+        bus.emit('show', {
+          group: props.group,
+          popperId,
+        });
+      }
     });
 
+    const mutexHandler: Handler<{ group: string; popperId: string }> = (payload) => {
+      const { group, popperId: instanceId } = payload;
+      if (group !== props.group || popperId === instanceId) {
+        return;
+      }
+      hide();
+    };
+
+    let groupListenerCleaner = () => {
+      bus.off('show', mutexHandler);
+    };
+    let groupListenerAttached = false;
+
     watch(
-      () => popupShowed,
-      () => {
-        // will be emitted when the popup visibility state changed
-        emit('popupStatusChanged', popupShowed.value);
+      () => props.group,
+      (newVal) => {
+        if (newVal) {
+          if (groupListenerAttached) {
+            return;
+          }
+          bus.on('show', mutexHandler);
+          sideEffectCleaners.push(groupListenerCleaner);
+          groupListenerAttached = true;
+        } else {
+          bus.off('show', mutexHandler);
+          groupListenerAttached = false;
+          const idx = sideEffectCleaners.indexOf(groupListenerCleaner);
+          if (idx >= 0) {
+            sideEffectCleaners.splice(idx, 1);
+          }
+        }
       },
+      { immediate: true },
     );
 
     const show = () => {
@@ -295,6 +339,10 @@ export default defineComponent({
       // do event effect clean
       eventEffectCleaners.forEach((f) => f());
     };
+
+    onBeforeUnmount(() => {
+      sideEffectCleaners.forEach((f) => f());
+    });
 
     expose({ show, hide });
 
