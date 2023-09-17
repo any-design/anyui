@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts">
-import { MessageType } from '@/packages/message/types';
 import { defineComponent } from 'vue';
+import { MessageType } from '@/packages/message/types';
 
 export default defineComponent({
   methods: {
