@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.5](https://github.com/any-design/anyui/compare/v0.1.4...v0.1.5) (2023-09-17)
+
+### Features
+
+- (popmenu) command event now will have an extra argument which contains the elements of popper ([7ba3eb0](https://github.com/any-design/anyui/commit/7ba3eb070df2bc96b81284592400899c71891ff9))
+
 ## [0.1.4](https://github.com/any-design/anyui/compare/v0.1.3...v0.1.4) (2023-09-17)
 
 ### Bug Fixes
