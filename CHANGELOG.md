@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.3](https://github.com/any-design/anyui/compare/v0.1.2...v0.1.3) (2023-09-17)
+
+### Features
+
+- (tag) allow CSS var background color ([82d10c6](https://github.com/any-design/anyui/commit/82d10c6d3c3174f45e9fdb9652b1df636d1af850))
+
 ## [0.1.2](https://github.com/any-design/anyui/compare/v0.1.1...v0.1.2) (2023-09-17)
 
 ### Features
