@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.2](https://github.com/any-design/anyui/compare/v0.1.1...v0.1.2) (2023-09-17)
+
+### Features
+
+- (popper) support contextmenu trigger ([8f30709](https://github.com/any-design/anyui/commit/8f30709bc1a6bfaee10ec8954d62a35923263ddf))
+
 ## [0.1.1](https://github.com/any-design/anyui/compare/v0.1.0...v0.1.1) (2023-09-16)
 
 ### Bug Fixes
