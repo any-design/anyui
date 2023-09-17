@@ -2,7 +2,7 @@
   <div class="testground-content__item">
     <p class="testground-content-title">PopMenu</p>
     <div class="testground-flex">
-      <a-popup-menu :items="['Item 1', 'Item 2', 'Item 3', 'Item 4']">
+      <a-popup-menu :items="['Item 1', 'Item 2', 'Item 3', 'Item 4']" @command="handleCommand">
         <span>trigger</span>
       </a-popup-menu>
       <a-popup-menu :items="['Item 1', 'Item 2', 'Item 3', 'Item 4']" triggerType="click">
@@ -56,3 +56,11 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { PopMenuCommandExtra } from '@/packages/popupMenu/types';
+
+const handleCommand = (command: string, extra: PopMenuCommandExtra) => {
+  console.log('command', command, 'extra', extra);
+};
+</script>
