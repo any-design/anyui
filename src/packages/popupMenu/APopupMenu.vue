@@ -31,10 +31,10 @@
 import { defineComponent, PropType } from 'vue';
 import { formatStyleSize } from '../../utils';
 
+import type { APopperTriggerType } from '../popper/types';
 import type APopper from '../popper';
 
-import { PopMenuItem } from './types';
-import { APopperTriggerType } from '../popper/types';
+import { PopMenuCommandExtra, PopMenuItem } from './types';
 
 // This component is a menu based on popper.
 export default defineComponent({
@@ -123,11 +123,16 @@ export default defineComponent({
       return typeof menuItem === 'string' ? menuItem : menuItem.name;
     },
     handleItemClick(key: string) {
-      if (this.$refs.popper && this.hideAfterClick) {
-        (this.$refs.popper as InstanceType<typeof APopper>).hide();
+      const popperRef = this.$refs.popper as InstanceType<typeof APopper> | undefined;
+      if (this.hideAfterClick) {
+        popperRef?.hide();
       }
       // will be emitted when user click on a menu item
-      this.$emit('command', key);
+      const extra: PopMenuCommandExtra = {
+        triggerEl: popperRef?.getTriggerEl(),
+        popupEl: popperRef?.getPopupEl(),
+      };
+      this.$emit('command', key, extra);
     },
   },
 });
