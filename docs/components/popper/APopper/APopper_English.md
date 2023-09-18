@@ -1,72 +1,70 @@
-# @any-design/anyui - APopper Component
+# APopper Component
 
-`APopper` is a Vue3 component that allows you to create tooltips, popovers, and dropdowns with flexible positioning and triggering options.
+The `APopper` component is a versatile wrapper that provides common functionalities such as show/hide poppers, event listeners, and popper rendering. It supports different options that control how the component should be triggered, where it should be placed, and how it should handle external clicks.
 
-## Basic Usage
+## Basic Usage of APopper Component
 
-This component is composed of two parts: a trigger element and a popup element. Wrap your content inside the `APopper` component, and then use the `slot` tag to specify a trigger element and a popup element.
+Here is an example how to use `APopper` component in Vue:
 
 ```vue
 <template>
-  <APopper>
-    <button slot="trigger">Hover Me!</button>
-    <div slot="popup">Hello, I am a tooltip.</div>
+  <APopper triggerType="click" placement="bottom" closeWhenClickOutside>
+    <template v-slot:popup>
+      <!-- The content of the popup goes here. -->
+    </template>
   </APopper>
 </template>
 ```
 
-This code will produce a `button` element as the trigger and a `div` element as the popup. The `APopper` component will automatically bind a mouseover event to the trigger by default, causing the popup to display when the user hovers over the trigger.
-
 ## Props
 
-The following props can be passed to the `APopper` component:
+`APopper` accepts the following props:
 
-| Name                  | Type    | Default   | Description                                                                                           |
-| --------------------- | ------- | --------- | ----------------------------------------------------------------------------------------------------- |
-| hideDelay             | Number  | 100       | The delay in milliseconds before hiding the popup, useful for hover events.                           |
-| placement             | String  | 'bottom'  | The placement of the popup relative to the trigger, as defined by the `@popperjs/core` package.       |
-| triggerType           | String  | 'hover'   | The type of event that triggers the popup. Can be 'hover', 'click', or 'manual'.                      |
-| offset                | Number  | 18        | The offset in pixels between the trigger and the popup.                                               |
-| zIndex                | Number  | 3000      | The z-index value of the popup.                                                                       |
-| appendToBody          | Boolean | true      | Whether to append the popup to the body of the document.                                              |
-| popupClass            | String  | undefined | The CSS class to be applied to the popup element.                                                     |
-| transition            | String  | undefined | The CSS transition class to be applied to the popup element.                                          |
-| closeWhenClickOutside | Boolean | true      | Only effective when `triggerType` is 'click'. Whether to close the popup when clicking outside of it. |
+| Prop                  | Type    | Default  | Description                                                                                                      |
+| --------------------- | ------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| hideDelay             | Number  | 100      | The delay in milliseconds before the popper is hidden.                                                           |
+| placement             | String  | 'bottom' | The placement of the popper, same as the popperjs.                                                               |
+| triggerType           | String  | 'hover'  | The trigger type of the popper. It can be 'hover', 'click', or 'manual'.                                         |
+| offset                | Number  | 18       | The offset between the trigger element and the popup.                                                            |
+| zIndex                | Number  | 3000     | The z-index value of the popup.                                                                                  |
+| appendToBody          | Boolean | true     | If true, the popup will be appended to the body.                                                                 |
+| popupClass            | String  |          | The class name of the popup.                                                                                     |
+| transition            | String  |          | The transition class name of the popup.                                                                          |
+| closeWhenClickOutside | Boolean | true     | If true, the popup will be closed when clicking outside of it. It only takes effect when triggerType is "click". |
+| group                 | String  |          | Group id for mutually exclusive popups.                                                                          |
 
 ## Events
 
-`APopper` component will emit an event when the popup visibility status changes. The event is named `'popupStatusChanged'`. You can listen to this event by using `@popupStatusChanged` on the `APopper` component.
+The `APopper` component emits the following event:
+
+- popupStatusChanged: This event is triggered when the visibility state of the popup changes. The new visibility state is emitted as the payload.
 
 ## Exposed Methods
 
-`APopper` component exposes two methods for programmatic control: `show` and `hide`. These methods allow you to manually show or hide the popup, or bind them to a custom event.
+`APopper` exposes the following methods:
+
+- `show`: This method is used to show the popup. There are no arguments.
+- `hide`: This method is used to hide the popup. There are no arguments.
+- `getTriggerEl`: This method is used to get the trigger element. It returns `HTMLElement` and accepts no arguments.
+- `getPopupEl`: This method is used to get the popup element. It returns `HTMLElement` and accepts no arguments.
+
+## Example
+
+Here is an example of using the `APopper` component with customized props and slots:
 
 ```vue
 <template>
-  <APopper ref="myPopup">
-    <button @click="showPopup">Click Me!</button>
-    <div slot="popup">Hello, I am a tooltip.</div>
+  <APopper triggerType="click" placement="top" :appendToBody="false" popupClass="my-popup">
+    <button slot="default">Open Popover</button>
+    <div slot="popup">This is the popup content!</div>
   </APopper>
 </template>
 
 <script>
-import { ref } from 'vue';
-
 export default {
-  setup() {
-    const myPopup = ref(null);
-
-    const showPopup = () => {
-      myPopup.value.show();
-    };
-
-    return {
-      myPopup,
-      showPopup,
-    };
+  components: {
+    APopper,
   },
 };
 </script>
 ```
-
-This code will bind the `showPopup` method to the click event of the trigger button, and will open the popup by calling the `show` method of the `APopper` component.
