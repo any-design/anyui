@@ -29,6 +29,7 @@
       <LoadingSection />
       <SpinnerSection />
       <DrawerSection />
+      <PaginationSection />
       <VirtualListSection />
       <ChatSection />
       <MasonrySection />
@@ -47,81 +48,44 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { defineAsyncComponent } from 'vue';
 import { Icon } from '@iconify/vue';
 
 import { version } from '../../package.json';
 
-import ButtonSection from './sections/button.vue';
-import ClickableTextSection from './sections/clickableText.vue';
-import GradientTextSection from './sections/gradientText.vue';
-import InputSection from './sections/input.vue';
-import SelectSection from './sections/select.vue';
-import RadioSection from './sections/radio.vue';
-import RadioButtonGroupSection from './sections/radioButtonGroup.vue';
-import CheckboxSection from './sections/checkbox.vue';
-import CardSection from './sections/card.vue';
-import SplitSection from './sections/split.vue';
-import FloatSection from './sections/float.vue';
-import StepSection from './sections/step.vue';
-import UploadSection from './sections/upload.vue';
-import ImageSection from './sections/image.vue';
-import PopperSection from './sections/popper.vue';
-import PopMenuSection from './sections/popmenu.vue';
-import FormSection from './sections/form.vue';
-import MessageSection from './sections/message.vue';
-import LayoutSection from './sections/layout.vue';
-import TagSection from './sections/tag.vue';
-import TextareaSection from './sections/textarea.vue';
-import CollapseSection from './sections/collapse.vue';
-import LoadingSection from './sections/loading.vue';
-import DrawerSection from './sections/drawer.vue';
-import SpinnerSection from './sections/spinner.vue';
-import MasonrySection from './sections/masonry.vue';
-import VirtualListSection from './sections/virtualList.vue';
-import ChatSection from './sections/chat.vue';
-import Logo from './icon/Logo.vue';
-
-export default defineComponent({
-  components: {
-    ButtonSection,
-    ClickableTextSection,
-    CollapseSection,
-    GradientTextSection,
-    InputSection,
-    SelectSection,
-    RadioSection,
-    RadioButtonGroupSection,
-    CheckboxSection,
-    CardSection,
-    SplitSection,
-    FloatSection,
-    StepSection,
-    UploadSection,
-    ImageSection,
-    PopperSection,
-    PopMenuSection,
-    FormSection,
-    MessageSection,
-    LayoutSection,
-    TagSection,
-    TextareaSection,
-    SpinnerSection,
-    LoadingSection,
-    DrawerSection,
-    MasonrySection,
-    VirtualListSection,
-    ChatSection,
-    Logo,
-    Icon,
-  },
-  setup() {
-    return {
-      version,
-    };
-  },
-});
+const ButtonSection = defineAsyncComponent(() => import('./sections/button.vue'));
+const ClickableTextSection = defineAsyncComponent(() => import('./sections/clickableText.vue'));
+const GradientTextSection = defineAsyncComponent(() => import('./sections/gradientText.vue'));
+const InputSection = defineAsyncComponent(() => import('./sections/input.vue'));
+const SelectSection = defineAsyncComponent(() => import('./sections/select.vue'));
+const RadioSection = defineAsyncComponent(() => import('./sections/radio.vue'));
+const RadioButtonGroupSection = defineAsyncComponent(
+  () => import('./sections/radioButtonGroup.vue'),
+);
+const CheckboxSection = defineAsyncComponent(() => import('./sections/checkbox.vue'));
+const CardSection = defineAsyncComponent(() => import('./sections/card.vue'));
+const SplitSection = defineAsyncComponent(() => import('./sections/split.vue'));
+const FloatSection = defineAsyncComponent(() => import('./sections/float.vue'));
+const StepSection = defineAsyncComponent(() => import('./sections/step.vue'));
+const UploadSection = defineAsyncComponent(() => import('./sections/upload.vue'));
+const ImageSection = defineAsyncComponent(() => import('./sections/image.vue'));
+const PaginationSection = defineAsyncComponent(() => import('./sections/pagination.vue'));
+const PopperSection = defineAsyncComponent(() => import('./sections/popper.vue'));
+const PopMenuSection = defineAsyncComponent(() => import('./sections/popmenu.vue'));
+const FormSection = defineAsyncComponent(() => import('./sections/form.vue'));
+const MessageSection = defineAsyncComponent(() => import('./sections/message.vue'));
+const LayoutSection = defineAsyncComponent(() => import('./sections/layout.vue'));
+const TagSection = defineAsyncComponent(() => import('./sections/tag.vue'));
+const TextareaSection = defineAsyncComponent(() => import('./sections/textarea.vue'));
+const CollapseSection = defineAsyncComponent(() => import('./sections/collapse.vue'));
+const LoadingSection = defineAsyncComponent(() => import('./sections/loading.vue'));
+const DrawerSection = defineAsyncComponent(() => import('./sections/drawer.vue'));
+const SpinnerSection = defineAsyncComponent(() => import('./sections/spinner.vue'));
+const MasonrySection = defineAsyncComponent(() => import('./sections/masonry.vue'));
+const VirtualListSection = defineAsyncComponent(() => import('./sections/virtualList.vue'));
+const ChatSection = defineAsyncComponent(() => import('./sections/chat.vue'));
+const Logo = defineAsyncComponent(() => import('./icon/Logo.vue'));
 </script>
 
 <style lang="scss">
@@ -132,6 +96,7 @@ export default defineComponent({
   padding: 0 24px;
   box-sizing: border-box;
   user-select: none;
+
   &-title {
     height: 72px;
     line-height: 72px;
@@ -139,47 +104,61 @@ export default defineComponent({
     letter-spacing: 0.05rem;
     font-weight: 600;
   }
+
   &-content {
     &-title {
       font-weight: 600;
       font-size: 18px;
       margin: 8px 0 12px 0;
     }
+
     &__item {
       margin-bottom: 24px;
     }
+
     .testground-flex {
       display: flex;
+
       > * {
         margin-right: 18px;
       }
+
       > *:last-child {
         margin-right: 0;
       }
     }
   }
+
   &-footer {
     display: flex;
     padding-bottom: 16px;
     align-items: center;
     user-select: none;
+
     .logo {
       width: 26px;
       height: 26px;
       margin-right: 12px;
+
+      path {
+        fill: var(--text-secondary);
+      }
     }
+
     .text {
       color: var(--text-secondary);
       opacity: 0.8;
       flex: 1;
       font-size: 14px;
     }
+
     .github {
       opacity: 0.2;
       transition: 100ms;
       width: 24px;
       height: 24px;
     }
+
     .github:hover {
       opacity: 0.35;
     }
