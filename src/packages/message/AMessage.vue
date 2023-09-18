@@ -20,9 +20,10 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import { Icon } from '@iconify/vue';
-import { MessageType } from './types';
+import { Icon, IconifyIcon } from '@iconify/vue';
+
 import { DefaultIcon } from './constants';
+import { MessageType } from './types';
 
 export default defineComponent({
   name: 'AMessage',
@@ -40,7 +41,7 @@ export default defineComponent({
     },
     // the icon which will be used as a prefix, if remains empty, there will be no icon
     icon: {
-      type: String,
+      type: [String, Object] as PropType<string | IconifyIcon>,
       default: '',
     },
     // whether to show the icon
