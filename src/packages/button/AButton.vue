@@ -23,7 +23,7 @@
 
 <script lang="ts">
 import { defineComponent, useSlots, PropType } from 'vue';
-import { Icon } from '@iconify/vue';
+import { Icon, IconifyIcon } from '@iconify/vue';
 import { ButtonType, IconPosition } from './types';
 
 // This ui component is a button.
@@ -70,7 +70,7 @@ export default defineComponent({
     },
     // The icon in the button
     icon: {
-      type: String,
+      type: [String, Object] as PropType<string | IconifyIcon>,
       default: '',
     },
     // The position of the icon
