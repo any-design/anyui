@@ -66,11 +66,12 @@ import {
   ref,
   watch,
 } from 'vue';
-import { Icon } from '@iconify/vue';
+import { Icon, IconifyIcon } from '@iconify/vue';
+
 import { getCertainParent } from '../../utils';
 import { FormItemEventEmitter } from '../formItem/bus';
-import { ASelectItem, ASelectItems } from './types';
 import APopper from '../popper';
+import { ASelectItem, ASelectItems } from './types';
 
 type SelectedValue = string | number | undefined | null;
 
@@ -108,7 +109,7 @@ export default defineComponent({
       type: Object as PropType<ASelectItems>,
     },
     expandIcon: {
-      type: String,
+      type: [String, Object] as PropType<string | IconifyIcon>,
       default: 'ic:outline-expand-more',
     },
   },
