@@ -37,170 +37,172 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { PropType, computed } from 'vue';
+<script lang="ts">
+import { PropType, defineComponent } from 'vue';
 import { Icon, IconifyIcon } from '@iconify/vue';
 
 import { PaginationMeta } from './types';
 
-const props = defineProps({
-  pagination: {
-    type: Object as PropType<PaginationMeta>,
+export default defineComponent({
+  components: {
+    Icon,
   },
-  // how many page button should show on each side of the current page
-  siblingCount: {
-    type: Number,
-    default: 1,
+  props: {
+    pagination: {
+      type: Object as PropType<PaginationMeta>,
+    },
+    // how many page button should show on each side of the current page
+    siblingCount: {
+      type: Number,
+      default: 1,
+    },
+    boundaryCount: {
+      type: Number,
+      default: 1,
+    },
+    prevIcon: {
+      type: [String, Object] as PropType<string | IconifyIcon>,
+      default: 'uil:angle-left',
+    },
+    nextIcon: {
+      type: [String, Object] as PropType<string | IconifyIcon>,
+      default: 'uil:angle-right',
+    },
   },
-  boundaryCount: {
-    type: Number,
-    default: 1,
+  emits: ['change', 'update:pagination'],
+  computed: {
+    currentPage() {
+      return this.pagination?.current || 1;
+    },
+    totalPages() {
+      if (!this.pagination?.pageSize || !this.pagination?.total) {
+        console.warn('[a-pagination] wrong pageSize or total value.');
+        return 0;
+      }
+      const totalPageValue = this.pagination.total / this.pagination.pageSize;
+      if (`${totalPageValue}`.includes('.')) {
+        return Math.floor(totalPageValue) + 1;
+      }
+      return totalPageValue;
+    },
+    startPageCount() {
+      return Math.min(this.boundaryCount, this.totalPages);
+    },
+    endPageCount() {
+      return (
+        this.totalPages -
+        Math.max(this.totalPages - this.boundaryCount + 1, this.boundaryCount + 1) +
+        1
+      );
+    },
+    siblingStart() {
+      return Math.max(
+        Math.min(
+          this.currentPage - this.siblingCount,
+          this.totalPages - this.boundaryCount - this.siblingCount * 2 - 1,
+        ),
+        this.boundaryCount + 2,
+      );
+    },
+    siblingEnd() {
+      return Math.min(
+        Math.max(
+          this.currentPage + this.siblingCount,
+          this.boundaryCount + this.siblingCount * 2 + 2,
+        ),
+        this.endPageCount ? this.totalPages - this.endPageCount - 1 : this.totalPages - 1,
+      );
+    },
+    displayList() {
+      return [
+        // start page
+        ...Array.from({ length: this.startPageCount }, (_, idx) => ({
+          text: `${idx + 1}`,
+          value: idx + 1,
+          disabled: false,
+        })),
+        // start ellipsis
+        ...(this.siblingStart > this.boundaryCount + 2
+          ? [
+              {
+                text: '...',
+                value: -1,
+                disabled: true,
+              },
+            ]
+          : this.boundaryCount + 1 < this.totalPages - this.boundaryCount
+          ? [
+              {
+                text: `${this.boundaryCount + 1}`,
+                value: this.boundaryCount + 1,
+                disabled: false,
+              },
+            ]
+          : []),
+        // middle range
+        ...Array.from({ length: this.siblingEnd - this.siblingStart + 1 }, (_, idx) => ({
+          text: `${this.siblingStart + idx}`,
+          value: this.siblingStart + idx,
+          disabled: false,
+        })),
+        // end ellipsis
+        ...(this.siblingEnd < this.totalPages - this.boundaryCount - 1
+          ? [
+              {
+                text: '...',
+                value: -1,
+                disabled: true,
+              },
+            ]
+          : this.totalPages - this.boundaryCount > this.boundaryCount
+          ? [
+              {
+                text: `${this.totalPages - this.boundaryCount}`,
+                value: this.totalPages - this.boundaryCount,
+                disabled: false,
+              },
+            ]
+          : []),
+        // end page
+        ...Array.from({ length: this.endPageCount }, (_, idx) => ({
+          text: `${this.totalPages - this.endPageCount + idx + 1}`,
+          value: this.totalPages - this.endPageCount + idx + 1,
+          disabled: false,
+        })),
+      ];
+    },
+    shouldDisablePrev() {
+      return this.currentPage > 1;
+    },
+    shouldDisableNext() {
+      return this.currentPage < this.totalPages;
+    },
   },
-  prevIcon: {
-    type: [String, Object] as PropType<string | IconifyIcon>,
-    default: 'uil:angle-left',
-  },
-  nextIcon: {
-    type: [String, Object] as PropType<string | IconifyIcon>,
-    default: 'uil:angle-right',
+  methods: {
+    emitPaginationChange(pagination: Partial<PaginationMeta>) {
+      this.$emit('update:pagination', pagination);
+      this.$emit('change', pagination);
+    },
+    handlePrevClicked() {
+      this.emitPaginationChange({
+        ...this.pagination,
+        current: Math.max(1, this.currentPage - 1),
+      });
+    },
+    handleNextClicked() {
+      this.emitPaginationChange({
+        ...this.pagination,
+        current: Math.min(this.totalPages, this.currentPage + 1),
+      });
+    },
+    handlePageClicked(page: number) {
+      this.emitPaginationChange({
+        ...this.pagination,
+        current: page,
+      });
+    },
   },
 });
-
-const emit = defineEmits(['update:pagination', 'change']);
-
-const currentPage = computed(() => props.pagination?.current || 1);
-
-const totalPages = computed(() => {
-  if (!props.pagination?.pageSize || !props.pagination?.total) {
-    console.warn('[a-pagination] wrong pageSize or total value.');
-    return 0;
-  }
-  const totalPageValue = props.pagination.total / props.pagination.pageSize;
-  if (`${totalPageValue}`.includes('.')) {
-    return Math.floor(totalPageValue) + 1;
-  }
-  return totalPageValue;
-});
-
-const startPageCount = computed(() => Math.min(props.boundaryCount, totalPages.value));
-const endPageCount = computed(
-  () =>
-    totalPages.value -
-    Math.max(totalPages.value - props.boundaryCount + 1, props.boundaryCount + 1) +
-    1,
-);
-const siblingStart = computed(() =>
-  Math.max(
-    Math.min(
-      currentPage.value - props.siblingCount,
-      totalPages.value - props.boundaryCount - props.siblingCount * 2 - 1,
-    ),
-    props.boundaryCount + 2,
-  ),
-);
-const siblingEnd = computed(() =>
-  Math.min(
-    Math.max(
-      currentPage.value + props.siblingCount,
-      props.boundaryCount + props.siblingCount * 2 + 2,
-    ),
-    endPageCount.value ? totalPages.value - endPageCount.value - 1 : totalPages.value - 1,
-  ),
-);
-
-const displayList = computed(() => {
-  return [
-    // start page
-    ...Array.from({ length: startPageCount.value }, (_, idx) => ({
-      text: `${idx + 1}`,
-      value: idx + 1,
-      disabled: false,
-    })),
-    // start ellipsis
-    ...(siblingStart.value > props.boundaryCount + 2
-      ? [
-          {
-            text: '...',
-            value: -1,
-            disabled: true,
-          },
-        ]
-      : props.boundaryCount + 1 < totalPages.value - props.boundaryCount
-      ? [
-          {
-            text: `${props.boundaryCount + 1}`,
-            value: props.boundaryCount + 1,
-            disabled: false,
-          },
-        ]
-      : []),
-    // middle range
-    ...Array.from({ length: siblingEnd.value - siblingStart.value + 1 }, (_, idx) => ({
-      text: `${siblingStart.value + idx}`,
-      value: siblingStart.value + idx,
-      disabled: false,
-    })),
-    // end ellipsis
-    ...(siblingEnd.value < totalPages.value - props.boundaryCount - 1
-      ? [
-          {
-            text: '...',
-            value: -1,
-            disabled: true,
-          },
-        ]
-      : totalPages.value - props.boundaryCount > props.boundaryCount
-      ? [
-          {
-            text: `${totalPages.value - props.boundaryCount}`,
-            value: totalPages.value - props.boundaryCount,
-            disabled: false,
-          },
-        ]
-      : []),
-    // end page
-    ...Array.from({ length: endPageCount.value }, (_, idx) => ({
-      text: `${totalPages.value - endPageCount.value + idx + 1}`,
-      value: totalPages.value - endPageCount.value + idx + 1,
-      disabled: false,
-    })),
-  ];
-});
-
-const shouldDisablePrev = computed(() => {
-  return currentPage.value > 1;
-});
-
-const shouldDisableNext = computed(() => {
-  return currentPage.value < totalPages.value;
-});
-
-const emitPaginationChange = (paginaton: Partial<PaginationMeta>) => {
-  emit('update:pagination', paginaton);
-  emit('change', paginaton);
-};
-
-// event handlers
-const handlePrevClicked = () => {
-  emitPaginationChange({
-    ...props.pagination,
-    current: Math.max(1, currentPage.value - 1),
-  });
-};
-
-const handleNextClicked = () => {
-  emitPaginationChange({
-    ...props.pagination,
-    current: Math.min(totalPages.value, currentPage.value + 1),
-  });
-};
-
-const handlePageClicked = (page: number) => {
-  emitPaginationChange({
-    ...props.pagination,
-    current: page,
-  });
-};
 </script>
 
 <style lang="scss" scoped>
