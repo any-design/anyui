@@ -20,6 +20,7 @@ import Message, { message } from './packages/message';
 import Radio from './packages/radio';
 import RadioGroup from './packages/radioGroup';
 import RadioButtonGroup from './packages/radioButtonGroup';
+import Pagination from './packages/pagination';
 import Popper from './packages/popper';
 import PopupMenu from './packages/popupMenu';
 import Select from './packages/select';
@@ -92,6 +93,7 @@ export {
   Loading,
   Masonry,
   Message,
+  Pagination,
   Popper,
   PopupMenu,
   Radio,
@@ -113,12 +115,10 @@ export {
 
 // hooks
 export * from './packages/hooks';
+export * from './packages/helper';
 
 // types
-export * from './packages/chat/types';
-export * from './packages/helper';
-export * from './packages/masonry/types';
-export * from './packages/virtualList/types';
+export * from './types';
 
 export type MessageFn = typeof message;
 
