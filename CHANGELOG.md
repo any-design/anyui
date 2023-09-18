@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.6](https://github.com/any-design/anyui/compare/v0.1.5...v0.1.6) (2023-09-18)
+
+### Features
+
+- (pagination) add pagination component ([6c4cc3e](https://github.com/any-design/anyui/commit/6c4cc3ed5e42d40b5189027720d3721bd665f6d4))
+
 ## [0.1.5](https://github.com/any-design/anyui/compare/v0.1.4...v0.1.5) (2023-09-17)
 
 ### Features

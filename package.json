@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "any-design",
   "description": "A cute UI components library for Vue 3.",
   "files": [
@@ -30,7 +30,7 @@
     "start": "npm run dev",
     "dev": "cross-env BUILD_TARGET=TESTGROUND vite",
     "clean": "rimraf ./lib && rimraf ./styles",
-    "build": "vue-tsc && cross-env BUILD_TARGET=LIBRARY vite build && cross-env BUILD_TARGET=RESOLVER vite build",
+    "build": "vue-tsc --noEmit && cross-env BUILD_TARGET=LIBRARY vite build && cross-env BUILD_TARGET=RESOLVER vite build",
     "dist": "npm run lint && npm run clean && npm run build && node ./scripts/afterBuild.js",
     "build:after": "node ./scripts/afterBuild.js",
     "build:testground": "npm run lint && rimraf ./dist-testground && cross-env BUILD_TARGET=TESTGROUND vite build",
