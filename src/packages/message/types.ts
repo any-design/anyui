@@ -1,11 +1,12 @@
 import { Emitter } from 'mitt';
+import { IconifyIcon } from '@iconify/vue';
 
 export type MessageType = 'default' | 'info' | 'success' | 'warning' | 'error';
 
 export interface MessageOptions {
   type: MessageType;
   content: string;
-  icon?: string;
+  icon?: string | IconifyIcon;
   showIcon?: boolean;
   zIndex?: number;
   duration?: number;
