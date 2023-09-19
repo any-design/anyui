@@ -1,7 +1,7 @@
 <template>
-  <header class="a-layout-inner a-footer" :style="styles">
+  <footer class="a-layout-inner a-footer" :style="styles">
     <slot></slot>
-  </header>
+  </footer>
 </template>
 
 <script lang="ts">
