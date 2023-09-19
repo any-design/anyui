@@ -5,8 +5,8 @@
 </template>
 
 <script lang="ts">
-import { Icon } from '@iconify/vue';
-import { defineComponent } from 'vue';
+import { PropType, defineComponent } from 'vue';
+import { Icon, IconifyIcon } from '@iconify/vue';
 
 export default defineComponent({
   components: {
@@ -15,7 +15,7 @@ export default defineComponent({
   props: {
     // the icon name of the spinner
     icon: {
-      type: String,
+      type: [String, Object] as PropType<string | IconifyIcon>,
       default: 'quill:loading-spin',
     },
   },

@@ -27,7 +27,7 @@ export default defineComponent({
       type: Number,
     },
   },
-  setup(props, { expose }) {
+  setup(_, { expose }) {
     const messageQueue = ref<Message[]>([]);
     const emitter: MessageEventEmitter = mitt();
 

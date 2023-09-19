@@ -23,8 +23,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, onBeforeMount } from 'vue';
-import { Icon } from '@iconify/vue';
+import { defineComponent, ref, watch, onBeforeMount, PropType } from 'vue';
+import { Icon, IconifyIcon } from '@iconify/vue';
 
 export default defineComponent({
   name: 'ACheckbox',
@@ -38,7 +38,7 @@ export default defineComponent({
     },
     // the icon which will showed when the checkbox is checked.
     checkIcon: {
-      type: String,
+      type: [String, Object] as PropType<string | IconifyIcon>,
       default: 'si-glyph:checked',
     },
     // the value which will be bound to this component.
