@@ -73,7 +73,7 @@ $default-colors: (
   secondary: rgba(17, 205, 239, 90),
   bg: $default-bg,
   bg-hover: adjust-color($default-bg, $lightness: -2.5%),
-  bg-readonly: #f2f3f4,
+  bg-readonly: #f0f0f3,
   bg-disabled: #dadadc,
   text: #202426,
   text-secondary: #909293,
