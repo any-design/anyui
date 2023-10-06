@@ -1,69 +1,92 @@
-# Component Documentation: AInput by "@any-design/anyui"
+# AInput Component Documentation
 
-## Introduction
+This component `AInput` is an input field. It provides different variants of input field with the ability to set custom padding for inner content, prefix and postfix sections, and explicit remeasurement of slots if necessary.
 
-"AInput" is a text input component that allows users to enter text information. It provides an input box with a variety of styles that can be customized to match the design of your site. You can also pass in different props to further customize the component.
+## Basic Usage and Examples
 
-## Basic Usage
+The below example illustrates the simple usage of `AInput` component:
 
 ```vue
 <template>
-  <div>
-    <a-input v-model="inputValue" placeholder="Enter text here"></a-input>
-  </div>
+  <AInput v-model="name"></AInput>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
-import AInput from '@any-design/anyui';
-
-export default defineComponent({
-  name: 'ExampleComponent',
-  components: {
-    AInput,
-  },
-  setup() {
-    const inputValue = ref('');
-
+export default {
+  data() {
     return {
-      inputValue,
+      name: '',
     };
   },
-});
+};
 </script>
 ```
 
-In the code above, we create an `AInput` instance. The `v-model` directive on the `AInput` component binds the input to a local data value called `inputValue`. The placeholder defines the placeholder text in the text box before the user enters any text.
-
 ## Props
 
-| Prop Name    | Type          | Default   | Description                                                                                              |
-| ------------ | ------------- | --------- | -------------------------------------------------------------------------------------------------------- |
-| width        | string/number | '100%'    | The width of the input. Can be a number or a string, e.g. '500px'.                                       |
-| size         | string        | 'default' | The size of the input. Can be 'default' or 'large'.                                                      |
-| round        | boolean       | false     | Whether to display the input with rounded corners.                                                       |
-| borderless   | boolean       | false     | If this prop is set to 'true', the input will not display a surrounding border.                          |
-| modelValue   | string/number | ''        | The initial value of the input. This is the value that the input will attempt to display.                |
-| placeholder  | string        | ''        | The placeholder text displayed in the input before the user enters any text.                             |
-| disabled     | boolean       | false     | If this value is set to 'true', the input is disabled and user input is not accepted.                    |
-| readonly     | boolean       | false     | If this value is set to 'true', the input is readonly and the user cannot change the input value.        |
-| editable     | boolean       | true      | If this value is set to 'false', the input is read-only and disabled.                                    |
-| type         | string        | 'text'    | The type of input. Can be 'text', 'email', 'password', etc.                                              |
-| max          | number        | -         | The maximum value that can be entered.                                                                   |
-| min          | number        | -         | The minimum value that can be entered.                                                                   |
-| maxlength    | number        | -         | The maximum number of characters that can be entered.                                                    |
-| minlength    | number        | -         | The minimum number of characters that must be entered.                                                   |
-| autocomplete | string        | 'off'     | This attribute indicates whether the value of the control can be automatically completed by the browser. |
+The `AInput` component accepts the following props:
+
+| Prop           | Type           | Default   | Description                                                |
+| -------------- | -------------- | --------- | ---------------------------------------------------------- |
+| width          | String, Number | '100%'    | Width of the input field                                   |
+| size           | String         | 'default' | Determines the size of the input field                     |
+| round          | Boolean        | false     | Whether round corners should be applied to the input field |
+| borderless     | Boolean        | false     | When true, no border will be applied to the input field    |
+| modelValue     | String, Number | ''        | Value of the input field                                   |
+| placeholder    | String         | ''        | Placeholder for the input field                            |
+| disabled       | Boolean        | false     | Disables the input field, if set to true                   |
+| readonly       | Boolean        | false     | Set the input field to readonly                            |
+| editable       | Boolean        | true      | Allows input field to be editable                          |
+| type           | String         |           | HTML5 input type of the input field                        |
+| max            | Number         |           | Maximum value for the input field                          |
+| min            | Number         |           | Minimum value for the input field                          |
+| maxlength      | Number         |           | Maximum length of the string in the input field            |
+| minlength      | Number         |           | Minimum length of the string in the input field            |
+| autocomplete   | String         | 'off'     | Sets whether autocomplete is enabled for the input field   |
+| prefixPadding  | Number         |           | Apply padding to the prefix in the input field             |
+| postfixPadding | Number         |           | Apply padding to the postfix in the input field            |
+| leftPadding    | Number         |           | Apply left padding to the input field                      |
+| rightPadding   | Number         |           | Apply right padding to the input field                     |
+| measureSlots   | Boolean        | true      | Measure size of used slots or not                          |
 
 ## Events
 
-| Event Name        | Description                                                                                  |
-| ----------------- | -------------------------------------------------------------------------------------------- |
-| update:modelValue | Triggered when the value inside the input changes. This event updates the local data value.  |
-| submit            | Triggered when "Enter" is pressed on the keyboard. Emits the current value inside the input. |
+The `AInput` component emits the following events:
 
-## Exposed Methods or Values
+- 'update:modelValue': This event is emitted whenever the input value changes, it emits the current value of the input field as a payload.
+- 'submit': This event is emitted when Enter key is pressed, it emits the current value of the input field as a payload.
 
-| Name  | Description                                     |
-| ----- | ----------------------------------------------- |
-| clear | A method to clear the content of the input box. |
+## Example
+
+The below example depicts the use of various props of the `AInput` component:
+
+```vue
+<template>
+  <AInput
+    v-model="name"
+    size="large"
+    placeholder="Enter your name"
+    round
+    width="50%"
+    autocomplete="on"
+    :disabled="false"
+    :readonly="false"
+    :editable="true"
+    maxlength="100"
+    minlength="2"
+    type="text"
+  />
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      name: '',
+    };
+  },
+};
+</script>
+```
+
+In the given example, a rounded input field with size "large", placeholder "Enter your name", width "50%", autocomplete enabled, and editable is configured. The minlength and maxlength for the input are set to 2 and 100, respectively.
