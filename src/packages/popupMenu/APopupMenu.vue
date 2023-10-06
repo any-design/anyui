@@ -156,7 +156,7 @@ export default defineComponent({
   }
 
   &__item:hover {
-    background-color: var(--bg-semi-dark);
+    background-color: var(--bg-hover);
     cursor: pointer;
   }
 }
