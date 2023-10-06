@@ -17,7 +17,7 @@
 <style lang="scss" scoped>
 .a-layout-inner {
   background-color: var(--primary);
-  color: var(--bg-light);
+  color: var(--text-btn);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,5 +28,6 @@
 }
 .a-content {
   background-color: var(--primary-80);
+  height: 100%;
 }
 </style>

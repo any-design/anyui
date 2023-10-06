@@ -73,6 +73,7 @@ $default-colors: (
   secondary: rgba(17, 205, 239, 90),
   bg: $default-bg,
   bg-hover: adjust-color($default-bg, $lightness: -2.5%),
+  bg-active: adjust-color($default-bg, $lightness: -3.75%),
   bg-readonly: #f0f0f3,
   bg-disabled: #dadadc,
   text: #202426,
@@ -102,7 +103,7 @@ $default-static-colors: (
 );
 
 $default-alphas: (
-  primary: 100 85 80 75 70 60 40 30 20 18 12 10 8 6 4,
+  primary: 100 90 85 80 75 70 60 40 30 20 18 12 10 8 6 4,
   secondary: 90 80 70 60 40 30 20,
   success: 80 60,
   warn: 80 60,
@@ -112,6 +113,7 @@ $default-alphas: (
   shadow: 2 4 5 6 8 10 12 18 20 24 25 30 36 40,
   shadow-w: 10 20 24,
   text: 80,
+  border: 80,
 );
 
 $default-lightness-adjustments: (
