@@ -152,46 +152,43 @@ $enable-prefer-query: true !default;
 $dark-theme-selector: 'html[theme="dark"]' !default;
 
 @if variable-exists(static-colors) {
-  $static-colors: map-merge($default-static-colors, $static-colors) !global;
+  $static-colors: map-merge($default-static-colors, $static-colors);
 } @else {
-  $static-colors: $default-static-colors !global;
+  $static-colors: $default-static-colors;
 }
 
 // merge with user configs
 @if variable-exists(colors) {
-  $colors: map-merge($default-colors, $colors) !global;
+  $colors: map-merge($default-colors, $colors);
 } @else {
-  $colors: $default-colors !global;
+  $colors: $default-colors;
 }
 
 @if variable-exists(alphas) {
-  $alphas: map-merge($default-alphas, $alphas) !global;
+  $alphas: map-merge($default-alphas, $alphas);
 } @else {
-  $alphas: $default-alphas !global;
+  $alphas: $default-alphas;
 }
 
 @if variable-exists(lightness-adjustments) {
-  $lightness-adjustments: map.deep-merge(
-    $default-lightness-adjustments,
-    $lightness-adjustments
-  ) !global;
+  $lightness-adjustments: map.deep-merge($default-lightness-adjustments, $lightness-adjustments);
 } @else {
-  $lightness-adjustments: $default-lightness-adjustments !global;
+  $lightness-adjustments: $default-lightness-adjustments;
 }
 
 @if variable-exists(dark-colors) {
-  $dark-colors: map-merge($default-dark-colors, $dark-colors) !global;
+  $dark-colors: map-merge($default-dark-colors, $dark-colors);
 } @else {
-  $dark-colors: $default-dark-colors !global;
+  $dark-colors: $default-dark-colors;
 }
 
 @if variable-exists(dark-lightness-adjustments) {
   $dark-lightness-adjustments: map.deep-merge(
     $default-dark-lightness-adjustments,
     $dark-lightness-adjustments
-  ) !global;
+  );
 } @else {
-  $dark-lightness-adjustments: $default-dark-lightness-adjustments !global;
+  $dark-lightness-adjustments: $default-dark-lightness-adjustments;
 }
 
 $colors: map-merge($colors, $static-colors);
