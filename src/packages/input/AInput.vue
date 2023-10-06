@@ -14,6 +14,9 @@
     }"
     :style="wrapperStyle"
   >
+    <div v-if="hasPrefix" class="a-input__prefix" :style="prefixStyle">
+      <slot name="prefix"></slot>
+    </div>
     <input
       :value="storedValue"
       class="a-input__inner"
@@ -30,9 +33,10 @@
       @input="handleInput"
       @keydown.enter="handleEnterDown"
     />
-    <div v-if="hasPrefix" class="a-input__prefix"><slot name="prefix"></slot></div>
     <div v-if="hasPostButton" class="a-input__post-button"><slot name="post-button"></slot></div>
-    <div v-else-if="hasPostfix" class="a-input__postfix"><slot name="postfix"></slot></div>
+    <div v-else-if="hasPostfix" class="a-input__postfix" :style="postfixStyle">
+      <slot name="postfix"></slot>
+    </div>
   </div>
 </template>
 
@@ -48,9 +52,13 @@ import {
   useSlots,
   watch,
   computed,
+  Ref,
 } from 'vue';
 import { formatStyleSize, getCertainParent } from '../../utils';
 import { FormItemEventEmitter } from '../formItem/bus';
+
+// extra padding to slot elements
+const SLOT_EXTRA_PADDING = 12;
 
 export default defineComponent({
   name: 'AInput',
@@ -110,6 +118,22 @@ export default defineComponent({
       type: String,
       default: 'off',
     },
+    prefixPadding: {
+      type: Number,
+    },
+    postfixPadding: {
+      type: Number,
+    },
+    leftPadding: {
+      type: Number,
+    },
+    rightPadding: {
+      type: Number,
+    },
+    measureSlots: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ['update:modelValue', 'submit'],
   setup(props, { emit }) {
@@ -150,9 +174,29 @@ export default defineComponent({
     );
 
     // styles
+    const hasPrefix = computed(() => !!useSlots()['prefix']);
+    const hasPostfix = computed(() => !!useSlots()['postfix']);
     const hasPostButton = computed(() => !!useSlots()['post-button']);
+
+    const prefixSlotWidth = ref(0);
+    const postfixSlotWidth = ref(0);
     const postButtonWidth = ref(0);
+
+    let prefixSlotObserver: ResizeObserver | undefined;
+    let postfixSlotObserver: ResizeObserver | undefined;
     let postButtonObserver: ResizeObserver | undefined;
+
+    const wrapperStyle = computed(() => ({
+      width: formatStyleSize(props.width),
+    }));
+
+    const prefixStyle = computed(() => ({
+      paddingLeft: props.prefixPadding ? formatStyleSize(props.prefixPadding) : undefined,
+    }));
+
+    const postfixStyle = computed(() => ({
+      paddingRight: props.postfixPadding ? formatStyleSize(props.postfixPadding) : undefined,
+    }));
 
     const extraPaddingOnPostButton = computed(() => {
       if (props.size === 'large') {
@@ -162,17 +206,73 @@ export default defineComponent({
     });
 
     const extraInnerStyle = computed(() => {
-      if (hasPostButton.value && postButtonWidth.value) {
-        return {
-          paddingRight: `${postButtonWidth.value + extraPaddingOnPostButton.value}px`,
-        };
+      let leftPadding: number | undefined;
+      let rightPadding: number | undefined;
+
+      if (props.leftPadding) {
+        leftPadding = props.leftPadding;
+      } else if (hasPrefix.value && prefixSlotWidth.value) {
+        leftPadding = prefixSlotWidth.value + SLOT_EXTRA_PADDING;
       }
-      return undefined;
+
+      if (props.rightPadding) {
+        rightPadding = props.rightPadding;
+      } else if (hasPostButton.value && postButtonWidth.value) {
+        rightPadding = postButtonWidth.value + extraPaddingOnPostButton.value;
+      } else if (hasPostfix.value && postfixSlotWidth.value) {
+        rightPadding = postfixSlotWidth.value + SLOT_EXTRA_PADDING;
+      }
+
+      return {
+        paddingLeft: leftPadding ? formatStyleSize(leftPadding) : undefined,
+        paddingRight: rightPadding ? formatStyleSize(rightPadding) : undefined,
+      };
     });
 
-    const wrapperStyle = computed(() => ({
-      width: formatStyleSize(props.width),
-    }));
+    const createSizeObserver = (targetRef: Ref<number>, targetSelector: string) => {
+      const postButton = inputWrapperRef.value?.querySelector(targetSelector);
+      if (!postButton) {
+        console.error('Cannot get the element of post button.');
+        return;
+      }
+      targetRef.value = postButton?.clientWidth || 0;
+      const observer = new ResizeObserver((entries) => {
+        const button = entries?.[0];
+        if (!postButton || !button) {
+          return;
+        }
+        targetRef.value = postButton?.clientWidth;
+      });
+      observer.observe(postButton);
+      return observer;
+    };
+
+    watch(hasPrefix, (newVal) => {
+      if (!newVal) {
+        prefixSlotObserver?.disconnect();
+        prefixSlotObserver = undefined;
+      } else if (!prefixSlotObserver && props.measureSlots) {
+        prefixSlotObserver = createSizeObserver(prefixSlotWidth, '.a-input__prefix');
+      }
+    });
+
+    watch(hasPostfix, (newVal) => {
+      if (!newVal) {
+        postfixSlotObserver?.disconnect();
+        postfixSlotObserver = undefined;
+      } else if (!postfixSlotObserver && props.measureSlots) {
+        postfixSlotObserver = createSizeObserver(postfixSlotWidth, '.a-input__postfix');
+      }
+    });
+
+    watch(hasPostButton, (newVal) => {
+      if (!newVal) {
+        postButtonObserver?.disconnect();
+        postButtonObserver = undefined;
+      } else if (!postButtonObserver) {
+        postButtonObserver = createSizeObserver(postButtonWidth, '.a-input__post-button');
+      }
+    });
 
     onBeforeMount(() => {
       storedValue.value = `${props.modelValue}`;
@@ -180,21 +280,16 @@ export default defineComponent({
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
-      if (hasPostButton.value && inputWrapperRef.value) {
-        const postButton = inputWrapperRef.value.querySelector('.a-input__post-button');
-        if (!postButton) {
-          console.error('Cannot get the element of post button.');
-          return;
+      if (hasPostButton.value) {
+        postButtonObserver = createSizeObserver(postButtonWidth, '.a-input__post-button');
+      }
+      if (props.measureSlots) {
+        if (hasPrefix.value) {
+          prefixSlotObserver = createSizeObserver(prefixSlotWidth, '.a-input__prefix');
         }
-        postButtonWidth.value = postButton?.clientWidth || 0;
-        postButtonObserver = new ResizeObserver((entries) => {
-          const button = entries?.[0];
-          if (!postButton || !button) {
-            return;
-          }
-          postButtonWidth.value = postButton?.clientWidth;
-        });
-        postButtonObserver.observe(postButton);
+        if (hasPostfix.value) {
+          postfixSlotObserver = createSizeObserver(postfixSlotWidth, '.a-input__postfix');
+        }
       }
     });
 
@@ -206,11 +301,13 @@ export default defineComponent({
     return {
       inputWrapperRef,
       storedValue,
-      hasPrefix: !!useSlots().prefix,
-      hasPostfix: !!useSlots().postfix,
-      hasPostButton: hasPostButton,
+      hasPrefix,
+      hasPostfix,
+      hasPostButton,
       wrapperStyle,
       extraInnerStyle,
+      prefixStyle,
+      postfixStyle,
       handleInput,
       handleEnterDown,
     };
