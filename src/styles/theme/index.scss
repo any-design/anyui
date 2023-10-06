@@ -15,14 +15,14 @@
 }
 
 #{$dark-theme-selector} {
-  @include generate-colors($dark-colors, $alphas, $lightness-adjustments);
+  @include generate-colors($dark-colors, $alphas, $dark-lightness-adjustments);
 }
 
 @if $enable-prefer-query {
   // prefer dark media query
   @media (prefers-color-scheme: dark) {
     :root {
-      @include generate-colors($dark-colors, $alphas, $lightness-adjustments);
+      @include generate-colors($dark-colors, $alphas, $dark-lightness-adjustments);
     }
   }
 }
