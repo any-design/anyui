@@ -18,7 +18,7 @@
       <a-input placeholder="Disabled" disabled></a-input>
       <a-input v-model="readOnlyText" placeholder="Read Only" readonly></a-input>
     </div>
-    <div class="testground-flex" style="margin-top: 16px">
+    <div class="testground-flex">
       <a-input placeholder="Borderless" borderless></a-input>
       <a-input placeholder="With post button">
         <template #post-button>
@@ -36,7 +36,7 @@
         </template>
       </a-input>
     </div>
-    <div class="testground-flex" style="margin-top: 16px">
+    <div class="testground-flex">
       <a-input placeholder="With rounded post button">
         <template #post-button>
           <a-button type="gradient" size="small" round icon="ri:search-2-line" />
@@ -53,7 +53,21 @@
         </template>
       </a-input>
     </div>
-    <div class="testground-flex" style="margin-top: 16px">
+    <div class="testground-flex">
+      <a-input placeholder="Select a file..." borderless round readonly :prefix-padding="4">
+        <template #prefix>
+          <label>
+            <a-button round borderless type="gradient" size="small" @click.prevent
+              >Prefix button</a-button
+            >
+          </label>
+        </template>
+        <template #post-button>
+          <a-button type="gradient" size="small" round icon="ri:search-2-line" />
+        </template>
+      </a-input>
+    </div>
+    <div class="testground-flex">
       <a-input placeholder="Password" type="password"></a-input>
       <a-input placeholder="Password" type="file"></a-input>
     </div>
@@ -75,3 +89,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.testground-flex {
+  margin-top: 16px;
+}
+</style>
