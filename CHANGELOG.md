@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## [0.1.9](https://github.com/any-design/anyui/compare/v0.1.8...v0.1.9) (2023-10-06)
+
+### Features
+
+- (input) support measurement for slots ([95e412b](https://github.com/any-design/anyui/commit/95e412bb566e037ccf2aa91121ad3eb1119a2857))
+- (theme) boost lightness for default theme ([daf5089](https://github.com/any-design/anyui/commit/daf5089a1bd40fdbf00aecce106185e00fd06b05))
+- (theme) support deep merge in lightness adjustment map, and now dark mode can have its own adjustment map ([532486e](https://github.com/any-design/anyui/commit/532486ebb517fd720728ecb54c100915c07bd5f3))
+
 ## [0.1.8](https://github.com/any-design/anyui/compare/v0.1.7...v0.1.8) (2023-10-06)
 
 ### Bug Fixes
