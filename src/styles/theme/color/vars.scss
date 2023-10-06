@@ -134,11 +134,11 @@ $default-lightness-adjustments: (
 );
 
 // globals
-$colors: ();
-$dark-colors: ();
-$static-colors: ();
-$alphas: ();
-$lightness-adjustments: ();
+$colors: () !default;
+$dark-colors: () !default;
+$static-colors: () !default;
+$alphas: () !default;
+$lightness-adjustments: () !default;
 $enable-prefer-query: true !default;
 $dark-theme-selector: 'html[theme="dark"]' !default;
 
