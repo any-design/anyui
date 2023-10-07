@@ -4,10 +4,10 @@
     <div class="testground-flex">
       <a-layout>
         <a-side>
-          <a-list-menu :menu="listMenu"></a-list-menu>
+          <a-list-menu v-model="menuSelected" :menu="listMenu"></a-list-menu>
         </a-side>
         <a-layout>
-          <a-content></a-content>
+          <a-content>{{ menuSelected }}</a-content>
         </a-layout>
       </a-layout>
     </div>
@@ -16,12 +16,15 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import AListMenu from '../../packages/listMenu';
 
 const listMenu = ref({
   Accounts: ['My Account'],
   UI: ['Theme'],
   Security: ['Storage', 'API'],
 });
+
+const menuSelected = ref('Theme');
 </script>
 
 <style lang="scss" scoped>

@@ -262,7 +262,7 @@ $regular-size: 32px;
   &__page {
     @include inline-center();
     @include regular-size-rect();
-    color: var(--text);
+
     cursor: pointer;
     margin: 0 4px;
     transition: opacity 100ms ease, color 100ms ease;
@@ -276,6 +276,7 @@ $regular-size: 32px;
       left: 0;
       top: 0;
       z-index: 2;
+      color: var(--text);
     }
   }
 
@@ -288,9 +289,12 @@ $regular-size: 32px;
   }
 
   &__page--selected {
-    color: var(--text-btn);
     cursor: default;
     font-weight: 600;
+
+    span {
+      color: var(--text-btn);
+    }
   }
 
   &__page--selected::before {

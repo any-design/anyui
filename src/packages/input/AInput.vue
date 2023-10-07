@@ -487,6 +487,12 @@ export default defineComponent({
   }
 }
 
+.a-input.a-input--readonly.a-input--borderless {
+  .a-input__inner {
+    box-shadow: 3px 2px 8px var(--shadow-8);
+  }
+}
+
 .a-input.a-input--has-post-button {
   .a-input__post-button {
     position: absolute;
