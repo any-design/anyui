@@ -6,6 +6,7 @@
         :text="item.label"
         :value="item.value"
         :selected="currentSelected"
+        @click="(e) => handleItemClicked(e, item)"
       />
       <div v-else class="a-list-menu__split">
         <span>{{ item.label }}</span>
@@ -15,17 +16,29 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, computed, ref } from 'vue';
+import { PropType, computed, onBeforeMount, ref, watch } from 'vue';
 import { AListMenuConfig, AListMenuDisplayItem, AListMenuItemConfig } from './types';
 import AListMenuItem from './AListMenuItem.vue';
 
 const props = defineProps({
+  modelValue: {
+    type: String,
+  },
   menu: {
     type: [Array, Object] as PropType<AListMenuConfig>,
   },
 });
 
-const currentSelected = ref('');
+const emit = defineEmits(['update:modelValue']);
+
+const currentSelected = ref<string | undefined>('');
+
+watch(
+  () => props.modelValue,
+  () => {
+    currentSelected.value = props.modelValue;
+  },
+);
 
 const generateDisplayItems = (list: AListMenuItemConfig[]): AListMenuDisplayItem[] => {
   return list.map((item) => {
@@ -65,11 +78,34 @@ const displayItems = computed<AListMenuDisplayItem[]>(() => {
     return ret;
   }
 });
+
+const handleItemClicked = (_: Event, item: AListMenuDisplayItem) => {
+  currentSelected.value = item.value;
+  emit('update:modelValue', item.value);
+};
+
+onBeforeMount(() => {
+  currentSelected.value = props.modelValue;
+});
 </script>
 
 <style lang="scss">
 .a-list-menu {
   width: 100%;
   position: relative;
+  box-sizing: border-box;
+
+  &__split {
+    width: calc(100% - 20px);
+    padding: 8px 2px;
+    box-sizing: border-box;
+    margin: 0 10px 8px 10px;
+    border-bottom: 1px solid var(--border-80);
+
+    span {
+      color: var(--text-80);
+      font-size: 13px;
+    }
+  }
 }
 </style>

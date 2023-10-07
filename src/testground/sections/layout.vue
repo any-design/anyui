@@ -10,6 +10,19 @@
           <a-footer>Footer</a-footer>
         </a-layout>
       </a-layout>
+      <a-layout>
+        <a-layout>
+          <a-content>Content</a-content>
+          <a-footer>Footer</a-footer>
+        </a-layout>
+        <a-side>Side</a-side>
+      </a-layout>
+      <a-layout>
+        <a-layout>
+          <a-header>Header</a-header>
+          <a-content>Content</a-content>
+        </a-layout>
+      </a-layout>
     </div>
   </div>
 </template>
@@ -17,7 +30,7 @@
 <style lang="scss" scoped>
 .a-layout-inner {
   background-color: var(--primary);
-  color: var(--bg-light);
+  color: var(--text-btn);
   display: flex;
   align-items: center;
   justify-content: center;

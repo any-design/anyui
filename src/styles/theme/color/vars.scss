@@ -66,11 +66,15 @@ $invert-text-btn: false !default;
   @return $dark-colors;
 }
 
+$default-bg: #f8f8fa;
+
 $default-colors: (
   primary: rgba(15, 111, 239, 90),
   secondary: rgba(17, 205, 239, 90),
-  bg: #fbfbfc,
-  bg-readonly: #f2f3f4,
+  bg: $default-bg,
+  bg-hover: adjust-color($default-bg, $lightness: -2.5%),
+  bg-active: adjust-color($default-bg, $lightness: -3.75%),
+  bg-readonly: #f0f0f3,
   bg-disabled: #dadadc,
   text: #202426,
   text-secondary: #909293,
@@ -99,7 +103,7 @@ $default-static-colors: (
 );
 
 $default-alphas: (
-  primary: 100 85 80 75 70 60 40 30 20 18 12 10 8 6 4,
+  primary: 100 90 85 80 75 70 60 40 30 20 18 12 10 8 6 4,
   secondary: 90 80 70 60 40 30 20,
   success: 80 60,
   warn: 80 60,
@@ -108,6 +112,8 @@ $default-alphas: (
   info: 80 60,
   shadow: 2 4 5 6 8 10 12 18 20 24 25 30 36 40,
   shadow-w: 10 20 24,
+  text: 80,
+  border: 80,
 );
 
 $default-lightness-adjustments: (
@@ -119,9 +125,9 @@ $default-lightness-adjustments: (
     bright: 4.5%,
     light: 2.5%,
     semi-light: 1.5%,
-    alter: -0.625%,
-    semi-dark: -1.5%,
-    darker: -3%,
+    alter: -0.75%,
+    semi-dark: -2.5%,
+    darker: -4%,
   ),
   border: (
     lighter: 6%,
@@ -138,6 +144,9 @@ $default-dark-lightness-adjustments: (
     bright: 7.5%,
     light: 5.75%,
     semi-light: 4.5%,
+    alter: -0.1%,
+    semi-dark: -0.75%,
+    darker: -1.25%,
   ),
 );
 
