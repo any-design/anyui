@@ -1,79 +1,63 @@
-# AUpload Component
+# AUpload component documentation
 
-The `AUpload` component is a template that supports exposing dropped files to its parent. This component doesn't trigger or handle any upload operation by itself. It has four different upload statuses, which are 'default', 'uploading', 'error', and 'success'. Moreover, it can be clickable and has drag and drop feature.
+This component is designed as a drag-and-drop file uploader.
 
-## Basic usage
+## Basic usage and examples
 
-To use the component, you need to import it from the "@any-design/anyui" package and include the "a-upload" tag in your template.
+Using the `AUpload` component, you can create a drag-and-drop area for file uploading:
 
-```html
+```vue
 <template>
-  <a-upload />
-</template>
-
-<script setup lang="ts">
-  import { AUpload } from '@any-design/anyui';
-</script>
-```
-
-You can also add slots inside AUpload component based on its status.
-
-```html
-<template>
-  <a-upload>
-    <span slot="dragging">Drop file here</span>
-    <span slot="error">Failed: file size too large</span>
-  </a-upload>
+  <AUpload />
 </template>
 ```
 
 ## Props
 
-The following props are available in the `AUpload` component.
+The component accepts the following props:
 
-| Prop      | Type    | Default | Description                                                                                   |
-| --------- | ------- | ------- | --------------------------------------------------------------------------------------------- |
-| status    | String  | `''`    | The upload status of the uploader, can be `'default'`, `'uploading'`, `'error'`, `'success'`. |
-| clickable | Boolean | `true`  | If `true`, the uploader will be clickable.                                                    |
+| Property  | Type    | Default value | Description                                                                                                 |
+| --------- | ------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+| status    | String  | ''            | The upload status of the uploader, can be 'default', 'uploading', 'error', or 'success'.                    |
+| clickable | Boolean | true          | If set to true, the uploader will be clickable.                                                             |
+| disabled  | Boolean | false         | Disables the uploader when set to true. While disabled, it won't respond to any click or drop behaviours. |
 
-### status
+- status: The upload status of the uploader; it can be 'default', 'uploading', 'error', or 'success'. The default value is an empty string ''.
+- clickable: If set to true, the uploader will be clickable. The default value is true.
+- disabled: If set to true, the uploader will be disabled; it won't respond to any click or drop behaviours. This property is useful when you do not want to trigger another upload operation while the file is uploading. The default value is false.
 
-The `status` prop determines the current status of the `AUpload` component. The available options are `'default'`, `'uploading'`, `'error'`, and `'success'`.
+Example:
 
-```html
+```vue
 <template>
-  <a-upload :status="'uploading'" />
-</template>
-```
-
-### clickable
-
-The `clickable` prop determines whether the AUpload component is clickable or not. If `true`, you can click it to select files.
-
-```html
-<template>
-  <a-upload :clickable="false" />
+  <AUpload status="uploading" :clickable="false" :disabled="true" />
 </template>
 ```
 
 ## Events
 
-The `AUpload` component emits only one event, which is `'upload'`. This event is triggered when a file is chosen by the user or be dropped in the uploader by the user. The first argument of the event is the File object.
+This component emits the following event:
+
+| Event  | Value Type | Description                                                      |
+| ------ | ---------- | ---------------------------------------------------------------- |
+| upload | File       | Triggered when a file is chosen or dropped in the uploader by the user. The input value is the file that the user chose or dropped. |
+
+Example:
 
 ```vue
 <template>
-  <a-upload @upload="handleUpload" />
+  <AUpload @upload="handleUpload" />
 </template>
 
-<script setup lang="ts">
-import { AUpload } from '@any-design/anyui';
-
-const handleUpload = (file) => {
-  console.log('Selected file: ', file);
+<script>
+export default {
+  methods: {
+    handleUpload(file) {
+      console.log(file);
+    },
+  },
 };
 </script>
 ```
 
-## Exposed Methods or Values
-
-The `AUpload` component has no exposed methods or values.
+Please note that this component does not handle the upload operation itself. It's just a template and supports exposing dropped files to its parent. The parent component should handle the uploaded file properly.
