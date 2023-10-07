@@ -1,43 +1,73 @@
-# AUpload 文档
+# AUpload 组件文档
 
-## 介绍
+这个组件是一个文件上传组件，能够接收用户的文件上传操作，包括点击事件和拖动事件，并且提供对上传状态的展示插槽。
 
-AUpload 组件是一个基于 Vue3 开发的 UI 组件。此组件为一个上传文件组件，不负责具体上传操作，而是提供一个拖拽上传或浏览器上传文件的模板，方便开发者使用。
+## 基本用法和示例
 
-## 基本用法
-
-> 注：在下面的例子中，需要注意的是 `@any-design/anyui` 这个包的引入方式。
-
-在 Vue3 项目中，可以使用以下方式引入 AUpload 组件：
+使用 `AUpload` 组件，可以创建一个文件上传器，用户可以通过点击或拖拽文件到组件区域进行上传：
 
 ```vue
 <template>
-  <a-upload @upload="handleUpload" />
+  <AUpload @upload="handleUpload">
+    <template #default>点击或拖动文件到此上传</template>
+    <template #uploading>上传中...</template>
+    <template #error>上传失败</template>
+    <template #success>上传成功</template>
+  </AUpload>
 </template>
 
-<script setup lang="ts">
-import { AUpload } from '@any-design/anyui';
-
-const handleUpload = (file) => {
-  console.log('Selected file: ', file);
+<script>
+export default {
+  methods: {
+    handleUpload(file) {
+      console.log('文件上传', file);
+    },
+  },
 };
 </script>
 ```
 
 ## Props
 
-### status
+该组件接受以下 props：
 
-- 类型：String
-- 默认值：''
-- 说明：上传状态。可以为 'default', 'uploading', 'error', 'success'。
+| 属性名    | 类型    | 默认值 | 说明                                                                |
+| --------- | ------- | ------ | ------------------------------------------------------------------- |
+| status    | String  | ''     | 上传组件的状态，可以为 'default'、'uploading'、'error'、'success'。 |
+| clickable | Boolean | true   | 是否可以点击上传组件上传文件。                                      |
+| disabled  | Boolean | false  | 是否禁用上传组件。                                                  |
 
-### clickable
+- status: 上传组件的状态，类型为 String，默认为空字符串 ''。它的值可以为 'default'、'uploading'、'error'、'success'，对应不同的上传状态。
+- clickable: 是否可以点击上传组件上传文件，类型为 Boolean，默认为 true。在它的值为 true 时，用户可以点击上传组件上传文件。
+- disabled: 是否禁用上传组件，类型为 Boolean，默认为 false。在它的值为 true 时，上传组件将不响应任何点击或拖动的行为。
 
-- 类型：Boolean
-- 默认值：true
-- 说明：是否可以点击上传
+## Events
 
-## 事件
+本组件会触发以下事件：
 
-AUpload 组件会触发 `upload` 事件，当用户选择文件或者将文件拖拽到此组件中时，事件中会传入一个 file 对象，开发者可以处理该文件。
+- upload：当用户选择了一个文件或者把一个文件拖到上传组件上时，会触发此事件。会返回一个 File 对象作为参数。
+
+示例：
+
+```vue
+<template>
+  <AUpload @upload="handleUpload">
+    <template #default>点击或拖动文件到此上传</template>
+    <template #uploading>上传中...</template>
+    <template #error>上传失败</template>
+    <template #success>上传成功</template>
+  </AUpload>
+</template>
+
+<script>
+export default {
+  methods: {
+    handleUpload(file) {
+      console.log('文件上传', file);
+    },
+  },
+};
+</script>
+```
+
+其中 `handleUpload` 方法会接收到一个 File 对象，可以进行后续的上传操作。
