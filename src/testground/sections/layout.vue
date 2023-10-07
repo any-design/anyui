@@ -10,6 +10,19 @@
           <a-footer>Footer</a-footer>
         </a-layout>
       </a-layout>
+      <a-layout>
+        <a-layout>
+          <a-content>Content</a-content>
+          <a-footer>Footer</a-footer>
+        </a-layout>
+        <a-side>Side</a-side>
+      </a-layout>
+      <a-layout>
+        <a-layout>
+          <a-header>Header</a-header>
+          <a-content>Content</a-content>
+        </a-layout>
+      </a-layout>
     </div>
   </div>
 </template>
@@ -28,6 +41,5 @@
 }
 .a-content {
   background-color: var(--primary-80);
-  height: 100%;
 }
 </style>
