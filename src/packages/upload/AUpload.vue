@@ -4,6 +4,7 @@
     :class="{
       'a-upload': true,
       'a-upload--clickable': clickable,
+      'a-upload--disabled': disabled,
     }"
     @click="handleUploadClick"
     @dragenter="handleDragEnter"
@@ -38,6 +39,12 @@ export default defineComponent({
     clickable: {
       type: Boolean,
       default: true,
+    },
+    // if true, the uploader will be disabled, it won't respond to any click or drop behaviours.
+    // it will be useful when you do not want to trigger another upload operation while the file is uploading.
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['upload'],
@@ -77,6 +84,9 @@ export default defineComponent({
       this.dragging = false;
     },
     handleDrop(e: DragEvent) {
+      if (this.disabled) {
+        return;
+      }
       if (!e.dataTransfer) {
         return;
       }
@@ -90,7 +100,7 @@ export default defineComponent({
       e.stopPropagation();
     },
     handleUploadClick() {
-      if (!this.clickable) {
+      if (!this.clickable || this.disabled) {
         return;
       }
       (this.$refs.fileInput as HTMLElement | undefined)?.click();
@@ -113,7 +123,12 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
 }
+
 .a-upload--clickable {
   cursor: pointer;
+}
+
+.a-upload--disabled {
+  cursor: default;
 }
 </style>
