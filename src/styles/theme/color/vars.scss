@@ -95,8 +95,6 @@ $default-colors: (
   shadow-w: #fff,
 );
 
-$default-dark-colors: get-dark-colors($default-colors);
-
 // static colors
 $default-static-colors: (
   mask: rgba(0, 0, 0, 0.8),
@@ -172,6 +170,8 @@ $dark-theme-selector: 'html[theme="dark"]' !default;
 } @else {
   $colors: $default-colors;
 }
+
+$default-dark-colors: get-dark-colors($colors);
 
 @if variable-exists(alphas) {
   $alphas: map-merge($default-alphas, $alphas);
