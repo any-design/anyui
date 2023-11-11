@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.11](https://github.com/any-design/anyui/compare/v0.1.10...v0.1.11) (2023-11-11)
+
+### Bug Fixes
+
+- (theme) override for colors now will be also applied to dark-colors ([2ca05ef](https://github.com/any-design/anyui/commit/2ca05ef28cceae4a864ca1252dd5faf7c3ff37b0))
+
 ## [0.1.10](https://github.com/any-design/anyui/compare/v0.1.9...v0.1.10) (2023-10-07)
 
 ### Bug Fixes
