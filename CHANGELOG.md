@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## [0.1.12](https://github.com/any-design/anyui/compare/v0.1.10...v0.1.12) (2023-11-12)
+
+### Bug Fixes
+
+- (list-menu) export list menu ([49f4885](https://github.com/any-design/anyui/commit/49f48851fcbcacdf3bdca58356f03196a8188100))
+
+## [0.1.11](https://github.com/any-design/anyui/compare/v0.1.10...v0.1.11) (2023-11-11)
+
+### Bug Fixes
+
+- (theme) override for colors now will be also applied to dark-colors ([2ca05ef](https://github.com/any-design/anyui/commit/2ca05ef28cceae4a864ca1252dd5faf7c3ff37b0))
+
+## [0.1.10](https://github.com/any-design/anyui/compare/v0.1.9...v0.1.10) (2023-10-07)
+
+### Bug Fixes
+
+- (layout) layout might not fill the parent element in some cases ([f23787c](https://github.com/any-design/anyui/commit/f23787c0e9acb5860754ba68ce40644a6b6aad69))
+- (pagination) wrong text color of selected page ([44c7898](https://github.com/any-design/anyui/commit/44c789886bd7b1c9ba1f026bca4c96137f4122c1))
+
+### Features
+
+- (input) optimize the visual design of borderless readonly input ([906cde2](https://github.com/any-design/anyui/commit/906cde2a5b6e28d1c9e246998e9bf23b68b025c0))
+- (listMenu) add ListMenu component ([b0c591b](https://github.com/any-design/anyui/commit/b0c591bf3bddc91f98de835466b97b390d2b06ef))
+- (theme) add hover color ([23935a5](https://github.com/any-design/anyui/commit/23935a502d97ae3ac5652d6e0da968a725c0166a))
+- (upload) add disabled property ([ba467ef](https://github.com/any-design/anyui/commit/ba467ef5684d6f5cfbcae9a49e7d3977dbca1c2b))
+
 ## [0.1.9](https://github.com/any-design/anyui/compare/v0.1.8...v0.1.9) (2023-10-06)
 
 ### Features
