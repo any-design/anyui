@@ -85,15 +85,6 @@ export default defineComponent({
   }
 }
 
-@keyframes a-loading-spinner {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 .a-loading-wrapper {
   width: max-content;
   height: max-content;
