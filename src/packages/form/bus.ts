@@ -15,6 +15,7 @@ export interface ClearEventPayload {
 type FormEvents = {
   setValid: SetValidEventPayload;
   clear: ClearEventPayload;
+  revalidateField: string;
 };
 
 export type FormEventEmitter = Emitter<FormEvents>;

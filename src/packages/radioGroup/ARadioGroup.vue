@@ -37,7 +37,7 @@ export default defineComponent({
       type: [String, Number],
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
     const selected = ref<string | number | undefined>(undefined);
 
@@ -58,11 +58,14 @@ export default defineComponent({
       selected.value = item.value;
       // will be emitted when the value is changed or be cleared.
       emit('update:modelValue', item.value);
+      emit('change', item.value);
+      formItemEventEmitter?.emit('change');
     };
 
     const handleClear = () => {
       selected.value = undefined;
       emit('update:modelValue', undefined);
+      emit('change', undefined);
     };
 
     onBeforeMount(() => {
