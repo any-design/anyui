@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.1.18](https://github.com/any-design/anyui/compare/v0.1.17...v0.1.18) (2023-11-12)
+
+### Features
+
+- (form) support triggerType in form item to validate fields dynamically ([492b684](https://github.com/any-design/anyui/commit/492b68408084b3a94da09ac68ff72a69d972fbd5))
+- (input) add change, input, blur events ([6e16617](https://github.com/any-design/anyui/commit/6e16617e38823533f7b2b475e16dcd7d757c4fb4))
+- (radio-button-group) add change event ([0abb309](https://github.com/any-design/anyui/commit/0abb3092252f173ee59ef233b77cbdacc3dbf540))
+- (radio-group) add change event ([c82959b](https://github.com/any-design/anyui/commit/c82959bc9da8730910cd11714f627f80941d9e1e))
+- (select) add change, blur events ([1483e63](https://github.com/any-design/anyui/commit/1483e6342861ea63d5154807bef66369a9d463d1))
+- (textarea) add blur, change, input events ([0b45130](https://github.com/any-design/anyui/commit/0b451306c0b7f3cd940a3c9c125f12ce2feb902a))
+
 ## [0.1.17](https://github.com/any-design/anyui/compare/v0.1.16...v0.1.17) (2023-11-12)
 
 ### Bug Fixes
