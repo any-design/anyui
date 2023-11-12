@@ -156,20 +156,20 @@ export default defineComponent({
   border: none;
 }
 .a-button.a-button--gradient {
-  box-shadow: 0 3px 14px var(--shadow-18);
+  box-shadow: 0 2px 12px var(--shadow-12);
   background: linear-gradient(42deg, var(--primary), var(--secondary));
   color: var(--text-btn);
   border: none;
 }
 .a-button.a-button--gradient-reverse {
   background: linear-gradient(42deg, var(--secondary), var(--primary));
-  box-shadow: 0 3px 14px var(--shadow-18);
+  box-shadow: 0 2px 12px var(--shadow-12);
   color: var(--text-btn);
   border: none;
 }
 .a-button.a-button--depth {
   background: linear-gradient(180deg, var(--primary-l-6) 36%, var(--primary-d-4));
-  box-shadow: 0 3px 14px var(--shadow-18);
+  box-shadow: 0 2px 12px var(--shadow-12);
   color: var(--text-btn);
   border: none;
 }
