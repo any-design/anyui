@@ -23,14 +23,24 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@keyframes a-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .a-spinner {
   display: inline-block;
+
   &__inner {
     width: 1em;
     height: 1em;
     position: relative;
     color: var(--primary);
-    animation: 0.75s a-loading-spinner ease 0s infinite;
+    animation: 0.75s a-spinner ease 0s infinite;
     display: block;
   }
 }

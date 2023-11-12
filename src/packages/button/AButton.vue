@@ -19,7 +19,9 @@
   >
     <Icon v-if="icon && iconPosition === 'leading' && !loading" :icon="icon" />
     <span v-if="loading" class="a-button__loading">
-      <a-spinner></a-spinner>
+      <span class="a-button__spinner">
+        <Icon :icon="loadingIcon"></Icon>
+      </span>
     </span>
     <span class="a-button__inner" :style="{ visibility: loading ? 'hidden' : 'visible' }"
       ><slot></slot
@@ -31,8 +33,6 @@
 <script lang="ts">
 import { defineComponent, useSlots, PropType } from 'vue';
 import { Icon, IconifyIcon } from '@iconify/vue';
-
-import ASpinner from '../spinner';
 
 import { ButtonType, IconPosition } from './types';
 
@@ -92,6 +92,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    loadingIcon: {
+      type: String as PropType<IconPosition>,
+      default: 'quill:loading-spin',
+    },
   },
   emits: ['click'],
   setup(props, { emit }) {
@@ -113,6 +117,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@keyframes a-button-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .a-button {
   display: flex;
   align-items: center;
@@ -155,13 +168,16 @@ export default defineComponent({
     cursor: not-allowed;
     transition: background-color 120ms ease;
     font-size: 1.2em;
+  }
 
-    .a-spinner {
-      color: inherit;
+  &__spinner {
+    position: relative;
+    display: inline-block;
+    color: inherit;
 
-      &__inner {
-        color: inherit;
-      }
+    svg {
+      display: block;
+      animation: 0.75s a-button-spinner ease 0s infinite;
     }
   }
 }
@@ -263,6 +279,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
   padding: 6px 12px;
+
   svg {
     font-size: 1.25em;
     flex-shrink: 0;
