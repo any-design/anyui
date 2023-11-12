@@ -15,12 +15,15 @@
       'a-button--loading': loading,
     }"
     :disabled="disabled"
+    @click="onButtonClicked"
   >
     <Icon v-if="icon && iconPosition === 'leading' && !loading" :icon="icon" />
     <span v-if="loading" class="a-button__loading">
       <a-spinner></a-spinner>
     </span>
-    <span class="a-button__inner" :style="{ opacity: loading ? 0 : 1 }"><slot></slot></span>
+    <span class="a-button__inner" :style="{ visibility: loading ? 'hidden' : 'visible' }"
+      ><slot></slot
+    ></span>
     <Icon v-if="icon && iconPosition === 'trailing' && !loading" :icon="icon" />
   </div>
 </template>
@@ -90,10 +93,20 @@ export default defineComponent({
       default: false,
     },
   },
-  setup() {
+  emits: ['click'],
+  setup(props, { emit }) {
     const hasContent = !!useSlots().default;
+
+    const onButtonClicked = (e: MouseEvent) => {
+      if (props.disabled || props.loading) {
+        return;
+      }
+      emit('click', e);
+    };
+
     return {
       hasContent,
+      onButtonClicked,
     };
   },
 });
