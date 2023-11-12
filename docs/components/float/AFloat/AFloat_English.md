@@ -29,7 +29,7 @@ Here is an example of how to use `<AFloat>` component :
 
 These are the props for `<AFloat>` component :
 
-### `className`
+### `class`
 
 - type: `String`
 
@@ -45,7 +45,7 @@ Sets the distance from the top of the screen, in pixels, or in the string repres
 ### `padding`
 
 - type: `Number` or `String`
-- default: `16`
+- default: `undefined`
 
 Sets the padding of the component , accepts a value in pixels or the string representation of a CSS measurement.
 

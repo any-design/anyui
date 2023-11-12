@@ -38,9 +38,9 @@ export default {
 
 | 属性名           | 类型          | 默认值    | 说明                                                             |
 | ---------------- | ------------- | --------- | ---------------------------------------------------------------- |
-| className        | String        |           | 自定义类名                                                       |
+| class            | String        |           | 自定义类名                                                       |
 | top              | Number/String | 96        | 浮动层顶部距离                                                   |
-| padding          | Number/String | 16        | 浮动层内容内边距                                                 |
+| padding          | Number/String | undefined | 浮动层内容内边距                                                 |
 | visible          | Boolean       | false     | 浮动层的可见性                                                   |
 | zIndex           | Number        | 1000      | 浮动层的 z-index 值                                              |
 | width            | String/Number | 800       | 浮动层的宽度                                                     |

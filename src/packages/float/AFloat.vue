@@ -30,16 +30,12 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'AFloat',
   props: {
-    className: {
+    class: {
       type: String,
     },
     top: {
       type: [Number, String],
       default: 96,
-    },
-    padding: {
-      type: [Number, String],
-      default: 16,
     },
     visible: {
       type: Boolean,
@@ -52,6 +48,9 @@ export default defineComponent({
     width: {
       type: [String, Number],
       default: 800,
+    },
+    padding: {
+      type: [String, Number],
     },
     roundRadius: {
       type: [Number, String],
@@ -71,6 +70,9 @@ export default defineComponent({
   },
   emits: ['close', 'update:visible'],
   computed: {
+    className() {
+      return this.class;
+    },
     defaultRoundRadius() {
       return this.round ? 24 : 4;
     },
@@ -82,9 +84,14 @@ export default defineComponent({
     contentStyles() {
       return {
         width: formatStyleSize(this.width),
-        padding: formatStyleSize(this.padding),
         'margin-top': formatStyleSize(this.top),
         'border-radius': formatStyleSize(this.roundRadius || this.defaultRoundRadius),
+        ...(this.padding
+          ? {
+              padding:
+                typeof this.padding === 'number' ? formatStyleSize(this.padding) : this.padding,
+            }
+          : null),
       };
     },
   },
@@ -143,6 +150,7 @@ export default defineComponent({
     margin-left: auto;
     margin-right: auto;
     z-index: 1;
+    padding: 16px;
     box-shadow: 0 1px 12px var(--shadow-w-6);
     box-sizing: border-box;
   }
