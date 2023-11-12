@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.16](https://github.com/any-design/anyui/compare/v0.1.15...v0.1.16) (2023-11-12)
+
+### Features
+
+- (float) className => class & not set padding to inline style by default ([ecce985](https://github.com/any-design/anyui/commit/ecce98553fa48a6e5752069f527db16d7cadbe01))
+
 ## [0.1.15](https://github.com/any-design/anyui/compare/v0.1.14...v0.1.15) (2023-11-12)
 
 ### Bug Fixes
