@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.12](https://github.com/any-design/anyui/compare/v0.1.10...v0.1.12) (2023-11-12)
+
+### Bug Fixes
+
+- (list-menu) export list menu ([49f4885](https://github.com/any-design/anyui/commit/49f48851fcbcacdf3bdca58356f03196a8188100))
+
 ## [0.1.11](https://github.com/any-design/anyui/compare/v0.1.10...v0.1.11) (2023-11-11)
 
 ### Bug Fixes
