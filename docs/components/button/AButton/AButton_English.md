@@ -131,3 +131,10 @@ This `iconPosition` prop sets the position of the icon inside the button. The fo
 ```html
 <AButton iconPosition="trailing">Trailing Icon Button</AButton>
 ```
+
+### loading
+
+- Type: `Boolean`
+- Default value: `false`
+
+If `true`, the button content will be replaced with a loading spinner, and it won't be clickable.

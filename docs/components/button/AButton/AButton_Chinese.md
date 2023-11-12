@@ -27,6 +27,7 @@
 | textShadow   | Boolean | false     | 是否给按钮文本应用文字阴影               |
 | icon         | String  | ''        | 按钮中的图标                             |
 | iconPosition | String  | 'leading' | 图标的位置                               |
+| loading      | Boolean | false     | 按钮是否处于加载态                       |
 
 - type: 按钮的样式类型，可以为 primary、gradient、gradient-reverse、depth 和 default，默认为 'default'。
 - round: 是否应用圆角边框到按钮，在 true 时，按钮应用圆角边框，默认为 false。
@@ -37,6 +38,7 @@
 - textShadow: 是否给按钮文本应用文字阴影，在 true 时，应用文字阴影，默认为 false。
 - icon: 按钮中的图标，类型为 String，默认为空字符串 ''。
 - iconPosition: 图标的位置，可以为 leading 和 trailing，默认为 'leading'。
+- loading: 按钮是否处于加载态，为 true 时会显示 Spinner 且不可点击。
 
 示例：
 
