@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.1.17](https://github.com/any-design/anyui/compare/v0.1.16...v0.1.17) (2023-11-12)
+
+### Bug Fixes
+
+- (spinner) extract spinner styles into spinner component ([8f665dd](https://github.com/any-design/anyui/commit/8f665dd403d895b8c326179d21e1b5cfe5e2c36c))
+
+### Features
+
+- (button) remove spinner import ([5226fe6](https://github.com/any-design/anyui/commit/5226fe60abffd400b0006924b9bdd2e85cd90d5f))
+- (message) add enter animation to message ([2c6ce77](https://github.com/any-design/anyui/commit/2c6ce7705a6679ab330260c0265cb8605fa52914))
+- (message) now the new messages will always on the top of container ([6b20fc6](https://github.com/any-design/anyui/commit/6b20fc6966f5625d7fffb14a458b3effc9c6304c))
+
 ## [0.1.16](https://github.com/any-design/anyui/compare/v0.1.15...v0.1.16) (2023-11-12)
 
 ### Features
