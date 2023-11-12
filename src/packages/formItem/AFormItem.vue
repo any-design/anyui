@@ -13,10 +13,12 @@
         <slot></slot>
       </div>
     </div>
-    <div v-if="!isValid" class="a-form-item-invalid">
-      <div v-if="label" class="a-form-item-invalid__placeholder" :style="labelStyle"></div>
-      <div class="a-form-item-invalid__msg">{{ inValidMessage }}</div>
-    </div>
+    <Transition mode="out-in" name="a-form-item-invalid">
+      <div v-if="!isValid" class="a-form-item-invalid">
+        <div v-if="label" class="a-form-item-invalid__placeholder" :style="labelStyle"></div>
+        <div class="a-form-item-invalid__msg">{{ inValidMessage }}</div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -30,8 +32,10 @@ import {
   ref,
   computed,
   ComputedRef,
+  inject,
 } from 'vue';
 import { ClearEventPayload, FormEventEmitter, SetValidEventPayload } from '../form/bus';
+import { FormRuleItem } from '../form/types';
 import { getCertainParent } from '../../utils';
 import formItemEventEmitterFactory from './bus';
 
@@ -89,9 +93,38 @@ export default defineComponent({
       formItemEventEmitter.emit('clear');
     };
 
+    const formRules = inject<ComputedRef<Record<string, FormRuleItem[]>>>('formRules');
+
+    const currentItemRule = computed(() => {
+      if (!formRules) {
+        return;
+      }
+      return formRules.value?.[props.prop || ''];
+    });
+
+    const shouldRevalidateOnChange = computed(() =>
+      currentItemRule.value?.some((item) => item.triggerType === 'change'),
+    );
+    const shouldRevalidateOnBlur = computed(() =>
+      currentItemRule.value?.some((item) => item.triggerType === 'blur'),
+    );
+
+    const handleItemChange = () => {
+      if (shouldRevalidateOnChange.value && props.prop)
+        formEventEmitter?.emit('revalidateField', props.prop);
+    };
+    const handleItemBlur = () => {
+      if (shouldRevalidateOnBlur.value && props.prop)
+        formEventEmitter?.emit('revalidateField', props.prop);
+    };
+
     onMounted(() => {
+      // for parent
       formEventEmitter?.on('setValid', setValidHandler);
       formEventEmitter?.on('clear', clearHandler);
+      // for child
+      formItemEventEmitter.on('change', handleItemChange);
+      formItemEventEmitter.on('blur', handleItemBlur);
     });
 
     onUnmounted(() => {
@@ -140,6 +173,7 @@ export default defineComponent({
     }
   }
 }
+
 .a-form-item--invalid {
   .a-form-item-inner {
     &__content {
@@ -149,7 +183,22 @@ export default defineComponent({
     }
   }
 }
+
 .a-form-item:last-of-type {
   margin-bottom: 0;
+}
+
+.a-form-item-invalid-enter-active,
+.a-form-item-invalid-leave-active {
+  transition: transform var(--anim-duration-quick, 100ms) ease-out;
+}
+.a-form-item-invalid-enter-to {
+  opacity: 1;
+  transform: translateY(0px) scaleY(1);
+}
+.a-form-item-invalid-enter-from,
+.a-form-item-invalid-leave-to {
+  opacity: 0;
+  transform: translateY(-20px) scaleY(0);
 }
 </style>
