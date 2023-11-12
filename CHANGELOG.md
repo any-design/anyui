@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.14](https://github.com/any-design/anyui/compare/v0.1.13...v0.1.14) (2023-11-12)
+
+### Features
+
+- (button) add loading state ([19ec971](https://github.com/any-design/anyui/commit/19ec9715de74b0d80f8f80342428d0b09dcf819f))
+
 ## [0.1.13](https://github.com/any-design/anyui/compare/v0.1.12...v0.1.13) (2023-11-12)
 
 ### Features
