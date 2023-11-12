@@ -27,6 +27,8 @@
         :placeholder="placeholder"
         :disabled="disabled"
         :editable="false"
+        @change="handleSelectChange"
+        @blur="handleSelectBlur"
       >
         <template #postfix>
           <Icon
@@ -113,7 +115,7 @@ export default defineComponent({
       default: 'ic:outline-expand-more',
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'change', 'blur'],
   setup(props, { emit }) {
     const selected = ref<string | number | null | undefined>(undefined);
     const selectedText = ref('');
@@ -152,6 +154,19 @@ export default defineComponent({
       clear();
     };
 
+    const handleSelectChange = (e: Event) => {
+      if (!e.target) {
+        return;
+      }
+      emit('change', e, (e.target as HTMLInputElement).value);
+      formItemEventEmitter?.emit('change');
+    };
+
+    const handleSelectBlur = (e: Event) => {
+      emit('blur', e);
+      formItemEventEmitter?.emit('blur');
+    };
+
     watch(
       () => [props.items, props.modelValue],
       () => {
@@ -187,6 +202,8 @@ export default defineComponent({
       handlePopupStatusChanged,
       handleItemClick,
       popperRef,
+      handleSelectChange,
+      handleSelectBlur,
     };
   },
 });
