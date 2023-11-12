@@ -73,9 +73,16 @@ Sets the width of the component. It can accept a value in pixels or the string r
 ### `roundRadius`
 
 - type: `Number` or `String`
-- default: `4`
+- default: `undefined`
 
 Sets the border-radius of the component, can be set using pixels or the string representation of a CSS measurement.
+
+### `round`
+
+- type: `Boolean`
+- default: `false`
+
+If true, the component will be applied a 24px border-radius automaticlly.
 
 ### `lockScroll`
 
