@@ -155,6 +155,7 @@ export default defineComponent({
     const clear = () => {
       storedValue.value = '';
       emit('update:modelValue', '');
+      emit('change', '');
     };
     const handleInput = (e: Event) => {
       if (!e.target) {
@@ -170,7 +171,7 @@ export default defineComponent({
     const handleChange = (e: Event) => {
       const target = e.target as HTMLInputElement;
       emit('update:modelValue', target.value);
-      emit('change', e, target.value);
+      emit('change', target.value);
       formItemEventEmitter?.emit('change');
     };
     const handleEnterDown = () => {

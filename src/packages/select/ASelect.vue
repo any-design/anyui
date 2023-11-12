@@ -144,6 +144,7 @@ export default defineComponent({
       selected.value = undefined;
       selectedText.value = '';
       emit('update:modelValue', undefined);
+      emit('change', '');
     };
 
     const handlePopupStatusChanged = (status: boolean) => {
@@ -158,7 +159,7 @@ export default defineComponent({
       if (!e.target) {
         return;
       }
-      emit('change', e, (e.target as HTMLInputElement).value);
+      emit('change', (e.target as HTMLInputElement).value);
       formItemEventEmitter?.emit('change');
     };
 

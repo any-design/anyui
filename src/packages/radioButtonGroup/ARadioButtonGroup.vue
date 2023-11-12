@@ -121,6 +121,7 @@ export default defineComponent({
       selected.value = undefined;
       showBgBlock.value = false;
       emit('update:modelValue', undefined);
+      emit('change', undefined);
       if (showBgBlock.value) {
         setTimeout(() => {
           bgBlockPosition.value = undefined;
