@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.1.13](https://github.com/any-design/anyui/compare/v0.1.12...v0.1.13) (2023-11-12)
+
+### Features
+
+- (button) optimize the shadow of gradient & depth style ([999d767](https://github.com/any-design/anyui/commit/999d767f0118eea0b1054d2f133ea56a8f2f0f29))
+- (float) add round property to float ([193d930](https://github.com/any-design/anyui/commit/193d930e7208ebcdc7eec4257e7d034927af338b))
+
 ## [0.1.12](https://github.com/any-design/anyui/compare/v0.1.10...v0.1.12) (2023-11-12)
 
 ### Bug Fixes
