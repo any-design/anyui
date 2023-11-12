@@ -31,7 +31,9 @@
       :autocomplete="autocomplete"
       :style="extraInnerStyle"
       @input="handleInput"
+      @change="handleChange"
       @keydown.enter="handleEnterDown"
+      @blur="handleBlur"
     />
     <div v-if="hasPostButton" class="a-input__post-button"><slot name="post-button"></slot></div>
     <div v-else-if="hasPostfix" class="a-input__postfix" :style="postfixStyle">
@@ -135,7 +137,7 @@ export default defineComponent({
       default: true,
     },
   },
-  emits: ['update:modelValue', 'submit'],
+  emits: ['update:modelValue', 'submit', 'input', 'change', 'blur'],
   setup(props, { emit }) {
     // refs
     const inputWrapperRef = ref<HTMLDivElement | undefined>();
@@ -153,10 +155,24 @@ export default defineComponent({
     const clear = () => {
       storedValue.value = '';
       emit('update:modelValue', '');
+      emit('change', '');
     };
     const handleInput = (e: Event) => {
+      if (!e.target) {
+        return;
+      }
+      emit('update:modelValue', (e.target as HTMLInputElement).value);
+      emit('input', e);
+    };
+    const handleBlur = (e: Event) => {
+      emit('blur', e);
+      formItemEventEmitter?.emit('blur');
+    };
+    const handleChange = (e: Event) => {
       const target = e.target as HTMLInputElement;
       emit('update:modelValue', target.value);
+      emit('change', target.value);
+      formItemEventEmitter?.emit('change');
     };
     const handleEnterDown = () => {
       emit('submit', storedValue.value);
@@ -309,6 +325,8 @@ export default defineComponent({
       prefixStyle,
       postfixStyle,
       handleInput,
+      handleBlur,
+      handleChange,
       handleEnterDown,
     };
   },

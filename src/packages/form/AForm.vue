@@ -10,22 +10,33 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent, computed } from 'vue';
+import {
+  PropType,
+  defineComponent,
+  computed,
+  provide,
+  onBeforeMount,
+  onBeforeUnmount,
+  unref,
+} from 'vue';
 import ValidateSchema, { Rules } from 'async-validator';
 import type { Rule, ValidateError } from 'async-validator/dist-types/interface';
+
 import { formatStyleSize } from '../../utils';
+
 import formEventEmitterFactory from './bus';
+import { FormRuleItem } from './types';
 
 export default defineComponent({
   name: 'AForm',
   props: {
     // form values which will be bound to this component
     modelValue: {
-      type: Object,
+      type: Object as PropType<Record<string, any>>,
     },
     // a validation rules which can be used in async-validator
     rules: {
-      type: Object,
+      type: Object as PropType<Record<string, FormRuleItem[]>>,
     },
     // layout type of the component, can be 'default' or 'inline'
     layout: {
@@ -39,7 +50,31 @@ export default defineComponent({
     },
   },
   setup(props, { expose }) {
-    const formData = props.modelValue as Record<string, unknown>;
+    const formData = computed(() => props.modelValue);
+
+    // for form items
+    provide(
+      'formRules',
+      computed(() => {
+        if (!props.rules) {
+          return {};
+        }
+        const res: Record<string, FormRuleItem[]> = {};
+        Object.keys(props.rules).forEach((key) => {
+          res[key] = props.rules![key].map((item) => {
+            if (item.triggerType) {
+              return item;
+            }
+            // use 'change' as triggerType by default
+            return {
+              ...item,
+              triggerType: 'change',
+            };
+          });
+        });
+        return res;
+      }),
+    );
 
     // exposed data
     const emitter = formEventEmitterFactory();
@@ -51,6 +86,8 @@ export default defineComponent({
       if (!props.rules) {
         return;
       }
+
+      // set specific field when specified
       if (field) {
         emitter.emit('setValid', {
           field,
@@ -59,6 +96,8 @@ export default defineComponent({
         });
         return;
       }
+
+      // set all
       Object.keys(props.rules).forEach((key: string) => {
         emitter.emit('setValid', {
           field: key,
@@ -84,9 +123,13 @@ export default defineComponent({
         console.warn('[AnyUI][Form] Form has no rules.');
         return true;
       }
+      const values = unref(formData);
+      if (!values) {
+        throw new Error('Invalid form values.');
+      }
       const validator = new ValidateSchema(props.rules as Rules);
       try {
-        await validator.validate(formData);
+        await validator.validate(values);
         handleValidatePassed();
         return true;
       } catch ({ errors }: any) {
@@ -99,16 +142,20 @@ export default defineComponent({
         console.warn('[AnyUI][Form] Form has no rules.');
         return true;
       }
+      const values = unref(formData);
+      if (!values) {
+        throw new Error('Invalid form values.');
+      }
       const rule = props.rules[field] as Rule | undefined;
       if (!rule) {
         console.warn(`[AnyUI][Form] Form has no rule for validating field ${field}.`);
         return true;
       }
       const validator = new ValidateSchema({
-        field: rule,
+        [field]: rule,
       });
       try {
-        await validator.validate(formData);
+        await validator.validate(values);
         handleValidatePassed(field);
         return true;
       } catch ({ errors }: any) {
@@ -116,20 +163,31 @@ export default defineComponent({
         return false;
       }
     };
+
     const clearField = async (field: string) => {
       emitter.emit('clear', {
         type: 'specific',
         field,
       });
+      clearValidation(field);
     };
     const clearFields = async () => {
       emitter.emit('clear', {
         type: 'all',
       });
+      clearValidation();
     };
     const clearValidation = async (field?: string) => {
       handleValidatePassed(field);
     };
+
+    onBeforeMount(() => {
+      emitter.on('revalidateField', validateField);
+    });
+
+    onBeforeUnmount(() => {
+      emitter.off('revalidateField', validateField);
+    });
 
     // exposed methods and values
     const exposed = {

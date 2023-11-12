@@ -60,7 +60,7 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
     const container = ref<HTMLElement | undefined>();
     const buttonContainer = ref<HTMLElement | undefined>();
@@ -108,6 +108,8 @@ export default defineComponent({
       bgBlockPosition.value = position;
       // will be emitted when some button in the group is clicked by user or the value has been cleared.
       emit('update:modelValue', value);
+      emit('change', value);
+      formItemEventEmitter?.emit('change');
       if (!showBgBlock.value) {
         setTimeout(() => {
           showBgBlock.value = true;
@@ -119,6 +121,7 @@ export default defineComponent({
       selected.value = undefined;
       showBgBlock.value = false;
       emit('update:modelValue', undefined);
+      emit('change', undefined);
       if (showBgBlock.value) {
         setTimeout(() => {
           bgBlockPosition.value = undefined;
