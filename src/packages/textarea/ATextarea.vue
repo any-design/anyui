@@ -23,6 +23,8 @@
       :spellcheck="spellcheck"
       :wrap="wrap"
       @input="handleInput"
+      @change="handleChange"
+      @blur="handleBlur"
       @keydown.enter="handleEnterDown"
     ></textarea>
     <slot name="after"></slot>
@@ -113,7 +115,7 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['update:modelValue', 'submit'],
+  emits: ['update:modelValue', 'submit', 'change', 'blur', 'input'],
   setup(props, { emit }) {
     const storedValue = ref('');
 
@@ -173,6 +175,21 @@ export default defineComponent({
       storedValue.value = target.value;
       refreshInnerStyles();
       emit('update:modelValue', target.value);
+      emit('input', e);
+    };
+
+    const handleChange = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      storedValue.value = target.value;
+      refreshInnerStyles();
+      emit('update:modelValue', target.value);
+      emit('change', target.value);
+      formItemEventEmitter?.emit('change');
+    };
+
+    const handleBlur = (e: Event) => {
+      emit('blur', e);
+      formItemEventEmitter?.emit('blur');
     };
 
     const handleEnterDown = () => {
@@ -182,6 +199,7 @@ export default defineComponent({
     const handleClear = () => {
       storedValue.value = '';
       emit('update:modelValue', '');
+      emit('change', '');
     };
 
     const initElementFontSize = () => {
@@ -281,6 +299,8 @@ export default defineComponent({
       innerStyles,
       wrapperRef,
       innerRef,
+      handleBlur,
+      handleChange,
       handleInput,
       handleEnterDown,
       showResizeCorner,
