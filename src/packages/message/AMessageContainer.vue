@@ -33,7 +33,7 @@ export default defineComponent({
 
     const addMessage = (message: Message) => {
       const key = `${Date.now()}${Math.random()}`;
-      messageQueue.value.push({
+      messageQueue.value.unshift({
         ...message,
         key,
       });

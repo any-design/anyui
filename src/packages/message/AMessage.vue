@@ -78,6 +78,20 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@keyframes message-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(8%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 .a-message {
   min-width: 300px;
   max-width: 90vw;
@@ -91,6 +105,8 @@ export default defineComponent({
   margin-bottom: 12px;
   background: var(--bg-bright);
   user-select: none;
+  animation: message-in 145ms ease-out 0s 1 forwards;
+
   &__icon {
     width: 18px;
     height: 18px;
@@ -99,11 +115,9 @@ export default defineComponent({
     svg {
       width: 100%;
       height: 100%;
-      path {
-        fill: var(--text-white);
-      }
     }
   }
+
   &__text {
     font-size: 15px;
     white-space: nowrap;
@@ -112,38 +126,46 @@ export default defineComponent({
     flex: 1;
   }
 }
+
+@mixin white-content {
+  .a-message__icon {
+    svg {
+      path {
+        fill: #fff;
+      }
+    }
+  }
+  .a-message__text {
+    color: #fff;
+  }
+}
+
 .a-message--has-icon.a-message--round {
   padding: 0 12px;
 }
 .a-message:last-child {
   margin-bottom: 0;
 }
+
 .a-message--round {
   border-radius: 20px;
   padding: 0 16px;
 }
+
 .a-message--success {
   background: var(--success);
-  .a-message__text {
-    color: var(--text-white);
-  }
+  @include white-content();
 }
 .a-message--error {
   background: var(--danger);
-  .a-message__text {
-    color: var(--text-white);
-  }
+  @include white-content();
 }
 .a-message--warning {
   background: var(--warn);
-  .a-message__text {
-    color: var(--text-white);
-  }
+  @include white-content();
 }
 .a-message--info {
   background: var(--info);
-  .a-message__text {
-    color: var(--text-white);
-  }
+  @include white-content();
 }
 </style>
