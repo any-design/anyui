@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.15](https://github.com/any-design/anyui/compare/v0.1.14...v0.1.15) (2023-11-12)
+
+### Bug Fixes
+
+- (button) event not be handled properly ([497d565](https://github.com/any-design/anyui/commit/497d565bfa219064604f90686ba777fb9e2ea360))
+
 ## [0.1.14](https://github.com/any-design/anyui/compare/v0.1.13...v0.1.14) (2023-11-12)
 
 ### Features
