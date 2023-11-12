@@ -71,5 +71,17 @@
       <a-button type="gradient">Gradient</a-button>
       <a-button type="gradient-reverse">Gradient (Reverse)</a-button>
     </div>
+    <div class="testground-flex" style="margin-top: 24px">
+      <a-button loading></a-button>
+      <a-button loading type="primary">按钮文本</a-button>
+      <a-button loading type="secondary">按钮文本</a-button>
+      <a-button loading type="primary" round>按钮文本</a-button>
+      <a-button loading type="gradient" round>按钮文本</a-button>
+      <a-button loading type="depth" round>按钮文本</a-button>
+      <a-button loading type="anim" round>按钮文本</a-button>
+      <a-button type="primary" icon="eva:alert-circle-fill" iconPosition="trailing" loading
+        >Icon Button</a-button
+      >
+    </div>
   </div>
 </template>
