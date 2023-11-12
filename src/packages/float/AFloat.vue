@@ -3,7 +3,13 @@
     <transition name="a-float-fade">
       <div
         v-if="visible"
-        :class="['a-float', className || null]"
+        :class="[
+          'a-float',
+          {
+            'a-float--round': round,
+          },
+          className || null,
+        ]"
         :style="floatStyles"
         role="dialog"
         @click.stop
@@ -49,7 +55,6 @@ export default defineComponent({
     },
     roundRadius: {
       type: [Number, String],
-      default: 4,
     },
     lockScroll: {
       type: Boolean,
@@ -59,9 +64,16 @@ export default defineComponent({
       type: String,
       default: 'html',
     },
+    round: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['close', 'update:visible'],
   computed: {
+    defaultRoundRadius() {
+      return this.round ? 24 : 4;
+    },
     floatStyles() {
       return {
         'z-index': this.zIndex,
@@ -72,7 +84,7 @@ export default defineComponent({
         width: formatStyleSize(this.width),
         padding: formatStyleSize(this.padding),
         'margin-top': formatStyleSize(this.top),
-        'border-radius': this.roundRadius + `px`,
+        'border-radius': formatStyleSize(this.roundRadius || this.defaultRoundRadius),
       };
     },
   },
@@ -106,12 +118,14 @@ export default defineComponent({
 .scroll-locked {
   overflow: hidden;
 }
+
 .a-float {
   position: fixed;
   width: 100vw;
   height: 100vh;
   top: 0;
   left: 0;
+
   &__mask {
     width: 100%;
     height: 100%;
@@ -120,18 +134,20 @@ export default defineComponent({
     top: 0;
     left: 0;
     z-index: -1;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(8px);
   }
+
   &__content {
     height: max-content;
     background: var(--bg);
     margin-left: auto;
     margin-right: auto;
     z-index: 1;
-    box-shadow: 0 12px 40px var(--shadow-w-10);
+    box-shadow: 0 1px 12px var(--shadow-w-6);
     box-sizing: border-box;
   }
 }
+
 .a-float-fade-enter-active,
 .a-float-fade-leave-active {
   transition: opacity var(--anim-duration, 200ms) ease;
