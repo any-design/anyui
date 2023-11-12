@@ -1,5 +1,5 @@
 <template>
-  <button
+  <div
     :class="{
       'a-button': true,
       [`a-button--${size}`]: size && size !== 'default',
@@ -10,20 +10,27 @@
       'a-button--anim': anim,
       'a-button--disabled': disabled,
       'a-button--icon': !!icon,
-      'a-button--icon-leading': !!icon && hasContent && iconPosition === 'leading',
-      'a-button--icon-trailing': !!icon && hasContent && iconPosition === 'trailing',
+      'a-button--icon-leading': !!icon && hasContent && iconPosition === 'leading' && !loading,
+      'a-button--icon-trailing': !!icon && hasContent && iconPosition === 'trailing' && !loading,
+      'a-button--loading': loading,
     }"
     :disabled="disabled"
   >
-    <Icon v-if="icon && iconPosition === 'leading'" :icon="icon" />
-    <slot></slot>
-    <Icon v-if="icon && iconPosition === 'trailing'" :icon="icon" />
-  </button>
+    <Icon v-if="icon && iconPosition === 'leading' && !loading" :icon="icon" />
+    <span v-if="loading" class="a-button__loading">
+      <a-spinner></a-spinner>
+    </span>
+    <span class="a-button__inner" :style="{ opacity: loading ? 0 : 1 }"><slot></slot></span>
+    <Icon v-if="icon && iconPosition === 'trailing' && !loading" :icon="icon" />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, useSlots, PropType } from 'vue';
 import { Icon, IconifyIcon } from '@iconify/vue';
+
+import ASpinner from '../spinner';
+
 import { ButtonType, IconPosition } from './types';
 
 // This ui component is a button.
@@ -78,6 +85,10 @@ export default defineComponent({
       type: String as PropType<IconPosition>,
       default: 'leading',
     },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup() {
     const hasContent = !!useSlots().default;
@@ -99,25 +110,56 @@ export default defineComponent({
   line-height: 30px;
   padding: 4px 20px;
   background: var(--bg);
-  color: var(--primary);
   border-radius: 6px;
   box-shadow: 0px 4px 10px var(--shadow-6);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.05rem;
+  color: var(--primary);
   cursor: pointer;
   border: 1px solid var(--primary);
   user-select: none;
   box-sizing: border-box;
   white-space: nowrap;
-  transition: filter 100ms ease;
+  transition: filter 120ms ease;
+
+  &__inner {
+    color: inherit;
+  }
+
+  &__loading {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.16);
+    border-radius: inherit;
+    color: inherit;
+    cursor: not-allowed;
+    transition: background-color 120ms ease;
+    font-size: 1.2em;
+
+    .a-spinner {
+      color: inherit;
+
+      &__inner {
+        color: inherit;
+      }
+    }
+  }
 }
+
 .a-button:hover {
   filter: brightness(1.1);
 }
 .a-button:active {
   filter: brightness(1.05);
 }
+
 .a-button.a-button--round {
   border-radius: 24px;
 }
@@ -141,6 +183,7 @@ export default defineComponent({
 .a-button.a-button--small.a-button--round {
   border-radius: 18px;
 }
+
 .a-button.a-button--fill {
   width: 100%;
 }
@@ -150,11 +193,13 @@ export default defineComponent({
 .a-button.a-button--text-shadow {
   text-shadow: 2px 2px 4px var(--shadow-12);
 }
+
 .a-button.a-button--primary {
   background: var(--primary);
   color: var(--text-btn);
   border: none;
 }
+
 .a-button.a-button--gradient {
   box-shadow: 0 2px 12px var(--shadow-12);
   background: linear-gradient(42deg, var(--primary), var(--secondary));
@@ -167,12 +212,14 @@ export default defineComponent({
   color: var(--text-btn);
   border: none;
 }
+
 .a-button.a-button--depth {
   background: linear-gradient(180deg, var(--primary-l-6) 36%, var(--primary-d-4));
   box-shadow: 0 2px 12px var(--shadow-12);
   color: var(--text-btn);
   border: none;
 }
+
 .a-button.a-button--primary:hover {
   filter: none;
   background: var(--primary-85);
@@ -181,6 +228,7 @@ export default defineComponent({
   filter: none;
   background: var(--primary-75);
 }
+
 .a-button.a-button--anim {
   transition: all var(--anim-duration, 200ms) ease;
 }
@@ -188,6 +236,7 @@ export default defineComponent({
   transform: translateY(-4px);
   box-shadow: 0 4px 10px var(--shadow-24);
 }
+
 .a-button.a-button--disabled {
   transition: none;
   border: none;
@@ -196,6 +245,7 @@ export default defineComponent({
   box-shadow: 0 3px 12px var(--shadow-5);
   cursor: not-allowed;
 }
+
 .a-button--icon {
   display: flex;
   align-items: center;
@@ -205,6 +255,7 @@ export default defineComponent({
     flex-shrink: 0;
   }
 }
+
 .a-button--small.a-button--icon {
   padding: 4px 10px;
   svg {
@@ -306,6 +357,21 @@ export default defineComponent({
   padding: 8px 16px 8px 21px;
   svg {
     margin-left: 6px;
+  }
+}
+
+.a-button--loading:hover {
+  transform: none;
+
+  .a-button__loading {
+    background-color: rgba(0, 0, 0, 0.24);
+  }
+}
+.a-button--loading:active {
+  transform: none;
+
+  .a-button__loading {
+    background-color: rgba(0, 0, 0, 0.24);
   }
 }
 </style>
