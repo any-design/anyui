@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.19](https://github.com/any-design/anyui/compare/v0.1.18...v0.1.19) (2023-11-13)
+
+### Features
+
+- (button) add type "secondary" ([41b4f02](https://github.com/any-design/anyui/commit/41b4f02efa567ad2ae7fa21e4bf21707e07b4fe3))
+
 ## [0.1.18](https://github.com/any-design/anyui/compare/v0.1.17...v0.1.18) (2023-11-12)
 
 ### Features
