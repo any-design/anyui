@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.1.20](https://github.com/any-design/anyui/compare/v0.1.19...v0.1.20) (2023-11-13)
+
+### Bug Fixes
+
+- (float) float content should be relative position ([176221e](https://github.com/any-design/anyui/commit/176221efbda70327a94d7122eb584f46162e1796))
+
 ## [0.1.19](https://github.com/any-design/anyui/compare/v0.1.18...v0.1.19) (2023-11-13)
 
 ### Features
