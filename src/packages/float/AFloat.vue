@@ -153,6 +153,7 @@ export default defineComponent({
     padding: 16px;
     box-shadow: 0 1px 12px var(--shadow-w-6);
     box-sizing: border-box;
+    position: relative;
   }
 }
 
