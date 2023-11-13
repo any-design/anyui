@@ -6,6 +6,7 @@
       <a-button>Default</a-button>
       <a-button size="large">Large</a-button>
       <a-button type="primary">Primary</a-button>
+      <a-button type="secondary">Secondary</a-button>
       <a-button type="primary" round>Round</a-button>
       <a-button type="primary" round anim>Anim</a-button>
       <a-button size="small" round>Small Round</a-button>

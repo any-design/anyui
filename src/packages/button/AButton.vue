@@ -223,11 +223,24 @@ export default defineComponent({
   text-shadow: 2px 2px 4px var(--shadow-12);
 }
 
-.a-button.a-button--primary {
-  background: var(--primary);
-  color: var(--text-btn);
-  border: none;
+@mixin coloredButton($color) {
+  .a-button.a-button--#{$color} {
+    background: var(--#{$color});
+    color: var(--text-btn);
+    border: none;
+  }
+  .a-button.a-button--#{$color}:hover {
+    filter: none;
+    background: var(--#{$color}-85);
+  }
+  .a-button.a-button--#{$color}:active {
+    filter: none;
+    background: var(--#{$color}-75);
+  }
 }
+
+@include coloredButton('primary');
+@include coloredButton('secondary');
 
 .a-button.a-button--gradient {
   box-shadow: 0 2px 12px var(--shadow-12);
@@ -247,15 +260,6 @@ export default defineComponent({
   box-shadow: 0 2px 12px var(--shadow-12);
   color: var(--text-btn);
   border: none;
-}
-
-.a-button.a-button--primary:hover {
-  filter: none;
-  background: var(--primary-85);
-}
-.a-button.a-button--primary:active {
-  filter: none;
-  background: var(--primary-75);
 }
 
 .a-button.a-button--anim {
