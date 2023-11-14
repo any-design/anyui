@@ -42,5 +42,3 @@ onBeforeUnmount(() => {
   observer?.unobserve(itemRef.value);
 });
 </script>
-
-<style lang="scss"></style>
