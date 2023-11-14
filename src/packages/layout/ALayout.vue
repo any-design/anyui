@@ -12,21 +12,43 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, provide, onMounted } from 'vue';
+import { defineComponent, ref, provide, onMounted, watch } from 'vue';
 
 const RELATIVE_POSITION_KEYS = ['relative', 'absolute', 'fixed'];
 
 export default defineComponent({
-  setup() {
+  props: {
+    // fit the parent element (only works when parent element is relative position).
+    fit: {
+      type: Boolean,
+      default: false,
+    },
+    // automatically fit the parent element, not suitable for SSR.
+    autoFit: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  setup(props) {
     const hasSide = ref(false);
     const containerRef = ref<HTMLElement | undefined>();
 
-    const shouldFillParent = ref(false);
+    // eslint-disable-next-line vue/no-setup-props-destructure
+    const shouldFillParent = ref(props.fit ?? false);
+
+    watch(
+      () => props.fit,
+      (newVal) => {
+        if (newVal) {
+          shouldFillParent.value = false;
+        }
+      },
+    );
 
     provide('layout', { hasSide });
 
     onMounted(() => {
-      if (!containerRef.value) {
+      if (!containerRef.value || !props.autoFit) {
         return;
       }
       const parentEl = containerRef.value.parentElement;
