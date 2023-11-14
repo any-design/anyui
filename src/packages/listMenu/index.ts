@@ -1,6 +1,6 @@
-import { App } from 'vue';
+import type { App } from 'vue';
 
-import { SFCWithInstall } from '@/utils/types';
+import type { SFCWithInstall } from '@/utils/types';
 
 import AListMenu from './AListMenu.vue';
 import AListMenuItem from './AListMenuItem.vue';

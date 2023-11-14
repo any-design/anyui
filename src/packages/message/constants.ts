@@ -1,4 +1,4 @@
-import { MessageType } from './types';
+import type { MessageType } from './types';
 
 export const DefaultIcon: Record<MessageType, string> = {
   default: '',

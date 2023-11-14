@@ -57,23 +57,25 @@
 </template>
 
 <script lang="ts">
-import { Handler } from 'mitt';
+import type { Handler } from 'mitt';
+import type {
+  PropType} from 'vue';
 import {
   defineComponent,
   getCurrentInstance,
   onBeforeMount,
   onMounted,
   onUnmounted,
-  PropType,
   ref,
   watch,
 } from 'vue';
-import { Icon, IconifyIcon } from '@iconify/vue';
+import type { IconifyIcon } from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 
 import { getCertainParent } from '../../utils';
-import { FormItemEventEmitter } from '../formItem/bus';
-import APopper from '../popper';
-import { ASelectItem, ASelectItems } from './types';
+import type { FormItemEventEmitter } from '../formItem/bus';
+import type APopper from '../popper';
+import type { ASelectItem, ASelectItems } from './types';
 
 type SelectedValue = string | number | undefined | null;
 

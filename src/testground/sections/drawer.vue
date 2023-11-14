@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { DrawerPosition } from '@/packages/drawer';
+import type { DrawerPosition } from '@/packages/drawer';
 import { defineComponent } from 'vue';
 
 export default defineComponent({

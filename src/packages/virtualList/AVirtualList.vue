@@ -29,8 +29,10 @@
  * Unlike other components that have same functions, our virtual list will not query user to set a item height getter, it will measure the suitable item height automatically.
  * Also it support dynamic item height by default.
  */
-import {
+import type {
   PropType,
+  StyleValue} from 'vue';
+import {
   ref,
   computed,
   provide,
@@ -39,13 +41,12 @@ import {
   watch,
   nextTick,
   markRaw,
-  StyleValue,
   onBeforeMount,
 } from 'vue';
 
 import { useRefreshableComputed } from '../hooks/useRefreshable';
 
-import { RawVirtualListItem, VirtualListItem } from './types';
+import type { RawVirtualListItem, VirtualListItem } from './types';
 
 import AVirtualListItem from './AVirtualListItem.vue';
 

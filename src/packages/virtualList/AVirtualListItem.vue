@@ -10,8 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, PropType, ref, inject, nextTick } from 'vue';
-import { VirtualListItem } from './types';
+import type { PropType} from 'vue';
+import { onMounted, onBeforeUnmount, ref, inject } from 'vue';
+import type { VirtualListItem } from './types';
 
 const props = defineProps({
   // the item passed in from the virtual list.

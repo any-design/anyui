@@ -3,7 +3,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, CSSProperties, computed } from 'vue';
+import type { CSSProperties} from 'vue';
+import { defineComponent, computed } from 'vue';
 import { formatStyleSize } from '../../utils';
 
 export default defineComponent({

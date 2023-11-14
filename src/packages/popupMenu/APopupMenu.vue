@@ -28,13 +28,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import type { PropType } from 'vue';
+import { defineComponent } from 'vue';
 import { formatStyleSize } from '../../utils';
 
 import type { APopperTriggerType } from '../popper/types';
 import type APopper from '../popper';
 
-import { PopMenuCommandExtra, PopMenuItem } from './types';
+import type { PopMenuCommandExtra, PopMenuItem } from './types';
 
 // This component is a menu based on popper.
 export default defineComponent({

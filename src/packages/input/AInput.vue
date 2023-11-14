@@ -43,7 +43,9 @@
 </template>
 
 <script lang="ts">
-import { Handler } from 'mitt';
+import type { Handler } from 'mitt';
+import type {
+  Ref} from 'vue';
 import {
   defineComponent,
   getCurrentInstance,
@@ -53,11 +55,10 @@ import {
   ref,
   useSlots,
   watch,
-  computed,
-  Ref,
+  computed
 } from 'vue';
 import { formatStyleSize, getCertainParent } from '../../utils';
-import { FormItemEventEmitter } from '../formItem/bus';
+import type { FormItemEventEmitter } from '../formItem/bus';
 
 // extra padding to slot elements
 const SLOT_EXTRA_PADDING = 12;
