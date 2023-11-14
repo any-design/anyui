@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## [0.1.22](https://github.com/any-design/anyui/compare/v0.1.21...v0.1.22) (2023-11-14)
+# [0.2.0](https://github.com/any-design/anyui/compare/v0.1.21...v0.2.0) (2023-11-14)
 
 ### Bug Fixes
 
@@ -8,6 +8,8 @@
 
 ### Features
 
+- (core) **BREAKING**: allow to import sub-component style separetely ([b71d192](https://github.com/any-design/anyui/commit/b71d192160995ef3c7cccd01c045f6600c30c1c2))
+- (clickable-text) add more colored type ([1ec1f94](https://github.com/any-design/anyui/commit/1ec1f94c147c2cf967f27be803cea756ed0bda2a))
 - (float) now float mask will have a larger radius blur ([b0ad294](https://github.com/any-design/anyui/commit/b0ad2941b9c68b3ee74d04cc1cca2087f06d30d6))
 - (float) now the float can be centered & tweat the style of the background ([701ce5b](https://github.com/any-design/anyui/commit/701ce5b7efed48c0405b1355acd638a9a62083ef))
 
