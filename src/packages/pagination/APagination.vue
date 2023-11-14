@@ -205,7 +205,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @mixin inline-center() {
   display: inline-flex;
   align-items: center;
