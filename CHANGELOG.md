@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.1.22](https://github.com/any-design/anyui/compare/v0.1.21...v0.1.22) (2023-11-14)
+
+### Bug Fixes
+
+- (index) add export of listView ([f842823](https://github.com/any-design/anyui/commit/f8428234c2a28402af3eb778109b098991cb4d4b))
+
+### Features
+
+- (float) now float mask will have a larger radius blur ([b0ad294](https://github.com/any-design/anyui/commit/b0ad2941b9c68b3ee74d04cc1cca2087f06d30d6))
+- (float) now the float can be centered & tweat the style of the background ([701ce5b](https://github.com/any-design/anyui/commit/701ce5b7efed48c0405b1355acd638a9a62083ef))
+
 ## [0.1.21](https://github.com/any-design/anyui/compare/v0.1.20...v0.1.21) (2023-11-14)
 
 ### Bug Fixes
