@@ -1,11 +1,5 @@
 <template>
-  <span
-    :class="{
-      'a-clickable-text': true,
-      'a-clickable-text--secondary': type === 'secondary',
-      'a-clickable-text--primary': type === 'primary',
-    }"
-    @click="handleClick"
+  <span :class="['a-clickable-text', `a-clickable-text--${type}`]" @click="handleClick"
     ><slot></slot
   ></span>
 </template>
@@ -38,28 +32,27 @@ export default defineComponent({
   cursor: pointer;
 }
 .a-clickable-text:hover {
-  color: var(--text-80);
+  color: var(--text-85);
 }
 .a-clickable-text:active {
-  color: var(--text-70);
+  color: var(--text-75);
 }
-.a-clickable-text--secondary {
-  color: var(--text-secondary);
-  cursor: pointer;
+
+@mixin coloredClickcableText($color) {
+  .a-clickable-text.a-clickable-text--#{$color} {
+    color: var(--#{$color});
+  }
+  .a-clickable-text.a-clickable-text--#{$color}:hover {
+    color: var(--#{$color}-85);
+  }
+  .a-clickable-text.a-clickable-text--#{$color}:active {
+    color: var(--#{$color}-75);
+  }
 }
-.a-clickable-text--secondary:hover {
-  color: var(--text-secondary-80);
-}
-.a-clickable-text--secondary:active {
-  color: var(--text-secondary-70);
-}
-.a-clickable-text--primary {
-  color: var(--primary);
-}
-.a-clickable-text--primary:hover {
-  color: var(--primary-80);
-}
-.a-clickable-text--primary:active {
-  color: var(--primary-70);
-}
+
+@include coloredClickcableText('primary');
+@include coloredClickcableText('secondary');
+@include coloredClickcableText('danger');
+@include coloredClickcableText('warn');
+@include coloredClickcableText('info');
 </style>

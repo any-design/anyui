@@ -9,5 +9,6 @@ module.exports = {
   rules: {
     'vue/no-v-model-argument': 0,
     'vue/multi-word-component-names': 0,
+    'vue/no-empty-component-block': 0,
   },
 };
