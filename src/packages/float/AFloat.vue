@@ -6,6 +6,7 @@
         :class="[
           'a-float',
           {
+            'a-float--centered': shouldBeCentered,
             'a-float--round': round,
           },
           className || null,
@@ -35,7 +36,6 @@ export default defineComponent({
     },
     top: {
       type: [Number, String],
-      default: 96,
     },
     visible: {
       type: Boolean,
@@ -67,6 +67,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    centered: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['close', 'update:visible'],
   computed: {
@@ -84,7 +88,6 @@ export default defineComponent({
     contentStyles() {
       return {
         width: formatStyleSize(this.width),
-        'margin-top': formatStyleSize(this.top),
         'border-radius': formatStyleSize(this.roundRadius || this.defaultRoundRadius),
         ...(this.padding
           ? {
@@ -92,7 +95,16 @@ export default defineComponent({
                 typeof this.padding === 'number' ? formatStyleSize(this.padding) : this.padding,
             }
           : null),
+        ...(!this.centered
+          ? {
+              'margin-top': formatStyleSize(this.top || 96),
+            }
+          : null),
       };
+    },
+    // if top is not set, the float should be centered
+    shouldBeCentered() {
+      return typeof this.top === 'undefined';
     },
   },
   watch: {
@@ -136,7 +148,7 @@ export default defineComponent({
   &__mask {
     width: 100%;
     height: 100%;
-    background: var(--mask, rgba(0, 0, 0, 0.8));
+    background: var(--mask, rgba(0, 0, 0, 0.6));
     position: absolute;
     top: 0;
     left: 0;
@@ -146,7 +158,7 @@ export default defineComponent({
 
   &__content {
     height: max-content;
-    background: var(--bg);
+    background: var(--bg-semi-light);
     margin-left: auto;
     margin-right: auto;
     z-index: 1;
@@ -155,6 +167,12 @@ export default defineComponent({
     box-sizing: border-box;
     position: relative;
   }
+}
+
+.a-float--centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .a-float-fade-enter-active,
