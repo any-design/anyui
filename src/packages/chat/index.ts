@@ -1,5 +1,5 @@
-import { App } from 'vue';
-import { SFCWithInstall } from '@/utils/types';
+import type { App } from 'vue';
+import type { SFCWithInstall } from '@/utils/types';
 import AChat from './AChat.vue';
 
 AChat.install = (app: App) => {

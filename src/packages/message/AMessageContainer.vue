@@ -14,7 +14,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import mitt from 'mitt';
-import { Message, MessageEventEmitter } from './types';
+import type { Message, MessageEventEmitter } from './types';
 import AMessage from './AMessage.vue';
 
 export default defineComponent({

@@ -1,7 +1,7 @@
-import { App } from 'vue';
+import type { App } from 'vue';
 import AListView from './AListView.vue';
 import AListViewItem from './AListViewItem.vue';
-import { SFCWithInstall } from '@/utils/types';
+import type { SFCWithInstall } from '@/utils/types';
 
 AListView.install = (app: App) => {
   app.component('AListView', AListView);

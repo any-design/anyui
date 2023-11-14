@@ -1,8 +1,8 @@
 import { loadIcons } from '@iconify/vue';
-import { App } from 'vue';
+import type { App } from 'vue';
 import { DefaultIcon } from './constants';
 import { popupMessage } from './helper';
-import { MessageOptions, MessageType } from './types';
+import type { MessageOptions, MessageType } from './types';
 
 export type AMessageTypedOptions =
   | string

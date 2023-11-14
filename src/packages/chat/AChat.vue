@@ -23,9 +23,11 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, nextTick, ref, watch } from 'vue';
+import type { PropType} from 'vue';
+import { nextTick, ref, watch } from 'vue';
 
-import AVirtualList, { RawVirtualListItem } from '../virtualList';
+import type { RawVirtualListItem } from '../virtualList';
+import AVirtualList from '../virtualList';
 
 import type { AChatMessage } from './types';
 

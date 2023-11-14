@@ -1,13 +1,14 @@
-import {
-  addIcon,
-  addCollection,
+import type {
   IconifyIcon,
   IconifyJSON,
   IconifyIconName,
-  loadIcons,
   IconifyIconLoaderAbort,
-  enableCache as enableIconCache,
-  IconifyBrowserCacheType,
+  IconifyBrowserCacheType} from '@iconify/vue';
+import {
+  addIcon,
+  addCollection,
+  loadIcons,
+  enableCache as enableIconCache
 } from '@iconify/vue';
 
 export type IconMeta =

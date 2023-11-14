@@ -12,18 +12,19 @@
 
 <script lang="ts">
 import { getCertainParent } from '../../utils';
+import type {
+  PropType} from 'vue';
 import {
   defineComponent,
   getCurrentInstance,
   onMounted,
   onUnmounted,
-  PropType,
   ref,
   watch,
   onBeforeMount,
 } from 'vue';
-import { FormItemEventEmitter } from '../formItem/bus';
-import { ARadioGroupItem, ARadioGroupItems } from './types';
+import type { FormItemEventEmitter } from '../formItem/bus';
+import type { ARadioGroupItem, ARadioGroupItems } from './types';
 
 export default defineComponent({
   name: 'ARadioGroup',

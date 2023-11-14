@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
-import { Interval, Timeout } from '@/utils/types';
+import type { Interval, Timeout } from '@/utils/types';
 
 const CIRCLE_COUNT = 4;
 const CIRCLE_ANIM_DURATION = 1200;

@@ -19,11 +19,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { Icon, IconifyIcon } from '@iconify/vue';
+import type { PropType } from 'vue';
+import { defineComponent } from 'vue';
+import type { IconifyIcon } from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 
 import { DefaultIcon } from './constants';
-import { MessageType } from './types';
+import type { MessageType } from './types';
 
 export default defineComponent({
   name: 'AMessage',
