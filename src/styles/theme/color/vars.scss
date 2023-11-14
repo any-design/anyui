@@ -1,6 +1,7 @@
 // colors
 @use 'sass:list';
 @use 'sass:map';
+@use 'sass:color';
 
 @import './hct.scss';
 
@@ -17,6 +18,7 @@ $invert-text-btn: false !default;
     $hue: nth($hct, 1);
     $chroma: nth($hct, 2);
     $tone: nth($hct, 3);
+    $alpha: color.alpha($value);
     $dark-color: null;
 
     @if $chroma <= $gray-chroma-limit {
@@ -25,39 +27,39 @@ $invert-text-btn: false !default;
         // specific rules
         @if $name == 'text-btn' and $tone >= 90 {
           @if $invert-text-btn {
-            $dark-color: hct($hue, $chroma, 100 - $tone * 0.98);
+            $dark-color: hcta($hue, $chroma, 100 - $tone * 0.98, $alpha);
           } @else {
-            $dark-color: hct($hue, $chroma, $tone * 0.92);
+            $dark-color: hcta($hue, $chroma, $tone * 0.92, $alpha);
           }
         } @else if (($name == 'shadow' or $name == 'shadow-w')) {
           @if $tone <= 10 {
-            $dark-color: hct($hue, $chroma * 0.6, $tone + 14);
+            $dark-color: hcta($hue, $chroma * 0.6, $tone + 14, $alpha);
           } @else {
-            $dark-color: hct($hue, $chroma * 0.9, $tone * 0.4);
+            $dark-color: hcta($hue, $chroma * 0.9, $tone * 0.4, $alpha);
           }
         } @else {
           // general rules
-          $dark-color: hct($hue, $chroma * 0.9, 100 - $tone * 0.98);
+          $dark-color: hcta($hue, $chroma * 0.9, 100 - $tone * 0.98, $alpha);
         }
       } @else {
         // specifc
         @if ($name == 'bg-disabled' and $tone >= 80) {
-          $dark-color: hct($hue, $chroma * 0.8, $tone * 0.16);
+          $dark-color: hcta($hue, $chroma * 0.8, $tone * 0.16, $alpha);
         } @else {
           // make gray color deeper
           @if $tone > 75 {
-            $dark-color: hct($hue, $chroma * 0.8, $tone * 0.4);
+            $dark-color: hcta($hue, $chroma * 0.8, $tone * 0.4, $alpha);
           } @else {
-            $dark-color: hct($hue, $chroma * 0.8, $tone * 0.58);
+            $dark-color: hcta($hue, $chroma * 0.8, $tone * 0.58, $alpha);
           }
         }
       }
     } @else {
       @if ($tone >= $bright-color-tone-limit) {
-        $dark-color: hct($hue, $chroma * 0.72, $tone * 0.82);
+        $dark-color: hcta($hue, $chroma * 0.72, $tone * 0.82, $alpha);
       } @else {
         // to the colors is already dark, there is no need to make it way more darker
-        $dark-color: hct($hue, $chroma * 0.98, $tone * 0.98);
+        $dark-color: hcta($hue, $chroma * 0.98, $tone * 0.98, $alpha);
       }
     }
 
@@ -69,8 +71,8 @@ $invert-text-btn: false !default;
 $default-bg: #f8f8fa;
 
 $default-colors: (
-  primary: rgba(15, 111, 239, 90),
-  secondary: rgba(17, 205, 239, 90),
+  primary: rgba(15, 111, 239, 0.9),
+  secondary: rgba(17, 205, 239, 0.9),
   bg: $default-bg,
   bg-hover: adjust-color($default-bg, $lightness: -2.5%),
   bg-active: adjust-color($default-bg, $lightness: -3.75%),
@@ -89,7 +91,7 @@ $default-colors: (
   danger: rgb(231, 63, 51),
   info: rgb(47, 124, 224),
   border: #cecdd0,
-
+  overlay: rgba(0, 0, 0, 0.2),
   line: #eff2f3,
   shadow: #001220,
   shadow-w: #fff,
@@ -97,7 +99,7 @@ $default-colors: (
 
 // static colors
 $default-static-colors: (
-  mask: rgba(0, 0, 0, 0.8),
+  mask: rgba(0, 0, 0, 0.6),
 );
 
 $default-alphas: (
