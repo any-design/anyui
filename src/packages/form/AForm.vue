@@ -219,9 +219,11 @@ export default defineComponent({
   width: 100%;
   position: relative;
 }
+
 .a-form--inline {
   width: 100%;
   display: flex;
+
   .a-form-item {
     margin-bottom: 0;
     margin-right: 12px;
@@ -232,6 +234,7 @@ export default defineComponent({
       }
     }
   }
+
   .a-form-item:last-child {
     margin-right: 0;
   }
