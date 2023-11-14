@@ -16,6 +16,7 @@ import Input from './packages/input';
 import Loading from './packages/loading';
 import Layout, { Header, Content, Footer, Side } from './packages/layout';
 import ListMenu from './packages/listMenu';
+import ListView, { ListViewItem } from './packages/listView';
 import Masonry from './packages/masonry';
 import Message, { message } from './packages/message';
 import Radio from './packages/radio';
@@ -93,6 +94,8 @@ export {
   Layout,
   Loading,
   ListMenu,
+  ListView,
+  ListViewItem,
   Masonry,
   Message,
   Pagination,
