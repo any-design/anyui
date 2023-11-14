@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.2.1](https://github.com/any-design/anyui/compare/v0.2.0...v0.2.1) (2023-11-14)
+
+### Bug Fixes
+
+- (listView) the style file cannot be generated properly ([bb0fa15](https://github.com/any-design/anyui/commit/bb0fa154b48a1d692c7c6154c04a9587319d7fd6))
+
 # [0.2.0](https://github.com/any-design/anyui/compare/v0.1.21...v0.2.0) (2023-11-14)
 
 ### Bug Fixes
