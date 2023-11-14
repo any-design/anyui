@@ -40,7 +40,7 @@ provide('styleType', styleType);
 provide('itemHeight', formattedItemHeight);
 </script>
 
-<style>
+<style lang="scss">
 .a-list-view {
   width: max-content;
   height: inherit;
