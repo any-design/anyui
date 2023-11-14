@@ -1,5 +1,5 @@
-import { App } from 'vue';
-import { SFCWithInstall } from '@/utils/types';
+import type { App } from 'vue';
+import type { SFCWithInstall } from '@/utils/types';
 import ACard from './ACard.vue';
 
 ACard.install = (app: App) => {

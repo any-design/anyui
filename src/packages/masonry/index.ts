@@ -1,5 +1,5 @@
-import { App } from 'vue';
-import { SFCWithInstall } from '@/utils/types';
+import type { App } from 'vue';
+import type { SFCWithInstall } from '@/utils/types';
 import AMasonry from './AMasonry.vue';
 
 AMasonry.install = (app: App) => {

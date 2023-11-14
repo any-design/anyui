@@ -1,4 +1,4 @@
-import { Placement } from '@popperjs/core';
+import type { Placement } from '@popperjs/core';
 import { createPopper } from '@popperjs/core/lib/popper-lite';
 import preventOverflow from '@popperjs/core/lib/modifiers/preventOverflow';
 import offsetMod from '@popperjs/core/lib/modifiers/offset';

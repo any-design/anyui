@@ -1,4 +1,4 @@
-import { App } from 'vue';
+import type { App } from 'vue';
 import Button from './packages/button';
 import Chat from './packages/chat';
 import Card from './packages/card';

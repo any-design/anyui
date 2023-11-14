@@ -10,9 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, computed, provide } from 'vue';
+import type { PropType} from 'vue';
+import { computed, provide } from 'vue';
 
-import { AListMenuStyleType } from './types';
+import type { AListMenuStyleType } from './types';
 import { formatStyleSize } from '@/utils';
 
 const props = defineProps({

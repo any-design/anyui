@@ -39,23 +39,24 @@
 </template>
 
 <script lang="ts">
-import { Handler } from 'mitt';
+import type { Handler } from 'mitt';
+import type {
+  PropType} from 'vue';
 import {
   defineComponent,
   getCurrentInstance,
   onBeforeUnmount,
   onMounted,
-  PropType,
   ref,
   watch,
 } from 'vue';
-import { Placement } from '@popperjs/core';
+import type { Placement } from '@popperjs/core';
 import { getStyleNumVarInCSS } from '@/utils';
 import { attachClickOutsideListener } from '@/utils/clickOutside';
 
 import bus from './bus';
 import { createPopperInstance } from './popper';
-import { APopperTriggerType } from './types';
+import type { APopperTriggerType } from './types';
 
 export default defineComponent({
   name: 'APopper',
@@ -262,7 +263,7 @@ export default defineComponent({
           getCurrentInstance()?.proxy?.$forceUpdate();
         };
 
-        const delayHide = (e: Event) => {
+        const delayHide = () => {
           if (hideTimeout) {
             clearTimeout(hideTimeout);
           }

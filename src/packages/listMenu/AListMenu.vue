@@ -16,8 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { PropType, computed, onBeforeMount, ref, watch } from 'vue';
-import { AListMenuConfig, AListMenuDisplayItem, AListMenuItemConfig } from './types';
+import type { PropType} from 'vue';
+import { computed, onBeforeMount, ref, watch } from 'vue';
+import type { AListMenuConfig, AListMenuDisplayItem, AListMenuItemConfig } from './types';
 import AListMenuItem from './AListMenuItem.vue';
 
 const props = defineProps({

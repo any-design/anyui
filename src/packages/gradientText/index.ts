@@ -1,5 +1,5 @@
-import { App } from 'vue';
-import { SFCWithInstall } from '@/utils/types';
+import type { App } from 'vue';
+import type { SFCWithInstall } from '@/utils/types';
 import AGradientText from './AGradientText.vue';
 
 AGradientText.install = (app: App) => {

@@ -38,9 +38,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, computed, CSSProperties, watch, onBeforeMount } from 'vue';
+import type { PropType, CSSProperties} from 'vue';
+import { defineComponent, ref, computed, watch, onBeforeMount } from 'vue';
 import { SCROLL_LOCK_PROPS, useScrollLock } from '../hooks/useScrollLock';
-import { DrawerPosition } from './types';
+import type { DrawerPosition } from './types';
 
 export default defineComponent({
   props: {

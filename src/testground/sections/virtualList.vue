@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { VirtualList as AVirtualList } from '../../';
-import { RawVirtualListItem } from '../../';
+import type { RawVirtualListItem } from '../../';
 
 const list = ref(
   new Array(10000).fill(null).map((_, index) => {

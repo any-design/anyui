@@ -13,7 +13,8 @@
 </template>
 
 <script lang="ts">
-import { CSSProperties, defineComponent, PropType, computed } from 'vue';
+import type { CSSProperties, PropType} from 'vue';
+import { defineComponent, computed } from 'vue';
 import Color from 'color';
 
 export default defineComponent({

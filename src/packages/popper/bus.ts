@@ -1,4 +1,5 @@
-import mitt, { Emitter } from 'mitt';
+import type { Emitter } from 'mitt';
+import mitt from 'mitt';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type PopperEvents = {

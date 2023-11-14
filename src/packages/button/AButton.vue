@@ -31,10 +31,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useSlots, PropType } from 'vue';
-import { Icon, IconifyIcon } from '@iconify/vue';
+import type { PropType } from 'vue';
+import { defineComponent, useSlots } from 'vue';
+import type { IconifyIcon } from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 
-import { ButtonType, IconPosition } from './types';
+import type { ButtonType, IconPosition } from './types';
 
 // This ui component is a button.
 export default defineComponent({

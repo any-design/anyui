@@ -13,9 +13,10 @@
 </template>
 
 <script lang="ts">
-import { Timeout } from '@/utils/types';
+import type { Timeout } from '@/utils/types';
 import { computed, onBeforeMount } from 'vue';
-import { CSSProperties, defineComponent, nextTick, PropType, ref, watch } from 'vue';
+import type { CSSProperties, PropType} from 'vue';
+import { defineComponent, nextTick, ref, watch } from 'vue';
 
 const TRANSITION_DURATION = 200;
 
