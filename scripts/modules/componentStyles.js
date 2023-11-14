@@ -25,24 +25,33 @@ ${styleContent}
 `.trim();
 
 const collectDirStyles = async (dir) => {
+  // read package dir
   const dirInfo = await fsp.readdir(dir);
+  // collect all vue components
   const results = await Promise.all(
     dirInfo.map(async (fileName) => {
       const filePath = path.resolve(dir, fileName);
       const stat = await fsp.stat(filePath);
       if (stat.isDirectory()) {
+        // deeply collect, might be an array
         return await collectDirStyles(filePath);
       } else if (fileName.endsWith('.vue')) {
+        // extract scss style code
         const content = await fsp.readFile(filePath, { encoding: 'utf-8' });
         const matched = content.match(styleExtractor);
         if (matched) {
-          return matched[1];
+          return {
+            name: fileName.replace('.vue', ''),
+            content: matched[1],
+          };
         }
       }
       return null;
     }),
   );
-  return results.filter((item) => !!item).join('\n');
+  return results
+    .reduce((res, curr) => (Array.isArray(curr) ? [...res, ...curr] : [...res, curr]), [])
+    .filter((item) => !!item);
 };
 
 const getComponentStyles = async () => {
@@ -65,20 +74,37 @@ const getComponentStyles = async () => {
       if (!results[compName]) {
         return;
       }
-      await fsp.writeFile(
-        path.resolve(targetDir, `./${compName}.scss`),
-        appendGlobalVars(results[compName].trimStart(), false),
-        { encoding: 'utf-8' },
-      );
-      await fsp.writeFile(
-        path.resolve(targetDir, `./${compName}.css`),
-        (
-          await sass.compileStringAsync(appendGlobalVars(results[compName], true))
-        ).css,
-        { encoding: 'utf-8' },
+      // results array can contain mulitple file content, should compile them all.
+      return await Promise.all(
+        results[compName].map(async (styleItem) => {
+          const { name, content } = styleItem;
+          const formattedName = name[1].toLowerCase() + name.slice(2);
+
+          const scssPath = path.resolve(targetDir, `./${formattedName}.scss`);
+          if (fs.existsSync(scssPath)) {
+            console.error(chalk.red('Component style file already exists:', scssPath));
+          }
+
+          const cssFilePath = path.resolve(targetDir, `./${formattedName}.css`);
+          if (fs.existsSync(cssFilePath)) {
+            console.error(chalk.red('Component style file already exists:', scssPath));
+          }
+
+          await fsp.writeFile(scssPath, appendGlobalVars(content.trimStart(), false), {
+            encoding: 'utf-8',
+          });
+          await fsp.writeFile(
+            cssFilePath,
+            (
+              await sass.compileStringAsync(appendGlobalVars(content, true))
+            ).css,
+            { encoding: 'utf-8' },
+          );
+        }),
       );
     }),
   );
+
   console.log(chalk.green('Component styles has been collected and compiled to CSS.'));
 };
 

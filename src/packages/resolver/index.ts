@@ -16,9 +16,7 @@ const NATIVE_NAMES = [
   'AbsoluteOrientationSensor',
 ];
 
-const LAYOUT_NAMES = ['header', 'content', 'footer', 'side'];
-
-const NO_STYLE_COMPONENTS = ['checkboxGroup'];
+const NO_STYLE_COMPONENTS = ['checkboxGroup', 'virtualListItem'];
 
 export interface AnyUIResolverOptions {
   styleType?: 'scss' | 'css';
@@ -32,10 +30,7 @@ const getSideEffects = (importName: string, options: AnyUIResolverOptions) => {
     return;
   }
   // generate style path
-  let formattedName = importName[1].toLowerCase() + importName.slice(2);
-  if (LAYOUT_NAMES.includes(formattedName)) {
-    formattedName = 'layout';
-  }
+  const formattedName = importName[1].toLowerCase() + importName.slice(2);
   // check no style components
   if (NO_STYLE_COMPONENTS.includes(formattedName)) {
     return;
