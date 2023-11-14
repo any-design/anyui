@@ -22,8 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import { ComputedRef, StyleValue, computed, inject } from 'vue';
-import { AListMenuStyleType } from './types';
+import type { ComputedRef, StyleValue} from 'vue';
+import { computed, inject } from 'vue';
+import type { AListMenuStyleType } from './types';
 
 const props = defineProps({
   label: {

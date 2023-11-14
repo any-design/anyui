@@ -33,7 +33,10 @@
 
 <script lang="ts">
 import { getCertainParent } from '@/utils';
-import { Booleanish } from '@/utils/types';
+import type { Booleanish } from '@/utils/types';
+import type {
+  PropType,
+  StyleValue} from 'vue';
 import {
   defineComponent,
   onBeforeMount,
@@ -42,11 +45,9 @@ import {
   computed,
   onUnmounted,
   getCurrentInstance,
-  watch,
-  PropType,
-  StyleValue,
+  watch
 } from 'vue';
-import { FormItemEventEmitter } from '../formItem/bus';
+import type { FormItemEventEmitter } from '../formItem/bus';
 import { useRefreshableComputed } from '../hooks/useRefreshable';
 
 const INNER_PADDING_HEIGHT = 8;

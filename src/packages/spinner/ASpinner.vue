@@ -5,8 +5,10 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent } from 'vue';
-import { Icon, IconifyIcon } from '@iconify/vue';
+import type { PropType} from 'vue';
+import { defineComponent } from 'vue';
+import type { IconifyIcon } from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 
 export default defineComponent({
   components: {

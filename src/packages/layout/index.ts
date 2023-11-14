@@ -1,10 +1,10 @@
-import { App } from 'vue';
+import type { App } from 'vue';
 import ALayout from './ALayout.vue';
 import AHeader from './components/AHeader.vue';
 import AContent from './components/AContent.vue';
 import AFooter from './components/AFooter.vue';
 import ASide from './components/ASide.vue';
-import { SFCWithInstall } from '@/utils/types';
+import type { SFCWithInstall } from '@/utils/types';
 
 ALayout.install = (app: App) => {
   app.component('ALayout', ALayout);

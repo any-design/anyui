@@ -1,4 +1,4 @@
-import { ComponentInternalInstance } from 'vue';
+import type { ComponentInternalInstance } from 'vue';
 
 export const formatStyleSize = (size: number | string) => {
   if (typeof size === 'string' && /^\d+$/.test(size)) {

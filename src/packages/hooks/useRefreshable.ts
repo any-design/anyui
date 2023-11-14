@@ -1,4 +1,5 @@
-import { computed, ComputedRef, ref } from 'vue';
+import type { ComputedRef} from 'vue';
+import { computed, ref } from 'vue';
 
 export function useRefreshable<T>(getter: () => T): {
   getter: () => T;

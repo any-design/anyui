@@ -21,6 +21,8 @@
 </template>
 
 <script lang="ts">
+import type {
+  PropType} from 'vue';
 import {
   computed,
   defineComponent,
@@ -28,17 +30,16 @@ import {
   onBeforeMount,
   onMounted,
   onUnmounted,
-  PropType,
   provide,
   ref,
   watch,
 } from 'vue';
 import { getCertainParent } from '@/utils';
-import { ARadioGroupItems } from '../radioGroup/types';
-import { ARadioButtonPosition } from './types';
+import type { ARadioGroupItems } from '../radioGroup/types';
+import type { ARadioButtonPosition } from './types';
 import { GET_PARENT_CONTAINER_RECT, GET_PADDING_VALUE } from './constants';
 import ARadioButton from './ARadioButton.vue';
-import { FormItemEventEmitter } from '../formItem/bus';
+import type { FormItemEventEmitter } from '../formItem/bus';
 
 export default defineComponent({
   name: 'ARadioButtonGroup',

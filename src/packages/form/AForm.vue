@@ -10,8 +10,9 @@
 </template>
 
 <script lang="ts">
+import type {
+  PropType} from 'vue';
 import {
-  PropType,
   defineComponent,
   computed,
   provide,
@@ -19,13 +20,14 @@ import {
   onBeforeUnmount,
   unref,
 } from 'vue';
-import ValidateSchema, { Rules } from 'async-validator';
+import type { Rules } from 'async-validator';
+import ValidateSchema from 'async-validator';
 import type { Rule, ValidateError } from 'async-validator/dist-types/interface';
 
 import { formatStyleSize } from '../../utils';
 
 import formEventEmitterFactory from './bus';
-import { FormRuleItem } from './types';
+import type { FormRuleItem } from './types';
 
 export default defineComponent({
   name: 'AForm',

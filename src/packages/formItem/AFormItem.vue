@@ -23,7 +23,9 @@
 </template>
 
 <script lang="ts">
-import { Handler } from 'mitt';
+import type { Handler } from 'mitt';
+import type {
+  ComputedRef} from 'vue';
 import {
   defineComponent,
   getCurrentInstance,
@@ -31,11 +33,10 @@ import {
   onUnmounted,
   ref,
   computed,
-  ComputedRef,
   inject,
 } from 'vue';
-import { ClearEventPayload, FormEventEmitter, SetValidEventPayload } from '../form/bus';
-import { FormRuleItem } from '../form/types';
+import type { ClearEventPayload, FormEventEmitter, SetValidEventPayload } from '../form/bus';
+import type { FormRuleItem } from '../form/types';
 import { getCertainParent } from '../../utils';
 import formItemEventEmitterFactory from './bus';
 

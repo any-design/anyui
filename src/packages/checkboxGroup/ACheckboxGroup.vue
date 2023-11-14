@@ -12,7 +12,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch, computed, onBeforeMount } from 'vue';
+import type { PropType} from 'vue';
+import { defineComponent, ref, watch, computed, onBeforeMount } from 'vue';
 
 export default defineComponent({
   props: {

@@ -38,10 +38,12 @@
 </template>
 
 <script lang="ts">
-import { PropType, defineComponent } from 'vue';
-import { Icon, IconifyIcon } from '@iconify/vue';
+import type { PropType} from 'vue';
+import { defineComponent } from 'vue';
+import type { IconifyIcon } from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 
-import { PaginationMeta } from './types';
+import type { PaginationMeta } from './types';
 
 export default defineComponent({
   components: {

@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { PopMenuCommandExtra } from '@/packages/popupMenu/types';
+import type { PopMenuCommandExtra } from '@/packages/popupMenu/types';
 
 const handleCommand = (command: string, extra: PopMenuCommandExtra) => {
   console.log('command', command, 'extra', extra);

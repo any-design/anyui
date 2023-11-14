@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { MessageType } from '@/packages/message/types';
+import type { MessageType } from '@/packages/message/types';
 
 export default defineComponent({
   methods: {

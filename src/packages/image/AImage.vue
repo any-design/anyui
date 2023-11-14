@@ -11,9 +11,10 @@
 </template>
 
 <script lang="ts">
-import { Handler } from 'mitt';
+import type { Handler } from 'mitt';
+import type {
+  CSSProperties} from 'vue';
 import {
-  CSSProperties,
   defineComponent,
   onBeforeUnmount,
   onMounted,
