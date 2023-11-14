@@ -6,7 +6,7 @@
         :class="[
           'a-float',
           {
-            'a-float--centered': shouldBeCentered,
+            'a-float--centered': centered,
             'a-float--round': round,
           },
           className || null,
@@ -102,10 +102,6 @@ export default defineComponent({
           : null),
       };
     },
-    // if top is not set, the float should be centered
-    shouldBeCentered() {
-      return typeof this.top === 'undefined';
-    },
   },
   watch: {
     visible: {
@@ -153,7 +149,7 @@ export default defineComponent({
     top: 0;
     left: 0;
     z-index: -1;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(20px);
   }
 
   &__content {
