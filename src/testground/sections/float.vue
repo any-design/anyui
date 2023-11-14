@@ -5,13 +5,13 @@
       <a-button type="primary" @click="() => (floatVisible = true)">Default</a-button>
       <a-button type="primary" @click="() => (roundFloatVisible = true)">Round</a-button>
       <a-button type="primary" @click="() => (centeredFloatVisible = true)">Centered</a-button>
-      <a-float v-model:visible="floatVisible" top="96px">
+      <a-float v-model:visible="floatVisible">
         <p>This is a float.</p>
       </a-float>
-      <a-float v-model:visible="roundFloatVisible" round top="96px">
+      <a-float v-model:visible="roundFloatVisible" round>
         <p>This is a float.</p>
       </a-float>
-      <a-float v-model:visible="centeredFloatVisible" round>
+      <a-float v-model:visible="centeredFloatVisible" round centered>
         <p>This is a float.</p>
       </a-float>
     </div>
