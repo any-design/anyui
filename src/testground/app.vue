@@ -24,6 +24,7 @@
       <MessageSection />
       <LayoutSection />
       <ListMenuSection />
+      <ListViewSection />
       <TagSection />
       <TextareaSection />
       <CollapseSection />
@@ -78,6 +79,7 @@ const FormSection = defineAsyncComponent(() => import('./sections/form.vue'));
 const MessageSection = defineAsyncComponent(() => import('./sections/message.vue'));
 const LayoutSection = defineAsyncComponent(() => import('./sections/layout.vue'));
 const ListMenuSection = defineAsyncComponent(() => import('./sections/listMenu.vue'));
+const ListViewSection = defineAsyncComponent(() => import('./sections/listView.vue'));
 const TagSection = defineAsyncComponent(() => import('./sections/tag.vue'));
 const TextareaSection = defineAsyncComponent(() => import('./sections/textarea.vue'));
 const CollapseSection = defineAsyncComponent(() => import('./sections/collapse.vue'));

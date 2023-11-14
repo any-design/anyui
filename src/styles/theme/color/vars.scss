@@ -173,7 +173,12 @@ $dark-theme-selector: 'html[theme="dark"]' !default;
   $colors: $default-colors;
 }
 
-$default-dark-colors: get-dark-colors($colors);
+$default-dark-colors: map-merge(
+  get-dark-colors($colors),
+  (
+    overlay: rgba(255, 255, 255, 0.04),
+  )
+);
 
 @if variable-exists(alphas) {
   $alphas: map-merge($default-alphas, $alphas);
