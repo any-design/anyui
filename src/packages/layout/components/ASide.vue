@@ -5,7 +5,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onMounted, onUnmounted, Ref } from 'vue';
+import { formatStyleSize } from '@/utils';
+import { computed, defineComponent, inject, onMounted, onUnmounted, Ref } from 'vue';
 
 const DEFAULT_WIDTH = 300;
 
@@ -14,7 +15,6 @@ export default defineComponent({
     // height of the width, need to be a valid CSS height string
     width: {
       type: [Number, String],
-      default: 300,
     },
     // if true, the default style will not be applied to the component
     noDefault: {
@@ -26,12 +26,15 @@ export default defineComponent({
     const { hasSide } = inject('layout', Object.create(null)) as {
       hasSide: Ref<boolean>;
     };
-    const width = typeof props.width === 'number' ? `${props.width}px` : props.width;
-    const styles = !props.noDefault
-      ? {
-          width: width || `${DEFAULT_WIDTH}px`,
-        }
-      : undefined;
+
+    const styles = computed(() => {
+      return props.noDefault && !props.width
+        ? undefined
+        : {
+            width: formatStyleSize(props.width || DEFAULT_WIDTH),
+          };
+    });
+
     if (typeof hasSide !== 'undefined') {
       onMounted(() => {
         hasSide.value = true;
@@ -40,6 +43,7 @@ export default defineComponent({
         hasSide.value = false;
       });
     }
+
     return {
       styles,
     };

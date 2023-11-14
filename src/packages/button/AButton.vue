@@ -241,6 +241,9 @@ export default defineComponent({
 
 @include coloredButton('primary');
 @include coloredButton('secondary');
+@include coloredButton('info');
+@include coloredButton('warn');
+@include coloredButton('danger');
 
 .a-button.a-button--gradient {
   box-shadow: 0 2px 12px var(--shadow-12);
