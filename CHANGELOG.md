@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## [0.1.21](https://github.com/any-design/anyui/compare/v0.1.20...v0.1.21) (2023-11-14)
+
+### Bug Fixes
+
+- (layout) side width now is reactive ([c69d256](https://github.com/any-design/anyui/commit/c69d256c79cf8050e8d96239b010a5d94d5f1607))
+
+### Features
+
+- (button) add colored button with info, warn, danger color ([439b197](https://github.com/any-design/anyui/commit/439b1978c129fe30e02b10d559b13c20dac58fd3))
+- (layout) make auto fit SSR friendly ([910f296](https://github.com/any-design/anyui/commit/910f2962712e2e214af25a878a23184443561fb0))
+- (layout) now layout will fill the parent element when the parent element has relative position setting ([2cdf0dc](https://github.com/any-design/anyui/commit/2cdf0dc8a0413ef5fa37e776bfe2a797680d8d20))
+- (listView) add listView component ([742351f](https://github.com/any-design/anyui/commit/742351f4346f6c0e55773bbd9404dc58bc1d349a))
+- (theme) support alpha color when generating dark colors in color map ([eea0476](https://github.com/any-design/anyui/commit/eea0476bc93974ed696265c1d70d603ec7800b7c))
+
+## [0.1.20](https://github.com/any-design/anyui/compare/v0.1.19...v0.1.20) (2023-11-13)
+
+### Bug Fixes
+
+- (float) float content should be relative position ([176221e](https://github.com/any-design/anyui/commit/176221efbda70327a94d7122eb584f46162e1796))
+
+## [0.1.19](https://github.com/any-design/anyui/compare/v0.1.18...v0.1.19) (2023-11-13)
+
+### Features
+
+- (button) add type "secondary" ([41b4f02](https://github.com/any-design/anyui/commit/41b4f02efa567ad2ae7fa21e4bf21707e07b4fe3))
+
 ## [0.1.18](https://github.com/any-design/anyui/compare/v0.1.17...v0.1.18) (2023-11-12)
 
 ### Features
