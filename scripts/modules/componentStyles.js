@@ -39,7 +39,7 @@ const collectDirStyles = async (dir) => {
         // extract scss style code
         const content = await fsp.readFile(filePath, { encoding: 'utf-8' });
         const matched = content.match(styleExtractor);
-        if (matched.length >= 2) {
+        if (matched?.length >= 2) {
           return {
             name: fileName.replace('.vue', ''),
             content: matched[1],
