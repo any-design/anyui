@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [0.2.5](https://github.com/any-design/anyui/compare/v0.2.4...v0.2.5) (2023-11-15)
+
+### Features
+
+- (empty) non-selectable empty component ([5e732f3](https://github.com/any-design/anyui/commit/5e732f3e047a1e14e9dc470de94aa39cff11db57))
+- (listMenu) not-selectable split element ([63b519a](https://github.com/any-design/anyui/commit/63b519a3439b96386904ff11cbaf5e0710ac5950))
+- (listMenu) use overlay color as hover color ([e6d5c75](https://github.com/any-design/anyui/commit/e6d5c75438219bd87757e043b6669c5c2653cebf))
+- (resolver) export resolver in bundle ([ebcc0b6](https://github.com/any-design/anyui/commit/ebcc0b612f415a2690f82f413c8baef08a17bfd9))
+
 ## [0.2.4](https://github.com/any-design/anyui/compare/v0.2.3...v0.2.4) (2023-11-15)
 
 ### Bug Fixes
