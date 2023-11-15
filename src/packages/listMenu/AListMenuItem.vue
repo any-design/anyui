@@ -39,7 +39,10 @@ const isSelected = computed(() => props.selected === props.value);
   font-size: 15px;
   border-radius: 8px;
   font-weight: 600;
-  transition: background-color 140ms ease, background-image 140ms ease;
+  transition:
+    background-color 140ms ease,
+    background-image 140ms ease;
+  user-select: none;
 }
 
 .a-list-menu__item--selected {
