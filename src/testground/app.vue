@@ -32,6 +32,7 @@
       <SpinnerSection />
       <DrawerSection />
       <PaginationSection />
+      <EmptySection />
       <VirtualListSection />
       <ChatSection />
       <MasonrySection />
@@ -89,6 +90,7 @@ const SpinnerSection = defineAsyncComponent(() => import('./sections/spinner.vue
 const MasonrySection = defineAsyncComponent(() => import('./sections/masonry.vue'));
 const VirtualListSection = defineAsyncComponent(() => import('./sections/virtualList.vue'));
 const ChatSection = defineAsyncComponent(() => import('./sections/chat.vue'));
+const EmptySection = defineAsyncComponent(() => import('./sections/empty.vue'));
 const Logo = defineAsyncComponent(() => import('./icon/Logo.vue'));
 </script>
 
