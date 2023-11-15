@@ -7,6 +7,7 @@ import CheckboxGroup from './packages/checkboxGroup';
 import ClickableText from './packages/clickableText';
 import Collapse from './packages/collapse';
 import Drawer from './packages/drawer';
+import Empty from './packages/empty';
 import Float from './packages/float';
 import Form from './packages/form';
 import FormItem from './packages/formItem';
@@ -83,6 +84,7 @@ export {
   Collapse,
   Content,
   Drawer,
+  Empty,
   Input,
   Image,
   Form,
