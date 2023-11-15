@@ -58,6 +58,6 @@ const isSelected = computed(() => props.selected === props.value);
 }
 
 .a-list-menu__item:hover {
-  background-color: var(--bg-hover);
+  background-color: var(--overlay);
 }
 </style>
