@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType} from 'vue';
+import type { PropType } from 'vue';
 import { computed, onBeforeMount, ref, watch } from 'vue';
 import type { AListMenuConfig, AListMenuDisplayItem, AListMenuItemConfig } from './types';
 import AListMenuItem from './AListMenuItem.vue';
@@ -102,6 +102,7 @@ onBeforeMount(() => {
     box-sizing: border-box;
     margin: 0 10px 8px 10px;
     border-bottom: 1px solid var(--border-80);
+    user-select: none;
 
     span {
       color: var(--text-80);
