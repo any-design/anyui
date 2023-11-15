@@ -40,7 +40,7 @@
   },
   "main": "lib/anyui.js",
   "module": "lib/anyui.js",
-  "types": "lib/index.d.ts",
+  "types": "lib/src/index.d.ts",
   "sideEffects": false,
   "license": "MIT",
   "dependencies": {
