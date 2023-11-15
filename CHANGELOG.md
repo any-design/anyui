@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [0.2.3](https://github.com/any-design/anyui/compare/v0.2.1...v0.2.3) (2023-11-15)
+
+### Bug Fixes
+
+- (core) wrong type entry location ([0ff1801](https://github.com/any-design/anyui/commit/0ff1801e0a07e5ad6da4e12d72689e83497040aa))
+
+## [0.2.2](https://github.com/any-design/anyui/compare/v0.2.1...v0.2.2) (2023-11-14)
+
+### Bug Fixes
+
+- (resolver) import related component style automatically ([82f110f](https://github.com/any-design/anyui/commit/82f110ffb14db26ede56140052b0bec79c32c0e2))
+
+### Features
+
+- (core) upgrade deps & lint fix all files ([6fdde00](https://github.com/any-design/anyui/commit/6fdde008306f2c4d137b6e995c4d7a01e1f6447e))
+
 ## [0.2.1](https://github.com/any-design/anyui/compare/v0.2.0...v0.2.1) (2023-11-14)
 
 ### Bug Fixes
