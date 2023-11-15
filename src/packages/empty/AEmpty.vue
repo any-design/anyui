@@ -37,6 +37,7 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
   color: var(--text-80);
+  user-select: none;
 
   &__icon {
     font-size: 48px;
