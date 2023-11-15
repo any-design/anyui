@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.2.3](https://github.com/any-design/anyui/compare/v0.2.1...v0.2.3) (2023-11-15)
+
+### Bug Fixes
+
+- (core) wrong type entry location ([0ff1801](https://github.com/any-design/anyui/commit/0ff1801e0a07e5ad6da4e12d72689e83497040aa))
+
 ## [0.2.2](https://github.com/any-design/anyui/compare/v0.2.1...v0.2.2) (2023-11-14)
 
 ### Bug Fixes
