@@ -123,6 +123,7 @@ export {
 // hooks
 export * from './packages/hooks';
 export * from './packages/helper';
+export * from './packages/resolver';
 
 // types
 export * from './types';
