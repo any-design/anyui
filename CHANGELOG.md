@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## [0.2.4](https://github.com/any-design/anyui/compare/v0.2.3...v0.2.4) (2023-11-15)
+
+### Bug Fixes
+
+- (form) set triggerType optional ([f737116](https://github.com/any-design/anyui/commit/f737116957a5b477245c8e9b423af91665d6f3f3))
+
+### Features
+
+- (empty) add empty component ([b94c16b](https://github.com/any-design/anyui/commit/b94c16b70077d42fa4cff0d03f12dee67ab6b448))
+- (listMenu) the item will not be selectable ([72ee528](https://github.com/any-design/anyui/commit/72ee528b2cece285be9d261ca4466088819567bb))
+
 ## [0.2.3](https://github.com/any-design/anyui/compare/v0.2.1...v0.2.3) (2023-11-15)
 
 ### Bug Fixes
