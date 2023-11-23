@@ -404,6 +404,13 @@ const checkContainerScrollState = () => {
 
 let scrollToBottomTimeout: ReturnType<typeof setTimeout> | undefined;
 
+const scrollTo = (top: number) => {
+  if (!containerRef.value) {
+    return false;
+  }
+  containerRef.value.scrollTop = top;
+};
+
 const scrollToBottom = () => {
   if (!checkContainerScrollState()) {
     return;
@@ -421,9 +428,14 @@ const scrollToBottom = () => {
   });
 };
 
+// expose methods
+const getContainer = () => containerRef.value;
+
 defineExpose({
   refresh: refreshItems,
   scrollToBottom,
+  scrollTo,
+  getContainer,
 });
 
 onBeforeMount(() => {
