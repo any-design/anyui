@@ -24,6 +24,7 @@
 <script setup lang="ts">
 import type { ComputedRef, StyleValue} from 'vue';
 import { computed, inject } from 'vue';
+
 import type { AListMenuStyleType } from './types';
 
 const props = defineProps({

@@ -26,6 +26,7 @@
 // It's just a template and supports exposing dropped files to its parent.
 import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
+
 import type { UploadStatus } from './types';
 
 export default defineComponent({

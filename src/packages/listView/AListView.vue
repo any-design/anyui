@@ -14,6 +14,7 @@ import type { PropType} from 'vue';
 import { computed, provide } from 'vue';
 
 import type { AListMenuStyleType } from './types';
+
 import { formatStyleSize } from '@/utils';
 
 const props = defineProps({

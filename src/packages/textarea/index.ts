@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import ATextarea from './ATextarea.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 ATextarea.install = (app: App) => {
   app.component('ATextarea', ATextarea);

@@ -1,7 +1,8 @@
 import type { VNode } from 'vue';
 import { createVNode, render } from 'vue';
-import type { MessageEventEmitter, MessageOptions } from './types';
+
 import AMessageContainer from './AMessageContainer.vue';
+import type { MessageEventEmitter, MessageOptions } from './types';
 
 let messageContainer: {
   vm?: VNode;

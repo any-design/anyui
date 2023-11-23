@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import ADrawer from './ADrawer.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 ADrawer.install = (app: App) => {
   app.component('ADrawer', ADrawer);

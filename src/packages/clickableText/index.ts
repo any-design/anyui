@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import AClickableText from './AClickableText.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 AClickableText.install = (app: App) => {
   app.component('AClickableText', AClickableText);

@@ -11,7 +11,6 @@
 </template>
 
 <script lang="ts">
-import { getCertainParent } from '../../utils';
 import type {
   PropType} from 'vue';
 import {
@@ -23,7 +22,10 @@ import {
   watch,
   onBeforeMount,
 } from 'vue';
+
+import { getCertainParent } from '../../utils';
 import type { FormItemEventEmitter } from '../formItem/bus';
+
 import type { ARadioGroupItem, ARadioGroupItems } from './types';
 
 export default defineComponent({

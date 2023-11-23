@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
+
 import type { Interval, Timeout } from '@/utils/types';
 
 const CIRCLE_COUNT = 4;

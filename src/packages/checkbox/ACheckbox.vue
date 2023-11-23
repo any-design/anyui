@@ -23,10 +23,10 @@
 </template>
 
 <script lang="ts">
-import type { PropType } from 'vue';
-import { defineComponent, ref, watch, onBeforeMount } from 'vue';
 import type { IconifyIcon } from '@iconify/vue';
 import { Icon } from '@iconify/vue';
+import type { PropType } from 'vue';
+import { defineComponent, ref, watch, onBeforeMount } from 'vue';
 
 export default defineComponent({
   name: 'ACheckbox',

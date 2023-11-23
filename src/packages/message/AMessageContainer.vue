@@ -12,10 +12,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
 import mitt from 'mitt';
-import type { Message, MessageEventEmitter } from './types';
+import { defineComponent, ref } from 'vue';
+
 import AMessage from './AMessage.vue';
+import type { Message, MessageEventEmitter } from './types';
 
 export default defineComponent({
   components: {

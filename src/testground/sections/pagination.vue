@@ -11,6 +11,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+
 import { Pagination as APagination } from '../../';
 
 const pagination_1 = ref({

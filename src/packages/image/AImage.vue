@@ -24,7 +24,9 @@ import {
   watch,
   onBeforeMount,
 } from 'vue';
+
 import { formatStyleSize } from '../../utils';
+
 import emitter from './bus';
 import { getObserver, loadImage, DEFAULT_THRESHOLD } from './observer';
 

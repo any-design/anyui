@@ -5,6 +5,7 @@
 <script lang="ts">
 import type { CSSProperties} from 'vue';
 import { defineComponent, computed } from 'vue';
+
 import { formatStyleSize } from '../../utils';
 
 export default defineComponent({

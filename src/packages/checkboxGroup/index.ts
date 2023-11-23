@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import ACheckboxGroup from './ACheckboxGroup.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 ACheckboxGroup.install = (app: App) => {
   app.component('ACheckboxGroup', ACheckboxGroup);

@@ -1,9 +1,11 @@
 import type { App } from 'vue';
+
 import ALayout from './ALayout.vue';
-import AHeader from './components/AHeader.vue';
 import AContent from './components/AContent.vue';
 import AFooter from './components/AFooter.vue';
+import AHeader from './components/AHeader.vue';
 import ASide from './components/ASide.vue';
+
 import type { SFCWithInstall } from '@/utils/types';
 
 ALayout.install = (app: App) => {
