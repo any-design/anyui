@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.2.9](https://github.com/any-design/anyui/compare/v0.2.8...v0.2.9) (2023-11-23)
+
+### Features
+
+- (virtual-list) add an extra scrollTop shift when item is larger than estimated in scrolling up ([dc963ea](https://github.com/any-design/anyui/commit/dc963ea4057bb775244451c5d809ad25403fd805))
+
 ## [0.2.8](https://github.com/any-design/anyui/compare/v0.2.7...v0.2.8) (2023-11-23)
 
 ### Features
