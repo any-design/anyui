@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [0.2.6](https://github.com/any-design/anyui/compare/v0.2.5...v0.2.6) (2023-11-23)
+
+### Bug Fixes
+
+* (resolver) select cannot be imported properly by resolver ([47b012f](https://github.com/any-design/anyui/commit/47b012ff2c598a14f42ae390f2e5d7956fff438d))
+
 ## [0.2.5](https://github.com/any-design/anyui/compare/v0.2.4...v0.2.5) (2023-11-15)
 
 ### Features
