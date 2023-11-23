@@ -23,6 +23,7 @@ const STYLE_LINKED_COMPONENT_MAP = {
   radioButtonGroup: 'radioButton',
   listMenu: 'listMenuItem',
   popMenu: 'popper',
+  select: ['input', 'popper'],
 };
 
 const NO_STYLE_COMPONENTS = ['checkboxGroup', 'virtualListItem'];
