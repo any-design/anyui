@@ -29,9 +29,7 @@
  * Unlike other components that have same functions, our virtual list will not query user to set a item height getter, it will measure the suitable item height automatically.
  * Also it support dynamic item height by default.
  */
-import type {
-  PropType,
-  StyleValue} from 'vue';
+import type { PropType, StyleValue } from 'vue';
 import {
   ref,
   computed,
@@ -45,7 +43,6 @@ import {
 } from 'vue';
 
 import { useRefreshableComputed } from '../hooks/useRefreshable';
-
 
 import AVirtualListItem from './AVirtualListItem.vue';
 import BinaryIndexedTree from './BinaryIndexedTree';
@@ -393,26 +390,52 @@ const containerResizeObserver = new ResizeObserver((entries) => {
   containerHeight.value = container.contentRect.height;
 });
 
+// check if the container could be scrolled now
+const checkContainerScrollState = () => {
+  if (!containerRef.value) {
+    return false;
+  }
+  if (isRefreshing.value) {
+    shouldScrollBottomWhenRefreshing.value = true;
+    return false;
+  }
+  return true;
+};
+
 let scrollToBottomTimeout: ReturnType<typeof setTimeout> | undefined;
 
+const scrollTo = (top: number) => {
+  if (!containerRef.value) {
+    return false;
+  }
+  containerRef.value.scrollTop = top;
+};
+
 const scrollToBottom = () => {
-  scrollToBottomTimeout && clearTimeout(scrollToBottomTimeout);
+  if (!checkContainerScrollState()) {
+    return;
+  }
+  // scroll down for the first time
+  containerRef.value!.scrollTop = containerRef.value!.scrollHeight;
+  // the estimatedItemHeight will be smaller than the actual item height, so we need to scroll down twice to make things accurate
+  if (scrollToBottomTimeout) clearTimeout(scrollToBottomTimeout);
   scrollToBottomTimeout = setTimeout(() => {
-    if (!containerRef.value) {
+    if (!checkContainerScrollState()) {
       return;
     }
-    if (isRefreshing.value) {
-      shouldScrollBottomWhenRefreshing.value = true;
-      return;
-    }
-    containerRef.value.scrollTop = containerRef.value.scrollHeight;
+    containerRef.value!.scrollTop = containerRef.value!.scrollHeight;
     scrollToBottomTimeout = undefined;
   });
 };
 
+// expose methods
+const getContainer = () => containerRef.value;
+
 defineExpose({
   refresh: refreshItems,
   scrollToBottom,
+  scrollTo,
+  getContainer,
 });
 
 onBeforeMount(() => {
