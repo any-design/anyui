@@ -39,24 +39,17 @@
 </template>
 
 <script lang="ts">
-import type { Handler } from 'mitt';
-import type {
-  PropType} from 'vue';
-import {
-  defineComponent,
-  getCurrentInstance,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watch,
-} from 'vue';
 import type { Placement } from '@popperjs/core';
-import { getStyleNumVarInCSS } from '@/utils';
-import { attachClickOutsideListener } from '@/utils/clickOutside';
+import type { Handler } from 'mitt';
+import type { PropType } from 'vue';
+import { defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 import bus from './bus';
 import { createPopperInstance } from './popper';
 import type { APopperTriggerType } from './types';
+
+import { getStyleNumVarInCSS } from '@/utils';
+import { attachClickOutsideListener } from '@/utils/clickOutside';
 
 export default defineComponent({
   name: 'APopper',
