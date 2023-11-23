@@ -11,8 +11,7 @@
 </template>
 
 <script lang="ts">
-import type {
-  PropType} from 'vue';
+import type { PropType } from 'vue';
 import {
   defineComponent,
   getCurrentInstance,
@@ -25,11 +24,15 @@ import {
 
 import { getCertainParent } from '../../utils';
 import type { FormItemEventEmitter } from '../formItem/bus';
+import ARadio from '../radio';
 
 import type { ARadioGroupItem, ARadioGroupItems } from './types';
 
 export default defineComponent({
   name: 'ARadioGroup',
+  components: {
+    ARadio,
+  },
   props: {
     // an array includes objects which match the type { label: string, value: string }, it will be rendered as a group of radio
     items: {
