@@ -46,11 +46,10 @@ import {
 
 import { useRefreshableComputed } from '../hooks/useRefreshable';
 
-import type { RawVirtualListItem, VirtualListItem } from './types';
 
 import AVirtualListItem from './AVirtualListItem.vue';
-
 import BinaryIndexedTree from './BinaryIndexedTree';
+import type { RawVirtualListItem, VirtualListItem } from './types';
 
 const props = defineProps({
   // the data list which will be rendered in the virtual list, it will be passed to the AVirutalListItem component, and will be finally passed in your custom component. Be sure that all the item in the list will have an unique id.

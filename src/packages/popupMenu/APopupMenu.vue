@@ -28,22 +28,26 @@
 </template>
 
 <script lang="ts">
+import type { Placement } from '@popperjs/core';
 import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
-import { formatStyleSize } from '../../utils';
 
+import { formatStyleSize } from '../../utils';
+import APopper from '../popper';
 import type { APopperTriggerType } from '../popper/types';
-import type APopper from '../popper';
 
 import type { PopMenuCommandExtra, PopMenuItem } from './types';
 
 // This component is a menu based on popper.
 export default defineComponent({
   name: 'APopupMenu',
+  components: {
+    APopper,
+  },
   props: {
     // The placement position of the popper, same as the APopper component.
     placement: {
-      type: String,
+      type: String as PropType<Placement>,
       default: 'bottom',
     },
     // the menu position offset to the trigger element, unit is px
@@ -164,7 +168,8 @@ export default defineComponent({
 
 .a-trans-popmenu-enter-active,
 .a-trans-popmenu-leave-active {
-  transition: opacity var(--anim-duration-quick, 100ms) ease-out,
+  transition:
+    opacity var(--anim-duration-quick, 100ms) ease-out,
     transform var(--anim-duration-quick, 100ms) ease-out,
     max-height var(--anim-duration-quick, 100ms) ease-out;
 }

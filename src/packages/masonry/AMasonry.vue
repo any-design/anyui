@@ -14,10 +14,12 @@
 </template>
 
 <script lang="ts">
-import type { Timeout } from '@/utils/types';
 import type { PropType, StyleValue } from 'vue';
 import { defineComponent } from 'vue';
+
 import type { MasonryItem, PositionItem, SectionRecord } from './types';
+
+import type { Timeout } from '@/utils/types';
 
 export default defineComponent({
   name: 'AMasonry',

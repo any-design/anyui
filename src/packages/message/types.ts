@@ -1,5 +1,5 @@
-import type { Emitter } from 'mitt';
 import type { IconifyIcon } from '@iconify/vue';
+import type { Emitter } from 'mitt';
 
 export type MessageType = 'default' | 'info' | 'success' | 'warning' | 'error';
 

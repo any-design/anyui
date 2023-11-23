@@ -52,8 +52,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent } from 'vue';
 import { Icon } from '@iconify/vue';
+import { defineAsyncComponent } from 'vue';
 
 import { version } from '../../package.json';
 

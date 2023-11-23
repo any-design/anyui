@@ -27,6 +27,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+
 import type { Form } from '../../index';
 
 export default defineComponent({

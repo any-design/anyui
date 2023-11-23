@@ -14,6 +14,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue';
+
 import type { AChatMessage } from '../../index';
 import { Chat as AChat } from '../../index';
 

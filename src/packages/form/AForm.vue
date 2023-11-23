@@ -10,8 +10,9 @@
 </template>
 
 <script lang="ts">
-import type {
-  PropType} from 'vue';
+import type { Rules } from 'async-validator';
+import ValidateSchema from 'async-validator';
+import type { Rule, ValidateError } from 'async-validator/dist-types/interface';
 import {
   defineComponent,
   computed,
@@ -20,9 +21,8 @@ import {
   onBeforeUnmount,
   unref,
 } from 'vue';
-import type { Rules } from 'async-validator';
-import ValidateSchema from 'async-validator';
-import type { Rule, ValidateError } from 'async-validator/dist-types/interface';
+import type {
+  PropType} from 'vue';
 
 import { formatStyleSize } from '../../utils';
 

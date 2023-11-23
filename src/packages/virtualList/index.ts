@@ -1,8 +1,9 @@
 import type { App } from 'vue';
 
+import AVirtualList from './AVirtualList.vue';
+
 import type { SFCWithInstall } from '@/utils/types';
 
-import AVirtualList from './AVirtualList.vue';
 
 export * from './types';
 

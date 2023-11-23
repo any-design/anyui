@@ -14,7 +14,9 @@
 <script lang="ts">
 import type { PropType} from 'vue';
 import { defineComponent, inject, ref } from 'vue';
+
 import type { ARadioGroupItem } from '../radioGroup/types';
+
 import { GET_PARENT_CONTAINER_RECT, GET_PADDING_VALUE } from './constants';
 
 export default defineComponent({

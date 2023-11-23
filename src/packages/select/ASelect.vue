@@ -57,9 +57,10 @@
 </template>
 
 <script lang="ts">
+import type { IconifyIcon } from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 import type { Handler } from 'mitt';
-import type {
-  PropType} from 'vue';
+import type { PropType } from 'vue';
 import {
   defineComponent,
   getCurrentInstance,
@@ -69,12 +70,12 @@ import {
   ref,
   watch,
 } from 'vue';
-import type { IconifyIcon } from '@iconify/vue';
-import { Icon } from '@iconify/vue';
 
 import { getCertainParent } from '../../utils';
 import type { FormItemEventEmitter } from '../formItem/bus';
-import type APopper from '../popper';
+import AInput from '../input';
+import APopper from '../popper';
+
 import type { ASelectItem, ASelectItems } from './types';
 
 type SelectedValue = string | number | undefined | null;
@@ -83,6 +84,8 @@ export default defineComponent({
   name: 'ASelect',
   components: {
     Icon,
+    APopper,
+    AInput,
   },
   props: {
     width: {
@@ -230,7 +233,8 @@ export default defineComponent({
           width: 24px;
           height: 24px;
           color: var(--icon-fill);
-          transition: transform var(--anim-duration, 200ms) ease,
+          transition:
+            transform var(--anim-duration, 200ms) ease,
             color var(--anim-duration, 200ms) ease;
           path {
             stroke: var(--icon-fill);
