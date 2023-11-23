@@ -12,10 +12,16 @@
 </template>
 
 <script lang="ts">
-import type { PropType} from 'vue';
+import type { PropType } from 'vue';
 import { defineComponent, ref, watch, computed, onBeforeMount } from 'vue';
 
+import ACheckbox from '../checkbox';
+
 export default defineComponent({
+  components: {
+    ACheckbox,
+  },
+
   props: {
     // the values which will be bound to this component.
     modelValue: {

@@ -17,7 +17,7 @@
       </transition>
     </div>
     <div class="a-checkbox-label">
-      {{ label }}
+      {{ `${label}` }}
     </div>
   </div>
 </template>
@@ -36,7 +36,7 @@ export default defineComponent({
   props: {
     // a label text after the checkbox.
     label: {
-      type: String,
+      type: [String, Number],
     },
     // the icon which will showed when the checkbox is checked.
     checkIcon: {
