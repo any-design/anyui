@@ -5,9 +5,10 @@
 </template>
 
 <script lang="ts">
-import { formatStyleSize } from '@/utils';
 import type { Ref } from 'vue';
 import { computed, defineComponent, inject, onMounted, onUnmounted } from 'vue';
+
+import { formatStyleSize } from '@/utils';
 
 const DEFAULT_WIDTH = 300;
 

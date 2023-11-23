@@ -1,9 +1,10 @@
 import type { App } from 'vue';
 
-import type { SFCWithInstall } from '@/utils/types';
 
 import AListMenu from './AListMenu.vue';
 import AListMenuItem from './AListMenuItem.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 AListMenu.install = (app: App) => {
   app.component('AListMenu', AListMenu);

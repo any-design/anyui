@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import ACollapse from './ACollapse.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 ACollapse.install = (app: App) => {
   app.component('ACollapse', ACollapse);
