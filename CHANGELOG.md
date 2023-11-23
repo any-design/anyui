@@ -1,10 +1,19 @@
 # CHANGELOG
 
+## [0.2.7](https://github.com/any-design/anyui/compare/v0.2.6...v0.2.7) (2023-11-23)
+
+### Bug Fixes
+
+- (checkboxGroup) register checkbox in component ([e8fdfc6](https://github.com/any-design/anyui/commit/e8fdfc639b6aa1afd44d616cb7fb38a4ee1b2001))
+- (popmenu) register popper inside the component ([07baa3a](https://github.com/any-design/anyui/commit/07baa3a9186991933aba407dc38e6a2940072451))
+- (radioGroup) register the ARadio inside the component ([6ac4286](https://github.com/any-design/anyui/commit/6ac4286a1d81f68b7c241de33668ac2e81dce0ab))
+- (select) register input and popper in the component ([ed09351](https://github.com/any-design/anyui/commit/ed09351f8052464320901f5726dd831b308121ce))
+
 ## [0.2.6](https://github.com/any-design/anyui/compare/v0.2.5...v0.2.6) (2023-11-23)
 
 ### Bug Fixes
 
-* (resolver) select cannot be imported properly by resolver ([47b012f](https://github.com/any-design/anyui/commit/47b012ff2c598a14f42ae390f2e5d7956fff438d))
+- (resolver) select cannot be imported properly by resolver ([47b012f](https://github.com/any-design/anyui/commit/47b012ff2c598a14f42ae390f2e5d7956fff438d))
 
 ## [0.2.5](https://github.com/any-design/anyui/compare/v0.2.4...v0.2.5) (2023-11-15)
 
