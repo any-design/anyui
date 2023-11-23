@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.2.8](https://github.com/any-design/anyui/compare/v0.2.7...v0.2.8) (2023-11-23)
+
+### Features
+
+- (virtual-list) expose getContainer and scrollTo methods ([e2422ae](https://github.com/any-design/anyui/commit/e2422ae5ebfd30b2faf7ad6dfb03502daf766e6c))
+- (virtual-list) tweat scrollToBottom method to be more accurate ([1606b6c](https://github.com/any-design/anyui/commit/1606b6cd5ce43dd198638760dd6877d0d5f1526a))
+
 ## [0.2.7](https://github.com/any-design/anyui/compare/v0.2.6...v0.2.7) (2023-11-23)
 
 ### Bug Fixes
