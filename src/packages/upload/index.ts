@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import AUpload from './AUpload.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 AUpload.install = (app: App) => {
   app.component('AUpload', AUpload);

@@ -35,9 +35,11 @@ import {
   computed,
   inject,
 } from 'vue';
+
+import { getCertainParent } from '../../utils';
 import type { ClearEventPayload, FormEventEmitter, SetValidEventPayload } from '../form/bus';
 import type { FormRuleItem } from '../form/types';
-import { getCertainParent } from '../../utils';
+
 import formItemEventEmitterFactory from './bus';
 
 export default defineComponent({

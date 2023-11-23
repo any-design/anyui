@@ -57,6 +57,8 @@
 </template>
 
 <script lang="ts">
+import type { IconifyIcon } from '@iconify/vue';
+import { Icon } from '@iconify/vue';
 import type { Handler } from 'mitt';
 import type {
   PropType} from 'vue';
@@ -69,12 +71,11 @@ import {
   ref,
   watch,
 } from 'vue';
-import type { IconifyIcon } from '@iconify/vue';
-import { Icon } from '@iconify/vue';
 
 import { getCertainParent } from '../../utils';
 import type { FormItemEventEmitter } from '../formItem/bus';
 import type APopper from '../popper';
+
 import type { ASelectItem, ASelectItems } from './types';
 
 type SelectedValue = string | number | undefined | null;

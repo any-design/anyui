@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import APagination from './APagination.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 APagination.install = (app: App) => {
   app.component('APagination', APagination);

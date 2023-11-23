@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import AInput from './AInput.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 AInput.install = (app: App) => {
   app.component('AInput', AInput);

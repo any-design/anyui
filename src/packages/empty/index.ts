@@ -1,7 +1,9 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
 
 import AEmpty from './AEmpty.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
+
 
 AEmpty.install = (app: App) => {
   app.component('AEmpty', AEmpty);

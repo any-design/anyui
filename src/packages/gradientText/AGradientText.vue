@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import { formatStyleSize } from '../../utils';
 import { defineComponent } from 'vue';
+
+import { formatStyleSize } from '../../utils';
 
 export default defineComponent({
   name: 'AGradientText',

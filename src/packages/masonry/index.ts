@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import AMasonry from './AMasonry.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 AMasonry.install = (app: App) => {
   app.component('AMasonry', AMasonry);

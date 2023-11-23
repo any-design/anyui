@@ -1,6 +1,8 @@
 import type { App } from 'vue';
-import type { SFCWithInstall } from '@/utils/types';
+
 import APopper from './APopper.vue';
+
+import type { SFCWithInstall } from '@/utils/types';
 
 APopper.install = (app: App) => {
   app.component('APopper', APopper);

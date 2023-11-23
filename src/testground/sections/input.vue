@@ -75,8 +75,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { Icon } from '@iconify/vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   components: {

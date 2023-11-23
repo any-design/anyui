@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+
 import { VirtualList as AVirtualList } from '../../';
 import type { RawVirtualListItem } from '../../';
 
