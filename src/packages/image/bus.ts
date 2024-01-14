@@ -1,4 +1,3 @@
-import type { Emitter } from 'mitt';
 import mitt from 'mitt';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -15,6 +14,6 @@ type ImageEvents = {
   };
 };
 
-const imageEventEmitter: Emitter<ImageEvents> = mitt();
+const imageEventEmitter = mitt<ImageEvents>();
 
 export default imageEventEmitter;
