@@ -1,5 +1,5 @@
 <template>
-  <div ref="containerRef" class="a-virtual-list" @scroll.passive="refreshDisplayItems">
+  <div ref="containerRef" class="a-virtual-list" @scroll.passive="onContainerScroll">
     <div class="a-virtual-list__inner a-scroll-shadows" :style="innerStyles">
       <template v-if="displayItems.length">
         <div
@@ -57,6 +57,7 @@ const props = defineProps({
   // the scroll buffer of the list, larger number means more items will be rendered. this property accept a number in px.
   buffer: {
     type: Number,
+    default: 400,
   },
   // if you already know the proper height of your item, you can set it here to skip the height measurement.
   estimatedItemHeight: {
@@ -223,13 +224,14 @@ const getDisplayStart = (startTop: number) => {
 let updateFrame: ReturnType<typeof requestAnimationFrame> | undefined;
 
 const refreshDisplayItems = () => {
-  updateFrame && window.cancelAnimationFrame(updateFrame);
+  if (isRefreshing.value) return;
+  if (updateFrame) window.cancelAnimationFrame(updateFrame);
   isRefreshing.value = true;
   updateFrame = window.requestAnimationFrame(() => {
     scrollTop.value = containerRef.value?.scrollTop || 0;
-    const buffer = estimatedItemHeightRef.value * (props.buffer || 0);
-    const startTop = Math.max(scrollTop.value, 0);
-    const { start, scrolledHeight } = getDisplayStart(Math.max(startTop - buffer, 0));
+    const buffer = props.buffer || 0;
+    const startTop = Math.max(scrollTop.value - buffer, 0);
+    const { start, scrolledHeight } = getDisplayStart(startTop);
 
     let end = start;
     let visibleHeight = -transformedItems[start].__itemHeight;
@@ -261,6 +263,35 @@ const refreshDisplayItems = () => {
     updateFrame = undefined;
     isRefreshing.value = false;
   });
+};
+
+const scrollDirection = ref<'up' | 'down' | undefined>(undefined);
+
+let lastScrollTop = 0;
+let scrollTimeout: ReturnType<typeof setTimeout> | undefined;
+
+const onContainerScroll = () => {
+  if (!containerRef.value) {
+    return;
+  }
+  if (containerRef.value.scrollTop > lastScrollTop) {
+    scrollDirection.value = 'down';
+  } else if (containerRef.value.scrollTop < lastScrollTop) {
+    scrollDirection.value = 'up';
+  } else {
+    scrollDirection.value = undefined;
+  }
+
+  lastScrollTop = containerRef.value.scrollTop;
+
+  if (scrollTimeout) clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    scrollTimeout = undefined;
+    scrollDirection.value = undefined;
+    if (containerRef.value) lastScrollTop = containerRef.value.scrollTop;
+  }, 300);
+
+  refreshDisplayItems();
 };
 
 const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: number } = {}) => {
@@ -310,7 +341,9 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     if (!heightDiff) {
       continue;
     }
-    needRefresh = true;
+    if (heightDiff >= props.buffer / 3) {
+      needRefresh = true;
+    }
     scrollHeightDiff += heightDiff;
     itemHeightMap[itemId] = height;
     const itemIndex = itemIdIndexMap[itemId];
@@ -319,13 +352,17 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     biTree.value?.update(itemIndex + 1, heightDiff);
   }
 
+  if (scrollHeightDiff) {
+    scrollHeight.value += scrollHeightDiff;
+    refreshInnerStyles();
+    if (scrollHeightDiff > 0 && containerRef.value && scrollDirection.value === 'up') {
+      containerRef.value.scrollTop += scrollHeightDiff;
+    }
+  }
+
   if (!needRefresh) {
     return;
   }
-
-  // update scroll height
-  scrollHeight.value += scrollHeightDiff;
-
   refreshDisplayItems();
 };
 
