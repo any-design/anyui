@@ -10,8 +10,8 @@
           }"
         >
           <a-virtual-list-item
-            v-for="(item, index) in displayItems"
-            :key="reuseNodes ? getItemKey(index) : `${item.id}_${index}`"
+            v-for="item in displayItems"
+            :key="item.id"
             :item="item"
             @init-height="handleInitItemHeight"
           >
@@ -57,7 +57,7 @@ const props = defineProps({
   // the scroll buffer of the list, larger number means more items will be rendered. this property accept a number in px.
   buffer: {
     type: Number,
-    default: 400,
+    default: 1200,
   },
   // if you already know the proper height of your item, you can set it here to skip the height measurement.
   estimatedItemHeight: {
@@ -72,16 +72,6 @@ const props = defineProps({
   firstScreenThreshold: {
     type: Number,
     default: 10,
-  },
-  // if true, the DOM node will be reused to avoid frequent DOM node creation and removing.
-  reuseNodes: {
-    type: Boolean,
-    default: true,
-  },
-  // the key type of the item, it will affect the refreshing. can be 'batch' (the index of render batch), 'screen' (a series indexes based on the screen height and the items count), 'both' (use both of previous two indexes), 'none' (use none of previous indexes, just use the natural index of the item).
-  keyType: {
-    type: String as PropType<'batch' | 'screen' | 'both' | 'none'>,
-    default: 'none',
   },
 });
 
@@ -119,28 +109,12 @@ const { computed: innerStyles, refresh: refreshInnerStyles } = useRefreshableCom
 let itemHeightMap: Record<string, number> = {};
 let itemIdIndexMap: Record<string, number> = {};
 
-// render related
-let renderBatchIdx = ref(0);
-
 const clearVars = () => {
   transformedItems = [];
   displayItems.value = [];
   itemIdIndexMap = {};
   itemHeightMap = {};
   biTree.value = undefined;
-};
-
-const getItemKey = (index: number) => {
-  switch (props.keyType) {
-    case 'screen':
-      return `${index}_${screenTop / containerHeight.value}`;
-    case 'batch':
-      return `${index}_${renderBatchIdx.value}`;
-    case 'both':
-      return `${index}_${screenTop / containerHeight.value}_${renderBatchIdx.value}`;
-    case 'none':
-      return index;
-  }
 };
 
 const refreshItems = ({
@@ -187,6 +161,7 @@ const refreshItems = ({
   }
 
   biTree.value = new BinaryIndexedTree(itemHeightList);
+
   // reset the height map
   itemHeightMap = newHeightMap;
   itemIdIndexMap = newItemIdIndexMap;
@@ -203,12 +178,6 @@ const refreshItems = ({
 
 // which one is the first one to display in current viewport
 const getDisplayStart = (startTop: number) => {
-  if (!startTop) {
-    return {
-      start: 0,
-      scrolledHeight: 0,
-    };
-  }
   let start = 0;
   let scrolledHeight = 0;
   if (biTree.value) {
@@ -224,14 +193,14 @@ const getDisplayStart = (startTop: number) => {
 let updateFrame: ReturnType<typeof requestAnimationFrame> | undefined;
 
 const refreshDisplayItems = () => {
-  if (isRefreshing.value) return;
   if (updateFrame) window.cancelAnimationFrame(updateFrame);
+
   isRefreshing.value = true;
   updateFrame = window.requestAnimationFrame(() => {
     scrollTop.value = containerRef.value?.scrollTop || 0;
+
     const buffer = props.buffer || 0;
-    const startTop = Math.max(scrollTop.value - buffer, 0);
-    const { start, scrolledHeight } = getDisplayStart(startTop);
+    const { start, scrolledHeight } = getDisplayStart(scrollTop.value);
 
     let end = start;
     let visibleHeight = -transformedItems[start].__itemHeight;
@@ -254,12 +223,6 @@ const refreshDisplayItems = () => {
       });
     }
 
-    if (!props.reuseNodes) {
-      isRefreshing.value = false;
-      return;
-    }
-
-    renderBatchIdx.value += 1;
     updateFrame = undefined;
     isRefreshing.value = false;
   });
@@ -326,9 +289,6 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
   let scrollHeightDiff = 0;
   let minUpdateIndex = Infinity;
 
-  // update item height
-  let needRefresh = false;
-
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
@@ -338,17 +298,15 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
       throw new Error('Detect item resized but no item id found.');
     }
     const heightDiff = height - itemHeightMap[itemId];
-    if (!heightDiff) {
+    if (heightDiff === 0) {
       continue;
-    }
-    if (heightDiff >= props.buffer / 3) {
-      needRefresh = true;
     }
     scrollHeightDiff += heightDiff;
     itemHeightMap[itemId] = height;
     const itemIndex = itemIdIndexMap[itemId];
     transformedItems[itemIndex].__itemHeight = height;
     minUpdateIndex = Math.min(itemIndex, minUpdateIndex);
+
     biTree.value?.update(itemIndex + 1, heightDiff);
   }
 
@@ -360,9 +318,6 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     }
   }
 
-  if (!needRefresh) {
-    return;
-  }
   refreshDisplayItems();
 };
 
