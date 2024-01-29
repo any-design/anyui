@@ -1,4 +1,4 @@
-import mitt from 'mitt';
+import mitt, { Emitter } from 'mitt';
 
 export interface SetValidEventPayload {
   field?: string;
@@ -17,6 +17,8 @@ type FormEvents = {
   clear: ClearEventPayload;
   revalidateField: string;
 };
+
+export type FormEventEmitter = Emitter<FormEvents>;
 
 const formEventEmitterFactory = () => mitt<FormEvents>();
 
