@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [0.3.0](https://github.com/any-design/anyui/compare/v0.2.9...v0.3.0) (2024-01-29)
+
+### Breaking
+
+- (virtual-list) Remove `reuseNodes` and `keyType`, to the complicated components, reuse the wrapper nodes can cause some undetermined bugs, the state in the component might be a big mess. Now the key will be the same as the `id` of item in `items`.
+
+### Bug Fixes
+
+- (virtual-list) refactor item refreshing to allow the height reducing.
+
 ## [0.2.9](https://github.com/any-design/anyui/compare/v0.2.8...v0.2.9) (2023-11-23)
 
 ### Features
