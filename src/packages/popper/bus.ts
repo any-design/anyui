@@ -1,4 +1,3 @@
-import type { Emitter } from 'mitt';
 import mitt from 'mitt';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -9,6 +8,6 @@ type PopperEvents = {
   };
 };
 
-const popperEventEmitter: Emitter<PopperEvents> = mitt();
+const popperEventEmitter = mitt<PopperEvents>();
 
 export default popperEventEmitter;
