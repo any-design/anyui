@@ -1,5 +1,4 @@
-import type { Emitter } from 'mitt';
-import mitt from 'mitt';
+import mitt, { type Emitter } from 'mitt';
 
 export interface SetValidEventPayload {
   field?: string;
