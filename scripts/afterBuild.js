@@ -13,6 +13,14 @@ const stylesPath = path.resolve(process.cwd(), './styles');
 
 console.log(chalk.cyan('AnyUI after building script is starting...'));
 
+// write resolver dts
+fs.writeFileSync(
+  path.resolve(projectDistDir, './resolver.d.ts'),
+  `export * from './src/packages/resolver/index.d.ts';`,
+);
+console.log(chalk.green('Resolver dts file generated.'));
+
+// remove useless files
 if (fs.existsSync(cssFilePath)) {
   fs.moveSync(cssFilePath, path.resolve(stylesPath, './components.scss'));
   fs.copySync(
