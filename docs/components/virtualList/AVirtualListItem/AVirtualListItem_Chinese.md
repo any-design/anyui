@@ -1,42 +1,57 @@
-# @any-design/anyui VirtualListItem
+# AVirtualListItem 组件文档
 
-The `VirtualListItem` component is used within the `VirtualList` component to represent an individual item. This component can receive an object of an item that will be passed down from the `VirtualList` component, and will use that object to generate a list item.
+这是一个为虚拟列表提供子项的组件。
 
-## 基础用法
+## 基本用法和示例
 
-在模板中使用 `VirtualListItem`：
+当你希望使用虚拟列表时，每一个列表项应使用 `AVirtualListItem` 组件：
 
 ```vue
 <template>
-  <VirtualListItem :item="item" @initHeight="handleInitHeight">
-    {{ item.text }}
-  </VirtualListItem>
+  <AVirtualListItem :item="item">
+    <!-- 在此处添加你的列表项内容 -->
+  </AVirtualListItem>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
-import { VirtualListItem } from '@any-design/anyui';
+import { AVirtualListItem } from '@any-design/anyui';
 
-const item = reactive({ id: '1', text: '列表项' });
+export default {
+  components: {
+    AVirtualListItem,
+  },
+  setup() {
+    const item = {
+      __listIndex: 0,
+      id: 'unique_id',
+    };
 
-const handleInitHeight = (data: { itemId: string; height: number }) => {
-  console.log(`列表项 ${data.itemId} 的高度是 ${data.height}px。`);
+    return {
+      item,
+    };
+  },
 };
 </script>
 ```
 
 ## Props
 
-| Name | 类型 | 描述 |
-| ---- | ---- | ---- |
-| item *(required)* | `Object` | 要在列表项中呈现的对象。 |
+该组件接受以下 props：
 
-## Events
+| 属性名 | 类型   | 默认值 | 说明                       |
+| ------ | ------ | ------ | -------------------------- |
+| item   | Object | 无     | 从虚拟列表传入的列表项数据 |
 
-| Name | 描述 |
-| ---- | ---- |
-| initHeight | `initHeight` 事件被用于在列表中被渲染时检查其高度。 当列表项高度的值发生变化时会被重新呈现。 所以 `VirtualListItem` 组件需要检查并在高度发生变化时更新组件中的状态。 这里 `initHeight` 事件会传递一个包含被呈现的项目的 ID 和其高度值的对象。 |
+- item: 表示从虚拟列表中传入的具体列表项数据，类型为 Object。`item` 对象的约定形式为 { \_\_listIndex: number, id: string }。
 
-## Exposed Methods or Values
+## Event
 
-`VirtualListItem` 组件没有暴露方法或值。
+该组件会触发的事件：
+
+- initHeight: 当列表项首次渲染以获取其高度，用来修正列表项在虚拟列表中的位置。事件的参数为 { itemId: string, height: number }。其中 `itemId` 是列表项的 ID，`height` 是列表项的实际高度。
+
+## Notice
+
+- 该组件使用了 Vue 3 的新语法 `script setup`，确保你的 Vue 版本在 3.2.0 或以上。
+- 你必须为每一个列表项提供唯一的 `id`，以帮助虚拟列表更好地追踪和管理每一个列表项。
+- 注意在列表项组件中包含图片或者其他可能导致高度变化的元素可能会导致虚拟列表的错位，建议在加载这些元素前预设好宽高。
