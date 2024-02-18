@@ -1,132 +1,89 @@
-# @any-design/anyui - 虚拟滚动列表组件
+# AVirtualList 组件文档
 
-这是一个非常快速的虚拟滚动列表组件，它基于二叉索引树来搜索滚动列表，性能十分卓越。与其他具有相同功能的组件不同，我们的虚拟列表不需要用户设置项目高度，它会自动测量适合的项目高度。此外，默认支持动态项目高度。
+这是一个虚拟列表组件，使用二进制索引树查找滚动高度，性能优越。不像其他同类功能的组件，我们的虚拟列表不会让用户设置项高度getter，它会自动测量合适的项高度。同时默认支持动态项高度。
 
-## 基本使用和示例
+## 基本用法和示例
 
-```
+使用 `AVirtualList` 组件，可以创建一个虚拟滚动列表：
+
+```vue
 <template>
-  <a-virtual-list // 插入你代码里的标签名
-    :items="list"
-    :buffer="bufferHeight"
-  >
-    <div slot-scope="{ item }" :style="..." /> // 自定义的组件或模板
-  </a-virtual-list>
+  <AVirtualList :items="items" :buffer="1200">
+    <template v-slot="{ item }">
+      <!-- 在这里放置列表项的模板 -->
+    </template>
+  </AVirtualList>
 </template>
 
 <script>
-  import { defineComponent, ref } from 'vue';
-  import AVirtualList from '@any-design/anyui/dist/AVirtualList'; // 引入组件
-
-  export default defineComponent({
-    name: 'Example',
-    middleware() {
-      return [
-        async (resolve) => {
-          const listData = await someData();
-          resolve({ listData });
-        },
-      ];
-    },
-    setup(props) {
-      const list = ref(props.listData);
-      const bufferHeight = 4;
-      return { list, bufferHeight };
-    },
-    components: {
-      AVirtualList, // 注册组件
-    },
-  });
+export default {
+  data() {
+    return {
+      items: [
+        { id: 1, content: 'Item 1' },
+        { id: 2, content: 'Item 2' },
+        // ...
+      ],
+    };
+  },
+};
 </script>
 ```
 
-## 属性
+## Props
 
-### items
+| 属性名               | 类型                           | 默认值    | 说明                                     |
+| -------------------- | ------------------------------ | --------- | ---------------------------------------- |
+| items                | RawVirtualListItem<unknown>[]  | []        | 将在虚拟列表中渲染的数据列表                                       |
+| buffer               | Number                         | 1200      | 列表的滚动缓冲区大小，较大的数值意味着将渲染更多的项               |
+| estimatedItemHeight  | Number                         |           | 如果已知适当的项高度，可以在此处设置以跳过高度测量                 |
+| enableDeepWatch      | Boolean                        | false     | 如果为真，组件将深度观察项目                                     |
+| firstScreenThreshold | Number                         | 10        | 将用于高度测量的元素数量                                           |
 
-- 类型: `Array`
-- 默认值: `[]`
-- 必填: 否
+- items：将在虚拟列表中渲染的数据列表，它将被传递给 `AVirutalListItem` 组件，并最终传递给你的自定义组件。确保列表中的所有项目都有一个唯一的id。
+- buffer：列表的滚动缓冲区大小，以px为单位接受一个数字。较大的数值意味着将渲染更多的项。
+- estimatedItemHeight：如果已知适当的项高度，可以在此处设置以跳过高度测量。
+- enableDeepWatch：如果为真，组件将深度观察项目。
+- firstScreenThreshold：将用于高度测量的元素数量。
 
-包含渲染虚拟列表的数据数组。它将传递给 AVirtualListItem 组件，并最终传递到您的自定义组件。请确保列表中的所有项目都具有唯一的 `id`。
+## 事件
 
-### buffer
+`AVirtualList` 组件不发出任何事件。
 
-- 类型: `Number`
-- 默认值: `0`
-- 必填: 否
+## 公开的方法
 
-列表的滚动缓冲区，较大的数字表示渲染的项目数量更多。此属性接受以像素为单位的数字。
+`AVirtualList` 提供了以下公开方法：
 
-### estimatedItemHeight
+- refresh：刷新项目列表
+- scrollToBottom：滚动到底部
+- scrollTo：滚动到指定的顶部偏移量
+- getContainer：获取列表容器的引用
 
-- 类型: `Number`
-- 默认值: `0`
-- 必填: 否
+例子：
 
-如果您已经知道项目的适当高度，则可以在此处设置它以跳过测量高度。
+```vue
+<!-- 在 template 中 -->
+<AVirtualList ref="virtualListRef" :items="items"></AVirtualList>
 
-### enableDeepWatch
+<!-- 在 script 中 -->
+import type { VirtualListExposure } from 'AnyUI';
 
-- 类型: `Boolean`
-- 默认值: `false`
-- 必填: 否
-
-如果设置为 `true`，则组件将对项目进行深度侦听。
-
-### firstScreenThreshold
-
-- 类型: `Number`
-- 默认值: `10`
-- 必填: 否
-
-首屏要显示的元素数量。
-
-### reuseNodes
-
-- 类型: `Boolean`
-- 默认值: `true`
-- 必填: 否
-
-如果设置为 `true`，则此组件将重用 DOM 节点以避免频繁创建和删除 DOM 节点。
-
-### keyType
-
-- 类型: `String`
-- 默认值: `'none'`
-- 必填: 否
-
-项的键类型，它将影响刷新。可以是 `'batch'`（渲染批次的索引），`'screen'`（基于屏幕高度和项目数的一系列索引），`'both'`（使用上述两个索引之一），`'none'`（不使用以前的任何索引，仅使用项的自然索引）。
-
-## 暴露的方法
-
-### refresh
-
-刷新列表，当你的数据源更新时需要调用此方法。
-
-```
-  <a-button @click="() => list = mockData" />
-  <!-- ... -->
-  <a-virtual-list ref="virtualList" :items="list" />
-
-  <script>
-    // ...
-    const refreshList = () => {
-      const { value: virtualList } = refs.virtualList;
-      virtualList.refresh();
+export default {
+  data() {
+    return {
+      virtualListRef: ref<VirtualListExposure | null>(null),
+      items: [
+        { id: 1, content: 'Item 1' },
+        { id: 2, content: 'Item 2' },
+        // ...
+      ],
     };
-  </script>
-```
+  },
 
-### scrollToBottom
-
-滚动到底部。
-
-```
-  <a-button @click="() => scrollToBottom()" />
-
-  <script>
-    // ...
-    const { scrollToBottom } = useContext();
-  </script>
+  mounted() {
+    if (this.virtualListRef) {
+      this.virtualListRef.scrollToBottom();
+    }
+  },
+};
 ```
