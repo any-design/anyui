@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.3.1](https://github.com/any-design/anyui/compare/v0.3.0...v0.3.1) (2024-02-18)
+
+### Bug Fixes
+
+- (build) fix resolver type building ([8df0187](https://github.com/any-design/anyui/commit/8df0187df0c959e9f0fbc237cfae428355a994f6))
+- (form) wrong import statement ([9aaf8e8](https://github.com/any-design/anyui/commit/9aaf8e88cdb0c24ef6496b4859c81cdaa14d461d))
+
 ## [0.3.0](https://github.com/any-design/anyui/compare/v0.2.9...v0.3.0) (2024-01-29)
 
 ### Breaking
