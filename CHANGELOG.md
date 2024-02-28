@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.3.2](https://github.com/any-design/anyui/compare/v0.3.1...v0.3.2) (2024-02-28)
+
+### Bug Fixes
+
+* (layout) height property in header and footer now is responsive ([76f8e87](https://github.com/any-design/anyui/commit/76f8e8752d86bda1e23d18745c4e81e94fc396d8))
+* (virtual-list) prevent re-render when component activate and deactivate ([b96a15d](https://github.com/any-design/anyui/commit/b96a15d0095accf0d7285b0078a4fcc58efacdb9))
+
 ## [0.3.1](https://github.com/any-design/anyui/compare/v0.3.0...v0.3.1) (2024-02-18)
 
 ### Bug Fixes
