@@ -40,6 +40,8 @@ import {
   nextTick,
   markRaw,
   onBeforeMount,
+  onActivated,
+  onDeactivated,
 } from 'vue';
 
 import { useRefreshableComputed } from '../hooks/useRefreshable';
@@ -73,9 +75,16 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  preserveScrollTop: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 let transformedItems: VirtualListItem<unknown>[] = [];
+
+// If component is not activated, some logic should be disabled
+const componentActivated = ref(false);
 
 // Before vue rfc #436 landed, this line remains any for safety scoped slots typings
 const displayItems = ref<VirtualListItem<any>[]>([]);
@@ -173,6 +182,7 @@ const refreshItems = ({
   if (!refreshDisplay) {
     return;
   }
+
   refreshDisplayItems();
 };
 
@@ -286,6 +296,9 @@ const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: nu
 };
 
 const onItemResized = (entries: ResizeObserverEntry[]) => {
+  // if component is not activated, skip
+  if (!componentActivated.value) return;
+
   let scrollHeightDiff = 0;
   let minUpdateIndex = Infinity;
 
@@ -379,7 +392,10 @@ const stopItemWatching = watch(items, (newVal) => {
 
 const containerResizeObserver = new ResizeObserver((entries) => {
   const [container] = entries;
-  containerHeight.value = container.contentRect.height;
+  // if component is not activated, should not mutate containerHeight here
+  if (componentActivated.value) {
+    containerHeight.value = container.contentRect.height;
+  }
 });
 
 // check if the container could be scrolled now
@@ -460,6 +476,21 @@ onMounted(() => {
 
   // initialize rendering
   firstRender();
+});
+
+onActivated(() => {
+  componentActivated.value = true;
+  if (containerRef.value) {
+    if (props.preserveScrollTop) {
+      containerRef.value.scrollTop = scrollTop.value;
+    } else {
+      scrollTo(0);
+    }
+  }
+});
+
+onDeactivated(() => {
+  componentActivated.value = false;
 });
 
 onBeforeUnmount(() => {
