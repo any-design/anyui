@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
@@ -16,10 +16,10 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const height = typeof props.height === 'number' ? `${props.height}px` : props.height;
-    const styles = {
-      height: height || '',
-    };
+    const height = computed(() => typeof props.height === 'number' ? `${props.height}px` : props.height);
+    const styles = computed(() => ({
+      height: height.value || '',
+    }));
     return {
       styles,
     };
