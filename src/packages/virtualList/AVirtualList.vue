@@ -71,6 +71,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  computedStyle: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 let transformedItems: VirtualListItem<unknown>[] = [];
@@ -260,7 +264,7 @@ const onContainerScroll = () => {
 };
 
 const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: number } = {}) => {
-  if (!itemId || typeof height === 'undefined') {
+  if (!itemId || typeof height === 'undefined' || !isFinite(height)) {
     return;
   }
 
@@ -298,9 +302,19 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
     const { height } = entry.contentRect;
-    const itemId = (entry.target as HTMLElement).dataset.id;
+    if (!isFinite(height)) {
+      continue;
+    }
+    const targetEl = entry.target as HTMLElement;
+    const itemId = targetEl.dataset.id;
     if (!itemId) {
       throw new Error('Detect item resized but no item id found.');
+    }
+    if (props.computedStyle) {
+      const targetStyle = getComputedStyle(targetEl);
+      if (targetStyle.display === 'none' || targetStyle.visibility === 'none') {
+        continue;
+      }
     }
     const heightDiff = height - itemHeightMap[itemId];
     if (heightDiff === 0) {
@@ -359,8 +373,9 @@ const firstRender = () => {
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < elements.length; i++) {
       const { clientHeight } = elements[i];
-      transformedItems[i].__itemHeight = clientHeight;
-      itemHeightMap[transformedItems[i].id] = clientHeight;
+      const itemHeight = isFinite(clientHeight) ? clientHeight : estimatedItemHeightRef.value;
+      transformedItems[i].__itemHeight = itemHeight;
+      itemHeightMap[transformedItems[i].id] = itemHeight;
       itemIdIndexMap[transformedItems[i].id] = i;
       heights.push(clientHeight);
     }
@@ -433,6 +448,7 @@ const getContainer = () => containerRef.value;
 
 defineExpose({
   refresh: refreshItems,
+  refreshDisplay: refreshDisplayItems,
   scrollToBottom,
   scrollTo,
   getContainer,
