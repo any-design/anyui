@@ -1,4 +1,12 @@
+
 # CHANGELOG
+
+## [0.3.3](https://github.com/any-design/anyui/compare/v0.3.2...v0.3.3) (2024-04-28)
+
+### Bug Fixes
+
+* (virtual-list) avoid -Infinity height item ([5193a8d](https://github.com/any-design/anyui/commit/5193a8d03e5bd95ab98f894f90b708b380ef402b))
+* (virtual-list) refresh container when activated ([5222245](https://github.com/any-design/anyui/commit/5222245fa0eb36d8adccdde1ffa79bc8f3466756))
 
 ## [0.3.2](https://github.com/any-design/anyui/compare/v0.3.1...v0.3.2) (2024-02-28)
 
