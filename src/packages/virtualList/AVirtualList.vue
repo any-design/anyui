@@ -2,19 +2,11 @@
   <div ref="containerRef" class="a-virtual-list" @scroll.passive="onContainerScroll">
     <div class="a-virtual-list__inner a-scroll-shadows" :style="innerStyles">
       <template v-if="displayItems.length">
-        <div
-          ref="fillerRef"
-          class="a-virtual-list__filler"
-          :style="{
-            transform: `translateY(${firstItemTop}px)`,
-          }"
-        >
-          <a-virtual-list-item
-            v-for="item in displayItems"
-            :key="item.id"
-            :item="item"
-            @init-height="handleInitItemHeight"
-          >
+        <div ref="fillerRef" class="a-virtual-list__filler" :style="{
+          transform: `translateY(${firstItemTop}px)`,
+        }">
+          <a-virtual-list-item v-for="item in displayItems" :key="item.id" :item="item"
+            @init-height="handleInitItemHeight">
             <slot :item="item"></slot>
           </a-virtual-list-item>
         </div>
@@ -487,6 +479,13 @@ onActivated(() => {
       scrollTo(0);
     }
   }
+  // refresh items after activation
+  nextTick(() => {
+    if (containerRef.value) {
+      containerHeight.value = containerRef.value.clientHeight;
+    }
+    refreshDisplayItems();
+  });
 });
 
 onDeactivated(() => {
