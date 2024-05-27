@@ -21,7 +21,6 @@ export default defineComponent({
   components: {
     ACheckbox,
   },
-
   props: {
     // the values which will be bound to this component.
     modelValue: {
