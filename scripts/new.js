@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const ejs = require('ejs');
-const path = require('path');
-const fs = require('fs');
+const path = require('node:path');
+const fs = require('node:fs');
 
 const TEMPLATE_DIR = path.resolve(__dirname, './templates');
 const PACKAGES_TARGET = path.resolve(__dirname, '../src/packages/');
