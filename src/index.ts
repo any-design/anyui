@@ -1,5 +1,6 @@
 import type { App } from 'vue';
 
+import Avatar from './packages/avatar';
 import Button from './packages/button';
 import Card from './packages/card';
 import Chat from './packages/chat';
@@ -76,6 +77,7 @@ const buildInstaller = (components: any[]) => {
 };
 
 export {
+  Avatar,
   Button,
   Chat,
   Card,

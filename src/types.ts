@@ -1,4 +1,5 @@
 // component types
+export * from './packages/avatar/types';
 export * from './packages/button/types';
 export * from './packages/chat/types';
 export * from './packages/drawer/types';

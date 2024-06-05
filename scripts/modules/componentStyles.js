@@ -1,7 +1,7 @@
-const path = require('path');
 const chalk = require('chalk');
-const fs = require('fs');
-const fsp = require('fs/promises');
+const fs = require('node:fs');
+const fsp = require('node:fs/promises');
+const path = require('node:path');
 const sass = require('sass');
 
 const styleExtractor = /<style lang=.+>([\s\S]+)<\/style>/;
@@ -97,9 +97,7 @@ const getComponentStyles = async () => {
           });
           await fsp.writeFile(
             cssFilePath,
-            (
-              await sass.compileStringAsync(appendGlobalVars(content, true))
-            ).css,
+            (await sass.compileStringAsync(appendGlobalVars(content, true))).css,
             { encoding: 'utf-8' },
           );
         }),

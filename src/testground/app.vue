@@ -4,35 +4,36 @@
       <span>AnyUI Component TestGround</span>
     </div>
     <div class="testground-content">
+      <AvatarSection />
       <ButtonSection />
-      <ClickableTextSection />
-      <GradientTextSection />
-      <InputSection />
-      <SelectSection />
-      <RadioSection />
-      <RadioButtonGroupSection />
-      <CheckboxSection />
       <CardSection />
-      <SplitSection />
+      <CheckboxSection />
+      <ClickableTextSection />
+      <CollapseSection />
+      <DrawerSection />
+      <EmptySection />
       <FloatSection />
-      <StepSection />
-      <UploadSection />
-      <ImageSection />
-      <PopperSection />
-      <PopMenuSection />
       <FormSection />
-      <MessageSection />
+      <GradientTextSection />
+      <ImageSection />
+      <InputSection />
       <LayoutSection />
       <ListMenuSection />
       <ListViewSection />
+      <LoadingSection />
+      <MessageSection />
+      <PaginationSection />
+      <PopMenuSection />
+      <PopperSection />
+      <RadioButtonGroupSection />
+      <RadioSection />
+      <SelectSection />
+      <SpinnerSection />
+      <SplitSection />
+      <StepSection />
       <TagSection />
       <TextareaSection />
-      <CollapseSection />
-      <LoadingSection />
-      <SpinnerSection />
-      <DrawerSection />
-      <PaginationSection />
-      <EmptySection />
+      <UploadSection />
       <VirtualListSection />
       <ChatSection />
       <MasonrySection />
@@ -57,6 +58,7 @@ import { defineAsyncComponent } from 'vue';
 
 import { version } from '../../package.json';
 
+const AvatarSection = defineAsyncComponent(() => import('./sections/avatar.vue'));
 const ButtonSection = defineAsyncComponent(() => import('./sections/button.vue'));
 const ClickableTextSection = defineAsyncComponent(() => import('./sections/clickableText.vue'));
 const GradientTextSection = defineAsyncComponent(() => import('./sections/gradientText.vue'));
