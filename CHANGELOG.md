@@ -1,19 +1,25 @@
-
 # CHANGELOG
+
+## [0.4.0](https://github.com/any-design/anyui/compare/v0.3.3...v0.4.0) (2024-06-05)
+
+### Features
+
+- (avatar) add avatar component ([142bc10](https://github.com/any-design/anyui/commit/142bc104b5a8d4bb47537dcd55372b07f74c0d33))
+- (virtual-list) better performance ([ef2a987](https://github.com/any-design/anyui/commit/ef2a987a216fa9e6fc6badef96a104e40eaca9b2))
 
 ## [0.3.3](https://github.com/any-design/anyui/compare/v0.3.2...v0.3.3) (2024-04-28)
 
 ### Bug Fixes
 
-* (virtual-list) avoid -Infinity height item ([5193a8d](https://github.com/any-design/anyui/commit/5193a8d03e5bd95ab98f894f90b708b380ef402b))
-* (virtual-list) refresh container when activated ([5222245](https://github.com/any-design/anyui/commit/5222245fa0eb36d8adccdde1ffa79bc8f3466756))
+- (virtual-list) avoid -Infinity height item ([5193a8d](https://github.com/any-design/anyui/commit/5193a8d03e5bd95ab98f894f90b708b380ef402b))
+- (virtual-list) refresh container when activated ([5222245](https://github.com/any-design/anyui/commit/5222245fa0eb36d8adccdde1ffa79bc8f3466756))
 
 ## [0.3.2](https://github.com/any-design/anyui/compare/v0.3.1...v0.3.2) (2024-02-28)
 
 ### Bug Fixes
 
-* (layout) height property in header and footer now is responsive ([76f8e87](https://github.com/any-design/anyui/commit/76f8e8752d86bda1e23d18745c4e81e94fc396d8))
-* (virtual-list) prevent re-render when component activate and deactivate ([b96a15d](https://github.com/any-design/anyui/commit/b96a15d0095accf0d7285b0078a4fcc58efacdb9))
+- (layout) height property in header and footer now is responsive ([76f8e87](https://github.com/any-design/anyui/commit/76f8e8752d86bda1e23d18745c4e81e94fc396d8))
+- (virtual-list) prevent re-render when component activate and deactivate ([b96a15d](https://github.com/any-design/anyui/commit/b96a15d0095accf0d7285b0078a4fcc58efacdb9))
 
 ## [0.3.1](https://github.com/any-design/anyui/compare/v0.3.0...v0.3.1) (2024-02-18)
 
