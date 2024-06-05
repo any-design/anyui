@@ -54,9 +54,9 @@
     "@popperjs/core": "^2.11.8"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.24.6",
+    "@babel/eslint-parser": "^7.24.7",
     "@types/color": "^3.0.6",
-    "@types/node": "^16.18.97",
+    "@types/node": "^20.14.2",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-vue": "^4.6.2",
@@ -72,16 +72,16 @@
     "eslint-plugin-vue": "^9.26.0",
     "fs-extra": "^10.1.0",
     "inquirer": "^8.2.6",
-    "prettier": "^3.2.5",
+    "prettier": "^3.3.1",
     "rimraf": "^3.0.2",
-    "sass": "^1.77.2",
+    "sass": "^1.77.4",
     "terser": "^5.31.0",
     "typescript": "^5.4.5",
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.5.3",
     "vite-plugin-dts": "^3.9.1",
     "vite-plugin-gfont": "^0.2.0",
-    "vue-eslint-parser": "^9.4.2",
+    "vue-eslint-parser": "^9.4.3",
     "vue-tsc": "^1.8.27"
   }
 }

@@ -1,7 +1,7 @@
 const chalk = require('chalk');
-const path = require('path');
-const fsp = require('fs/promises');
 const fs = require('fs-extra');
+const path = require('node:path');
+const fsp = require('node:fs/promises');
 const sass = require('sass');
 const getComponentStyles = require('./modules/componentStyles');
 
