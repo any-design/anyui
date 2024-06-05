@@ -8,13 +8,13 @@
 import type { StyleValue } from 'vue';
 import { computed } from 'vue';
 
-import { PREDEFINED_SIZE, type AvatarSize } from './types';
+import { AvatarSize, PREDEFINED_SIZE } from './types';
 
 import type { EnumValues } from '@/utils/types';
 
 const props = defineProps<{
   src: string;
-  size: EnumValues<typeof AvatarSize>;
+  size?: EnumValues<typeof AvatarSize>;
   width?: number | string;
   round?: boolean;
 }>();
@@ -26,7 +26,7 @@ const handleError = (event: Event) => {
 };
 
 const styles = computed<StyleValue>(() => {
-  const sizeValue = PREDEFINED_SIZE[props.size];
+  const sizeValue = PREDEFINED_SIZE[props.size || AvatarSize.Medium];
   const widthValue = props.width ?? `${sizeValue}px`;
 
   return {
