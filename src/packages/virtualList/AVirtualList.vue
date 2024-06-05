@@ -2,11 +2,19 @@
   <div ref="containerRef" class="a-virtual-list" @scroll.passive="onContainerScroll">
     <div class="a-virtual-list__inner a-scroll-shadows" :style="innerStyles">
       <template v-if="displayItems.length">
-        <div ref="fillerRef" class="a-virtual-list__filler" :style="{
-          transform: `translateY(${firstItemTop}px)`,
-        }">
-          <a-virtual-list-item v-for="item in displayItems" :key="item.id" :item="item"
-            @init-height="handleInitItemHeight">
+        <div
+          ref="fillerRef"
+          class="a-virtual-list__filler"
+          :style="{
+            transform: `translateY(${firstItemTop}px)`,
+          }"
+        >
+          <a-virtual-list-item
+            v-for="item in displayItems"
+            :key="item.id"
+            :item="item"
+            @init-height="handleInitItemHeight"
+          >
             <slot :item="item"></slot>
           </a-virtual-list-item>
         </div>
@@ -31,9 +39,9 @@ import {
   watch,
   nextTick,
   markRaw,
-  onBeforeMount,
   onActivated,
   onDeactivated,
+  onBeforeMount,
 } from 'vue';
 
 import { useRefreshableComputed } from '../hooks/useRefreshable';
@@ -67,11 +75,18 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  // whether the list preserve scroll top when component back to active
   preserveScrollTop: {
     type: Boolean,
     default: true,
   },
-  computedStyle: {
+  // if items turn to invisible, skip the calculation
+  ignoreInvisibleItems: {
+    type: Boolean,
+    default: false,
+  },
+  // if true, it will calculate estimated height dynamically when item height inited
+  dynamicEstimatedHeight: {
     type: Boolean,
     default: true,
   },
@@ -200,7 +215,6 @@ let updateFrame: ReturnType<typeof requestAnimationFrame> | undefined;
 
 const refreshDisplayItems = () => {
   if (updateFrame) window.cancelAnimationFrame(updateFrame);
-
   isRefreshing.value = true;
   updateFrame = window.requestAnimationFrame(() => {
     scrollTop.value = containerRef.value?.scrollTop || 0;
@@ -243,6 +257,7 @@ const onContainerScroll = () => {
   if (!containerRef.value) {
     return;
   }
+
   if (containerRef.value.scrollTop > lastScrollTop) {
     scrollDirection.value = 'down';
   } else if (containerRef.value.scrollTop < lastScrollTop) {
@@ -262,6 +277,8 @@ const onContainerScroll = () => {
 
   refreshDisplayItems();
 };
+
+let lastDiffs: number[] = [];
 
 const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: number } = {}) => {
   if (!itemId || typeof height === 'undefined' || !isFinite(height)) {
@@ -283,9 +300,24 @@ const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: nu
   // update diff to tree
   biTree.value?.update(itemIndex + 1, diff);
 
+  // patch the scroll top to let scroll smoother
+  if (scrollDirection.value === 'up' && scrollTop.value > 0 && containerRef.value) {
+    containerRef.value.scrollTop += diff;
+    scrollTop.value = containerRef.value.scrollTop;
+  }
+
   // choose the min one as the estimated height
   if (height && height < estimatedItemHeightRef.value) {
     estimatedItemHeightRef.value = height;
+  }
+
+  // use dynamic estimated height for better scroll top position
+  if (props.dynamicEstimatedHeight) {
+    lastDiffs.push(diff);
+    if (lastDiffs.length > props.firstScreenThreshold) {
+      estimatedItemHeightRef.value += lastDiffs.reduce((r, curr) => r + curr, 0) / lastDiffs.length;
+      lastDiffs = [];
+    }
   }
 
   refreshDisplayItems();
@@ -301,8 +333,12 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
-    const { height } = entry.contentRect;
-    if (!isFinite(height)) {
+    let { height } = entry.contentRect;
+    // the item is invisibie
+    if (height <= 0) {
+      height = 0;
+    } else if (!isFinite(height)) {
+      // skip some strange value
       continue;
     }
     const targetEl = entry.target as HTMLElement;
@@ -310,9 +346,9 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     if (!itemId) {
       throw new Error('Detect item resized but no item id found.');
     }
-    if (props.computedStyle) {
+    if (props.ignoreInvisibleItems) {
       const targetStyle = getComputedStyle(targetEl);
-      if (targetStyle.display === 'none' || targetStyle.visibility === 'none') {
+      if (targetStyle.display === 'none') {
         continue;
       }
     }
@@ -329,11 +365,14 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     biTree.value?.update(itemIndex + 1, heightDiff);
   }
 
-  if (scrollHeightDiff) {
+  if (scrollHeightDiff !== 0) {
     scrollHeight.value += scrollHeightDiff;
     refreshInnerStyles();
-    if (scrollHeightDiff > 0 && containerRef.value && scrollDirection.value === 'up') {
+
+    // patch the scroll top
+    if (containerRef.value && scrollTop.value > 0 && scrollDirection.value === 'up') {
       containerRef.value.scrollTop += scrollHeightDiff;
+      scrollTop.value = containerRef.value.scrollTop;
     }
   }
 
@@ -454,21 +493,47 @@ defineExpose({
   getContainer,
 });
 
+let cancelWatch: ReturnType<typeof watch> | undefined;
+
+const startWatchItems = () => {
+  if (props.enableDeepWatch) {
+    cancelWatch = watch(
+      () => [...props.items],
+      (newVal) => {
+        if (firstRendered || !newVal?.length) {
+          refreshItems();
+        } else {
+          firstRender();
+        }
+      },
+    );
+  } else {
+    cancelWatch = watch(
+      () => props.items.length,
+      (newVal) => {
+        if (firstRendered || !newVal) {
+          refreshItems();
+        } else {
+          firstRender();
+        }
+      },
+    );
+  }
+};
+
+watch(
+  () => props.enableDeepWatch,
+  () => {
+    if (cancelWatch) cancelWatch();
+    startWatchItems();
+  },
+);
+
 onBeforeMount(() => {
   if (props.estimatedItemHeight) {
     estimatedItemHeightRef.value = props.estimatedItemHeight;
   }
-  watch(
-    () => [...props.items],
-    () => {
-      if (firstRendered) {
-        refreshItems();
-      } else {
-        firstRender();
-      }
-    },
-    { deep: props.enableDeepWatch },
-  );
+  startWatchItems();
 });
 
 onMounted(() => {
