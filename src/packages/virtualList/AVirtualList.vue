@@ -23,13 +23,13 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup generic="T extends object" lang="ts">
 /*
  * This component is a blazing fast virtual scroll list, which based on a binary indexed tree to search the scroll top, it's performance is excellent.
  * Unlike other components that have same functions, our virtual list will not query user to set a item height getter, it will measure the suitable item height automatically.
  * Also it support dynamic item height by default.
  */
-import type { PropType, StyleValue } from 'vue';
+import type { Ref, StyleValue } from 'vue';
 import {
   ref,
   computed,
@@ -50,55 +50,44 @@ import AVirtualListItem from './AVirtualListItem.vue';
 import BinaryIndexedTree from './BinaryIndexedTree';
 import type { RawVirtualListItem, VirtualListItem } from './types';
 
-const props = defineProps({
-  // the data list which will be rendered in the virtual list, it will be passed to the AVirutalListItem component, and will be finally passed in your custom component. Be sure that all the item in the list will have an unique id.
-  items: {
-    type: Array as PropType<RawVirtualListItem<unknown>[]>,
-    default: () => [],
+const props = withDefaults(
+  defineProps<{
+    items: RawVirtualListItem<T>[];
+    buffer: number;
+    estimatedItemHeight?: number;
+    enableDeepWatch?: boolean;
+    firstScreenThreshold?: number;
+    preserveScrollTop?: boolean;
+    ignoreInvisibleItems?: boolean;
+    dynamicEstimatedHeight?: boolean;
+  }>(),
+  {
+    // the data list which will be rendered in the virtual list, it will be passed to the AVirutalListItem component, and will be finally passed in your custom component. Be sure that all the item in the list will have an unique id.
+    items: () => [] as RawVirtualListItem<T>[],
+    // the scroll buffer of the list, larger number means more items will be rendered. this property accept a number in px.
+    buffer: 1200,
+    // if you already know the proper height of your item, you can set it here to skip the height measurement.
+    estimatedItemHeight: undefined,
+    // if true, the component will watch the items deeply.
+    enableDeepWatch: false,
+    // how many elements will be used for height measure
+    firstScreenThreshold: 10,
+    // whether the list preserve scroll top when component back to active
+    preserveScrollTop: true,
+    // if items turn to invisible, skip the calculation
+    ignoreInvisibleItems: false,
+    // if true, it will calculate estimated height dynamically when item height inited
+    dynamicEstimatedHeight: true,
   },
-  // the scroll buffer of the list, larger number means more items will be rendered. this property accept a number in px.
-  buffer: {
-    type: Number,
-    default: 1200,
-  },
-  // if you already know the proper height of your item, you can set it here to skip the height measurement.
-  estimatedItemHeight: {
-    type: Number,
-  },
-  // if true, the component will watch the items deeply.
-  enableDeepWatch: {
-    type: Boolean,
-    default: false,
-  },
-  // how many elements will be used for height measure
-  firstScreenThreshold: {
-    type: Number,
-    default: 10,
-  },
-  // whether the list preserve scroll top when component back to active
-  preserveScrollTop: {
-    type: Boolean,
-    default: true,
-  },
-  // if items turn to invisible, skip the calculation
-  ignoreInvisibleItems: {
-    type: Boolean,
-    default: false,
-  },
-  // if true, it will calculate estimated height dynamically when item height inited
-  dynamicEstimatedHeight: {
-    type: Boolean,
-    default: true,
-  },
-});
+);
 
-let transformedItems: VirtualListItem<unknown>[] = [];
+let transformedItems: VirtualListItem<T>[] = [];
 
 // If component is not activated, some logic should be disabled
 const componentActivated = ref(false);
 
 // Before vue rfc #436 landed, this line remains any for safety scoped slots typings
-const displayItems = ref<VirtualListItem<any>[]>([]);
+const displayItems: Ref<VirtualListItem<T>[]> = ref([]);
 
 // container layout related
 const containerRef = ref<HTMLElement | undefined>();
@@ -151,7 +140,7 @@ const refreshItems = ({
   const newHeightMap: Record<string, number> = {};
   const newItemIdIndexMap: Record<string, number> = {};
 
-  const items: VirtualListItem<unknown>[] = [];
+  const items: VirtualListItem<T>[] = [];
   const itemHeightList: number[] = [];
 
   let cumulatedHeight = 0;
@@ -396,7 +385,7 @@ const firstRender = () => {
   }
   // render the first screen elements
   refreshItems({ refreshDisplay: false, stopAt: props.firstScreenThreshold });
-  displayItems.value = props.items.slice(
+  displayItems.value = transformedItems.slice(
     0,
     Math.min(props.items.length, props.firstScreenThreshold),
   );
@@ -465,6 +454,22 @@ const scrollTo = (top: number) => {
   containerRef.value.scrollTop = top;
 };
 
+const scrollToItem = (idOrFunc: string | ((item: VirtualListItem<unknown>) => boolean)) => {
+  const id = typeof idOrFunc === 'function' ? transformedItems.find(idOrFunc)?.id : idOrFunc;
+  if (!id) {
+    return;
+  }
+  // acculate _itemHeight until find the id use for-of
+  let height = 0;
+  for (const item of transformedItems) {
+    if (item.id === id) {
+      break;
+    }
+    height += item.__itemHeight;
+  }
+  scrollTo(height);
+};
+
 const scrollToBottom = () => {
   if (!checkContainerScrollState()) {
     return;
@@ -489,6 +494,7 @@ defineExpose({
   refresh: refreshItems,
   refreshDisplay: refreshDisplayItems,
   scrollToBottom,
+  scrollToItem,
   scrollTo,
   getContainer,
 });
