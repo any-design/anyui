@@ -28,6 +28,7 @@ import type {
   PaginationMeta,
   PopMenuItem,
   RawVirtualListItem,
+  VirtualListItem as VirtualListDataItem,
 } from './types';
 export * from './types';
 
@@ -1135,11 +1136,26 @@ export const VirtualList = forwardRef<any, AnyUIReactProps>(function VirtualList
     scrollTo: (top: number) => {
       if (containerRef.current) containerRef.current.scrollTop = top;
     },
+    scrollToItem: (idOrFunc: string | ((item: VirtualListDataItem<unknown>) => boolean)) => {
+      const targetIndex =
+        typeof idOrFunc === 'function'
+          ? items.findIndex((item: any, listIndex: number) =>
+              idOrFunc({
+                ...item,
+                __listIndex: listIndex,
+                __itemHeight: itemHeights[listIndex],
+                __itemScrollTop: prefixHeights[listIndex],
+              } as VirtualListDataItem<unknown>),
+            )
+          : items.findIndex((item: any) => item.id === idOrFunc);
+      if (targetIndex < 0) return;
+      if (containerRef.current) containerRef.current.scrollTop = prefixHeights[targetIndex] ?? 0;
+    },
     scrollToBottom: () => {
       if (containerRef.current) containerRef.current.scrollTop = containerRef.current.scrollHeight;
     },
     getContainer: () => containerRef.current ?? undefined,
-  }), []);
+  }), [items, itemHeights, prefixHeights]);
   return (
     <div {...pickDataAttrs(rest)} ref={containerRef} className={cx('a-virtual-list', className)} onScroll={(event) => setScrollTop(event.currentTarget.scrollTop)}>
       <div className="a-virtual-list__inner a-scroll-shadows" style={{ height: totalHeight }}>

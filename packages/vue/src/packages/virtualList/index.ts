@@ -8,15 +8,18 @@ import type { SFCWithInstall } from '@/utils/types';
 
 export * from './types';
 
-AVirtualList.install = (app: App) => {
-  app.component('AVirtualList', AVirtualList);
-  app.component('AVirtualListItem', AVirtualListItem);
+const VirtualList = AVirtualList as SFCWithInstall<typeof AVirtualList>;
+const VirtualListItem = AVirtualListItem as SFCWithInstall<typeof AVirtualListItem>;
+
+VirtualList.install = (app: App) => {
+  app.component('AVirtualList', VirtualList);
+  app.component('AVirtualListItem', VirtualListItem);
 };
 
-AVirtualListItem.install = (app: App) => {
-  app.component('AVirtualListItem', AVirtualListItem);
+VirtualListItem.install = (app: App) => {
+  app.component('AVirtualListItem', VirtualListItem);
 };
 
-export const VirtualListItem = AVirtualListItem as SFCWithInstall<typeof AVirtualListItem>;
+export { VirtualListItem };
 
-export default AVirtualList as SFCWithInstall<typeof AVirtualList>;
+export default VirtualList;

@@ -1,6 +1,6 @@
 <template>
   <div class="a-chat">
-    <a-virtual-list
+    <AVirtualList
       ref="virtualListRef"
       :items="transformedMessages"
       :enable-deep-watch="enableDeepWatch"
@@ -18,7 +18,7 @@
           </div>
         </div>
       </template>
-    </a-virtual-list>
+    </AVirtualList>
   </div>
 </template>
 
@@ -27,7 +27,7 @@ import type { PropType } from 'vue';
 import { computed, ref, watch } from 'vue';
 
 import type { RawVirtualListItem } from '../virtualList';
-import AVirtualList from '../virtualList';
+import AVirtualList from '../virtualList/AVirtualList.vue';
 
 import type { AChatMessage } from './types';
 
@@ -46,7 +46,7 @@ const props = defineProps({
 
 const transformedMessages = computed(() => props.messages as RawVirtualListItem<AChatMessage>[]);
 
-const virtualListRef = ref<typeof AVirtualList | undefined>();
+const virtualListRef = ref<{ scrollToBottom: () => void }>();
 
 watch(
   () => props.messages,
