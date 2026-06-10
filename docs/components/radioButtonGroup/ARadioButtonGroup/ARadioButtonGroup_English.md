@@ -13,11 +13,11 @@ To use `ARadioButtonGroup`, include it in your Vue component like this:
 
 <script>
 import { defineComponent, reactive } from 'vue';
-import ARadioButtonGroup from '@any-design/anyui/lib/ARadioButtonGroup';
+import { RadioButtonGroup } from '@any-design/anyui/vue';
 
 export default defineComponent({
   components: {
-    ARadioButtonGroup,
+    ARadioButtonGroup: RadioButtonGroup,
   },
   setup() {
     const state = reactive({
@@ -36,7 +36,7 @@ export default defineComponent({
 </script>
 ```
 
-In the example above, the `ARadioButtonGroup` component is imported from the `@any-design/anyui` package and included in the template section of the Vue component. Props can be passed to `ARadioButtonGroup` to customize it. The `items` prop is an array of objects with two properties: `label` and `value`. The `v-model` directive is used to bind the selected radio button value to `selectedItem`. The `round` prop is used to set a rounded border style to the `ARadioButtonGroup` component.
+In the example above, the `ARadioButtonGroup` component is imported from the `@any-design/anyui/vue` package and included in the template section of the Vue component. Props can be passed to `ARadioButtonGroup` to customize it. The `items` prop is an array of objects with two properties: `label` and `value`. The `v-model` directive is used to bind the selected radio button value to `selectedItem`. The `round` prop is used to set a rounded border style to the `ARadioButtonGroup` component.
 
 ## Props
 

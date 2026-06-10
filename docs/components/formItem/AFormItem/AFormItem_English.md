@@ -15,11 +15,11 @@ To use `AFormItem`, we can import it into our Vue component and use it in the te
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import AFormItem from '@any-design/anyui/lib/form-item';
+import { FormItem } from '@any-design/anyui/vue';
 
 export default defineComponent({
   components: {
-    AFormItem,
+    AFormItem: FormItem,
   },
   setup() {
     const username = ref('');
@@ -118,14 +118,12 @@ In this example, the component will emit a `clear` event with the appropriate pa
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import AFormItem from '@any-design/anyui/lib/form-item';
-import AForm from '@any-design/anyui/lib/form';
-import { FormEventEmitter } from '@any-design/anyui/lib/form/bus';
+import { Form, FormItem } from '@any-design/anyui/vue';
 
 export default defineComponent({
   components: {
-    AFormItem,
-    AForm,
+    AForm: Form,
+    AFormItem: FormItem,
   },
   setup() {
     const username = ref('');

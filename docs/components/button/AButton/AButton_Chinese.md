@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { AButton } from '@any-design/anyui';
+import { AButton } from '@any-design/anyui/vue';
 
 export default {
   components: {

@@ -11,7 +11,7 @@ The `AImage` component is designed to display an image with customized styles an
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import AImage from '@any-design/anyui';
+import { AImage } from '@any-design/anyui/vue';
 
 export default defineComponent({
   components: {

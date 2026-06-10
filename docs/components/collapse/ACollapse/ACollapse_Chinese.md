@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { ACollapse } from '@any-design/anyui';
+import { ACollapse } from '@any-design/anyui/vue';
 
 export default {
   components: {

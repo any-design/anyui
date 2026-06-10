@@ -1,6 +1,6 @@
 # AVirtualList Component Documentation
 
-This document includes comprehensive details of the `AVirtualList` Vue component from "@any-design/anyui" JavaScript library. The `AVirtualList` is a performant virtual scroll list that uses a binary indexed tree to determine the scroll top. It automatically measures the optimal item height and supports dynamic item height.
+This document includes comprehensive details of the `AVirtualList` Vue component from "@any-design/anyui/vue" JavaScript library. The `AVirtualList` is a performant virtual scroll list that uses a binary indexed tree to determine the scroll top. It automatically measures the optimal item height and supports dynamic item height.
 
 ## Basic Usage and Example
 

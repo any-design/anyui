@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ACheckbox } from '@any-design/anyui';
+import { ACheckbox } from '@any-design/anyui/vue';
 
 export default {
   components: {

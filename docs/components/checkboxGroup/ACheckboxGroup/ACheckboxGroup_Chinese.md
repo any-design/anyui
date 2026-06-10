@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ACheckboxGroup } from '@any-design/anyui';
+import { ACheckboxGroup } from '@any-design/anyui/vue';
 
 export default {
   components: {
@@ -74,7 +74,7 @@ export default {
 </template>
 
 <script>
-import { ACheckboxGroup } from '@any-design/anyui';
+import { ACheckboxGroup } from '@any-design/anyui/vue';
 import { ref } from 'vue';
 
 export default {

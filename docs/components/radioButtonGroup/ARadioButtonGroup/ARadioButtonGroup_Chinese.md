@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { ARadioButton } from '@any-design/anyui';
+import { ARadioButton } from '@any-design/anyui/vue';
 
 export default {
   components: {

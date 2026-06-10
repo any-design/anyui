@@ -11,7 +11,7 @@ The `ACheckbox` component is a Vue component that allows the user to select an i
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { ACheckbox } from '@any-design/anyui';
+import { ACheckbox } from '@any-design/anyui/vue';
 
 export default defineComponent({
   components: {
@@ -145,7 +145,7 @@ Example:
 
 <script>
 import { ref } from 'vue';
-import { ACheckbox } from '@any-design/anyui';
+import { ACheckbox } from '@any-design/anyui/vue';
 
 export default {
   components: {

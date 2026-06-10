@@ -17,7 +17,7 @@ The `AMasonry` Component is a Vue3 component that helps to create grid-like layo
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import AMasonry from '@any-design/anyui';
+import { AMasonry } from '@any-design/anyui/vue';
 
 const items = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 const itemHeightGetter = () => 100;

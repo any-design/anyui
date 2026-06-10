@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { AFloat } from '@any-design/anyui';
+import { AFloat } from '@any-design/anyui/vue';
 
 export default {
   components: {
@@ -84,7 +84,7 @@ export default {
 </template>
 
 <script>
-import { AFloat } from '@any-design/anyui';
+import { AFloat } from '@any-design/anyui/vue';
 
 export default {
   components: {

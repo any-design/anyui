@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { ACard } from '@any-design/anyui';
+import { ACard } from '@any-design/anyui/vue';
 
 export default {
   components: {

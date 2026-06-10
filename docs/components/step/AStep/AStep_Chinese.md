@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { AStep } from '@any-design/anyui';
+import { AStep } from '@any-design/anyui/vue';
 
 export default {
   components: {

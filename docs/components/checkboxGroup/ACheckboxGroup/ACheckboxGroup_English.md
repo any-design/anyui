@@ -11,7 +11,7 @@ The `a-checkbox-group` component is used to group multiple related checkboxes. I
 
 <script>
   import { defineComponent } from 'vue';
-  import ACheckboxGroup from '@any-design/anyui';
+  import { ACheckboxGroup } from '@any-design/anyui/vue';
 
   export default defineComponent({
     components: {

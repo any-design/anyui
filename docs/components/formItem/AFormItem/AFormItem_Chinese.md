@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { AFormItem } from '@any-design/anyui';
+import { AFormItem } from '@any-design/anyui/vue';
 
 export default {
   components: {

@@ -7,7 +7,7 @@ The `AClickableText` component is a clickable text component designed for use in
 To use the `AClickableText` component, first import it into your Vue3 SFC file using:
 
 ```javascript
-import AClickableText from '@any-design/anyui';
+import { AClickableText } from '@any-design/anyui/vue';
 ```
 
 Then, you can use the component in your template with the following code:

@@ -10,7 +10,7 @@ The `AButton` component is a UI button that can be used in Vue3 and can be custo
 </template>
 
 <script>
-  import AButton from '@any-design/anyui';
+  import { AButton } from '@any-design/anyui/vue';
 
   export default {
     components: { AButton },

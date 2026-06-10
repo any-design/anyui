@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ADrawer } from '@any-design/anyui';
+import { ADrawer } from '@any-design/anyui/vue';
 
 export default {
   components: {
@@ -37,7 +37,7 @@ export default {
 | maskClass      | String                 |                 | 应用于抽屉遮罩的 class             |
 | bodyClass      | String                 |                 | 应用于抽屉主体的 class             |
 | appendToBody   | Boolean                | true            | 是否移动到 body 上                 |
-| position       | DrawerPosition(String) | 'left'          | 抽屉的位置                         |
+| position       | String                 | 'left'          | 抽屉的位置，可选值为 'left' 或 'right' |
 | modelValue     | Boolean                | false           | 表示抽屉是否可见的 Boolean 值      |
 | withMask       | Boolean                | true            | 是否显示遮罩                       |
 | width          | String/Number          | '30%'           | 抽屉的宽度                         |
@@ -105,7 +105,7 @@ export default {
 </template>
 
 <script>
-import { ADrawer } from '@any-design/anyui';
+import { ADrawer } from '@any-design/anyui/vue';
 export default {
   components: {
     ADrawer,

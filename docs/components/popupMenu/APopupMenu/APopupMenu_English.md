@@ -14,7 +14,7 @@ Here is a basic usage example of the `APopupMenu` component:
 </template>
 
 <script>
-import { APopupMenu } from '@any-design/anyui';
+import { APopupMenu } from '@any-design/anyui/vue';
 
 export default {
   components: {

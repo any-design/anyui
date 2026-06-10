@@ -25,7 +25,7 @@ Here's a basic example of how to use `AForm`:
 
 <script>
   import { ref } from 'vue';
-  import { AForm, AFormItem, AInput, AButton } from '@any-design/anyui';
+  import { AForm, AFormItem, AInput, AButton } from '@any-design/anyui/vue';
 
   export default {
     components: {
@@ -106,7 +106,7 @@ Here's an example of how to use `AForm` with some of the exposed methods:
 
 <script>
   import { ref } from 'vue';
-  import { AForm, AFormItem, AInput, AButton } from '@any-design/anyui';
+  import { AForm, AFormItem, AInput, AButton } from '@any-design/anyui/vue';
 
   export default {
     components: { AForm, AFormItem, AInput, AButton },

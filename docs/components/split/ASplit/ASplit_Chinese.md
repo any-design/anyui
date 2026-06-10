@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { ASplit } from '@any-design/anyui';
+import { ASplit } from '@any-design/anyui/vue';
 
 export default {
   components: {
@@ -49,7 +49,7 @@ export default {
 </template>
 
 <script>
-import { ASplit } from '@any-design/anyui';
+import { ASplit } from '@any-design/anyui/vue';
 
 export default {
   components: {

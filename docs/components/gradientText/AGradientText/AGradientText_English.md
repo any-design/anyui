@@ -4,7 +4,7 @@ The `AGradientText` component is a Vue3 component that creates text with a gradi
 
 ## Basic Usage
 
-To use the `AGradientText` component, import it from "@any-design/anyui" and add it to your template. You can then pass in any desired props.
+To use the `AGradientText` component, import it from "@any-design/anyui/vue" and add it to your template. You can then pass in any desired props.
 
 ```vue
 <template>
@@ -15,7 +15,7 @@ To use the `AGradientText` component, import it from "@any-design/anyui" and add
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { AGradientText } from '@any-design/anyui';
+import { AGradientText } from '@any-design/anyui/vue';
 
 export default defineComponent({
   components: {
