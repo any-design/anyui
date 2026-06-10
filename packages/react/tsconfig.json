@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "composite": true,
+    "declarationDir": "../../dist/react",
+    "emitDeclarationOnly": false,
+    "jsx": "react-jsx",
+    "noImplicitAny": false,
+    "noEmit": true,
+    "outDir": "../../dist/react",
+    "tsBuildInfoFile": "./.turbo/tsconfig.tsbuildinfo"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}
