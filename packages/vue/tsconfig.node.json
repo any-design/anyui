@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowSyntheticDefaultImports": true,
+    "tsBuildInfoFile": "./.turbo/tsconfig.node.tsbuildinfo"
+  },
+  "include": ["vite.config.ts"]
+}
