@@ -1,8 +1,11 @@
 node_modules
+.codegraph
+.turbo
 .history
 .DS_Store
 .vscode
 .vercel
+*.tsbuildinfo
 dist
 dist-ssr
 dist-testground
