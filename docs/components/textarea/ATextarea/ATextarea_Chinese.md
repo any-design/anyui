@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ATextarea } from '@any-design/anyui';
+import { ATextarea } from '@any-design/anyui/vue';
 
 export default {
   components: {
@@ -104,7 +104,7 @@ export default {
 </template>
 
 <script>
-import { ATextarea } from '@any-design/anyui';
+import { ATextarea } from '@any-design/anyui/vue';
 
 export default {
   components: {

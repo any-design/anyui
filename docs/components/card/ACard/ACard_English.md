@@ -15,7 +15,7 @@
 
 <script>
   import { defineComponent } from 'vue';
-  import ACard from '@any-design/anyui/ACard';
+  import { ACard } from '@any-design/anyui/vue';
   export default defineComponent({
     components: { ACard },
   });

@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { APopupMenu } from '@any-design/anyui';
+import { APopupMenu } from '@any-design/anyui/vue';
 
 export default {
   components: {

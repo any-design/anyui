@@ -11,7 +11,7 @@ The AChat component is used to display a chat interface. It is built using Vue3 
 
 <script setup>
   import { reactive } from 'vue';
-  import AChat from '@any-design/anyui/AChat.vue';
+  import { AChat } from '@any-design/anyui/vue';
 
   const messages = reactive([
     { id: 1, content: 'Hello', role: 'self' },

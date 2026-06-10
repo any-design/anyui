@@ -10,7 +10,7 @@ The ASelect component is a dropdown select component. It display a list of optio
 </template>
 <script>
   import { defineComponent } from 'vue';
-  import ASelect from '@any-design/anyui/ASelect';
+  import { ASelect } from '@any-design/anyui/vue';
 
   export default defineComponent({
     name: 'MyComponent',

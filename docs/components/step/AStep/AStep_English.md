@@ -14,7 +14,7 @@ The following example shows how to use this component.
 </template>
 
 <script setup>
-  import AStep from '@any-design/anyui';
+  import { AStep } from '@any-design/anyui/vue';
 </script>
 ```
 
@@ -36,7 +36,7 @@ The `steps` prop is used to pass the array or number of steps. The default value
 </template>
 
 <script setup>
-  import AStep from '@any-design/anyui';
+  import { AStep } from '@any-design/anyui/vue';
 </script>
 ```
 
@@ -54,7 +54,7 @@ The `current` prop is used to pass the current step number. The default value fo
 </template>
 
 <script setup>
-  import AStep from '@any-design/anyui';
+  import { AStep } from '@any-design/anyui/vue';
 </script>
 ```
 

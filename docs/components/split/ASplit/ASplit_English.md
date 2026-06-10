@@ -4,7 +4,7 @@ The `ASplit` component is a Vue component that creates a colored line to indicat
 
 ## Basic Usage
 
-To use the `ASplit` component, you can import it from the `@any-design/anyui` package and add it to your template. The component can be used with default values like this:
+To use the `ASplit` component, you can import it from the `@any-design/anyui/vue` package and add it to your template. The component can be used with default values like this:
 
 ```vue
 <template>

@@ -4,7 +4,7 @@ The `a-spinner` component is a part of the `@any-design/anyui` package. It is a 
 
 # Basic Usage
 
-To use the `a-spinner` component, simply import it from the `@any-design/anyui` package and include it in your template. You can pass in an icon name as a prop to display a particular type of spinner.
+To use the `a-spinner` component, simply import it from the `@any-design/anyui/vue` package and include it in your template. You can pass in an icon name as a prop to display a particular type of spinner.
 
 ```vue
 <template>

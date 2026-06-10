@@ -12,11 +12,11 @@ You can use the ARadioButton component in your Vue templates like this:
 </template>
 
 <script>
-import ARadioButton from '@any-design/anyui/lib/components/radioButton';
+import { RadioButton } from '@any-design/anyui/vue';
 
 export default {
   components: {
-    ARadioButton,
+    ARadioButton: RadioButton,
   },
   methods: {
     handleClicked(event) {

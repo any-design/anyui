@@ -17,10 +17,7 @@
       <AInput v-model="formValues.username" />
     </AFormItem>
     <AFormItem name="gender" label="请选择性别：">
-      <ASelect v-model="formValues.gender">
-        <ASelectOption value="male">男</ASelectOption>
-        <ASelectOption value="female">女</ASelectOption>
-      </ASelect>
+      <ASelect v-model="formValues.gender" :items="genderOptions" />
     </AFormItem>
     <AFormItem>
       <AButton type="primary" @click="submitForm">提交</AButton>
@@ -59,10 +56,7 @@
       <AInput v-model="formValues.username" />
     </AFormItem>
     <AFormItem name="gender" label="请选择性别：">
-      <ASelect v-model="formValues.gender">
-        <ASelectOption value="male">男</ASelectOption>
-        <ASelectOption value="female">女</ASelectOption>
-      </ASelect>
+      <ASelect v-model="formValues.gender" :items="genderOptions" />
     </AFormItem>
     <AFormItem>
       <AButton type="primary" @click="handleSubmit">提交</AButton>
@@ -72,11 +66,15 @@
 
 <script>
 import { ref } from 'vue';
-import { AForm, AFormItem, AInput, ASelect, ASelectOption, AButton } from '@any-design/anyui';
+import { AForm, AFormItem, AInput, ASelect, AButton } from '@any-design/anyui/vue';
 export default {
-  components: { AForm, AFormItem, AInput, ASelect, ASelectOption, AButton },
+  components: { AForm, AFormItem, AInput, ASelect, AButton },
   setup() {
     const formValues = ref({ username: '', gender: '' });
+    const genderOptions = [
+      { text: '男', value: 'male' },
+      { text: '女', value: 'female' },
+    ];
     const formRules = ref({ username: { required: true, message: '请输入名字' } });
     const formRef = ref(null);
 
@@ -89,6 +87,7 @@ export default {
 
     return {
       formValues,
+      genderOptions,
       formRules,
       formRef,
       handleSubmit,

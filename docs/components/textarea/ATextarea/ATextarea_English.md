@@ -13,10 +13,10 @@ To use the ATextarea component, import the component into your Vue file and add 
 
 <script>
 import { defineComponent } from 'vue';
-import ATextarea from '@any-design/anyui/lib/ATextarea';
+import { Textarea } from '@any-design/anyui/vue';
 
 export default defineComponent({
-  components: { ATextarea },
+  components: { ATextarea: Textarea },
   data() {
     return {
       message: '',

@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ARadio } from '@any-design/anyui';
+import { ARadio } from '@any-design/anyui/vue';
 
 export default {
   components: {

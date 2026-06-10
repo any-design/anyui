@@ -9,7 +9,7 @@ In some scenarios you might need to use AnyUI in a completely offline environmen
 For the pre-defined default icons, you can install an additional package named `@any-design/default-icons`, it will load all the default icons as `IconMeta` JSON format, then you can setup them with the `Icon Helper` directly at startup.
 
 ```ts
-import { setupIcons } from '@any-design/anyui';
+import { setupIcons } from '@any-design/anyui/vue';
 import DefaultIcons from '@any-design/default-icons',
 
 setupIcons({

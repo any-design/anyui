@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { AVirtualListItem } from '@any-design/anyui';
+import { AVirtualListItem } from '@any-design/anyui/vue';
 
 export default {
   components: {

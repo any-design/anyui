@@ -13,7 +13,7 @@ The A-Tag component is designed to show a clickable tag. It has various availabl
 
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import ATag from '@any-design/anyui';
+  import { ATag } from '@any-design/anyui/vue';
 
   export default defineComponent({
     components: { ATag },

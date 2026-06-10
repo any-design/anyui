@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { AClickableText } from '@any-design/anyui';
+import { AClickableText } from '@any-design/anyui/vue';
 
 export default {
   components: {
@@ -51,7 +51,7 @@ export default {
 </template>
 
 <script>
-import { AClickableText } from '@any-design/anyui';
+import { AClickableText } from '@any-design/anyui/vue';
 
 export default {
   components: {

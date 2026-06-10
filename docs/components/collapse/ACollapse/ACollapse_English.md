@@ -9,7 +9,7 @@ The `@any-design/anyui` collapse component provides the functionality of hiding 
 You can start using the `@any-design/anyui` collapse component by importing it as shown below:
 
 ```javascript
-import ACollapse from '@any-design/anyui/lib/ACollapse';
+import { Collapse } from '@any-design/anyui/vue';
 ```
 
 After importing, you can use it in your Vue application or component as shown below:

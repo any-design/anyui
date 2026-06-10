@@ -17,7 +17,7 @@ Before modify the SCSS vars, you need to modify the imports of the styles.
 // ....
 
 // Import the basic style file
-@import '@any-design/anyui/styles/index.scss';
+@use '@any-design/anyui/styles/index.scss' as *;
 ```
 
 If you want to import styles on demand, you need to modify the `@any-design/anyui/styles/index.scss` to `@any-design/anyui/styles/theme.scss`.
@@ -45,9 +45,9 @@ We provided bunch of variables for you to modify, including all the basic colors
 
 #### Responsive styles
 
-`__anyui__enable-responsive-styles__`: `boolean`
+`$anyui-enable-responsive-styles`: `boolean`
 
-Set `__anyui__enable-responsive-styles__` to `false` can disable the generation of all responsive styles.
+Set `$anyui-enable-responsive-styles` to `false` can disable the generation of all responsive styles.
 
 #### Layout
 

@@ -56,7 +56,7 @@ export default {
 </template>
 
 <script>
-import { APagination } from '@any-design/anyui';
+import { APagination } from '@any-design/anyui/vue';
 
 export default {
   components: {
@@ -102,7 +102,7 @@ export default {
 </template>
 
 <script>
-import { APagination } from '@any-design/anyui';
+import { APagination } from '@any-design/anyui/vue';
 
 export default {
   components: {

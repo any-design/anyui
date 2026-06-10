@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { ATag } from '@any-design/anyui';
+import { ATag } from '@any-design/anyui/vue';
 
 export default {
   components: {

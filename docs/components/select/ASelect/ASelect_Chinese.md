@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ASelect } from '@any-design/anyui';
+import { ASelect } from '@any-design/anyui/vue';
 
 export default {
   components: {

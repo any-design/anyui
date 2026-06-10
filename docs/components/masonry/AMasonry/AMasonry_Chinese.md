@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { AMasonry } from '@any-design/anyui';
+import { AMasonry } from '@any-design/anyui/vue';
 
 export default {
   components: {

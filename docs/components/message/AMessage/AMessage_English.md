@@ -12,7 +12,7 @@ Here is a basic example of how to use the `AMessage` component:
 </template>
 
 <script>
-import { AMessage } from '@any-design/anyui';
+import { AMessage } from '@any-design/anyui/vue';
 
 export default {
   components: {

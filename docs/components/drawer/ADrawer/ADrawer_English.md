@@ -17,12 +17,11 @@ The `a-drawer` can be used as follows:
 
 <script>
 import { ref } from 'vue';
-import { DrawerPosition } from '@any-design/anyui';
 
 export default {
   setup() {
     const drawerVisible = ref(false);
-    const position = DrawerPosition.Right;
+    const position = 'right';
     return {
       drawerVisible,
       position,
@@ -113,13 +112,12 @@ The `a-drawer` component is styled using SCSS, which produces CSS. The CSS class
 
 <script>
 import { ref } from 'vue';
-import { DrawerPosition } from '@any-design/anyui';
 
 export default {
   setup() {
     const drawerVisible = ref(false);
     const appendToBody = true;
-    const drawerPosition = DrawerPosition.Right;
+    const drawerPosition = 'right';
     const withMask = true;
     const drawerWidth = '25%';
     const drawerZIndex = 150;

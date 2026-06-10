@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { AChat } from '@any-design/anyui';
+import { AChat } from '@any-design/anyui/vue';
 
 export default {
   components: {
@@ -55,7 +55,7 @@ export default {
 </template>
 
 <script>
-import { AChat } from '@any-design/anyui';
+import { AChat } from '@any-design/anyui/vue';
 
 export default {
   components: {
