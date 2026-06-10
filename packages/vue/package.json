@@ -1,0 +1,25 @@
+{
+  "name": "@any-design/anyui-vue",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Vue package for AnyUI",
+  "type": "module",
+  "main": "../../dist/vue/anyui.mjs",
+  "module": "../../dist/vue/anyui.mjs",
+  "types": "../../dist/vue/index.d.ts",
+  "scripts": {
+    "dev": "cross-env BUILD_TARGET=TESTGROUND vite",
+    "clean": "rimraf ../../dist/vue ../../styles dist-testground",
+    "build": "vue-tsc -p tsconfig.json --noEmit && cross-env BUILD_TARGET=LIBRARY vite build && cross-env BUILD_TARGET=RESOLVER vite build && node ../../scripts/afterBuild.mjs",
+    "build:testground": "rimraf ./dist-testground && cross-env BUILD_TARGET=TESTGROUND vite build",
+    "serve": "vite preview",
+    "lint": "vue-tsc -p tsconfig.json --noEmit",
+    "lint-fix": "vue-tsc -p tsconfig.json --noEmit",
+    "typecheck": "vue-tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "@iconify/vue": "^5.0.1",
+    "@popperjs/core": "^2.11.8",
+    "vue": "^3.5.35"
+  }
+}
