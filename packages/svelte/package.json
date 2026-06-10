@@ -1,0 +1,22 @@
+{
+  "name": "@any-design/anyui-svelte",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Svelte package for AnyUI",
+  "type": "module",
+  "svelte": "../../dist/svelte/index.mjs",
+  "main": "../../dist/svelte/index.mjs",
+  "module": "../../dist/svelte/index.mjs",
+  "types": "../../dist/svelte/index.d.ts",
+  "scripts": {
+    "build": "vite build",
+    "clean": "rimraf ../../dist/svelte",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "lint-fix": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "@iconify/svelte": "^5.2.1",
+    "svelte": "^5.56.3"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "composite": true,
+    "declarationDir": "../../dist/svelte",
+    "emitDeclarationOnly": false,
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "outDir": "../../dist/svelte",
+    "tsBuildInfoFile": "./.turbo/tsconfig.tsbuildinfo"
+  },
+  "include": ["src/**/*.ts", "src/**/*.svelte", "vite.config.ts"]
+}
