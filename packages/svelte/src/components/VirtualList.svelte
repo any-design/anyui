@@ -1,6 +1,6 @@
 <script lang="ts">
   import { afterUpdate, onDestroy, onMount, tick } from 'svelte';
-  import type { RawVirtualListItem } from '../types';
+  import type { RawVirtualListItem, VirtualListItem } from '../types';
   export let items: RawVirtualListItem<unknown>[] = [];
   export let buffer = 1200;
   export let estimatedItemHeight: number | undefined = undefined;
@@ -74,6 +74,21 @@
   }
   export function scrollTo(top: number) {
     if (containerEl) containerEl.scrollTop = top;
+  }
+  export function scrollToItem(idOrFunc: string | ((item: VirtualListItem<unknown>) => boolean)) {
+    const targetIndex =
+      typeof idOrFunc === 'function'
+        ? items.findIndex((item: any, listIndex) =>
+            idOrFunc({
+              ...item,
+              __listIndex: listIndex,
+              __itemHeight: itemHeights[listIndex],
+              __itemScrollTop: prefixHeights[listIndex],
+            } as VirtualListItem<unknown>),
+          )
+        : items.findIndex((item: any) => item.id === idOrFunc);
+    if (targetIndex < 0) return;
+    scrollTo(prefixHeights[targetIndex] ?? 0);
   }
   export function scrollToBottom() {
     if (containerEl) containerEl.scrollTop = containerEl.scrollHeight;

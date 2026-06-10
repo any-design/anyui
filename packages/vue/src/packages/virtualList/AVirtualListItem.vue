@@ -2,25 +2,21 @@
   <div
     ref="itemRef"
     class="a-virtual-list__item"
-    :data-index="item?.__listIndex"
-    :data-id="item?.id"
+    :data-index="(item as VirtualListItem<T> | undefined)?.__listIndex"
+    :data-id="(item as VirtualListItem<T> | undefined)?.id"
   >
     <slot></slot>
   </div>
 </template>
 
-<script setup lang="ts">
-import type { PropType } from 'vue';
+<script setup generic="T extends object" lang="ts">
 import { onMounted, onBeforeUnmount, ref, inject } from 'vue';
 
 import type { VirtualListItem } from './types';
 
-const props = defineProps({
-  // the item passed in from the virtual list.
-  item: {
-    type: Object as PropType<VirtualListItem<unknown>>,
-  },
-});
+const props = defineProps<{
+  item: VirtualListItem<T>;
+}>();
 
 const emit = defineEmits(['initHeight']);
 

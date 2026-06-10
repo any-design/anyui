@@ -3,7 +3,7 @@
     <p class="testground-content-title">Virtual List</p>
     <div class="testground-flex">
       <div class="virtual-container">
-        <a-virtual-list :items="list">
+        <AVirtualList :items="list">
           <template #default="scope">
             <div
               class="virtual-item"
@@ -14,7 +14,7 @@
               {{ scope.item.index }} ({{ scope.item.height }}px)
             </div>
           </template>
-        </a-virtual-list>
+        </AVirtualList>
       </div>
     </div>
   </div>
@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { VirtualList as AVirtualList } from '../../';
+import AVirtualList from '../../packages/virtualList/AVirtualList.vue';
 import type { RawVirtualListItem } from '../../';
 
 const list = ref(
