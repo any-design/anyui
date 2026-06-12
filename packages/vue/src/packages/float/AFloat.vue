@@ -155,12 +155,17 @@ export default defineComponent({
 
   &__content {
     height: max-content;
-    background: var(--bg-semi-light);
+    background: var(--a-surface, var(--bg-semi-light));
+    -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+    backdrop-filter: var(--a-surface-backdrop, none);
+    border: 1px solid var(--a-surface-border-color, transparent);
     margin-left: auto;
     margin-right: auto;
     z-index: 1;
     padding: 16px;
-    box-shadow: 0 1px 12px var(--shadow-w-6);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      var(--a-shadow-lg, 0 1px 12px var(--shadow-w-6));
     box-sizing: border-box;
     position: relative;
   }
@@ -180,6 +185,14 @@ export default defineComponent({
 .a-float-fade-enter-from,
 .a-float-fade-leave-to {
   opacity: 0;
+}
+
+.a-float-fade-enter-active .a-float__content {
+  transition: transform var(--anim-duration, 200ms) var(--a-ease-spring, ease);
+}
+
+.a-float-fade-enter-from .a-float__content {
+  transform: scale(0.94);
 }
 
 @if $anyui-enable-responsive-styles {

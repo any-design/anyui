@@ -1,42 +1,33 @@
 <script lang="ts">
-  import { afterUpdate, onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick, untrack } from 'svelte';
   import type { RawVirtualListItem, VirtualListItem } from '../types';
-  export let items: RawVirtualListItem<unknown>[] = [];
-  export let buffer = 1200;
-  export let estimatedItemHeight: number | undefined = undefined;
-  export let ignoreInvisibleItems = false;
-  export let className = '';
-  export { className as class };
-  let containerEl: HTMLDivElement;
-  let containerHeight = 0;
-  let scrollTop = 0;
+  let {
+    items = [] as RawVirtualListItem<unknown>[],
+    buffer = 1200,
+    estimatedItemHeight = undefined,
+    ignoreInvisibleItems = false,
+    class: className = '',
+    children,
+  } = $props();
+  let containerEl = $state<HTMLDivElement>();
+  let containerHeight = $state(0);
+  let scrollTop = $state(0);
   let resizeObserver: ResizeObserver | undefined;
-  let itemNodes = new Map<string, HTMLElement>();
-  let heightMap: Record<string, number> = {};
-  $: knownHeights = Object.values(heightMap).filter((value) => value > 0);
-  $: fallbackHeight = estimatedItemHeight && estimatedItemHeight > 0 ? estimatedItemHeight : knownHeights.length ? Math.min(...knownHeights) : 64;
-  $: itemHeights = items.map((item: any) => {
+  const itemNodes = new Map<string, HTMLElement>();
+  let heightMap = $state<Record<string, number>>({});
+  const knownHeights = $derived(Object.values(heightMap).filter((value) => value > 0));
+  const fallbackHeight = $derived(estimatedItemHeight && estimatedItemHeight > 0 ? estimatedItemHeight : knownHeights.length ? Math.min(...knownHeights) : 64);
+  const itemHeights = $derived(items.map((item: any) => {
     if (item.id && heightMap[item.id]) return heightMap[item.id];
     if (typeof item.height === 'number' && isFinite(item.height)) return item.height;
     return fallbackHeight;
-  });
-  $: prefixHeights = itemHeights.reduce((result, height) => {
+  }));
+  const prefixHeights = $derived(itemHeights.reduce((result, height) => {
     result.push(result[result.length - 1] + height);
     return result;
-  }, [0] as number[]);
-  $: totalHeight = prefixHeights[prefixHeights.length - 1] ?? 0;
-  $: visibleRange = getVisibleRange();
-  $: displayItems = items.slice(visibleRange.start, visibleRange.end).map((item: any, index) => {
-    const listIndex = visibleRange.start + index;
-    return {
-      ...item,
-      __listIndex: listIndex,
-      __itemHeight: itemHeights[listIndex],
-      __itemScrollTop: prefixHeights[listIndex],
-    };
-  });
-  $: firstItemTop = prefixHeights[visibleRange.start] ?? 0;
-  function getVisibleRange() {
+  }, [0] as number[]));
+  const totalHeight = $derived(prefixHeights[prefixHeights.length - 1] ?? 0);
+  const visibleRange = $derived.by(() => {
     if (!items.length) return { start: 0, end: 0 };
     const top = Math.max(0, scrollTop - buffer);
     const bottom = scrollTop + containerHeight + buffer;
@@ -45,7 +36,17 @@
     let end = start + 1;
     while (end < items.length && prefixHeights[end] <= bottom) end += 1;
     return { start, end: Math.min(items.length, end + 1) };
-  }
+  });
+  const displayItems = $derived(items.slice(visibleRange.start, visibleRange.end).map((item: any, index) => {
+    const listIndex = visibleRange.start + index;
+    return {
+      ...item,
+      __listIndex: listIndex,
+      __itemHeight: itemHeights[listIndex],
+      __itemScrollTop: prefixHeights[listIndex],
+    };
+  }));
+  const firstItemTop = $derived(prefixHeights[visibleRange.start] ?? 0);
   function setItemNode(node: HTMLElement, id: string) {
     itemNodes.set(id, node);
     resizeObserver?.observe(node);
@@ -115,15 +116,16 @@
     containerHeight = containerEl?.clientHeight ?? 0;
     return undefined;
   });
-  afterUpdate(() => {
-    itemNodes.forEach(measureNode);
+  $effect(() => {
+    void displayItems;
+    untrack(() => itemNodes.forEach(measureNode));
   });
   onDestroy(() => {
     resizeObserver?.disconnect();
   });
 </script>
 
-<div bind:this={containerEl} class="a-virtual-list {className}" on:scroll={refreshDisplay}>
+<div bind:this={containerEl} class="a-virtual-list {className}" onscroll={refreshDisplay}>
   <div class="a-virtual-list__inner a-scroll-shadows" style:height={totalHeight + 'px'}>
     <div class="a-virtual-list__filler" style:transform={'translateY(' + firstItemTop + 'px)'}>
       {#each displayItems as item (item.id)}
@@ -132,9 +134,9 @@
           class="a-virtual-list__item"
           data-index={item.__listIndex}
           data-id={item.id}
-        ><slot item={item} index={item.__listIndex}>{item.id}</slot></div>
+        >{#if children}{@render children(item, item.__listIndex)}{:else}{item.id}{/if}</div>
       {/each}
-      <slot />
+      {@render children?.()}
     </div>
   </div>
 </div>

@@ -1,10 +1,12 @@
 <script lang="ts">
   import { setContext } from 'svelte';
-  export let fit = true;
-  export let type = '';
-  export let itemHeight: string | number | undefined = undefined;
-  export let className = '';
-  export { className as class };
+  let {
+    fit = true,
+    type = '',
+    itemHeight = undefined,
+    class: className = '',
+    children,
+  } = $props();
   const context = {
     get type() {
       return type;
@@ -17,5 +19,5 @@
 </script>
 
 <div class="a-list-view {fit ? 'a-list-view--fit' : ''} {className}">
-  <slot />
+  {@render children?.()}
 </div>

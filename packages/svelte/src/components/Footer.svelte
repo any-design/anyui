@@ -1,9 +1,11 @@
 <script lang="ts">
-  export let height: string | number = '';
-  export let className = '';
-  export { className as class };
+  let {
+    height = '',
+    class: className = '',
+    children,
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedHeight = formatStyleSize(height);
+  const formattedHeight = $derived(formatStyleSize(height));
 </script>
 
-<footer class="a-layout-inner a-footer {className}" style:height={formattedHeight}><slot /></footer>
+<footer class="a-layout-inner a-footer {className}" style:height={formattedHeight}>{@render children?.()}</footer>

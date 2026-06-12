@@ -1,15 +1,17 @@
 <script lang="ts">
   import { setContext } from 'svelte';
-  import { get, writable } from 'svelte/store';
+  import { writable } from 'svelte/store';
   import ValidateSchema from 'async-validator';
   import type { Rules } from 'async-validator';
   import type { FormRuleItem } from '../types';
-  export let modelValue: Record<string, unknown> = {};
-  export let rules: Record<string, FormRuleItem[]> = {};
-  export let layout = 'default';
-  export let labelWidth: string | number = '20%';
-  export let className = '';
-  export { className as class };
+  let {
+    modelValue = {} as Record<string, unknown>,
+    rules = {} as Record<string, FormRuleItem[]>,
+    layout = 'default',
+    labelWidth = '20%',
+    class: className = '',
+    children,
+  } = $props();
   const validation = writable<Record<string, { isValid: boolean; message: string }>>({});
   const clearSignals = writable<Record<string, number>>({});
   const clearAllSignal = writable(0);
@@ -115,5 +117,5 @@
 </script>
 
 <div class="a-form {layout === 'inline' ? 'a-form--inline' : ''} {className}">
-  <slot />
+  {@render children?.()}
 </div>

@@ -81,7 +81,14 @@ export default defineComponent({
   font-weight: 600;
   z-index: 5;
   cursor: pointer;
-  transition: color 200ms ease;
+  transition: color 200ms ease,
+    transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+}
+.a-radio-button:hover:not(.a-radio-button--selected) {
+  color: var(--primary);
+}
+.a-radio-button:active:not(.a-radio-button--selected) {
+  transform: scale(0.96);
 }
 .a-radio-button--selected {
   color: var(--text-btn);

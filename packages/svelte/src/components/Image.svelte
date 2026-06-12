@@ -1,25 +1,26 @@
 <script lang="ts">
-  export let src = '';
-  export let width: string | number = '100%';
-  export let height: string | number = '100%';
-  export let size = 'cover';
-  export let position = 'center';
-  export let repeat = 'no-repeat';
-  export let loading: unknown = undefined;
-  export let error: unknown = undefined;
-  export let className = '';
-  export { className as class };
+  let {
+    src = '',
+    width = '100%',
+    height = '100%',
+    size = 'cover',
+    position = 'center',
+    repeat = 'no-repeat',
+    loading = undefined,
+    error = undefined,
+    class: className = '',
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedWidth = formatStyleSize(width);
-  $: formattedHeight = formatStyleSize(height);
+  const formattedWidth = $derived(formatStyleSize(width));
+  const formattedHeight = $derived(formatStyleSize(height));
 </script>
 
 <div class="a-image {className}" data-src={src || undefined} style:width={formattedWidth} style:height={formattedHeight}>
   {#if loading}
-    <div class="a-image__loading"><slot name="loading">{loading}</slot></div>
+    <div class="a-image__loading">{#if typeof loading === 'function'}{@render loading()}{:else}{loading}{/if}</div>
   {:else if src}
     <div class="a-image__pic" style:background-image={'url(' + src + ')'} style:background-size={size} style:background-position={position} style:background-repeat={repeat}></div>
   {:else}
-    <div class="a-image__error"><slot name="error">{error}</slot></div>
+    <div class="a-image__error">{#if typeof error === 'function'}{@render error()}{:else}{error}{/if}</div>
   {/if}
 </div>

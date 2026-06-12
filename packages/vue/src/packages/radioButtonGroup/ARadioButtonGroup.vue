@@ -210,17 +210,18 @@ export default defineComponent({
   width: max-content;
   padding: 12px 4px;
   box-sizing: border-box;
-  border-radius: 6px;
+  border-radius: var(--a-radius-sm, 10px);
   background-color: var(--bg-bright);
-  box-shadow: 1px 3px 16px var(--shadow-8);
+  box-shadow: var(--a-shadow-sm, 1px 3px 16px var(--shadow-8));
 
   &__bg {
     position: absolute;
     background-color: var(--primary-80);
-    box-shadow: 2px 3px 5px var(--shadow-10);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--primary) 45%, transparent),
+      2px 3px 5px var(--shadow-10);
     height: 36px;
     top: 4px;
-    border-radius: 4px;
+    border-radius: var(--a-radius-xs, 6px);
     z-index: 1;
   }
 
@@ -233,16 +234,16 @@ export default defineComponent({
 
 .a-radio-button-group--round {
   padding: 12px 6px;
-  border-radius: 22px;
+  border-radius: var(--a-radius-xl, 22px);
 
   .a-radio-button-group__bg {
-    border-radius: 18px;
+    border-radius: var(--a-radius-lg, 18px);
   }
 }
 
 .a-radio-button-group--animated {
   .a-radio-button-group__bg {
-    transition: transform 200ms ease;
+    transition: transform var(--anim-duration, 200ms) var(--a-ease-spring, ease);
   }
 }
 </style>

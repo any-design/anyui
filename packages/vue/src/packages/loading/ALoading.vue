@@ -50,39 +50,22 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@keyframes a-loading-circle-1 {
+@keyframes a-loading-bounce {
   0% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    opacity: 0.45;
+  }
+  40% {
+    transform: translateY(-0.75em) scale(1.18);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(0) scale(1);
+    opacity: 0.45;
   }
   100% {
-    transform: translateY(-1em);
-  }
-}
-
-@keyframes a-loading-circle-2 {
-  0% {
-    transform: translateY(-1em);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-@keyframes a-loading-circle-3 {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(1em);
-  }
-}
-
-@keyframes a-loading-circle-4 {
-  0% {
-    transform: translateY(1em);
-  }
-  100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    opacity: 0.45;
   }
 }
 
@@ -95,37 +78,29 @@ export default defineComponent({
     align-items: center;
     &-circle {
       background: var(--primary);
-      width: 1em;
-      height: 1em;
-      margin-left: 1em;
-      border-radius: 0.5em;
+      width: 1.125em;
+      height: 1.125em;
+      margin-left: 0.875em;
+      border-radius: var(--a-radius-full, 50%);
+      opacity: 0.45;
     }
     &-circle:first-child {
       margin-left: 0;
     }
     &-circle__1 {
-      animation: a-loading-circle-1 0.11s cubic-bezier(0, 0, 0.353, 1) 0s 1,
-        a-loading-circle-2 0.13s cubic-bezier(0.61, 0, 1, 1) 0.11s 1,
-        a-loading-circle-3 0.12s cubic-bezier(0, 0, 0.355, 1) 0.24s 1,
-        a-loading-circle-4 0.12s cubic-bezier(0.61, 0, 1, 1) 0.36s 1;
+      animation: a-loading-bounce 0.85s var(--a-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1)) 0s 1;
     }
     &-circle__2 {
-      animation: a-loading-circle-1 0.11s cubic-bezier(0, 0, 0.353, 1) 0.06s 1,
-        a-loading-circle-2 0.13s cubic-bezier(0.61, 0, 1, 1) 0.17s 1,
-        a-loading-circle-3 0.12s cubic-bezier(0, 0, 0.355, 1) 0.3s 1,
-        a-loading-circle-4 0.12s cubic-bezier(0.65, 0, 1, 1) 0.42s 1;
+      animation: a-loading-bounce 0.85s var(--a-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1))
+        0.1s 1;
     }
     &-circle__3 {
-      animation: a-loading-circle-1 0.11s cubic-bezier(0, 0, 0.353, 1) 0.14s 1,
-        a-loading-circle-2 0.13s cubic-bezier(0.61, 0, 1, 1) 0.25s 1,
-        a-loading-circle-3 0.11s cubic-bezier(0, 0, 0.355, 1) 0.38s 1,
-        a-loading-circle-4 0.12s cubic-bezier(0.65, 0, 1, 1) 0.49s 1;
+      animation: a-loading-bounce 0.85s var(--a-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1))
+        0.2s 1;
     }
     &-circle__4 {
-      animation: a-loading-circle-1 0.11s cubic-bezier(0, 0, 0.353, 1) 0.21s 1,
-        a-loading-circle-2 0.13s cubic-bezier(0.61, 0, 1, 1) 0.32s 1,
-        a-loading-circle-3 0.11s cubic-bezier(0, 0, 0.355, 1) 0.45s 1,
-        a-loading-circle-4 0.12s cubic-bezier(0.65, 0, 1, 1) 0.56s 1;
+      animation: a-loading-bounce 0.85s var(--a-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1))
+        0.3s 1;
     }
   }
 }

@@ -1,4 +1,13 @@
-export type ButtonType = 'default' | 'primary' | 'gradient' | 'gradient-reverse';
+export type ButtonType =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'info'
+  | 'warn'
+  | 'danger'
+  | 'depth'
+  | 'gradient'
+  | 'gradient-reverse';
 
 export type ButtonSize = 'default' | 'small' | 'large';
 

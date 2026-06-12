@@ -54,12 +54,13 @@ export default defineComponent({
   height: max-content;
   position: relative;
   &__line {
-    height: 3px;
+    height: 2px;
     width: calc(100% - 28px);
     position: absolute;
-    top: 19px;
+    top: 20px;
     left: 14px;
     background: var(--line);
+    border-radius: var(--a-radius-full, 999px);
     z-index: 0;
   }
   &__content {
@@ -73,35 +74,59 @@ export default defineComponent({
       align-items: center;
       justify-content: center;
       z-index: 1;
+      // items before (and including) the current one render as completed
       &__circle {
         width: 42px;
         height: 42px;
         line-height: 42px;
-        background: var(--bg-disabled);
-        color: var(--text-disabled);
-        border-radius: 50%;
+        background: var(--primary);
+        color: var(--text-btn, #fff);
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        border-radius: var(--a-radius-full, 50%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        transition: all var(--anim-duration, 200ms) ease;
+        transition:
+          transform var(--anim-duration, 200ms) var(--a-ease-spring, ease),
+          background-color var(--anim-duration, 200ms) ease,
+          border-color var(--anim-duration, 200ms) ease,
+          color var(--anim-duration, 200ms) ease,
+          box-shadow var(--anim-duration, 200ms) ease;
       }
       &__name {
-        color: var(--text-disabled);
-        margin-top: 10px;
-        font-weight: 600;
-        font-size: 20px;
+        color: var(--text-secondary);
+        margin-top: 8px;
+        font-weight: 500;
+        font-size: 13px;
         transition: all var(--anim-duration, 200ms) ease;
         letter-spacing: 0.05rem;
       }
     }
     .a-step-item--current {
       .a-step-item__circle {
-        background: var(--primary-100);
-        color: var(--bg);
+        background: var(--primary-100, var(--primary));
+        color: var(--text-btn, #fff);
+        transform: scale(1.04);
+        box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--primary) 45%, transparent);
       }
       .a-step-item__name {
         color: var(--primary);
+        font-weight: 600;
+      }
+    }
+    // items after the current one are pending
+    .a-step-item--current ~ .a-step-item {
+      .a-step-item__circle {
+        background: var(--bg-semi-light, var(--bg));
+        color: var(--text-disabled);
+        border-color: var(--border-light, var(--border));
+        box-shadow: none;
+      }
+      .a-step-item__name {
+        color: var(--text-disabled);
+        font-weight: 500;
       }
     }
   }

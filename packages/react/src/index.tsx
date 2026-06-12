@@ -23,11 +23,20 @@ import type {
   AListMenuDisplayItem,
   AListMenuItemConfig,
   ASelectItems,
+  ConfirmModalOptions,
+  DropdownMenuItem,
   FormRuleItem,
+  LoadingMaskShowOptions,
   MessageOptions,
   PaginationMeta,
   PopMenuItem,
   RawVirtualListItem,
+  TableColumn,
+  TableRow,
+  ToastItem,
+  ToastOptions,
+  ToastPlacement,
+  ToastType,
   VirtualListItem as VirtualListDataItem,
 } from './types';
 export * from './types';
@@ -187,7 +196,7 @@ export const Checkbox = forwardRef<HTMLDivElement, AnyUIReactProps>(function Che
     onChange?.(next);
   };
   return (
-    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-checkbox', checked && 'a-checkbox--checked', className)} onClick={update}>
+    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-checkbox', checked && 'a-checkbox--checked', className)} style={rest.style} onClick={update}>
       <div className="a-checkbox-checker">{checked ? <Icon className="a-checkbox-checker__icon" icon={checkIcon} /> : null}</div>
       <div className="a-checkbox-label">{label}</div>
     </div>
@@ -484,6 +493,7 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
     modelValue = '',
     placeholder = '',
     disabled = false,
+    multiple = false,
     expandIcon = 'ic:outline-expand-more',
     onUpdateModelValue,
     onChange,
@@ -499,13 +509,31 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
   useEffect(() => setSelectedValue(modelValue), [modelValue]);
   useEffect(() => {
     if (!formItem?.clearSignal) return;
-    setSelectedValue('');
-    onUpdateModelValue?.('');
-    onChange?.('');
+    const emptyValue = multiple ? [] : '';
+    setSelectedValue(emptyValue);
+    onUpdateModelValue?.(emptyValue);
+    onChange?.(emptyValue);
   }, [formItem?.clearSignal]);
-  const selected = items.find((item) => item.value === selectedValue);
+  const selectedValues: Array<string | number> = Array.isArray(selectedValue) ? selectedValue : [];
+  const isItemSelected = (item: { text: string; value: string | number }) =>
+    multiple ? selectedValues.includes(item.value) : item.value === selectedValue;
+  // always display the text of the selected items, never their raw values
+  const displayText = multiple
+    ? items.filter((item) => selectedValues.includes(item.value)).map((item) => item.text).join(', ')
+    : (items.find((item) => item.value === selectedValue)?.text ?? '');
   const selectItem = (item: { text: string; value: string | number }) => {
     if (disabled) return;
+    if (multiple) {
+      const next = selectedValues.includes(item.value)
+        ? selectedValues.filter((value) => value !== item.value)
+        : [...selectedValues, item.value];
+      setSelectedValue(next);
+      onUpdateModelValue?.(next);
+      onChange?.(next);
+      formItem?.notifyChange();
+      // keep the dropdown open in multi-select mode
+      return;
+    }
     setSelectedValue(item.value);
     onUpdateModelValue?.(item.value);
     onChange?.(item.value);
@@ -532,7 +560,7 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
         <div className={cx('a-input', 'a-select__inner', rest.size === 'large' && 'a-input--large', rest.round && 'a-input--round', disabled && 'a-input--disabled', 'a-input--has-postfix')}>
           <input
             className="a-input__inner"
-            value={selected?.text ?? ''}
+            value={displayText}
             placeholder={placeholder}
             disabled={disabled}
             readOnly
@@ -549,13 +577,13 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
       </div>
       {expanded && !disabled ? (
         <div className="a-select-dropdown__wrapper">
-          <div id={dropdownId} className="a-select-dropdown" role="listbox">
+          <div id={dropdownId} className="a-select-dropdown" role="listbox" aria-multiselectable={multiple || undefined}>
             {items.map((item) => (
               <div
                 key={String(item.value)}
-                className="a-select-dropdown__item"
+                className={cx('a-select-dropdown__item', isItemSelected(item) && 'a-select-dropdown__item--selected')}
                 role="option"
-                aria-selected={item.value === selectedValue}
+                aria-selected={isItemSelected(item)}
                 tabIndex={0}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => selectItem(item)}
@@ -566,7 +594,10 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
                   }
                 }}
               >
-                {item.text}
+                <span className="a-select-dropdown__item-text">{item.text}</span>
+                {multiple && isItemSelected(item) ? (
+                  <Icon className="a-select-dropdown__item-check" icon="ic:round-check" />
+                ) : null}
               </div>
             ))}
           </div>
@@ -576,17 +607,21 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
   );
 });
 
+// Vue applies the custom tag color at 0.2 alpha unless it is a css variable.
+const tagBackgroundColor = (value: string) =>
+  value.startsWith('var') ? value : `color-mix(in srgb, ${value} 20%, transparent)`;
+
 export const Tag = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tag(
   { children, className, round = false, size = 'default', color = '', bgColor = '', ...rest },
   ref,
 ) {
-  const backgroundColor = bgColor || color;
+  const backgroundBase = bgColor || color;
   return (
     <div
       {...pickDataAttrs(rest)}
       ref={ref}
       className={cx('a-tag', round && 'a-tag--round', size && `a-tag--${size}`, (color || bgColor) && 'a-tag--custom-color', className)}
-      style={{ backgroundColor: backgroundColor || undefined, color: color || undefined, ...rest.style }}
+      style={{ backgroundColor: backgroundBase ? tagBackgroundColor(backgroundBase) : undefined, color: color || undefined, ...rest.style }}
     >
       {children}
     </div>
@@ -594,7 +629,7 @@ export const Tag = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tag(
 });
 
 export const GradientText = forwardRef<HTMLSpanElement, AnyUIReactProps>(function GradientText(
-  { children, className, gradient = '', reverseGradient = false, size = '', primaryColor = 'var(--primary)', secondaryColor = 'var(--secondary)', splitPercent = 30, ...rest },
+  { children, className, gradient = '', reverseGradient = false, size = '', primaryColor = 'var(--primary)', secondaryColor = 'var(--secondary)', splitPercent = 30, glow = false, ...rest },
   ref,
 ) {
   const background =
@@ -603,7 +638,7 @@ export const GradientText = forwardRef<HTMLSpanElement, AnyUIReactProps>(functio
       ? `linear-gradient(90deg, ${primaryColor}, ${secondaryColor} ${splitPercent}%, ${secondaryColor} 100%)`
       : `linear-gradient(90deg, ${secondaryColor}, ${primaryColor} ${splitPercent}%, ${primaryColor} 100%)`);
   return (
-    <span ref={ref} className={cx('a-gradient-text', className)} style={{ background, fontSize: formatStyleSize(size), ...rest.style }}>
+    <span ref={ref} className={cx('a-gradient-text', glow && 'a-gradient-text--glow', className)} style={{ background, fontSize: formatStyleSize(size), ...rest.style }}>
       {children}
     </span>
   );
@@ -649,33 +684,103 @@ export const Loading = () => (
   </div>
 );
 
-export const Spinner = forwardRef<HTMLSpanElement, AnyUIReactProps>(function Spinner({ className, icon = 'quill:loading-spin', ...rest }, ref) {
+export const Spinner = forwardRef<HTMLSpanElement, AnyUIReactProps>(function Spinner({ className, icon = '', ...rest }, ref) {
   return (
     <span {...pickDataAttrs(rest)} ref={ref} className={cx('a-spinner', className)}>
-      <Icon className="a-spinner__inner" icon={icon} />
+      {icon ? (
+        <Icon className="a-spinner__inner" icon={icon} />
+      ) : (
+        <svg className="a-spinner__inner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" pathLength="100" strokeDasharray="75 100" />
+        </svg>
+      )}
     </span>
   );
 });
 
-export const Empty = forwardRef<HTMLDivElement, AnyUIReactProps>(function Empty({ className, text, icon = 'iconoir:file-not-found', ...rest }, ref) {
+export const Empty = forwardRef<HTMLDivElement, AnyUIReactProps>(function Empty({ className, text, icon = 'iconoir:file-not-found', children, ...rest }, ref) {
   return (
     <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-empty', className)}>
-      <Icon className="a-empty__icon" icon={icon} />
+      <div className="a-empty__figure">
+        <Icon className="a-empty__icon" icon={icon} />
+      </div>
       {text ? <span className="a-empty__text">{text}</span> : null}
+      {children !== undefined && children !== null ? (
+        <div className="a-empty__actions">{children}</div>
+      ) : null}
     </div>
   );
 });
 
+// matches the Vue ACollapse transition duration (var(--anim-duration, 200ms))
+const COLLAPSE_TRANSITION_DURATION = 200;
+
 export const Collapse = forwardRef<HTMLDivElement, AnyUIReactProps>(function Collapse(
-  { children, className, visible = false, direction = 'vertical', alwaysRender = false, ...rest },
+  { children, className, visible = false, direction = 'vertical', alwaysRender = false, renderWaitTime = 100, ...rest },
   ref,
 ) {
-  if (!visible && !alwaysRender) return null;
+  const elementRef = useRef<HTMLDivElement | null>(null);
+  const [collapsed, setCollapsed] = useState(!visible);
+  const [rendered, setRendered] = useState(visible);
+  const [sizeStyle, setSizeStyle] = useState<React.CSSProperties | undefined>(undefined);
+  const firstRef = useRef(true);
+  const setElementRef = (node: HTMLDivElement | null) => {
+    elementRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as any).current = node;
+  };
+  const measure = (collapsedSize: boolean) => {
+    const element = elementRef.current;
+    if (!element) return undefined;
+    const size =
+      direction === 'vertical'
+        ? element[collapsedSize ? 'clientHeight' : 'scrollHeight']
+        : element[collapsedSize ? 'clientWidth' : 'scrollWidth'];
+    return direction === 'vertical' ? { maxHeight: `${size}px` } : { maxWidth: `${size}px` };
+  };
+  useEffect(() => {
+    if (firstRef.current) {
+      firstRef.current = false;
+      return undefined;
+    }
+    let raf = 0;
+    let animeTimeout: number | undefined;
+    let renderTimeout: number | undefined;
+    if (visible) {
+      setRendered(true);
+      // wait a frame so a freshly mounted element can be measured while still collapsed
+      raf = requestAnimationFrame(() => {
+        setSizeStyle(measure(false));
+        setCollapsed(false);
+        animeTimeout = window.setTimeout(() => setSizeStyle(undefined), COLLAPSE_TRANSITION_DURATION);
+      });
+    } else {
+      // pin the current size so the transition has an explicit starting point
+      setSizeStyle(measure(true));
+      raf = requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          setSizeStyle(undefined);
+          setCollapsed(true);
+        }),
+      );
+      renderTimeout = window.setTimeout(
+        () => setRendered(false),
+        COLLAPSE_TRANSITION_DURATION + renderWaitTime,
+      );
+    }
+    return () => {
+      cancelAnimationFrame(raf);
+      if (animeTimeout) window.clearTimeout(animeTimeout);
+      if (renderTimeout) window.clearTimeout(renderTimeout);
+    };
+  }, [visible, direction, renderWaitTime]);
+  if (!rendered && !alwaysRender) return null;
   return (
     <div
       {...pickDataAttrs(rest)}
-      ref={ref}
-      className={cx('a-collapse', !visible && `a-collapse--collapsed-${direction}`, className)}
+      ref={setElementRef}
+      className={cx('a-collapse', collapsed && `a-collapse--collapsed-${direction}`, className)}
+      style={{ ...sizeStyle, ...rest.style }}
     >
       {children}
     </div>
@@ -702,24 +807,78 @@ export const Float = forwardRef<HTMLDivElement, AnyUIReactProps>(function Float(
 });
 
 export const Drawer = forwardRef<HTMLDivElement, AnyUIReactProps>(function Drawer(
-  { children, className, drawerClass, maskClass, bodyClass, modelValue = false, withMask = true, position = 'left', width = '30%', zIndex = 100, maskZIndex, onUpdateModelValue, ...rest },
+  {
+    children,
+    className,
+    drawerClass,
+    maskClass,
+    bodyClass,
+    modelValue = false,
+    appendToBody = true,
+    withMask = true,
+    position = 'left',
+    width = '30%',
+    zIndex = 100,
+    maskZIndex,
+    lockScroll = true,
+    transitionName,
+    onUpdateModelValue,
+    ...rest
+  },
   ref,
 ) {
-  if (!modelValue) return null;
-  return (
-    <div ref={ref} className={cx('a-drawer', `a-drawer--${position}`, drawerClass, className)} role="dialog">
+  const [rendered, transitionClass] = useVueTransition(transitionName || 'a-drawer', modelValue, 240);
+  useEffect(() => {
+    if (!modelValue || !lockScroll) return undefined;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
+  }, [modelValue, lockScroll]);
+  const node = rendered ? (
+    <div
+      ref={ref}
+      className={cx('a-drawer', `a-drawer--${position}`, transitionClass, drawerClass, className)}
+      role="dialog"
+      onClick={(event) => event.stopPropagation()}
+    >
       {withMask ? (
-        <div className={cx('a-drawer__mask', maskClass)} style={{ zIndex: maskZIndex || zIndex - 1 }} onClick={() => onUpdateModelValue?.(false)} />
+        <div
+          className={cx('a-drawer__mask', appendToBody && 'a-drawer__mask--outside', maskClass)}
+          style={{ zIndex: maskZIndex || zIndex - 1 }}
+          onClick={() => onUpdateModelValue?.(false)}
+        />
       ) : null}
-      <div className={cx('a-drawer__body', bodyClass)} style={{ width: formatStyleSize(width), zIndex, ...rest.style }}>
+      <div
+        className={cx('a-drawer__body', appendToBody && 'a-drawer__body--outside', bodyClass)}
+        style={{ width: formatStyleSize(width), zIndex, ...rest.style }}
+      >
         {children}
       </div>
     </div>
-  );
+  ) : null;
+  return appendToBody && typeof document !== 'undefined' ? createPortal(node, document.body) : node;
 });
 
-export const Split = forwardRef<HTMLDivElement, AnyUIReactProps>(function Split({ className, margin = 0, color, ...rest }, ref) {
-  return <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-split', className)} style={{ margin: formatStyleSize(margin), backgroundColor: color, ...rest.style }} />;
+export const Split = forwardRef<HTMLDivElement, AnyUIReactProps>(function Split(
+  { className, height = 2, color = 'var(--line)', margin = 12, round = false, ...rest },
+  ref,
+) {
+  const formattedMargin = formatStyleSize(margin);
+  const formattedHeight = formatStyleSize(height);
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-split', className)}
+      style={{
+        height: formattedHeight,
+        backgroundColor: color,
+        marginTop: formattedMargin,
+        marginBottom: formattedMargin,
+        borderRadius: round ? `calc(${formattedHeight} / 2)` : undefined,
+        ...rest.style,
+      }}
+    />
+  );
 });
 
 export const Step = forwardRef<HTMLDivElement, AnyUIReactProps>(function Step({ className, steps = 2, current = 1, ...rest }, ref) {
@@ -1188,16 +1347,70 @@ export const VirtualListItem = forwardRef<HTMLDivElement, AnyUIReactProps>(funct
   );
 });
 
-export const Masonry = forwardRef<HTMLDivElement, AnyUIReactProps>(function Masonry({ children, className, items = [], columns = 3, gap = 16, ...rest }, ref) {
+export const Masonry = forwardRef<HTMLDivElement, AnyUIReactProps>(function Masonry(
+  { children, className, items = [], itemHeightGetter, colWidth = 240, col = 0, gap = 16, fit = false, ...rest },
+  ref,
+) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
+  const [containerWidth, setContainerWidth] = useState(0);
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return undefined;
+    // in fit mode the container width is pinned to the computed fit width,
+    // so measure the parent element to keep the column count responsive
+    const target = fit && !col ? container.parentElement ?? container : container;
+    const measure = () => setContainerWidth(target.offsetWidth);
+    measure();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', measure);
+      return () => window.removeEventListener('resize', measure);
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [fit, col]);
+  const columns = Math.max(1, col || Math.floor((containerWidth + gap) / (colWidth + gap)));
+  const layout = useMemo(() => {
+    const columnHeights = new Array(columns).fill(0) as number[];
+    const positions = items.map((item: any) => {
+      const rawHeight = typeof itemHeightGetter === 'function' ? itemHeightGetter(item) : Number(item?.height);
+      const height = Number.isFinite(rawHeight) && rawHeight > 0 ? rawHeight : colWidth;
+      let targetCol = 0;
+      for (let i = 1; i < columns; i += 1) {
+        if (columnHeights[i] < columnHeights[targetCol]) targetCol = i;
+      }
+      const position = { left: targetCol * (colWidth + gap), top: columnHeights[targetCol], height };
+      columnHeights[targetCol] += height + gap;
+      return position;
+    });
+    const maxHeight = positions.length ? Math.max(0, ...columnHeights.map((h) => h - gap)) : 0;
+    return { positions, maxHeight };
+  }, [items, columns, colWidth, gap, itemHeightGetter]);
+  const fitWidth = columns * colWidth + (columns - 1) * gap;
   return (
-    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-masonry', className)} style={{ columnCount: columns, columnGap: formatStyleSize(gap), ...rest.style }}>
-      {items.length
-        ? items.map((item: any, index: number) => (
-            <div key={item.id ?? index} className="a-masonry__item">
-              {typeof children === 'function' ? children({ item, index }) : children}
-            </div>
-          ))
-        : children}
+    <div
+      {...pickDataAttrs(rest)}
+      ref={containerRef}
+      className={cx('a-masonry', className)}
+      style={{ position: 'relative', width: fit ? fitWidth : undefined, height: layout.maxHeight, ...rest.style }}
+    >
+      {items.map((item: any, index: number) => (
+        <div
+          key={item.id ?? index}
+          className="a-masonry__item"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: colWidth,
+            height: layout.positions[index].height,
+            transform: `translateX(${layout.positions[index].left}px) translateY(${layout.positions[index].top}px)`,
+          }}
+        >
+          {typeof children === 'function' ? children(item, index) : children}
+        </div>
+      ))}
     </div>
   );
 });
@@ -1466,6 +1679,84 @@ export const PopupMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function Po
   );
 });
 
+export const DropdownMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function DropdownMenu(
+  {
+    children,
+    className,
+    items = [] as DropdownMenuItem[],
+    triggerType = 'click',
+    placement = 'bottom-start',
+    disabled = false,
+    hideAfterClick = true,
+    width,
+    offset = 12,
+    menuClass,
+    renderItem,
+    onCommand,
+    onVisibleChange,
+    ...rest
+  },
+  ref,
+) {
+  const popperRef = useRef<any>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const setMenuRef = (node: HTMLDivElement | null) => {
+    menuRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as any).current = node;
+  };
+  const command = (item: DropdownMenuItem) => {
+    if (item.disabled) return;
+    if (hideAfterClick) popperRef.current?.hide();
+    onCommand?.(item.command, item);
+  };
+  return (
+    <Popper
+      ref={popperRef}
+      className={className}
+      triggerType={disabled ? 'manual' : triggerType}
+      placement={placement}
+      offset={offset}
+      onPopupStatusChanged={(visible: boolean) => onVisibleChange?.(visible)}
+      popup={
+        <div
+          ref={setMenuRef}
+          className={cx('a-dropdown-menu', menuClass)}
+          style={width !== undefined ? { minWidth: formatStyleSize(width) } : undefined}
+        >
+          {items.map((item: DropdownMenuItem, index: number) => (
+            <div
+              key={item.command}
+              className={cx('a-dropdown-menu__item-wrapper', item.divided && index > 0 && 'a-dropdown-menu__item-wrapper--divided')}
+            >
+              <div
+                className={cx(
+                  'a-dropdown-menu__item',
+                  item.danger && !item.disabled && 'a-dropdown-menu__item--danger',
+                  item.disabled && 'a-dropdown-menu__item--disabled',
+                )}
+                onClick={() => command(item)}
+              >
+                {renderItem ? (
+                  renderItem(item)
+                ) : (
+                  <>
+                    {item.icon ? <Icon className="a-dropdown-menu__icon" icon={item.icon} /> : null}
+                    <span className="a-dropdown-menu__label">{item.label}</span>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      }
+      {...rest}
+    >
+      {children}
+    </Popper>
+  );
+});
+
 export const Upload = forwardRef<HTMLDivElement, AnyUIReactProps>(function Upload({ children, className, status = 'default', clickable = true, disabled = false, onUpload, ...rest }, ref) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -1517,19 +1808,98 @@ export const Message = forwardRef<HTMLDivElement, AnyUIReactProps>(function Mess
   );
 });
 
+// popup messages live in a single fixed top-center container, like Vue's AMessageContainer
+type MessageQueueItem = MessageOptions & { key: string };
+
+interface MessageContainerApi {
+  addMessage: (options: MessageOptions) => void;
+}
+
+const MessageContainer = ({
+  onReady,
+  onCleared,
+}: {
+  onReady?: (api: MessageContainerApi) => void;
+  onCleared?: () => void;
+}) => {
+  const [messageQueue, setMessageQueue] = useState<MessageQueueItem[]>([]);
+  const hadMessagesRef = useRef(false);
+  const addMessage = (options: MessageOptions) => {
+    const key = String(Date.now()) + String(Math.random());
+    setMessageQueue((current) => [{ ...options, key }, ...current]);
+    const duration = options.duration ?? 5000;
+    if (duration > 0) {
+      window.setTimeout(() => {
+        setMessageQueue((current) => current.filter((item) => item.key !== key));
+      }, duration);
+    }
+  };
+  useEffect(() => {
+    onReady?.({ addMessage });
+  }, []);
+  useEffect(() => {
+    if (messageQueue.length) {
+      hadMessagesRef.current = true;
+      return;
+    }
+    if (hadMessagesRef.current) {
+      hadMessagesRef.current = false;
+      onCleared?.();
+    }
+  }, [messageQueue.length]);
+  return (
+    <Fragment>
+      {messageQueue.map((item) => (
+        <Message key={item.key} type={item.type} content={item.content} icon={item.icon} showIcon={item.showIcon} round={item.round} />
+      ))}
+    </Fragment>
+  );
+};
+
+interface MessageContainerRecord {
+  node: HTMLDivElement;
+  root: ReturnType<typeof createRoot>;
+  api?: MessageContainerApi;
+  pending: MessageOptions[];
+}
+
+let messageContainer: MessageContainerRecord | null = null;
+
 const mountDomMessage = (options: MessageOptions | string) => {
   const normalized: MessageOptions =
     typeof options === 'string' ? { type: 'default', content: options } : options;
   if (typeof document === 'undefined') return;
-  const node = document.createElement('div');
-  node.style.zIndex = String(normalized.zIndex ?? 2000);
-  document.body.appendChild(node);
-  const root = createRoot(node);
-  root.render(<Message {...normalized} />);
-  window.setTimeout(() => {
-    root.unmount();
-    node.remove();
-  }, normalized.duration ?? 5000);
+  if (!messageContainer) {
+    const node = document.createElement('div');
+    node.className = 'a-message-container';
+    node.style.zIndex = String(normalized.zIndex ?? 2000);
+    document.body.appendChild(node);
+    const root = createRoot(node);
+    messageContainer = { node, root, pending: [] };
+    root.render(
+      <MessageContainer
+        onReady={(api) => {
+          if (!messageContainer) return;
+          messageContainer.api = api;
+          messageContainer.pending.splice(0).forEach((item) => api.addMessage(item));
+        }}
+        onCleared={() => {
+          const current = messageContainer;
+          if (!current) return;
+          messageContainer = null;
+          window.setTimeout(() => {
+            current.root.unmount();
+            current.node.remove();
+          }, 0);
+        }}
+      />,
+    );
+  }
+  if (messageContainer.api) {
+    messageContainer.api.addMessage(normalized);
+  } else {
+    messageContainer.pending.push(normalized);
+  }
 };
 
 export const message = Object.assign(mountDomMessage, {
@@ -1539,9 +1909,735 @@ export const message = Object.assign(mountDomMessage, {
   info: (options: Omit<MessageOptions, 'type'> | string) => mountDomMessage(typeof options === 'string' ? { type: 'info', content: options } : { ...options, type: 'info' }),
 });
 
+// replicates Vue's <transition> class flow using the same stylesheet classes.
+// returns [rendered, transitionClass]; rendered stays true during the leave phase.
+const useVueTransition = (name: string, active: boolean, leaveDuration = 320): [boolean, string] => {
+  const [rendered, setRendered] = useState(active);
+  const [transitionClass, setTransitionClass] = useState('');
+  const firstRef = useRef(true);
+  useEffect(() => {
+    if (firstRef.current) {
+      firstRef.current = false;
+      return undefined;
+    }
+    if (active) {
+      setRendered(true);
+      setTransitionClass(name + '-enter-active ' + name + '-enter-from');
+      const raf = requestAnimationFrame(() =>
+        requestAnimationFrame(() => setTransitionClass(name + '-enter-active ' + name + '-enter-to')),
+      );
+      const timer = window.setTimeout(() => setTransitionClass(''), leaveDuration);
+      return () => {
+        cancelAnimationFrame(raf);
+        window.clearTimeout(timer);
+      };
+    }
+    setTransitionClass(name + '-leave-active ' + name + '-leave-from');
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => setTransitionClass(name + '-leave-active ' + name + '-leave-to')),
+    );
+    const timer = window.setTimeout(() => {
+      setRendered(false);
+      setTransitionClass('');
+    }, leaveDuration);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  }, [active]);
+  return [rendered, transitionClass];
+};
+
+// simple shared refcount so stacked popups don't unlock each other
+let scrollLockCount = 0;
+
+const lockBodyScroll = () => {
+  scrollLockCount += 1;
+  if (scrollLockCount === 1 && typeof document !== 'undefined') {
+    document.body.classList.add('a-scroll-locked');
+  }
+};
+
+const unlockBodyScroll = () => {
+  scrollLockCount = Math.max(0, scrollLockCount - 1);
+  if (scrollLockCount === 0 && typeof document !== 'undefined') {
+    document.body.classList.remove('a-scroll-locked');
+  }
+};
+
+// A low-level centered overlay primitive, used by Dialog and friends.
+export const Popup = forwardRef<HTMLDivElement, AnyUIReactProps>(function Popup(
+  {
+    children,
+    className,
+    modelValue = false,
+    appendToBody = true,
+    maskClosable = true,
+    showMask = true,
+    width,
+    zIndex = 1000,
+    onUpdateModelValue,
+    onOpen,
+    onClose,
+    ...rest
+  },
+  ref,
+) {
+  const [rendered, transitionClass] = useVueTransition('a-popup', modelValue, 240);
+  const firstRef = useRef(true);
+  const selfClosedRef = useRef(false);
+  const doClose = () => {
+    if (!modelValue) return;
+    selfClosedRef.current = true;
+    onUpdateModelValue?.(false);
+    onClose?.();
+  };
+  useEffect(() => {
+    if (firstRef.current) {
+      firstRef.current = false;
+      return;
+    }
+    if (modelValue) {
+      onOpen?.();
+    } else if (selfClosedRef.current) {
+      selfClosedRef.current = false;
+    } else {
+      onClose?.();
+    }
+  }, [modelValue]);
+  useEffect(() => {
+    if (!modelValue) return undefined;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
+  }, [modelValue]);
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !modelValue || !maskClosable) return;
+      doClose();
+    };
+    document.addEventListener('keydown', onKeydown);
+    return () => document.removeEventListener('keydown', onKeydown);
+  }, [modelValue, maskClosable, onUpdateModelValue, onClose]);
+  const node = rendered ? (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-popup', transitionClass, className)}
+      style={{ zIndex, ...rest.style }}
+      role="dialog"
+      aria-modal="true"
+    >
+      {showMask ? <div className="a-popup__mask" onClick={() => maskClosable && doClose()} /> : null}
+      <div
+        className="a-popup__panel"
+        style={width !== undefined ? { width: formatStyleSize(width) } : undefined}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  ) : null;
+  return appendToBody && typeof document !== 'undefined' ? createPortal(node, document.body) : node;
+});
+
+// A standard dialog built on top of Popup.
+export const Dialog = forwardRef<HTMLDivElement, AnyUIReactProps>(function Dialog(
+  {
+    children,
+    className,
+    modelValue = false,
+    title = '',
+    width = 420,
+    showClose = true,
+    maskClosable = true,
+    appendToBody = true,
+    zIndex = 1000,
+    header,
+    footer,
+    onUpdateModelValue,
+    onConfirm,
+    onCancel,
+    onOpen,
+    onClose,
+    ...rest
+  },
+  ref,
+) {
+  const close = () => onUpdateModelValue?.(false);
+  return (
+    <Popup
+      ref={ref}
+      modelValue={modelValue}
+      width={width}
+      maskClosable={maskClosable}
+      appendToBody={appendToBody}
+      zIndex={zIndex}
+      onUpdateModelValue={onUpdateModelValue}
+      onOpen={onOpen}
+      onClose={onClose}
+    >
+      <div {...pickDataAttrs(rest)} className={cx('a-dialog', className)}>
+        <div className="a-dialog__header">
+          <div className="a-dialog__header-main">
+            {renderContent(header, <span className="a-dialog__title">{title}</span>)}
+          </div>
+          {showClose ? (
+            <button type="button" className="a-dialog__close" aria-label="Close" onClick={close}>
+              <Icon icon="ic:round-close" />
+            </button>
+          ) : null}
+        </div>
+        <div className="a-dialog__body">{children}</div>
+        <div className="a-dialog__footer">
+          {renderContent(
+            footer,
+            <Fragment>
+              <Button
+                size="small"
+                onClick={() => {
+                  onCancel?.();
+                  close();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => {
+                  onConfirm?.();
+                  close();
+                }}
+              >
+                OK
+              </Button>
+            </Fragment>,
+          )}
+        </div>
+      </div>
+    </Popup>
+  );
+});
+
+// A thin confirmation wrapper over Dialog.
+export const ConfirmModal = forwardRef<HTMLDivElement, AnyUIReactProps>(function ConfirmModal(
+  {
+    children,
+    className,
+    modelValue = false,
+    title = '',
+    content = '',
+    confirmText = 'OK',
+    cancelText = 'Cancel',
+    type = 'primary',
+    loading = false,
+    closeOnConfirm = true,
+    width = 420,
+    maskClosable = true,
+    appendToBody = true,
+    zIndex = 1000,
+    onUpdateModelValue,
+    onConfirm,
+    onCancel,
+    onClose,
+    ...rest
+  },
+  ref,
+) {
+  const close = () => onUpdateModelValue?.(false);
+  return (
+    <Dialog
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      modelValue={modelValue}
+      title={title}
+      width={width}
+      maskClosable={maskClosable}
+      appendToBody={appendToBody}
+      zIndex={zIndex}
+      onUpdateModelValue={onUpdateModelValue}
+      onClose={onClose}
+      footer={
+        <Fragment>
+          <Button
+            size="small"
+            onClick={() => {
+              onCancel?.();
+              close();
+            }}
+          >
+            {cancelText}
+          </Button>
+          <Button
+            size="small"
+            type={type === 'danger' ? 'danger' : 'primary'}
+            loading={loading}
+            onClick={() => {
+              if (loading) return;
+              onConfirm?.();
+              if (closeOnConfirm) close();
+            }}
+          >
+            {confirmText}
+          </Button>
+        </Fragment>
+      }
+    >
+      <div className={cx('a-confirm-modal__content', className)}>{renderContent(children, content)}</div>
+    </Dialog>
+  );
+});
+
+// wait for the popup leave transition before unmounting
+const CONFIRM_MODAL_DESTROY_DELAY = 400;
+
+export const confirmModal = (options: ConfirmModalOptions = {}): Promise<boolean> => {
+  if (typeof document === 'undefined') return Promise.resolve(false);
+  return new Promise<boolean>((resolve) => {
+    const node = document.createElement('div');
+    document.body.appendChild(node);
+    const root = createRoot(node);
+    let settled = false;
+    const settle = (result: boolean) => {
+      if (settled) return;
+      settled = true;
+      resolve(result);
+    };
+    const destroy = () => {
+      window.setTimeout(() => {
+        root.unmount();
+        node.remove();
+      }, CONFIRM_MODAL_DESTROY_DELAY);
+    };
+    const ConfirmModalHost = () => {
+      const [visible, setVisible] = useState(true);
+      return (
+        <ConfirmModal
+          {...options}
+          modelValue={visible}
+          onUpdateModelValue={(value: boolean) => {
+            setVisible(value);
+            if (!value) {
+              settle(false);
+              destroy();
+            }
+          }}
+          onConfirm={() => settle(true)}
+          onCancel={() => settle(false)}
+        />
+      );
+    };
+    root.render(<ConfirmModalHost />);
+  });
+};
+
+// default icons per type, reusing the message icon set
+const defaultAlertIcon: Record<string, string> = {
+  info: 'fluent:info-24-filled',
+  success: 'ic:round-check-circle',
+  warn: 'ph:warning-fill',
+  danger: 'si-glyph:circle-error',
+};
+
+// A static inline banner for contextual feedback.
+export const Alert = forwardRef<HTMLDivElement, AnyUIReactProps>(function Alert(
+  { children, className, type = 'info', title = '', closable = false, showIcon = true, icon, onClose, ...rest },
+  ref,
+) {
+  const [visible, setVisible] = useState(true);
+  const [rendered, transitionClass] = useVueTransition('a-alert', visible, 240);
+  if (!rendered) return null;
+  const hasContent = children !== undefined && children !== null;
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-alert', 'a-alert--' + type, transitionClass, className)}
+      style={rest.style}
+      role="alert"
+    >
+      {showIcon ? (
+        <div className="a-alert__icon">
+          {renderContent(icon, <Icon icon={defaultAlertIcon[type] || defaultAlertIcon.info} />)}
+        </div>
+      ) : null}
+      <div className="a-alert__main">
+        {title ? <div className="a-alert__title">{title}</div> : null}
+        {hasContent ? <div className="a-alert__content">{children}</div> : null}
+      </div>
+      {closable ? (
+        <button
+          type="button"
+          className="a-alert__close"
+          aria-label="Close"
+          onClick={() => {
+            setVisible(false);
+            onClose?.();
+          }}
+        >
+          <Icon icon="ic:round-close" />
+        </button>
+      ) : null}
+    </div>
+  );
+});
+
+const defaultToastIcon: Record<string, string> = {
+  info: 'fluent:info-24-filled',
+  success: 'ic:round-check-circle',
+  warning: 'ph:warning-fill',
+  error: 'si-glyph:circle-error',
+};
+
+// A single corner notification card, stacked by the toast container.
+export const Toast = forwardRef<HTMLDivElement, AnyUIReactProps>(function Toast(
+  { className, type = 'info', title = '', content = '', closable = true, onClose, ...rest },
+  ref,
+) {
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-toast', 'a-toast--' + type, className)}
+      style={rest.style}
+      role="status"
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div className="a-toast__icon">
+        <Icon icon={defaultToastIcon[type] || defaultToastIcon.info} />
+      </div>
+      <div className="a-toast__main">
+        {title ? <div className="a-toast__title">{title}</div> : null}
+        {content ? <div className="a-toast__content">{content}</div> : null}
+      </div>
+      {closable ? (
+        <button type="button" className="a-toast__close" aria-label="Close" onClick={onClose}>
+          <Icon icon="ic:round-close" />
+        </button>
+      ) : null}
+    </div>
+  );
+});
+
+type ToastQueueItem = ToastItem & { leaving?: boolean };
+
+const TransitionToast = ({ item, onClose }: { item: ToastQueueItem; onClose: () => void }) => {
+  const [stage, setStage] = useState<'enter-from' | 'enter-to' | ''>('enter-from');
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setStage('enter-to')));
+    const timer = window.setTimeout(() => setStage(''), 320);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  }, []);
+  const animClass = item.leaving
+    ? 'a-toast-anim-leave-active a-toast-anim-leave-to'
+    : stage
+      ? 'a-toast-anim-enter-active a-toast-anim-' + stage
+      : '';
+  return (
+    <Toast
+      className={animClass}
+      type={item.type}
+      title={item.title}
+      content={item.content}
+      closable={item.closable}
+      onClose={onClose}
+    />
+  );
+};
+
+interface ToastContainerApi {
+  addToast: (toast: Omit<ToastItem, 'key'>) => void;
+}
+
+const ToastContainer = ({
+  onReady,
+  onCleared,
+}: {
+  onReady?: (api: ToastContainerApi) => void;
+  onCleared?: () => void;
+}) => {
+  const [toastQueue, setToastQueue] = useState<ToastQueueItem[]>([]);
+  const hadToastsRef = useRef(false);
+  const removeToast = (key: string) => {
+    setToastQueue((current) => current.map((item) => (item.key === key ? { ...item, leaving: true } : item)));
+    window.setTimeout(() => {
+      setToastQueue((current) => current.filter((item) => item.key !== key));
+    }, 240);
+  };
+  const addToast = (toast: Omit<ToastItem, 'key'>) => {
+    const key = String(Date.now()) + String(Math.random());
+    setToastQueue((current) => [{ ...toast, key }, ...current]);
+    if (toast.duration > 0) {
+      window.setTimeout(() => removeToast(key), toast.duration);
+    }
+  };
+  useEffect(() => {
+    onReady?.({ addToast });
+  }, []);
+  useEffect(() => {
+    if (toastQueue.length) {
+      hadToastsRef.current = true;
+      return;
+    }
+    if (hadToastsRef.current) {
+      hadToastsRef.current = false;
+      onCleared?.();
+    }
+  }, [toastQueue.length]);
+  return (
+    <Fragment>
+      {toastQueue.map((item) => (
+        <TransitionToast key={item.key} item={item} onClose={() => removeToast(item.key)} />
+      ))}
+    </Fragment>
+  );
+};
+
+interface ToastContainerRecord {
+  node: HTMLDivElement;
+  root: ReturnType<typeof createRoot>;
+  api?: ToastContainerApi;
+  pending: Array<Omit<ToastItem, 'key'>>;
+}
+
+const toastContainers = new Map<ToastPlacement, ToastContainerRecord>();
+
+const popupToast = ({
+  title = '',
+  content = '',
+  type = 'info',
+  duration = 4500,
+  closable = true,
+  placement = 'top-right',
+  zIndex = 2100,
+}: ToastOptions) => {
+  if (typeof document === 'undefined') return;
+  let record = toastContainers.get(placement);
+  if (!record) {
+    const node = document.createElement('div');
+    node.className = 'a-toast-container a-toast-container--' + placement;
+    node.style.zIndex = String(zIndex);
+    document.body.appendChild(node);
+    const root = createRoot(node);
+    record = { node, root, pending: [] };
+    toastContainers.set(placement, record);
+    root.render(
+      <ToastContainer
+        onReady={(api) => {
+          const current = toastContainers.get(placement);
+          if (!current) return;
+          current.api = api;
+          current.pending.splice(0).forEach((item) => api.addToast(item));
+        }}
+        onCleared={() => {
+          const current = toastContainers.get(placement);
+          if (!current) return;
+          toastContainers.delete(placement);
+          window.setTimeout(() => {
+            current.root.unmount();
+            current.node.remove();
+          }, 0);
+        }}
+      />,
+    );
+  }
+  const item = { title, content, type, duration, closable };
+  if (record.api) {
+    record.api.addToast(item);
+  } else {
+    record.pending.push(item);
+  }
+};
+
+const toastFnFactory = (type: ToastType) => {
+  return (options: string | Omit<ToastOptions, 'type'>) => {
+    if (typeof options === 'string') {
+      popupToast({ type, content: options });
+      return;
+    }
+    popupToast({ type, ...options });
+  };
+};
+
+export const toast = Object.assign((options: ToastOptions) => popupToast(options), {
+  success: toastFnFactory('success'),
+  error: toastFnFactory('error'),
+  warning: toastFnFactory('warning'),
+  info: toastFnFactory('info'),
+});
+
+// A loading overlay which covers its children (or the whole screen).
+export const LoadingMask = forwardRef<HTMLDivElement, AnyUIReactProps>(function LoadingMask(
+  { children, className, loading = false, text = '', fullscreen = false, zIndex = 2000, ...rest },
+  ref,
+) {
+  const [rendered, transitionClass] = useVueTransition('a-loading-mask', loading, 240);
+  return (
+    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-loading-mask-wrapper', className)} style={rest.style}>
+      {children}
+      {rendered ? (
+        <div
+          className={cx('a-loading-mask', fullscreen && 'a-loading-mask--fullscreen', transitionClass)}
+          style={fullscreen ? { zIndex } : undefined}
+        >
+          <Spinner className="a-loading-mask__spinner" />
+          {text ? <span className="a-loading-mask__text">{text}</span> : null}
+        </div>
+      ) : null}
+    </div>
+  );
+});
+
+// wait for the fade-out transition before unmounting
+const LOADING_MASK_DESTROY_DELAY = 250;
+
+interface LoadingMaskHostState {
+  visible: boolean;
+  text: string;
+  zIndex: number;
+}
+
+interface FullscreenMaskRecord {
+  node: HTMLDivElement;
+  root: ReturnType<typeof createRoot>;
+  setState?: (state: LoadingMaskHostState) => void;
+  desired: LoadingMaskHostState;
+}
+
+let fullscreenMask: FullscreenMaskRecord | null = null;
+let loadingMaskDestroyTimeout: number | undefined;
+
+const LoadingMaskHost = ({ register }: { register: (set: (state: LoadingMaskHostState) => void) => void }) => {
+  const [state, setState] = useState<LoadingMaskHostState>({ visible: false, text: '', zIndex: 2000 });
+  useEffect(() => {
+    register(setState);
+  }, []);
+  return <LoadingMask loading={state.visible} text={state.text} zIndex={state.zIndex} fullscreen />;
+};
+
+const applyLoadingMaskState = () => {
+  fullscreenMask?.setState?.({ ...fullscreenMask.desired });
+};
+
+const showLoadingMask = (options: LoadingMaskShowOptions = {}) => {
+  if (typeof document === 'undefined') return;
+  if (loadingMaskDestroyTimeout) {
+    window.clearTimeout(loadingMaskDestroyTimeout);
+    loadingMaskDestroyTimeout = undefined;
+  }
+  if (!fullscreenMask) {
+    const node = document.createElement('div');
+    document.body.appendChild(node);
+    const root = createRoot(node);
+    fullscreenMask = { node, root, desired: { visible: false, text: '', zIndex: 2000 } };
+    root.render(
+      <LoadingMaskHost
+        register={(set) => {
+          if (!fullscreenMask) return;
+          fullscreenMask.setState = set;
+          applyLoadingMaskState();
+        }}
+      />,
+    );
+  }
+  fullscreenMask.desired = {
+    visible: true,
+    text: options.text || '',
+    zIndex: typeof options.zIndex === 'number' ? options.zIndex : fullscreenMask.desired.zIndex,
+  };
+  applyLoadingMaskState();
+};
+
+const hideLoadingMask = () => {
+  if (!fullscreenMask) return;
+  fullscreenMask.desired = { ...fullscreenMask.desired, visible: false };
+  applyLoadingMaskState();
+  loadingMaskDestroyTimeout = window.setTimeout(() => {
+    if (!fullscreenMask) return;
+    const record = fullscreenMask;
+    fullscreenMask = null;
+    loadingMaskDestroyTimeout = undefined;
+    record.root.unmount();
+    record.node.remove();
+  }, LOADING_MASK_DESTROY_DELAY);
+};
+
+export const loadingMask = {
+  show: showLoadingMask,
+  hide: hideLoadingMask,
+};
+
+// A clean data table with surface treatment.
+export const Table = forwardRef<HTMLDivElement, AnyUIReactProps>(function Table(
+  {
+    className,
+    columns = [] as TableColumn[],
+    data = [] as TableRow[],
+    striped = false,
+    hoverable = true,
+    round = true,
+    emptyText = 'No data',
+    empty,
+    renderCell,
+    onRowClick,
+    ...rest
+  },
+  ref,
+) {
+  const getColStyle = (column: TableColumn): React.CSSProperties | undefined =>
+    column.width !== undefined ? { width: formatStyleSize(column.width) } : undefined;
+  const getCellStyle = (column: TableColumn): React.CSSProperties | undefined =>
+    column.align && column.align !== 'left' ? { textAlign: column.align } : undefined;
+  const formatCell = (value: unknown) => (value === null || value === undefined ? '' : String(value));
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-table', striped && 'a-table--striped', hoverable && 'a-table--hoverable', round && 'a-table--round', className)}
+      style={rest.style}
+    >
+      <table className="a-table__inner">
+        <colgroup>
+          {columns.map((column: TableColumn) => (
+            <col key={column.key} style={getColStyle(column)} />
+          ))}
+        </colgroup>
+        <thead>
+          <tr>
+            {columns.map((column: TableColumn) => (
+              <th key={column.key} className="a-table__th" style={getCellStyle(column)}>
+                {column.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        {data.length ? (
+          <tbody>
+            {data.map((row: TableRow, index: number) => (
+              <tr key={index} className="a-table__row" onClick={() => onRowClick?.(row, index)}>
+                {columns.map((column: TableColumn) => (
+                  <td key={column.key} className="a-table__td" style={getCellStyle(column)}>
+                    {renderCell?.(column, row, row[column.key], index) ?? formatCell(row[column.key])}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        ) : null}
+      </table>
+      {!data.length ? <div className="a-table__empty">{renderContent(empty, <Empty text={emptyText} />)}</div> : null}
+    </div>
+  );
+});
+
 export const buildInstaller = (componentList: React.ComponentType<any>[]) => componentList;
 
 const defaultComponentList = [
+  Alert,
   Avatar,
   Button,
   Card,
@@ -1550,8 +2646,11 @@ const defaultComponentList = [
   CheckboxGroup,
   ClickableText,
   Collapse,
+  ConfirmModal,
   Content,
+  Dialog,
   Drawer,
+  DropdownMenu,
   Empty,
   Float,
   Footer,
@@ -1566,10 +2665,12 @@ const defaultComponentList = [
   ListView,
   ListViewItem,
   Loading,
+  LoadingMask,
   Masonry,
   Message,
   Pagination,
   Popper,
+  Popup,
   PopupMenu,
   Radio,
   RadioButton,
@@ -1581,8 +2682,10 @@ const defaultComponentList = [
   Split,
   Step,
   Switch,
+  Table,
   Tag,
   Textarea,
+  Toast,
   Upload,
   VirtualList,
   VirtualListItem,

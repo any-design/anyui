@@ -50,21 +50,38 @@ const hasLabel = computed(() => !!props.label);
   align-items: center;
   line-height: 1;
   box-sizing: border-box;
+  border-radius: var(--a-radius-sm, 10px);
+  transition: background-color var(--anim-duration-quick, 120ms) ease;
+}
+
+.a-list-view-item:hover {
+  background-color: var(--a-item-hover-bg, var(--bg-hover));
 }
 
 .a-list-view-item--has-label {
   justify-content: space-between;
 }
 
+.a-list-view-item__label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
 .a-list-view-item--bordered {
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 14px;
+}
+
+.a-list-view-item--bordered:last-child {
+  border-bottom: none;
 }
 
 .a-list-view-item--deep {
   padding: 4px 16px;
-  border-radius: 12px;
+  border-radius: var(--a-radius, 14px);
   background-color: var(--overlay);
+  box-shadow: var(--a-shadow-xs, 0 1px 3px var(--shadow-4));
   margin-bottom: 12px;
 }
 

@@ -1,14 +1,16 @@
 <script lang="ts">
   import { getContext, setContext } from 'svelte';
   import { derived, writable } from 'svelte/store';
-  export let label = '';
-  export let field = '';
-  export let prop = '';
-  export let isValid = true;
-  export let invalid = false;
-  export let invalidMessage = '';
-  export let className = '';
-  export { className as class };
+  let {
+    label = '',
+    field = '',
+    prop = '',
+    isValid = true,
+    invalid = false,
+    invalidMessage = '',
+    class: className = '',
+    children,
+  } = $props();
   const form = getContext<any>('anyui-form') ?? {};
   const fallbackValidation = writable<Record<string, { isValid: boolean; message: string }>>({});
   const fallbackClearSignals = writable<Record<string, number>>({});
@@ -18,13 +20,15 @@
   const clearAllSignalStore = form.clearAllSignal ?? fallbackClearAllSignal;
   const fieldStore = writable('');
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedLabelWidth = formatStyleSize(form.labelWidth);
-  $: fieldName = prop || field;
-  $: fieldStore.set(fieldName);
-  $: formValidation = fieldName ? $validationStore[fieldName] : undefined;
-  $: valid = Boolean(isValid) && !invalid && formValidation?.isValid !== false;
-  $: message = invalidMessage || formValidation?.message || '';
-  $: itemRules = fieldName ? form.rules?.[fieldName] : undefined;
+  const formattedLabelWidth = $derived(formatStyleSize(form.labelWidth));
+  const fieldName = $derived(prop || field);
+  $effect(() => {
+    fieldStore.set(fieldName);
+  });
+  const formValidation = $derived(fieldName ? $validationStore[fieldName] : undefined);
+  const valid = $derived(Boolean(isValid) && !invalid && formValidation?.isValid !== false);
+  const message = $derived(invalidMessage || formValidation?.message || '');
+  const itemRules = $derived(fieldName ? form.rules?.[fieldName] : undefined);
   const notifyChange = () => {
     if (fieldName && itemRules?.some((item: any) => item.triggerType === 'change')) setTimeout(() => form.validateField?.(fieldName));
   };
@@ -47,7 +51,7 @@
     {#if label}
       <div class="a-form-item-inner__label" style:width={formattedLabelWidth}><span>{label}</span></div>
     {/if}
-    <div class="a-form-item-inner__content"><slot /></div>
+    <div class="a-form-item-inner__content">{@render children?.()}</div>
   </div>
   {#if !valid}
     <div class="a-form-item-invalid">

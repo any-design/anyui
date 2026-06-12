@@ -59,9 +59,9 @@ export default defineComponent({
   &-check {
     width: 20px;
     height: 20px;
-    border-radius: 10px;
+    border-radius: var(--a-radius-full, 999px);
     background: var(--bg-light);
-    box-shadow: 0px 2px 8px var(--shadow-5);
+    box-shadow: var(--a-shadow-xs, 0px 2px 8px var(--shadow-5));
     border: 1px solid var(--border);
     margin-right: 10px;
     display: flex;
@@ -69,20 +69,28 @@ export default defineComponent({
     justify-content: center;
     box-sizing: border-box;
     position: relative;
+    transition:
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease),
+      border-color var(--anim-duration-quick, 120ms) ease;
 
     &__inner {
       width: 12px;
       height: 12px;
       background: var(--primary);
-      border-radius: 8px;
-      box-shadow: 1px 1px 3px var(--shadow-8);
+      border-radius: var(--a-radius-full, 999px);
+      box-shadow: 0 1px 4px color-mix(in srgb, var(--primary) 45%, transparent);
     }
   }
 }
 .a-radio:hover {
   .a-radio-check {
-    transition: var(--anim-duration, 200ms) ease;
     border: 1px solid var(--primary-70);
+    transform: scale(1.08);
+  }
+}
+.a-radio:active {
+  .a-radio-check {
+    transform: scale(0.92);
   }
 }
 .a-radio--checked {
@@ -91,7 +99,9 @@ export default defineComponent({
   }
 }
 
-.a-trans-radio-inner-enter-active,
+.a-trans-radio-inner-enter-active {
+  transition: all var(--anim-duration, 200ms) var(--a-ease-spring, ease-out);
+}
 .a-trans-radio-inner-leave-active {
   transition: all var(--anim-duration-quick, 100ms) ease-out;
 }

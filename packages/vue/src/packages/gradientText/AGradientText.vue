@@ -1,5 +1,11 @@
 <template>
-  <span class="a-gradient-text" :style="gradientStyles">
+  <span
+    :class="{
+      'a-gradient-text': true,
+      'a-gradient-text--glow': glow,
+    }"
+    :style="gradientStyles"
+  >
     <slot></slot>
   </span>
 </template>
@@ -42,6 +48,11 @@ export default defineComponent({
       type: Number,
       default: 30,
     },
+    // if true, a soft gradient-tinted glow will be applied to the text
+    glow: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     gradientStyles() {
@@ -74,5 +85,10 @@ export default defineComponent({
   background-clip: text;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent;
+}
+
+.a-gradient-text--glow {
+  filter: drop-shadow(0 2px 12px var(--primary-40, transparent))
+    drop-shadow(0 4px 24px var(--secondary-20, transparent));
 }
 </style>

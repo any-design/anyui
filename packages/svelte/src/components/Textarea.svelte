@@ -1,33 +1,40 @@
 <script lang="ts">
-  import { createEventDispatcher, getContext, onDestroy } from 'svelte';
-  export let modelValue: string | number = '';
-  export let width: string | number = '100%';
-  export let height: string | number | undefined = undefined;
-  export let placeholder = '';
-  export let disabled = false;
-  export let readonly = false;
-  export let borderless = false;
-  export let disableResizeCorner = false;
-  export let resizable = false;
-  export let maxlength: number | undefined = undefined;
-  export let minlength: number | undefined = undefined;
-  export let autocomplete = 'off';
-  export let autocorrect = 'off';
-  export let spellcheck: boolean | string | undefined = undefined;
-  export let wrap: string | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  import { getContext, onDestroy } from 'svelte';
+  let {
+    modelValue = $bindable(''),
+    width = '100%',
+    height = undefined,
+    placeholder = '',
+    disabled = false,
+    readonly = false,
+    borderless = false,
+    disableResizeCorner = false,
+    resizable = false,
+    maxlength = undefined,
+    minlength = undefined,
+    autocomplete = 'off',
+    autocorrect = 'off',
+    spellcheck = undefined,
+    wrap = undefined,
+    class: className = '',
+    before,
+    after,
+    onUpdateModelValue,
+    onInput,
+    onChange,
+    onSubmit,
+    onBlur,
+  } = $props();
   const formItem = getContext<any>('anyui-form-item') ?? {};
-  $: value = String(modelValue ?? '');
-  $: formattedWidth = typeof width === 'number' ? `${width}px` : width;
-  $: formattedHeight = typeof height === 'number' ? `${height}px` : height;
-  $: isResizable = !disableResizeCorner && resizable;
+  const value = $derived(String(modelValue ?? ''));
+  const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
+  const formattedHeight = $derived(typeof height === 'number' ? height + 'px' : height);
+  const isResizable = $derived(!disableResizeCorner && resizable);
   let lastClearSignal = 0;
   const clearValue = () => {
-    value = '';
-    dispatch('update:modelValue', '');
-    dispatch('change', '');
+    modelValue = '';
+    onUpdateModelValue?.('');
+    onChange?.('');
   };
   const unsubscribeClearSignal = formItem.clearSignalStore?.subscribe((signal: number) => {
     if (signal > lastClearSignal) clearValue();
@@ -37,7 +44,7 @@
 </script>
 
 <div class="a-textarea {borderless ? 'a-textarea--borderless' : ''} {isResizable ? 'a-textarea--resizable' : ''} {disableResizeCorner ? 'a-textarea--not-resizable' : ''} {className}" style:width={formattedWidth} style:height={formattedHeight}>
-  <slot name="before" />
+  {@render before?.()}
   <textarea
     class="a-textarea__inner"
     {value}
@@ -50,20 +57,20 @@
     {autocorrect}
     {spellcheck}
     {wrap}
-    on:input={(event) => {
-      value = event.currentTarget.value;
-      dispatch('update:modelValue', value);
-      dispatch('input', event);
+    oninput={(event) => {
+      modelValue = event.currentTarget.value;
+      onUpdateModelValue?.(event.currentTarget.value);
+      onInput?.(event);
     }}
-    on:change={(event) => {
-      dispatch('change', event.currentTarget.value);
+    onchange={(event) => {
+      onChange?.(event.currentTarget.value);
       formItem.notifyChange?.();
     }}
-    on:blur={(event) => {
-      dispatch('blur', event);
+    onblur={(event) => {
+      onBlur?.(event);
       formItem.notifyBlur?.();
     }}
-    on:keydown={(event) => event.key === 'Enter' && dispatch('submit', value)}
+    onkeydown={(event) => event.key === 'Enter' && onSubmit?.(value)}
   ></textarea>
-  <slot name="after" />
+  {@render after?.()}
 </div>

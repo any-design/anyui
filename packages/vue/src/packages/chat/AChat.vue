@@ -86,8 +86,8 @@ watch(
       padding: 14px 20px;
       box-sizing: border-box;
       position: relative;
-      border-radius: 12px;
-      box-shadow: 2px 2px 8px var(--shadow-6);
+      border-radius: var(--a-radius, 14px);
+      box-shadow: var(--a-shadow-xs, 2px 2px 8px var(--shadow-6));
       font-size: 15px;
 
       pre {
@@ -107,6 +107,9 @@ watch(
 
     .a-chat__content {
       background-color: var(--primary-80);
+      box-shadow:
+        0 6px 18px -6px color-mix(in srgb, var(--primary) 45%, transparent),
+        var(--a-shadow-xs, 2px 2px 8px var(--shadow-6));
 
       pre {
         color: var(--text-btn);

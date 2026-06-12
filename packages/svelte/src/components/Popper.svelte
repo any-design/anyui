@@ -1,4 +1,4 @@
-<script context="module" lang="ts">
+<script module lang="ts">
   const groupListeners = new Set<(payload: { group: string; popperId: string }) => void>();
   const emitGroupShow = (payload: { group: string; popperId: string }) => {
     groupListeners.forEach((listener) => listener(payload));
@@ -6,36 +6,42 @@
 </script>
 
 <script lang="ts">
-  import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import type { APopperTriggerType } from '../types';
-  export let triggerType: APopperTriggerType = 'hover';
-  export let visible = false;
-  export let appendToBody = true;
-  export let placement = 'bottom';
-  export let offset = 18;
-  export let hideDelay = 100;
-  export let closeWhenClickOutside = true;
-  export let group = '';
-  export let popupClass = '';
-  export let zIndex = 3000;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    triggerType = 'hover' as APopperTriggerType,
+    visible = false,
+    appendToBody = true,
+    placement = 'bottom',
+    offset = 18,
+    hideDelay = 100,
+    closeWhenClickOutside = true,
+    group = '',
+    popupClass = '',
+    zIndex = 3000,
+    class: className = '',
+    children,
+    popup,
+    onPopupStatusChanged,
+  } = $props();
   const popperId = Date.now() + '_' + Math.random().toString(36).slice(2);
-  let triggerEl: HTMLSpanElement;
-  let popupEl: HTMLDivElement;
+  let triggerEl = $state<HTMLSpanElement>();
+  let popupEl = $state<HTMLDivElement>();
   let hideTimeout: ReturnType<typeof setTimeout> | undefined;
-  let open = triggerType === 'manual' ? visible : false;
-  let fixedStyle = '';
-  $: if (triggerType === 'manual') setOpen(Boolean(visible));
-  $: insetStyle = getInsetStyle();
-  $: popupStyle = appendToBody
+  // svelte-ignore state_referenced_locally
+  let open = $state(triggerType === 'manual' ? Boolean(visible) : false);
+  let fixedStyle = $state('');
+  $effect(() => {
+    if (triggerType === 'manual') setOpen(Boolean(visible));
+  });
+  const insetStyle = $derived(getInsetStyle());
+  const popupStyle = $derived(appendToBody
     ? fixedStyle || 'position: fixed; z-index: ' + zIndex + ';'
-    : insetStyle + ' z-index: ' + zIndex + ';';
+    : insetStyle + ' z-index: ' + zIndex + ';');
   function setOpen(next: boolean) {
     if (open === next) return;
     open = next;
-    dispatch('popupStatusChanged', next);
+    onPopupStatusChanged?.(next);
     if (next && group) emitGroupShow({ group, popperId });
   }
   function getFixedStyle() {
@@ -134,26 +140,26 @@
   style:position={appendToBody ? undefined : 'relative'}
   role="button"
   tabindex={triggerType === 'manual' ? -1 : 0}
-  on:mouseenter={triggerType === 'hover' ? show : undefined}
-  on:mouseleave={triggerType === 'hover' ? delayHide : undefined}
-  on:focus={triggerType === 'hover' ? show : undefined}
-  on:blur={triggerType === 'hover' ? delayHide : undefined}
-  on:click={triggerType === 'click' ? toggle : undefined}
-  on:keydown={(event) => {
+  onmouseenter={triggerType === 'hover' ? show : undefined}
+  onmouseleave={triggerType === 'hover' ? delayHide : undefined}
+  onfocus={triggerType === 'hover' ? show : undefined}
+  onblur={triggerType === 'hover' ? delayHide : undefined}
+  onclick={triggerType === 'click' ? toggle : undefined}
+  onkeydown={(event) => {
     if ((event.key === 'Enter' || event.key === ' ') && triggerType === 'click') {
       event.preventDefault();
       toggle();
     }
     if (event.key === 'Escape') hide();
   }}
-  on:contextmenu={(event) => {
+  oncontextmenu={(event) => {
     if (triggerType === 'contextmenu') {
       event.preventDefault();
       toggle();
     }
   }}
 >
-  <slot />
+  {@render children?.()}
   {#if open}
     <div
       bind:this={popupEl}
@@ -161,10 +167,10 @@
       class="a-popper__popup {popupClass}"
       style={popupStyle}
       role="presentation"
-      on:mouseenter={triggerType === 'hover' ? show : undefined}
-      on:mouseleave={triggerType === 'hover' ? delayHide : undefined}
-      on:click={(event) => !appendToBody && event.stopPropagation()}
-      on:keydown={() => undefined}
-    ><slot name="popup" /></div>
+      onmouseenter={triggerType === 'hover' ? show : undefined}
+      onmouseleave={triggerType === 'hover' ? delayHide : undefined}
+      onclick={(event) => !appendToBody && event.stopPropagation()}
+      onkeydown={() => undefined}
+    >{@render popup?.()}</div>
   {/if}
 </span>

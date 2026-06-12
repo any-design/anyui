@@ -145,28 +145,44 @@ export default defineComponent({
 
 <style lang="scss">
 .a-popup-menu {
-  border-radius: 12px;
-  background: var(--bg-semi-light);
+  border-radius: var(--a-radius, 14px);
+  background: var(--a-surface, var(--bg-semi-light));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border: 1px solid var(--a-surface-border-color, transparent);
   box-sizing: border-box;
-  padding: 8px 0;
-  box-shadow: 0 4px 12px var(--shadow-10);
+  padding: 6px;
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-md, 0 4px 12px var(--shadow-10));
   overflow: hidden;
 
   &__item {
-    padding: 8px 16px;
+    padding: 8px 14px;
     line-height: 24px;
     font-size: 15px;
     user-select: none;
-    transition: background-color var(--anim-duration, 200ms) ease;
+    border-radius: var(--a-radius-sm, 10px);
+    transition: background-color var(--anim-duration-quick, 120ms) ease;
   }
 
   &__item:hover {
-    background-color: var(--bg-hover);
+    background-color: var(--a-item-hover-bg, var(--bg-hover));
+    box-shadow: var(--a-item-selected-highlight, 0 0 #0000);
     cursor: pointer;
+  }
+
+  &__item:active {
+    transform: scale(0.98);
   }
 }
 
-.a-trans-popmenu-enter-active,
+.a-trans-popmenu-enter-active {
+  transition:
+    opacity var(--anim-duration-quick, 100ms) ease-out,
+    transform var(--anim-duration, 200ms) var(--a-ease-spring, ease-out),
+    max-height var(--anim-duration-quick, 100ms) ease-out;
+}
 .a-trans-popmenu-leave-active {
   transition:
     opacity var(--anim-duration-quick, 100ms) ease-out,
@@ -175,13 +191,13 @@ export default defineComponent({
 }
 .a-trans-popmenu-enter-to {
   opacity: 1;
-  transform: translateY(0px);
+  transform: translateY(0px) scale(1);
   max-height: max-content;
 }
 .a-trans-popmenu-enter-from,
 .a-trans-popmenu-leave-to {
   opacity: 0.4;
-  transform: translateY(-12px);
+  transform: translateY(-12px) scale(0.96);
   max-height: 0;
 }
 </style>

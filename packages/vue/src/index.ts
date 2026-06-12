@@ -1,5 +1,6 @@
 import type { App } from 'vue';
 
+import Alert from './packages/alert';
 import Avatar from './packages/avatar';
 import Button from './packages/button';
 import Card from './packages/card';
@@ -8,7 +9,10 @@ import Checkbox from './packages/checkbox';
 import CheckboxGroup from './packages/checkboxGroup';
 import ClickableText from './packages/clickableText';
 import Collapse from './packages/collapse';
+import ConfirmModal, { confirmModal } from './packages/confirmModal';
+import Dialog from './packages/dialog';
 import Drawer from './packages/drawer';
+import DropdownMenu from './packages/dropdownMenu';
 import Empty from './packages/empty';
 import Float from './packages/float';
 import Form from './packages/form';
@@ -20,10 +24,12 @@ import Layout, { Header, Content, Footer, Side } from './packages/layout';
 import ListMenu from './packages/listMenu';
 import ListView, { ListViewItem } from './packages/listView';
 import Loading from './packages/loading';
+import LoadingMask, { loadingMask } from './packages/loadingMask';
 import Masonry from './packages/masonry';
 import Message, { message } from './packages/message';
 import Pagination from './packages/pagination';
 import Popper from './packages/popper';
+import Popup from './packages/popup';
 import PopupMenu from './packages/popupMenu';
 import Radio from './packages/radio';
 import RadioButtonGroup, { RadioButton } from './packages/radioButtonGroup';
@@ -33,12 +39,15 @@ import Spinner from './packages/spinner';
 import Split from './packages/split';
 import Step from './packages/step';
 import Switch from './packages/switch';
+import Table from './packages/table';
 import Tag from './packages/tag';
 import Textarea from './packages/textarea';
+import Toast, { toast } from './packages/toast';
 import Upload from './packages/upload';
 import VirtualList, { VirtualListItem } from './packages/virtualList';
 
 const defaultComponentList = [
+  Alert,
   Avatar,
   Button,
   Card,
@@ -47,7 +56,10 @@ const defaultComponentList = [
   CheckboxGroup,
   ClickableText,
   Collapse,
+  ConfirmModal,
+  Dialog,
   Drawer,
+  DropdownMenu,
   Empty,
   Float,
   Form,
@@ -59,10 +71,12 @@ const defaultComponentList = [
   ListMenu,
   ListView,
   Loading,
+  LoadingMask,
   Masonry,
   Message,
   Pagination,
   Popper,
+  Popup,
   PopupMenu,
   Radio,
   RadioButton,
@@ -73,8 +87,10 @@ const defaultComponentList = [
   Split,
   Step,
   Switch,
+  Table,
   Tag,
   Textarea,
+  Toast,
   Upload,
   VirtualList,
 ];
@@ -88,6 +104,8 @@ const buildInstaller = (components: any[]) => {
 };
 
 export {
+  Alert,
+  Alert as AAlert,
   Avatar,
   Avatar as AAvatar,
   Button,
@@ -104,10 +122,16 @@ export {
   ClickableText as AClickableText,
   Collapse,
   Collapse as ACollapse,
+  ConfirmModal,
+  ConfirmModal as AConfirmModal,
   Content,
   Content as AContent,
+  Dialog,
+  Dialog as ADialog,
   Drawer,
   Drawer as ADrawer,
+  DropdownMenu,
+  DropdownMenu as ADropdownMenu,
   Empty,
   Empty as AEmpty,
   Input,
@@ -130,6 +154,8 @@ export {
   Layout as ALayout,
   Loading,
   Loading as ALoading,
+  LoadingMask,
+  LoadingMask as ALoadingMask,
   ListMenu,
   ListMenu as AListMenu,
   ListView,
@@ -144,6 +170,8 @@ export {
   Pagination as APagination,
   Popper,
   Popper as APopper,
+  Popup,
+  Popup as APopup,
   PopupMenu,
   PopupMenu as APopupMenu,
   Radio,
@@ -166,10 +194,14 @@ export {
   Side as ASide,
   Switch,
   Switch as ASwitch,
+  Table,
+  Table as ATable,
   Tag,
   Tag as ATag,
   Textarea,
   Textarea as ATextarea,
+  Toast,
+  Toast as AToast,
   Upload,
   Upload as AUpload,
   VirtualList,
@@ -179,6 +211,9 @@ export {
   // methods
   buildInstaller,
   message,
+  confirmModal,
+  toast,
+  loadingMask,
 };
 
 // hooks
@@ -190,5 +225,8 @@ export * from './packages/resolver';
 export * from './types';
 
 export type MessageFn = typeof message;
+export type ConfirmModalFn = typeof confirmModal;
+export type ToastFn = typeof toast;
+export type LoadingMaskFn = typeof loadingMask;
 
 export default buildInstaller(defaultComponentList);

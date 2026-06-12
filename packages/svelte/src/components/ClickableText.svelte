@@ -1,22 +1,23 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let type = '';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    type = '',
+    class: className = '',
+    children,
+    onClick,
+  } = $props();
 </script>
 
 <span
   class="a-clickable-text {type ? 'a-clickable-text--' + type : ''} {className}"
   role="button"
   tabindex="0"
-  on:click={(event) => dispatch('click', event)}
-  on:keydown={(event) => {
+  onclick={(event) => onClick?.(event)}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      dispatch('click', event);
+      onClick?.(event);
     }
   }}
 >
-  <slot />
+  {@render children?.()}
 </span>

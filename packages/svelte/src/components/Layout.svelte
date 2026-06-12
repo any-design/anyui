@@ -1,11 +1,13 @@
 <script lang="ts">
-  export let direction = '';
-  export let fit = false;
-  export let hasSide = false;
-  export let className = '';
-  export { className as class };
+  let {
+    direction = '',
+    fit = false,
+    hasSide = false,
+    class: className = '',
+    children,
+  } = $props();
 </script>
 
 <div class="a-layout {fit ? 'a-layout--fill' : ''} {(hasSide || direction === 'horizontal') ? 'a-layout--has-side' : ''} {direction === 'vertical' ? 'a-layout--vertical' : ''} {className}">
-  <slot />
+  {@render children?.()}
 </div>

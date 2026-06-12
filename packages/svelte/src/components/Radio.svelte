@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let label = '';
-  export let checked = false;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    label = '',
+    checked = false,
+    class: className = '',
+    onChange,
+  } = $props();
 </script>
 
 <div
@@ -12,11 +12,11 @@
   role="radio"
   tabindex="0"
   aria-checked={checked}
-  on:click={() => !checked && dispatch('change', !checked)}
-  on:keydown={(event) => {
+  onclick={() => !checked && onChange?.(!checked)}
+  onkeydown={(event) => {
     if ((event.key === 'Enter' || event.key === ' ') && !checked) {
       event.preventDefault();
-      dispatch('change', !checked);
+      onChange?.(!checked);
     }
   }}
 >

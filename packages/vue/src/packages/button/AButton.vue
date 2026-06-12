@@ -137,9 +137,13 @@ export default defineComponent({
   height: 42px;
   line-height: 30px;
   padding: 4px 20px;
-  background: var(--bg);
-  border-radius: 6px;
-  box-shadow: 0px 4px 10px var(--shadow-6);
+  background: var(--a-surface, var(--bg));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border-radius: var(--a-radius, 14px);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-sm, 0 4px 10px var(--shadow-6));
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.05rem;
@@ -149,7 +153,11 @@ export default defineComponent({
   user-select: none;
   box-sizing: border-box;
   white-space: nowrap;
-  transition: filter 120ms ease;
+  transition:
+    transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease),
+    box-shadow var(--anim-duration-quick, 120ms) ease,
+    background-color var(--anim-duration-quick, 120ms) ease,
+    filter var(--anim-duration-quick, 120ms) ease;
 
   &__inner {
     color: inherit;
@@ -185,34 +193,42 @@ export default defineComponent({
 }
 
 .a-button:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-md, 0 6px 16px var(--shadow-8));
 }
 .a-button:active {
-  filter: brightness(1.05);
+  filter: brightness(1.02);
+  transform: translateY(0) scale(0.96);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-xs, 0 2px 6px var(--shadow-5));
 }
 
 .a-button.a-button--round {
-  border-radius: 24px;
+  border-radius: var(--a-radius-full, 999px);
 }
 .a-button.a-button--large {
   font-size: 16px;
   line-height: 36px;
   padding: 6px 24px;
   height: 52px;
-  border-radius: 8px;
+  border-radius: var(--a-radius-lg, 18px);
 }
 .a-button.a-button--large.a-button--round {
-  border-radius: 30px;
+  border-radius: var(--a-radius-full, 999px);
 }
 .a-button.a-button--small {
   font-size: 12px;
   line-height: 30px;
   padding: 3px 14px;
   height: 32px;
-  border-radius: 5px;
+  border-radius: var(--a-radius-sm, 10px);
 }
 .a-button.a-button--small.a-button--round {
-  border-radius: 18px;
+  border-radius: var(--a-radius-full, 999px);
 }
 
 .a-button.a-button--fill {
@@ -230,14 +246,25 @@ export default defineComponent({
     background: var(--#{$color});
     color: var(--text-btn);
     border: none;
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      0 6px 18px -6px color-mix(in srgb, var(--#{$color}) 55%, transparent),
+      0 2px 6px var(--shadow-4);
   }
   .a-button.a-button--#{$color}:hover {
     filter: none;
     background: var(--#{$color}-85);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      0 8px 22px -6px color-mix(in srgb, var(--#{$color}) 62%, transparent),
+      0 2px 6px var(--shadow-4);
   }
   .a-button.a-button--#{$color}:active {
     filter: none;
     background: var(--#{$color}-75);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      0 4px 12px -4px color-mix(in srgb, var(--#{$color}) 48%, transparent);
   }
 }
 
@@ -248,31 +275,39 @@ export default defineComponent({
 @include coloredButton('danger');
 
 .a-button.a-button--gradient {
-  box-shadow: 0 2px 12px var(--shadow-12);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    0 6px 18px -6px color-mix(in srgb, var(--primary) 50%, transparent);
   background: linear-gradient(42deg, var(--primary), var(--secondary));
   color: var(--text-btn);
   border: none;
 }
 .a-button.a-button--gradient-reverse {
   background: linear-gradient(42deg, var(--secondary), var(--primary));
-  box-shadow: 0 2px 12px var(--shadow-12);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    0 6px 18px -6px color-mix(in srgb, var(--secondary) 50%, transparent);
   color: var(--text-btn);
   border: none;
 }
 
 .a-button.a-button--depth {
   background: linear-gradient(180deg, var(--primary-l-6) 36%, var(--primary-d-4));
-  box-shadow: 0 2px 12px var(--shadow-12);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    0 6px 18px -6px color-mix(in srgb, var(--primary) 50%, transparent);
   color: var(--text-btn);
   border: none;
 }
 
 .a-button.a-button--anim {
-  transition: all var(--anim-duration, 200ms) ease;
+  transition: all var(--anim-duration, 200ms) var(--a-ease-spring, ease);
 }
 .a-button.a-button--anim:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 10px var(--shadow-24);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-lg, 0 4px 10px var(--shadow-24));
 }
 
 .a-button.a-button--disabled {
@@ -282,6 +317,11 @@ export default defineComponent({
   color: var(--text-disabled) !important;
   box-shadow: 0 3px 12px var(--shadow-5);
   cursor: not-allowed;
+}
+.a-button.a-button--disabled:hover,
+.a-button.a-button--disabled:active {
+  transform: none;
+  filter: none;
 }
 
 .a-button--icon {

@@ -1,9 +1,10 @@
 <script lang="ts">
-  export let steps: number | Array<string | null> = 2;
-  export let current = 1;
-  export let className = '';
-  export { className as class };
-  $: displaySteps = Array.isArray(steps) ? steps : Array.from({ length: steps }, () => null);
+  let {
+    steps = 2,
+    current = 1,
+    class: className = '',
+  } = $props();
+  const displaySteps = $derived(Array.isArray(steps) ? steps : Array.from({ length: steps }, () => null));
 </script>
 
 <div class="a-step {className}">

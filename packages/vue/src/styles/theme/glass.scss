@@ -1,0 +1,85 @@
+// Optional liquid glass style.
+//
+// Enable globally:        <html data-anyui-style="glass">
+// Enable for a subtree:   <div class="a-glass">...</div>
+//
+// It works purely by overriding the surface indirection tokens defined in
+// tokens.scss, so components need no glass-specific code. Floating elements
+// teleported to <body> (popper, message, select dropdown) only pick the style
+// up in global mode.
+//
+// The recipe follows Apple's liquid glass cues: heavy blur with boosted
+// saturation and a slight brightness lift (the "lensing" feel), a bright
+// specular top edge, a faint inner rim for material thickness, and floating
+// frosted pills for hovered / selected menu items.
+
+@use './global/vars.scss' as *;
+@use './color/vars.scss' as *;
+
+@mixin glass-surface-light {
+  --a-surface: color-mix(in srgb, var(--bg-bright) 52%, transparent);
+  --a-surface-input: color-mix(in srgb, var(--bg-semi-light) 46%, transparent);
+  --a-surface-backdrop: blur(26px) saturate(2) brightness(1.04);
+  --a-surface-border-color: color-mix(in srgb, #fff 46%, transparent);
+  // specular top edge + thickness rim + soft bottom sheen
+  --a-surface-highlight:
+    inset 0 1px 1px color-mix(in srgb, #fff 62%, transparent),
+    inset 0 -1px 1px color-mix(in srgb, #fff 12%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, #fff 18%, transparent);
+
+  // menu / list items: frosted pills instead of flat tints
+  --a-item-hover-bg: color-mix(in srgb, #fff 30%, transparent);
+  --a-item-selected-bg: color-mix(in srgb, #fff 44%, transparent);
+  --a-item-selected-gradient: none;
+  --a-item-selected-color: var(--text);
+  --a-item-selected-text-shadow: none;
+  --a-item-selected-highlight:
+    inset 0 1px 0 color-mix(in srgb, #fff 75%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, #fff 28%, transparent);
+  --a-item-selected-shadow: 0 2px 10px var(--shadow-10);
+
+  // tinted banners (alert) keep their tint but go translucent
+  --a-alert-surface: color-mix(in srgb, var(--bg-bright) 30%, transparent);
+}
+
+@mixin glass-surface-dark {
+  --a-surface: color-mix(in srgb, var(--bg-bright) 46%, transparent);
+  --a-surface-input: color-mix(in srgb, var(--bg-semi-light) 42%, transparent);
+  --a-surface-backdrop: blur(28px) saturate(1.55) brightness(1.12);
+  --a-surface-border-color: color-mix(in srgb, #fff 16%, transparent);
+  --a-surface-highlight:
+    inset 0 1px 1px color-mix(in srgb, #fff 22%, transparent),
+    inset 0 -1px 1px color-mix(in srgb, #fff 5%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, #fff 7%, transparent);
+
+  --a-item-hover-bg: color-mix(in srgb, #fff 9%, transparent);
+  --a-item-selected-bg: color-mix(in srgb, #fff 15%, transparent);
+  --a-item-selected-gradient: none;
+  --a-item-selected-color: var(--text);
+  --a-item-selected-text-shadow: none;
+  --a-item-selected-highlight:
+    inset 0 1px 0 color-mix(in srgb, #fff 28%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, #fff 10%, transparent);
+  --a-item-selected-shadow: 0 2px 10px var(--shadow-20);
+
+  --a-alert-surface: color-mix(in srgb, var(--bg-bright) 28%, transparent);
+}
+
+html[data-anyui-style='glass'],
+.a-glass {
+  @include glass-surface-light;
+}
+
+#{$dark-theme-selector}[data-anyui-style='glass'],
+#{$dark-theme-selector} .a-glass {
+  @include glass-surface-dark;
+}
+
+@if $enable-prefer-query {
+  @media (prefers-color-scheme: dark) {
+    html[data-anyui-style='glass'],
+    .a-glass {
+      @include glass-surface-dark;
+    }
+  }
+}

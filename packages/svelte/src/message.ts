@@ -1,30 +1,41 @@
 import { mount, unmount } from 'svelte';
-import Message from './components/Message.svelte';
+import MessageContainer from './components/MessageContainer.svelte';
 import type { MessageOptions } from './types';
 
-const defaultMessageIcon: Record<string, string> = {
-  default: '',
-  success: 'ic:round-check-circle',
-  warning: 'ph:warning-fill',
-  info: 'fluent:info-24-filled',
-  error: 'si-glyph:circle-error',
-};
+interface MessageContainerRecord {
+  node: HTMLDivElement;
+  instance: Record<string, any>;
+}
+
+// popup messages live in a single fixed top-center container, like Vue's AMessageContainer
+let messageContainer: MessageContainerRecord | null = null;
 
 const mountDomMessage = (options: MessageOptions | string) => {
   const normalized: MessageOptions =
     typeof options === 'string' ? { type: 'default', content: options } : options;
   if (typeof document === 'undefined') return;
-  const node = document.createElement('div');
-  node.style.zIndex = String(normalized.zIndex ?? 2000);
-  document.body.appendChild(node);
-  const component = mount(Message, {
-    target: node,
-    props: normalized as unknown as Record<string, unknown>,
-  });
-  window.setTimeout(() => {
-    unmount(component);
-    node.remove();
-  }, normalized.duration ?? 5000);
+  if (!messageContainer) {
+    const node = document.createElement('div');
+    node.className = 'a-message-container';
+    node.style.zIndex = String(normalized.zIndex ?? 2000);
+    document.body.appendChild(node);
+    const instance = mount(MessageContainer, {
+      target: node,
+      props: {
+        onCleared: () => {
+          const current = messageContainer;
+          if (!current) return;
+          messageContainer = null;
+          window.setTimeout(() => {
+            unmount(current.instance);
+            current.node.remove();
+          }, 0);
+        },
+      },
+    }) as Record<string, any>;
+    messageContainer = { node, instance };
+  }
+  messageContainer.instance.addMessage(normalized);
 };
 
 export const message = Object.assign(mountDomMessage, {

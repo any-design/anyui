@@ -1,18 +1,19 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import { getContext } from 'svelte';
-  export let selected = false;
-  export let label = '';
-  export let type = '';
-  export let itemHeight: string | number | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    selected = false,
+    label = '',
+    type = '',
+    itemHeight = undefined,
+    class: className = '',
+    children,
+    onClick,
+  } = $props();
   const listView = getContext<any>('anyui-list-view') ?? {};
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: itemStyleType = type || listView.type || 'borderless';
-  $: formattedHeight = formatStyleSize(itemHeight ?? listView.itemHeight);
-  $: hasLabel = Boolean(label);
+  const itemStyleType = $derived(type || listView.type || 'borderless');
+  const formattedHeight = $derived(formatStyleSize(itemHeight ?? listView.itemHeight));
+  const hasLabel = $derived(Boolean(label));
 </script>
 
 <div
@@ -20,18 +21,18 @@
   style:height={formattedHeight}
   role="button"
   tabindex="0"
-  on:click={(event) => dispatch('click', event)}
-  on:keydown={(event) => {
+  onclick={(event) => onClick?.(event)}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      dispatch('click', event);
+      onClick?.(event);
     }
   }}
 >
   {#if hasLabel}
     <span class="a-list-view-item__label">{label}</span>
-    <div class="a-list-view-item__content"><slot /></div>
+    <div class="a-list-view-item__content">{@render children?.()}</div>
   {:else}
-    <slot />
+    {@render children?.()}
   {/if}
 </div>

@@ -10,6 +10,7 @@ const svelteSrcDir = path.resolve(rootDir, './packages/svelte/src');
 const svelteComponentsDir = path.resolve(svelteSrcDir, './components');
 
 const components = [
+  'Alert',
   'Avatar',
   'Button',
   'Card',
@@ -18,8 +19,11 @@ const components = [
   'CheckboxGroup',
   'ClickableText',
   'Collapse',
+  'ConfirmModal',
   'Content',
+  'Dialog',
   'Drawer',
+  'DropdownMenu',
   'Empty',
   'Float',
   'Footer',
@@ -34,10 +38,12 @@ const components = [
   'ListView',
   'ListViewItem',
   'Loading',
+  'LoadingMask',
   'Masonry',
   'Message',
   'Pagination',
   'Popper',
+  'Popup',
   'PopupMenu',
   'Radio',
   'RadioButton',
@@ -49,12 +55,17 @@ const components = [
   'Split',
   'Step',
   'Switch',
+  'Table',
   'Tag',
   'Textarea',
+  'Toast',
   'Upload',
   'VirtualList',
   'VirtualListItem',
 ];
+
+// internal Svelte components that are generated but not exported from the index
+const svelteInternalComponents = ['ToastContainer', 'LoadingMaskHost', 'MessageContainer'];
 
 const kebab = (name) =>
   name
@@ -113,6 +124,15 @@ export interface PaginationMeta {
 export interface PopMenuItem {
   name: string;
   key?: string;
+}
+
+export interface DropdownMenuItem {
+  command: string | number;
+  label: string;
+  icon?: string;
+  disabled?: boolean;
+  danger?: boolean;
+  divided?: boolean;
 }
 
 export interface PopMenuCommandExtra {
@@ -193,6 +213,62 @@ export interface SectionRecord {
   head?: number;
   tail?: number;
 }
+
+export type AlertType = 'info' | 'success' | 'warn' | 'danger';
+
+export type ToastType = 'info' | 'success' | 'warning' | 'error';
+
+export type ToastPlacement = 'top-right' | 'bottom-right';
+
+export interface ToastOptions {
+  title?: string;
+  content?: string;
+  type?: ToastType;
+  duration?: number;
+  closable?: boolean;
+  placement?: ToastPlacement;
+  zIndex?: number;
+}
+
+export interface ToastItem {
+  key: string;
+  title: string;
+  content: string;
+  type: ToastType;
+  duration: number;
+  closable: boolean;
+}
+
+export type AToastTypedOptions = string | Omit<ToastOptions, 'type'>;
+
+export type ConfirmModalType = 'primary' | 'danger';
+
+export interface ConfirmModalOptions {
+  title?: string;
+  content?: string;
+  confirmText?: string;
+  cancelText?: string;
+  type?: ConfirmModalType;
+  width?: number | string;
+  maskClosable?: boolean;
+  zIndex?: number;
+}
+
+export interface LoadingMaskShowOptions {
+  text?: string;
+  zIndex?: number;
+}
+
+export type TableColumnAlign = 'left' | 'center' | 'right';
+
+export interface TableColumn {
+  key: string;
+  title: string;
+  width?: number | string;
+  align?: TableColumnAlign;
+}
+
+export type TableRow = Record<string, unknown>;
 `;
 
 const reactSource = `
@@ -221,11 +297,20 @@ import type {
   AListMenuDisplayItem,
   AListMenuItemConfig,
   ASelectItems,
+  ConfirmModalOptions,
+  DropdownMenuItem,
   FormRuleItem,
+  LoadingMaskShowOptions,
   MessageOptions,
   PaginationMeta,
   PopMenuItem,
   RawVirtualListItem,
+  TableColumn,
+  TableRow,
+  ToastItem,
+  ToastOptions,
+  ToastPlacement,
+  ToastType,
   VirtualListItem as VirtualListDataItem,
 } from './types';
 export * from './types';
@@ -385,7 +470,7 @@ export const Checkbox = forwardRef<HTMLDivElement, AnyUIReactProps>(function Che
     onChange?.(next);
   };
   return (
-    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-checkbox', checked && 'a-checkbox--checked', className)} onClick={update}>
+    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-checkbox', checked && 'a-checkbox--checked', className)} style={rest.style} onClick={update}>
       <div className="a-checkbox-checker">{checked ? <Icon className="a-checkbox-checker__icon" icon={checkIcon} /> : null}</div>
       <div className="a-checkbox-label">{label}</div>
     </div>
@@ -682,6 +767,7 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
     modelValue = '',
     placeholder = '',
     disabled = false,
+    multiple = false,
     expandIcon = 'ic:outline-expand-more',
     onUpdateModelValue,
     onChange,
@@ -697,13 +783,31 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
   useEffect(() => setSelectedValue(modelValue), [modelValue]);
   useEffect(() => {
     if (!formItem?.clearSignal) return;
-    setSelectedValue('');
-    onUpdateModelValue?.('');
-    onChange?.('');
+    const emptyValue = multiple ? [] : '';
+    setSelectedValue(emptyValue);
+    onUpdateModelValue?.(emptyValue);
+    onChange?.(emptyValue);
   }, [formItem?.clearSignal]);
-  const selected = items.find((item) => item.value === selectedValue);
+  const selectedValues: Array<string | number> = Array.isArray(selectedValue) ? selectedValue : [];
+  const isItemSelected = (item: { text: string; value: string | number }) =>
+    multiple ? selectedValues.includes(item.value) : item.value === selectedValue;
+  // always display the text of the selected items, never their raw values
+  const displayText = multiple
+    ? items.filter((item) => selectedValues.includes(item.value)).map((item) => item.text).join(', ')
+    : (items.find((item) => item.value === selectedValue)?.text ?? '');
   const selectItem = (item: { text: string; value: string | number }) => {
     if (disabled) return;
+    if (multiple) {
+      const next = selectedValues.includes(item.value)
+        ? selectedValues.filter((value) => value !== item.value)
+        : [...selectedValues, item.value];
+      setSelectedValue(next);
+      onUpdateModelValue?.(next);
+      onChange?.(next);
+      formItem?.notifyChange();
+      // keep the dropdown open in multi-select mode
+      return;
+    }
     setSelectedValue(item.value);
     onUpdateModelValue?.(item.value);
     onChange?.(item.value);
@@ -730,7 +834,7 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
         <div className={cx('a-input', 'a-select__inner', rest.size === 'large' && 'a-input--large', rest.round && 'a-input--round', disabled && 'a-input--disabled', 'a-input--has-postfix')}>
           <input
             className="a-input__inner"
-            value={selected?.text ?? ''}
+            value={displayText}
             placeholder={placeholder}
             disabled={disabled}
             readOnly
@@ -747,13 +851,13 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
       </div>
       {expanded && !disabled ? (
         <div className="a-select-dropdown__wrapper">
-          <div id={dropdownId} className="a-select-dropdown" role="listbox">
+          <div id={dropdownId} className="a-select-dropdown" role="listbox" aria-multiselectable={multiple || undefined}>
             {items.map((item) => (
               <div
                 key={String(item.value)}
-                className="a-select-dropdown__item"
+                className={cx('a-select-dropdown__item', isItemSelected(item) && 'a-select-dropdown__item--selected')}
                 role="option"
-                aria-selected={item.value === selectedValue}
+                aria-selected={isItemSelected(item)}
                 tabIndex={0}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => selectItem(item)}
@@ -764,7 +868,10 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
                   }
                 }}
               >
-                {item.text}
+                <span className="a-select-dropdown__item-text">{item.text}</span>
+                {multiple && isItemSelected(item) ? (
+                  <Icon className="a-select-dropdown__item-check" icon="ic:round-check" />
+                ) : null}
               </div>
             ))}
           </div>
@@ -774,17 +881,21 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
   );
 });
 
+// Vue applies the custom tag color at 0.2 alpha unless it is a css variable.
+const tagBackgroundColor = (value: string) =>
+  value.startsWith('var') ? value : \`color-mix(in srgb, \${value} 20%, transparent)\`;
+
 export const Tag = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tag(
   { children, className, round = false, size = 'default', color = '', bgColor = '', ...rest },
   ref,
 ) {
-  const backgroundColor = bgColor || color;
+  const backgroundBase = bgColor || color;
   return (
     <div
       {...pickDataAttrs(rest)}
       ref={ref}
       className={cx('a-tag', round && 'a-tag--round', size && \`a-tag--\${size}\`, (color || bgColor) && 'a-tag--custom-color', className)}
-      style={{ backgroundColor: backgroundColor || undefined, color: color || undefined, ...rest.style }}
+      style={{ backgroundColor: backgroundBase ? tagBackgroundColor(backgroundBase) : undefined, color: color || undefined, ...rest.style }}
     >
       {children}
     </div>
@@ -792,7 +903,7 @@ export const Tag = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tag(
 });
 
 export const GradientText = forwardRef<HTMLSpanElement, AnyUIReactProps>(function GradientText(
-  { children, className, gradient = '', reverseGradient = false, size = '', primaryColor = 'var(--primary)', secondaryColor = 'var(--secondary)', splitPercent = 30, ...rest },
+  { children, className, gradient = '', reverseGradient = false, size = '', primaryColor = 'var(--primary)', secondaryColor = 'var(--secondary)', splitPercent = 30, glow = false, ...rest },
   ref,
 ) {
   const background =
@@ -801,7 +912,7 @@ export const GradientText = forwardRef<HTMLSpanElement, AnyUIReactProps>(functio
       ? \`linear-gradient(90deg, \${primaryColor}, \${secondaryColor} \${splitPercent}%, \${secondaryColor} 100%)\`
       : \`linear-gradient(90deg, \${secondaryColor}, \${primaryColor} \${splitPercent}%, \${primaryColor} 100%)\`);
   return (
-    <span ref={ref} className={cx('a-gradient-text', className)} style={{ background, fontSize: formatStyleSize(size), ...rest.style }}>
+    <span ref={ref} className={cx('a-gradient-text', glow && 'a-gradient-text--glow', className)} style={{ background, fontSize: formatStyleSize(size), ...rest.style }}>
       {children}
     </span>
   );
@@ -847,33 +958,103 @@ export const Loading = () => (
   </div>
 );
 
-export const Spinner = forwardRef<HTMLSpanElement, AnyUIReactProps>(function Spinner({ className, icon = 'quill:loading-spin', ...rest }, ref) {
+export const Spinner = forwardRef<HTMLSpanElement, AnyUIReactProps>(function Spinner({ className, icon = '', ...rest }, ref) {
   return (
     <span {...pickDataAttrs(rest)} ref={ref} className={cx('a-spinner', className)}>
-      <Icon className="a-spinner__inner" icon={icon} />
+      {icon ? (
+        <Icon className="a-spinner__inner" icon={icon} />
+      ) : (
+        <svg className="a-spinner__inner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" pathLength="100" strokeDasharray="75 100" />
+        </svg>
+      )}
     </span>
   );
 });
 
-export const Empty = forwardRef<HTMLDivElement, AnyUIReactProps>(function Empty({ className, text, icon = 'iconoir:file-not-found', ...rest }, ref) {
+export const Empty = forwardRef<HTMLDivElement, AnyUIReactProps>(function Empty({ className, text, icon = 'iconoir:file-not-found', children, ...rest }, ref) {
   return (
     <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-empty', className)}>
-      <Icon className="a-empty__icon" icon={icon} />
+      <div className="a-empty__figure">
+        <Icon className="a-empty__icon" icon={icon} />
+      </div>
       {text ? <span className="a-empty__text">{text}</span> : null}
+      {children !== undefined && children !== null ? (
+        <div className="a-empty__actions">{children}</div>
+      ) : null}
     </div>
   );
 });
 
+// matches the Vue ACollapse transition duration (var(--anim-duration, 200ms))
+const COLLAPSE_TRANSITION_DURATION = 200;
+
 export const Collapse = forwardRef<HTMLDivElement, AnyUIReactProps>(function Collapse(
-  { children, className, visible = false, direction = 'vertical', alwaysRender = false, ...rest },
+  { children, className, visible = false, direction = 'vertical', alwaysRender = false, renderWaitTime = 100, ...rest },
   ref,
 ) {
-  if (!visible && !alwaysRender) return null;
+  const elementRef = useRef<HTMLDivElement | null>(null);
+  const [collapsed, setCollapsed] = useState(!visible);
+  const [rendered, setRendered] = useState(visible);
+  const [sizeStyle, setSizeStyle] = useState<React.CSSProperties | undefined>(undefined);
+  const firstRef = useRef(true);
+  const setElementRef = (node: HTMLDivElement | null) => {
+    elementRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as any).current = node;
+  };
+  const measure = (collapsedSize: boolean) => {
+    const element = elementRef.current;
+    if (!element) return undefined;
+    const size =
+      direction === 'vertical'
+        ? element[collapsedSize ? 'clientHeight' : 'scrollHeight']
+        : element[collapsedSize ? 'clientWidth' : 'scrollWidth'];
+    return direction === 'vertical' ? { maxHeight: \`\${size}px\` } : { maxWidth: \`\${size}px\` };
+  };
+  useEffect(() => {
+    if (firstRef.current) {
+      firstRef.current = false;
+      return undefined;
+    }
+    let raf = 0;
+    let animeTimeout: number | undefined;
+    let renderTimeout: number | undefined;
+    if (visible) {
+      setRendered(true);
+      // wait a frame so a freshly mounted element can be measured while still collapsed
+      raf = requestAnimationFrame(() => {
+        setSizeStyle(measure(false));
+        setCollapsed(false);
+        animeTimeout = window.setTimeout(() => setSizeStyle(undefined), COLLAPSE_TRANSITION_DURATION);
+      });
+    } else {
+      // pin the current size so the transition has an explicit starting point
+      setSizeStyle(measure(true));
+      raf = requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          setSizeStyle(undefined);
+          setCollapsed(true);
+        }),
+      );
+      renderTimeout = window.setTimeout(
+        () => setRendered(false),
+        COLLAPSE_TRANSITION_DURATION + renderWaitTime,
+      );
+    }
+    return () => {
+      cancelAnimationFrame(raf);
+      if (animeTimeout) window.clearTimeout(animeTimeout);
+      if (renderTimeout) window.clearTimeout(renderTimeout);
+    };
+  }, [visible, direction, renderWaitTime]);
+  if (!rendered && !alwaysRender) return null;
   return (
     <div
       {...pickDataAttrs(rest)}
-      ref={ref}
-      className={cx('a-collapse', !visible && \`a-collapse--collapsed-\${direction}\`, className)}
+      ref={setElementRef}
+      className={cx('a-collapse', collapsed && \`a-collapse--collapsed-\${direction}\`, className)}
+      style={{ ...sizeStyle, ...rest.style }}
     >
       {children}
     </div>
@@ -900,24 +1081,78 @@ export const Float = forwardRef<HTMLDivElement, AnyUIReactProps>(function Float(
 });
 
 export const Drawer = forwardRef<HTMLDivElement, AnyUIReactProps>(function Drawer(
-  { children, className, drawerClass, maskClass, bodyClass, modelValue = false, withMask = true, position = 'left', width = '30%', zIndex = 100, maskZIndex, onUpdateModelValue, ...rest },
+  {
+    children,
+    className,
+    drawerClass,
+    maskClass,
+    bodyClass,
+    modelValue = false,
+    appendToBody = true,
+    withMask = true,
+    position = 'left',
+    width = '30%',
+    zIndex = 100,
+    maskZIndex,
+    lockScroll = true,
+    transitionName,
+    onUpdateModelValue,
+    ...rest
+  },
   ref,
 ) {
-  if (!modelValue) return null;
-  return (
-    <div ref={ref} className={cx('a-drawer', \`a-drawer--\${position}\`, drawerClass, className)} role="dialog">
+  const [rendered, transitionClass] = useVueTransition(transitionName || 'a-drawer', modelValue, 240);
+  useEffect(() => {
+    if (!modelValue || !lockScroll) return undefined;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
+  }, [modelValue, lockScroll]);
+  const node = rendered ? (
+    <div
+      ref={ref}
+      className={cx('a-drawer', \`a-drawer--\${position}\`, transitionClass, drawerClass, className)}
+      role="dialog"
+      onClick={(event) => event.stopPropagation()}
+    >
       {withMask ? (
-        <div className={cx('a-drawer__mask', maskClass)} style={{ zIndex: maskZIndex || zIndex - 1 }} onClick={() => onUpdateModelValue?.(false)} />
+        <div
+          className={cx('a-drawer__mask', appendToBody && 'a-drawer__mask--outside', maskClass)}
+          style={{ zIndex: maskZIndex || zIndex - 1 }}
+          onClick={() => onUpdateModelValue?.(false)}
+        />
       ) : null}
-      <div className={cx('a-drawer__body', bodyClass)} style={{ width: formatStyleSize(width), zIndex, ...rest.style }}>
+      <div
+        className={cx('a-drawer__body', appendToBody && 'a-drawer__body--outside', bodyClass)}
+        style={{ width: formatStyleSize(width), zIndex, ...rest.style }}
+      >
         {children}
       </div>
     </div>
-  );
+  ) : null;
+  return appendToBody && typeof document !== 'undefined' ? createPortal(node, document.body) : node;
 });
 
-export const Split = forwardRef<HTMLDivElement, AnyUIReactProps>(function Split({ className, margin = 0, color, ...rest }, ref) {
-  return <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-split', className)} style={{ margin: formatStyleSize(margin), backgroundColor: color, ...rest.style }} />;
+export const Split = forwardRef<HTMLDivElement, AnyUIReactProps>(function Split(
+  { className, height = 2, color = 'var(--line)', margin = 12, round = false, ...rest },
+  ref,
+) {
+  const formattedMargin = formatStyleSize(margin);
+  const formattedHeight = formatStyleSize(height);
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-split', className)}
+      style={{
+        height: formattedHeight,
+        backgroundColor: color,
+        marginTop: formattedMargin,
+        marginBottom: formattedMargin,
+        borderRadius: round ? \`calc(\${formattedHeight} / 2)\` : undefined,
+        ...rest.style,
+      }}
+    />
+  );
 });
 
 export const Step = forwardRef<HTMLDivElement, AnyUIReactProps>(function Step({ className, steps = 2, current = 1, ...rest }, ref) {
@@ -1386,16 +1621,70 @@ export const VirtualListItem = forwardRef<HTMLDivElement, AnyUIReactProps>(funct
   );
 });
 
-export const Masonry = forwardRef<HTMLDivElement, AnyUIReactProps>(function Masonry({ children, className, items = [], columns = 3, gap = 16, ...rest }, ref) {
+export const Masonry = forwardRef<HTMLDivElement, AnyUIReactProps>(function Masonry(
+  { children, className, items = [], itemHeightGetter, colWidth = 240, col = 0, gap = 16, fit = false, ...rest },
+  ref,
+) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
+  const [containerWidth, setContainerWidth] = useState(0);
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) return undefined;
+    // in fit mode the container width is pinned to the computed fit width,
+    // so measure the parent element to keep the column count responsive
+    const target = fit && !col ? container.parentElement ?? container : container;
+    const measure = () => setContainerWidth(target.offsetWidth);
+    measure();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', measure);
+      return () => window.removeEventListener('resize', measure);
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [fit, col]);
+  const columns = Math.max(1, col || Math.floor((containerWidth + gap) / (colWidth + gap)));
+  const layout = useMemo(() => {
+    const columnHeights = new Array(columns).fill(0) as number[];
+    const positions = items.map((item: any) => {
+      const rawHeight = typeof itemHeightGetter === 'function' ? itemHeightGetter(item) : Number(item?.height);
+      const height = Number.isFinite(rawHeight) && rawHeight > 0 ? rawHeight : colWidth;
+      let targetCol = 0;
+      for (let i = 1; i < columns; i += 1) {
+        if (columnHeights[i] < columnHeights[targetCol]) targetCol = i;
+      }
+      const position = { left: targetCol * (colWidth + gap), top: columnHeights[targetCol], height };
+      columnHeights[targetCol] += height + gap;
+      return position;
+    });
+    const maxHeight = positions.length ? Math.max(0, ...columnHeights.map((h) => h - gap)) : 0;
+    return { positions, maxHeight };
+  }, [items, columns, colWidth, gap, itemHeightGetter]);
+  const fitWidth = columns * colWidth + (columns - 1) * gap;
   return (
-    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-masonry', className)} style={{ columnCount: columns, columnGap: formatStyleSize(gap), ...rest.style }}>
-      {items.length
-        ? items.map((item: any, index: number) => (
-            <div key={item.id ?? index} className="a-masonry__item">
-              {typeof children === 'function' ? children({ item, index }) : children}
-            </div>
-          ))
-        : children}
+    <div
+      {...pickDataAttrs(rest)}
+      ref={containerRef}
+      className={cx('a-masonry', className)}
+      style={{ position: 'relative', width: fit ? fitWidth : undefined, height: layout.maxHeight, ...rest.style }}
+    >
+      {items.map((item: any, index: number) => (
+        <div
+          key={item.id ?? index}
+          className="a-masonry__item"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: colWidth,
+            height: layout.positions[index].height,
+            transform: \`translateX(\${layout.positions[index].left}px) translateY(\${layout.positions[index].top}px)\`,
+          }}
+        >
+          {typeof children === 'function' ? children(item, index) : children}
+        </div>
+      ))}
     </div>
   );
 });
@@ -1664,6 +1953,84 @@ export const PopupMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function Po
   );
 });
 
+export const DropdownMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function DropdownMenu(
+  {
+    children,
+    className,
+    items = [] as DropdownMenuItem[],
+    triggerType = 'click',
+    placement = 'bottom-start',
+    disabled = false,
+    hideAfterClick = true,
+    width,
+    offset = 12,
+    menuClass,
+    renderItem,
+    onCommand,
+    onVisibleChange,
+    ...rest
+  },
+  ref,
+) {
+  const popperRef = useRef<any>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const setMenuRef = (node: HTMLDivElement | null) => {
+    menuRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as any).current = node;
+  };
+  const command = (item: DropdownMenuItem) => {
+    if (item.disabled) return;
+    if (hideAfterClick) popperRef.current?.hide();
+    onCommand?.(item.command, item);
+  };
+  return (
+    <Popper
+      ref={popperRef}
+      className={className}
+      triggerType={disabled ? 'manual' : triggerType}
+      placement={placement}
+      offset={offset}
+      onPopupStatusChanged={(visible: boolean) => onVisibleChange?.(visible)}
+      popup={
+        <div
+          ref={setMenuRef}
+          className={cx('a-dropdown-menu', menuClass)}
+          style={width !== undefined ? { minWidth: formatStyleSize(width) } : undefined}
+        >
+          {items.map((item: DropdownMenuItem, index: number) => (
+            <div
+              key={item.command}
+              className={cx('a-dropdown-menu__item-wrapper', item.divided && index > 0 && 'a-dropdown-menu__item-wrapper--divided')}
+            >
+              <div
+                className={cx(
+                  'a-dropdown-menu__item',
+                  item.danger && !item.disabled && 'a-dropdown-menu__item--danger',
+                  item.disabled && 'a-dropdown-menu__item--disabled',
+                )}
+                onClick={() => command(item)}
+              >
+                {renderItem ? (
+                  renderItem(item)
+                ) : (
+                  <>
+                    {item.icon ? <Icon className="a-dropdown-menu__icon" icon={item.icon} /> : null}
+                    <span className="a-dropdown-menu__label">{item.label}</span>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      }
+      {...rest}
+    >
+      {children}
+    </Popper>
+  );
+});
+
 export const Upload = forwardRef<HTMLDivElement, AnyUIReactProps>(function Upload({ children, className, status = 'default', clickable = true, disabled = false, onUpload, ...rest }, ref) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -1715,19 +2082,98 @@ export const Message = forwardRef<HTMLDivElement, AnyUIReactProps>(function Mess
   );
 });
 
+// popup messages live in a single fixed top-center container, like Vue's AMessageContainer
+type MessageQueueItem = MessageOptions & { key: string };
+
+interface MessageContainerApi {
+  addMessage: (options: MessageOptions) => void;
+}
+
+const MessageContainer = ({
+  onReady,
+  onCleared,
+}: {
+  onReady?: (api: MessageContainerApi) => void;
+  onCleared?: () => void;
+}) => {
+  const [messageQueue, setMessageQueue] = useState<MessageQueueItem[]>([]);
+  const hadMessagesRef = useRef(false);
+  const addMessage = (options: MessageOptions) => {
+    const key = String(Date.now()) + String(Math.random());
+    setMessageQueue((current) => [{ ...options, key }, ...current]);
+    const duration = options.duration ?? 5000;
+    if (duration > 0) {
+      window.setTimeout(() => {
+        setMessageQueue((current) => current.filter((item) => item.key !== key));
+      }, duration);
+    }
+  };
+  useEffect(() => {
+    onReady?.({ addMessage });
+  }, []);
+  useEffect(() => {
+    if (messageQueue.length) {
+      hadMessagesRef.current = true;
+      return;
+    }
+    if (hadMessagesRef.current) {
+      hadMessagesRef.current = false;
+      onCleared?.();
+    }
+  }, [messageQueue.length]);
+  return (
+    <Fragment>
+      {messageQueue.map((item) => (
+        <Message key={item.key} type={item.type} content={item.content} icon={item.icon} showIcon={item.showIcon} round={item.round} />
+      ))}
+    </Fragment>
+  );
+};
+
+interface MessageContainerRecord {
+  node: HTMLDivElement;
+  root: ReturnType<typeof createRoot>;
+  api?: MessageContainerApi;
+  pending: MessageOptions[];
+}
+
+let messageContainer: MessageContainerRecord | null = null;
+
 const mountDomMessage = (options: MessageOptions | string) => {
   const normalized: MessageOptions =
     typeof options === 'string' ? { type: 'default', content: options } : options;
   if (typeof document === 'undefined') return;
-  const node = document.createElement('div');
-  node.style.zIndex = String(normalized.zIndex ?? 2000);
-  document.body.appendChild(node);
-  const root = createRoot(node);
-  root.render(<Message {...normalized} />);
-  window.setTimeout(() => {
-    root.unmount();
-    node.remove();
-  }, normalized.duration ?? 5000);
+  if (!messageContainer) {
+    const node = document.createElement('div');
+    node.className = 'a-message-container';
+    node.style.zIndex = String(normalized.zIndex ?? 2000);
+    document.body.appendChild(node);
+    const root = createRoot(node);
+    messageContainer = { node, root, pending: [] };
+    root.render(
+      <MessageContainer
+        onReady={(api) => {
+          if (!messageContainer) return;
+          messageContainer.api = api;
+          messageContainer.pending.splice(0).forEach((item) => api.addMessage(item));
+        }}
+        onCleared={() => {
+          const current = messageContainer;
+          if (!current) return;
+          messageContainer = null;
+          window.setTimeout(() => {
+            current.root.unmount();
+            current.node.remove();
+          }, 0);
+        }}
+      />,
+    );
+  }
+  if (messageContainer.api) {
+    messageContainer.api.addMessage(normalized);
+  } else {
+    messageContainer.pending.push(normalized);
+  }
 };
 
 export const message = Object.assign(mountDomMessage, {
@@ -1735,6 +2181,731 @@ export const message = Object.assign(mountDomMessage, {
   error: (options: Omit<MessageOptions, 'type'> | string) => mountDomMessage(typeof options === 'string' ? { type: 'error', content: options } : { ...options, type: 'error' }),
   warning: (options: Omit<MessageOptions, 'type'> | string) => mountDomMessage(typeof options === 'string' ? { type: 'warning', content: options } : { ...options, type: 'warning' }),
   info: (options: Omit<MessageOptions, 'type'> | string) => mountDomMessage(typeof options === 'string' ? { type: 'info', content: options } : { ...options, type: 'info' }),
+});
+
+// replicates Vue's <transition> class flow using the same stylesheet classes.
+// returns [rendered, transitionClass]; rendered stays true during the leave phase.
+const useVueTransition = (name: string, active: boolean, leaveDuration = 320): [boolean, string] => {
+  const [rendered, setRendered] = useState(active);
+  const [transitionClass, setTransitionClass] = useState('');
+  const firstRef = useRef(true);
+  useEffect(() => {
+    if (firstRef.current) {
+      firstRef.current = false;
+      return undefined;
+    }
+    if (active) {
+      setRendered(true);
+      setTransitionClass(name + '-enter-active ' + name + '-enter-from');
+      const raf = requestAnimationFrame(() =>
+        requestAnimationFrame(() => setTransitionClass(name + '-enter-active ' + name + '-enter-to')),
+      );
+      const timer = window.setTimeout(() => setTransitionClass(''), leaveDuration);
+      return () => {
+        cancelAnimationFrame(raf);
+        window.clearTimeout(timer);
+      };
+    }
+    setTransitionClass(name + '-leave-active ' + name + '-leave-from');
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => setTransitionClass(name + '-leave-active ' + name + '-leave-to')),
+    );
+    const timer = window.setTimeout(() => {
+      setRendered(false);
+      setTransitionClass('');
+    }, leaveDuration);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  }, [active]);
+  return [rendered, transitionClass];
+};
+
+// simple shared refcount so stacked popups don't unlock each other
+let scrollLockCount = 0;
+
+const lockBodyScroll = () => {
+  scrollLockCount += 1;
+  if (scrollLockCount === 1 && typeof document !== 'undefined') {
+    document.body.classList.add('a-scroll-locked');
+  }
+};
+
+const unlockBodyScroll = () => {
+  scrollLockCount = Math.max(0, scrollLockCount - 1);
+  if (scrollLockCount === 0 && typeof document !== 'undefined') {
+    document.body.classList.remove('a-scroll-locked');
+  }
+};
+
+// A low-level centered overlay primitive, used by Dialog and friends.
+export const Popup = forwardRef<HTMLDivElement, AnyUIReactProps>(function Popup(
+  {
+    children,
+    className,
+    modelValue = false,
+    appendToBody = true,
+    maskClosable = true,
+    showMask = true,
+    width,
+    zIndex = 1000,
+    onUpdateModelValue,
+    onOpen,
+    onClose,
+    ...rest
+  },
+  ref,
+) {
+  const [rendered, transitionClass] = useVueTransition('a-popup', modelValue, 240);
+  const firstRef = useRef(true);
+  const selfClosedRef = useRef(false);
+  const doClose = () => {
+    if (!modelValue) return;
+    selfClosedRef.current = true;
+    onUpdateModelValue?.(false);
+    onClose?.();
+  };
+  useEffect(() => {
+    if (firstRef.current) {
+      firstRef.current = false;
+      return;
+    }
+    if (modelValue) {
+      onOpen?.();
+    } else if (selfClosedRef.current) {
+      selfClosedRef.current = false;
+    } else {
+      onClose?.();
+    }
+  }, [modelValue]);
+  useEffect(() => {
+    if (!modelValue) return undefined;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
+  }, [modelValue]);
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || !modelValue || !maskClosable) return;
+      doClose();
+    };
+    document.addEventListener('keydown', onKeydown);
+    return () => document.removeEventListener('keydown', onKeydown);
+  }, [modelValue, maskClosable, onUpdateModelValue, onClose]);
+  const node = rendered ? (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-popup', transitionClass, className)}
+      style={{ zIndex, ...rest.style }}
+      role="dialog"
+      aria-modal="true"
+    >
+      {showMask ? <div className="a-popup__mask" onClick={() => maskClosable && doClose()} /> : null}
+      <div
+        className="a-popup__panel"
+        style={width !== undefined ? { width: formatStyleSize(width) } : undefined}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  ) : null;
+  return appendToBody && typeof document !== 'undefined' ? createPortal(node, document.body) : node;
+});
+
+// A standard dialog built on top of Popup.
+export const Dialog = forwardRef<HTMLDivElement, AnyUIReactProps>(function Dialog(
+  {
+    children,
+    className,
+    modelValue = false,
+    title = '',
+    width = 420,
+    showClose = true,
+    maskClosable = true,
+    appendToBody = true,
+    zIndex = 1000,
+    header,
+    footer,
+    onUpdateModelValue,
+    onConfirm,
+    onCancel,
+    onOpen,
+    onClose,
+    ...rest
+  },
+  ref,
+) {
+  const close = () => onUpdateModelValue?.(false);
+  return (
+    <Popup
+      ref={ref}
+      modelValue={modelValue}
+      width={width}
+      maskClosable={maskClosable}
+      appendToBody={appendToBody}
+      zIndex={zIndex}
+      onUpdateModelValue={onUpdateModelValue}
+      onOpen={onOpen}
+      onClose={onClose}
+    >
+      <div {...pickDataAttrs(rest)} className={cx('a-dialog', className)}>
+        <div className="a-dialog__header">
+          <div className="a-dialog__header-main">
+            {renderContent(header, <span className="a-dialog__title">{title}</span>)}
+          </div>
+          {showClose ? (
+            <button type="button" className="a-dialog__close" aria-label="Close" onClick={close}>
+              <Icon icon="ic:round-close" />
+            </button>
+          ) : null}
+        </div>
+        <div className="a-dialog__body">{children}</div>
+        <div className="a-dialog__footer">
+          {renderContent(
+            footer,
+            <Fragment>
+              <Button
+                size="small"
+                onClick={() => {
+                  onCancel?.();
+                  close();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="small"
+                type="primary"
+                onClick={() => {
+                  onConfirm?.();
+                  close();
+                }}
+              >
+                OK
+              </Button>
+            </Fragment>,
+          )}
+        </div>
+      </div>
+    </Popup>
+  );
+});
+
+// A thin confirmation wrapper over Dialog.
+export const ConfirmModal = forwardRef<HTMLDivElement, AnyUIReactProps>(function ConfirmModal(
+  {
+    children,
+    className,
+    modelValue = false,
+    title = '',
+    content = '',
+    confirmText = 'OK',
+    cancelText = 'Cancel',
+    type = 'primary',
+    loading = false,
+    closeOnConfirm = true,
+    width = 420,
+    maskClosable = true,
+    appendToBody = true,
+    zIndex = 1000,
+    onUpdateModelValue,
+    onConfirm,
+    onCancel,
+    onClose,
+    ...rest
+  },
+  ref,
+) {
+  const close = () => onUpdateModelValue?.(false);
+  return (
+    <Dialog
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      modelValue={modelValue}
+      title={title}
+      width={width}
+      maskClosable={maskClosable}
+      appendToBody={appendToBody}
+      zIndex={zIndex}
+      onUpdateModelValue={onUpdateModelValue}
+      onClose={onClose}
+      footer={
+        <Fragment>
+          <Button
+            size="small"
+            onClick={() => {
+              onCancel?.();
+              close();
+            }}
+          >
+            {cancelText}
+          </Button>
+          <Button
+            size="small"
+            type={type === 'danger' ? 'danger' : 'primary'}
+            loading={loading}
+            onClick={() => {
+              if (loading) return;
+              onConfirm?.();
+              if (closeOnConfirm) close();
+            }}
+          >
+            {confirmText}
+          </Button>
+        </Fragment>
+      }
+    >
+      <div className={cx('a-confirm-modal__content', className)}>{renderContent(children, content)}</div>
+    </Dialog>
+  );
+});
+
+// wait for the popup leave transition before unmounting
+const CONFIRM_MODAL_DESTROY_DELAY = 400;
+
+export const confirmModal = (options: ConfirmModalOptions = {}): Promise<boolean> => {
+  if (typeof document === 'undefined') return Promise.resolve(false);
+  return new Promise<boolean>((resolve) => {
+    const node = document.createElement('div');
+    document.body.appendChild(node);
+    const root = createRoot(node);
+    let settled = false;
+    const settle = (result: boolean) => {
+      if (settled) return;
+      settled = true;
+      resolve(result);
+    };
+    const destroy = () => {
+      window.setTimeout(() => {
+        root.unmount();
+        node.remove();
+      }, CONFIRM_MODAL_DESTROY_DELAY);
+    };
+    const ConfirmModalHost = () => {
+      const [visible, setVisible] = useState(true);
+      return (
+        <ConfirmModal
+          {...options}
+          modelValue={visible}
+          onUpdateModelValue={(value: boolean) => {
+            setVisible(value);
+            if (!value) {
+              settle(false);
+              destroy();
+            }
+          }}
+          onConfirm={() => settle(true)}
+          onCancel={() => settle(false)}
+        />
+      );
+    };
+    root.render(<ConfirmModalHost />);
+  });
+};
+
+// default icons per type, reusing the message icon set
+const defaultAlertIcon: Record<string, string> = {
+  info: 'fluent:info-24-filled',
+  success: 'ic:round-check-circle',
+  warn: 'ph:warning-fill',
+  danger: 'si-glyph:circle-error',
+};
+
+// A static inline banner for contextual feedback.
+export const Alert = forwardRef<HTMLDivElement, AnyUIReactProps>(function Alert(
+  { children, className, type = 'info', title = '', closable = false, showIcon = true, icon, onClose, ...rest },
+  ref,
+) {
+  const [visible, setVisible] = useState(true);
+  const [rendered, transitionClass] = useVueTransition('a-alert', visible, 240);
+  if (!rendered) return null;
+  const hasContent = children !== undefined && children !== null;
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-alert', 'a-alert--' + type, transitionClass, className)}
+      style={rest.style}
+      role="alert"
+    >
+      {showIcon ? (
+        <div className="a-alert__icon">
+          {renderContent(icon, <Icon icon={defaultAlertIcon[type] || defaultAlertIcon.info} />)}
+        </div>
+      ) : null}
+      <div className="a-alert__main">
+        {title ? <div className="a-alert__title">{title}</div> : null}
+        {hasContent ? <div className="a-alert__content">{children}</div> : null}
+      </div>
+      {closable ? (
+        <button
+          type="button"
+          className="a-alert__close"
+          aria-label="Close"
+          onClick={() => {
+            setVisible(false);
+            onClose?.();
+          }}
+        >
+          <Icon icon="ic:round-close" />
+        </button>
+      ) : null}
+    </div>
+  );
+});
+
+const defaultToastIcon: Record<string, string> = {
+  info: 'fluent:info-24-filled',
+  success: 'ic:round-check-circle',
+  warning: 'ph:warning-fill',
+  error: 'si-glyph:circle-error',
+};
+
+// A single corner notification card, stacked by the toast container.
+export const Toast = forwardRef<HTMLDivElement, AnyUIReactProps>(function Toast(
+  { className, type = 'info', title = '', content = '', closable = true, onClose, ...rest },
+  ref,
+) {
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-toast', 'a-toast--' + type, className)}
+      style={rest.style}
+      role="status"
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div className="a-toast__icon">
+        <Icon icon={defaultToastIcon[type] || defaultToastIcon.info} />
+      </div>
+      <div className="a-toast__main">
+        {title ? <div className="a-toast__title">{title}</div> : null}
+        {content ? <div className="a-toast__content">{content}</div> : null}
+      </div>
+      {closable ? (
+        <button type="button" className="a-toast__close" aria-label="Close" onClick={onClose}>
+          <Icon icon="ic:round-close" />
+        </button>
+      ) : null}
+    </div>
+  );
+});
+
+type ToastQueueItem = ToastItem & { leaving?: boolean };
+
+const TransitionToast = ({ item, onClose }: { item: ToastQueueItem; onClose: () => void }) => {
+  const [stage, setStage] = useState<'enter-from' | 'enter-to' | ''>('enter-from');
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setStage('enter-to')));
+    const timer = window.setTimeout(() => setStage(''), 320);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  }, []);
+  const animClass = item.leaving
+    ? 'a-toast-anim-leave-active a-toast-anim-leave-to'
+    : stage
+      ? 'a-toast-anim-enter-active a-toast-anim-' + stage
+      : '';
+  return (
+    <Toast
+      className={animClass}
+      type={item.type}
+      title={item.title}
+      content={item.content}
+      closable={item.closable}
+      onClose={onClose}
+    />
+  );
+};
+
+interface ToastContainerApi {
+  addToast: (toast: Omit<ToastItem, 'key'>) => void;
+}
+
+const ToastContainer = ({
+  onReady,
+  onCleared,
+}: {
+  onReady?: (api: ToastContainerApi) => void;
+  onCleared?: () => void;
+}) => {
+  const [toastQueue, setToastQueue] = useState<ToastQueueItem[]>([]);
+  const hadToastsRef = useRef(false);
+  const removeToast = (key: string) => {
+    setToastQueue((current) => current.map((item) => (item.key === key ? { ...item, leaving: true } : item)));
+    window.setTimeout(() => {
+      setToastQueue((current) => current.filter((item) => item.key !== key));
+    }, 240);
+  };
+  const addToast = (toast: Omit<ToastItem, 'key'>) => {
+    const key = String(Date.now()) + String(Math.random());
+    setToastQueue((current) => [{ ...toast, key }, ...current]);
+    if (toast.duration > 0) {
+      window.setTimeout(() => removeToast(key), toast.duration);
+    }
+  };
+  useEffect(() => {
+    onReady?.({ addToast });
+  }, []);
+  useEffect(() => {
+    if (toastQueue.length) {
+      hadToastsRef.current = true;
+      return;
+    }
+    if (hadToastsRef.current) {
+      hadToastsRef.current = false;
+      onCleared?.();
+    }
+  }, [toastQueue.length]);
+  return (
+    <Fragment>
+      {toastQueue.map((item) => (
+        <TransitionToast key={item.key} item={item} onClose={() => removeToast(item.key)} />
+      ))}
+    </Fragment>
+  );
+};
+
+interface ToastContainerRecord {
+  node: HTMLDivElement;
+  root: ReturnType<typeof createRoot>;
+  api?: ToastContainerApi;
+  pending: Array<Omit<ToastItem, 'key'>>;
+}
+
+const toastContainers = new Map<ToastPlacement, ToastContainerRecord>();
+
+const popupToast = ({
+  title = '',
+  content = '',
+  type = 'info',
+  duration = 4500,
+  closable = true,
+  placement = 'top-right',
+  zIndex = 2100,
+}: ToastOptions) => {
+  if (typeof document === 'undefined') return;
+  let record = toastContainers.get(placement);
+  if (!record) {
+    const node = document.createElement('div');
+    node.className = 'a-toast-container a-toast-container--' + placement;
+    node.style.zIndex = String(zIndex);
+    document.body.appendChild(node);
+    const root = createRoot(node);
+    record = { node, root, pending: [] };
+    toastContainers.set(placement, record);
+    root.render(
+      <ToastContainer
+        onReady={(api) => {
+          const current = toastContainers.get(placement);
+          if (!current) return;
+          current.api = api;
+          current.pending.splice(0).forEach((item) => api.addToast(item));
+        }}
+        onCleared={() => {
+          const current = toastContainers.get(placement);
+          if (!current) return;
+          toastContainers.delete(placement);
+          window.setTimeout(() => {
+            current.root.unmount();
+            current.node.remove();
+          }, 0);
+        }}
+      />,
+    );
+  }
+  const item = { title, content, type, duration, closable };
+  if (record.api) {
+    record.api.addToast(item);
+  } else {
+    record.pending.push(item);
+  }
+};
+
+const toastFnFactory = (type: ToastType) => {
+  return (options: string | Omit<ToastOptions, 'type'>) => {
+    if (typeof options === 'string') {
+      popupToast({ type, content: options });
+      return;
+    }
+    popupToast({ type, ...options });
+  };
+};
+
+export const toast = Object.assign((options: ToastOptions) => popupToast(options), {
+  success: toastFnFactory('success'),
+  error: toastFnFactory('error'),
+  warning: toastFnFactory('warning'),
+  info: toastFnFactory('info'),
+});
+
+// A loading overlay which covers its children (or the whole screen).
+export const LoadingMask = forwardRef<HTMLDivElement, AnyUIReactProps>(function LoadingMask(
+  { children, className, loading = false, text = '', fullscreen = false, zIndex = 2000, ...rest },
+  ref,
+) {
+  const [rendered, transitionClass] = useVueTransition('a-loading-mask', loading, 240);
+  return (
+    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-loading-mask-wrapper', className)} style={rest.style}>
+      {children}
+      {rendered ? (
+        <div
+          className={cx('a-loading-mask', fullscreen && 'a-loading-mask--fullscreen', transitionClass)}
+          style={fullscreen ? { zIndex } : undefined}
+        >
+          <Spinner className="a-loading-mask__spinner" />
+          {text ? <span className="a-loading-mask__text">{text}</span> : null}
+        </div>
+      ) : null}
+    </div>
+  );
+});
+
+// wait for the fade-out transition before unmounting
+const LOADING_MASK_DESTROY_DELAY = 250;
+
+interface LoadingMaskHostState {
+  visible: boolean;
+  text: string;
+  zIndex: number;
+}
+
+interface FullscreenMaskRecord {
+  node: HTMLDivElement;
+  root: ReturnType<typeof createRoot>;
+  setState?: (state: LoadingMaskHostState) => void;
+  desired: LoadingMaskHostState;
+}
+
+let fullscreenMask: FullscreenMaskRecord | null = null;
+let loadingMaskDestroyTimeout: number | undefined;
+
+const LoadingMaskHost = ({ register }: { register: (set: (state: LoadingMaskHostState) => void) => void }) => {
+  const [state, setState] = useState<LoadingMaskHostState>({ visible: false, text: '', zIndex: 2000 });
+  useEffect(() => {
+    register(setState);
+  }, []);
+  return <LoadingMask loading={state.visible} text={state.text} zIndex={state.zIndex} fullscreen />;
+};
+
+const applyLoadingMaskState = () => {
+  fullscreenMask?.setState?.({ ...fullscreenMask.desired });
+};
+
+const showLoadingMask = (options: LoadingMaskShowOptions = {}) => {
+  if (typeof document === 'undefined') return;
+  if (loadingMaskDestroyTimeout) {
+    window.clearTimeout(loadingMaskDestroyTimeout);
+    loadingMaskDestroyTimeout = undefined;
+  }
+  if (!fullscreenMask) {
+    const node = document.createElement('div');
+    document.body.appendChild(node);
+    const root = createRoot(node);
+    fullscreenMask = { node, root, desired: { visible: false, text: '', zIndex: 2000 } };
+    root.render(
+      <LoadingMaskHost
+        register={(set) => {
+          if (!fullscreenMask) return;
+          fullscreenMask.setState = set;
+          applyLoadingMaskState();
+        }}
+      />,
+    );
+  }
+  fullscreenMask.desired = {
+    visible: true,
+    text: options.text || '',
+    zIndex: typeof options.zIndex === 'number' ? options.zIndex : fullscreenMask.desired.zIndex,
+  };
+  applyLoadingMaskState();
+};
+
+const hideLoadingMask = () => {
+  if (!fullscreenMask) return;
+  fullscreenMask.desired = { ...fullscreenMask.desired, visible: false };
+  applyLoadingMaskState();
+  loadingMaskDestroyTimeout = window.setTimeout(() => {
+    if (!fullscreenMask) return;
+    const record = fullscreenMask;
+    fullscreenMask = null;
+    loadingMaskDestroyTimeout = undefined;
+    record.root.unmount();
+    record.node.remove();
+  }, LOADING_MASK_DESTROY_DELAY);
+};
+
+export const loadingMask = {
+  show: showLoadingMask,
+  hide: hideLoadingMask,
+};
+
+// A clean data table with surface treatment.
+export const Table = forwardRef<HTMLDivElement, AnyUIReactProps>(function Table(
+  {
+    className,
+    columns = [] as TableColumn[],
+    data = [] as TableRow[],
+    striped = false,
+    hoverable = true,
+    round = true,
+    emptyText = 'No data',
+    empty,
+    renderCell,
+    onRowClick,
+    ...rest
+  },
+  ref,
+) {
+  const getColStyle = (column: TableColumn): React.CSSProperties | undefined =>
+    column.width !== undefined ? { width: formatStyleSize(column.width) } : undefined;
+  const getCellStyle = (column: TableColumn): React.CSSProperties | undefined =>
+    column.align && column.align !== 'left' ? { textAlign: column.align } : undefined;
+  const formatCell = (value: unknown) => (value === null || value === undefined ? '' : String(value));
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-table', striped && 'a-table--striped', hoverable && 'a-table--hoverable', round && 'a-table--round', className)}
+      style={rest.style}
+    >
+      <table className="a-table__inner">
+        <colgroup>
+          {columns.map((column: TableColumn) => (
+            <col key={column.key} style={getColStyle(column)} />
+          ))}
+        </colgroup>
+        <thead>
+          <tr>
+            {columns.map((column: TableColumn) => (
+              <th key={column.key} className="a-table__th" style={getCellStyle(column)}>
+                {column.title}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        {data.length ? (
+          <tbody>
+            {data.map((row: TableRow, index: number) => (
+              <tr key={index} className="a-table__row" onClick={() => onRowClick?.(row, index)}>
+                {columns.map((column: TableColumn) => (
+                  <td key={column.key} className="a-table__td" style={getCellStyle(column)}>
+                    {renderCell?.(column, row, row[column.key], index) ?? formatCell(row[column.key])}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        ) : null}
+      </table>
+      {!data.length ? <div className="a-table__empty">{renderContent(empty, <Empty text={emptyText} />)}</div> : null}
+    </div>
+  );
 });
 
 export const buildInstaller = (componentList: React.ComponentType<any>[]) => componentList;
@@ -1752,32 +2923,43 @@ export default {
 
 const svelteMessageSource = `
 import { mount, unmount } from 'svelte';
-import Message from './components/Message.svelte';
+import MessageContainer from './components/MessageContainer.svelte';
 import type { MessageOptions } from './types';
 
-const defaultMessageIcon: Record<string, string> = {
-  default: '',
-  success: 'ic:round-check-circle',
-  warning: 'ph:warning-fill',
-  info: 'fluent:info-24-filled',
-  error: 'si-glyph:circle-error',
-};
+interface MessageContainerRecord {
+  node: HTMLDivElement;
+  instance: Record<string, any>;
+}
+
+// popup messages live in a single fixed top-center container, like Vue's AMessageContainer
+let messageContainer: MessageContainerRecord | null = null;
 
 const mountDomMessage = (options: MessageOptions | string) => {
   const normalized: MessageOptions =
     typeof options === 'string' ? { type: 'default', content: options } : options;
   if (typeof document === 'undefined') return;
-  const node = document.createElement('div');
-  node.style.zIndex = String(normalized.zIndex ?? 2000);
-  document.body.appendChild(node);
-  const component = mount(Message, {
-    target: node,
-    props: normalized as unknown as Record<string, unknown>,
-  });
-  window.setTimeout(() => {
-    unmount(component);
-    node.remove();
-  }, normalized.duration ?? 5000);
+  if (!messageContainer) {
+    const node = document.createElement('div');
+    node.className = 'a-message-container';
+    node.style.zIndex = String(normalized.zIndex ?? 2000);
+    document.body.appendChild(node);
+    const instance = mount(MessageContainer, {
+      target: node,
+      props: {
+        onCleared: () => {
+          const current = messageContainer;
+          if (!current) return;
+          messageContainer = null;
+          window.setTimeout(() => {
+            unmount(current.instance);
+            current.node.remove();
+          }, 0);
+        },
+      },
+    }) as Record<string, any>;
+    messageContainer = { node, instance };
+  }
+  messageContainer.instance.addMessage(normalized);
 };
 
 export const message = Object.assign(mountDomMessage, {
@@ -1807,23 +2989,24 @@ const svelteGenericComponent = (name) => {
 const svelteTemplates = {
   Button: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import Icon from '@iconify/svelte';
-  export let type = 'default';
-  export let size = 'default';
-  export let round = false;
-  export let anim = false;
-  export let disabled = false;
-  export let fill = false;
-  export let textShadow = false;
-  export let loading = false;
-  export let icon: any = '';
-  export let iconPosition = 'leading';
-  export let loadingIcon = 'quill:loading-spin';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: hasContent = Boolean($$slots.default);
+  let {
+    type = 'default',
+    size = 'default',
+    round = false,
+    anim = false,
+    disabled = false,
+    fill = false,
+    textShadow = false,
+    loading = false,
+    icon = '',
+    iconPosition = 'leading',
+    loadingIcon = 'quill:loading-spin',
+    class: className = '',
+    children,
+    onClick,
+  } = $props();
+  const hasContent = $derived(Boolean(children));
 </script>
 
 <div
@@ -1831,11 +3014,11 @@ const svelteTemplates = {
   role="button"
   tabindex={disabled || loading ? -1 : 0}
   aria-disabled={disabled || loading}
-  on:click={(event) => !disabled && !loading && dispatch('click', event)}
-  on:keydown={(event) => {
+  onclick={(event) => !disabled && !loading && onClick?.(event)}
+  onkeydown={(event) => {
     if ((event.key === 'Enter' || event.key === ' ') && !disabled && !loading) {
       event.preventDefault();
-      dispatch('click', event);
+      onClick?.(event);
     }
   }}
 >
@@ -1847,100 +3030,109 @@ const svelteTemplates = {
       </span>
     </span>
   {/if}
-  <span class="a-button__inner" style:visibility={loading ? 'hidden' : 'visible'}><slot /></span>
+  <span class="a-button__inner" style:visibility={loading ? 'hidden' : 'visible'}>{@render children?.()}</span>
   {#if icon && iconPosition === 'trailing' && !loading}<Icon class="a-icon" aria-hidden="true" icon={icon} />{/if}
 </div>
 `,
   Card: `
 <script lang="ts">
-  export let title = '';
-  export let width: string | number = 240;
-  export let clean = false;
-  export let link = '';
-  export let className = '';
-  export { className as class };
-  $: formattedWidth = typeof width === 'number' ? \`\${width}px\` : width;
-  $: hasHeader = Boolean(title || $$slots.header);
-  $: hasFooter = Boolean($$slots.footer);
+  let {
+    title = '',
+    width = 240,
+    clean = false,
+    link = '',
+    class: className = '',
+    children,
+    header,
+    footer,
+  } = $props();
+  const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
+  const hasHeader = $derived(Boolean(title || header));
+  const hasFooter = $derived(Boolean(footer));
 </script>
 
 <a class="a-card {link ? 'a-card--has-link' : ''} {clean ? 'a-card--clean' : ''} {className}" href={link || undefined} style:width={formattedWidth}>
   {#if hasHeader}
     <div class="a-card-header">
       {#if title}<span class="a-card-header__title">{title}</span>{/if}
-      <slot name="header" />
+      {@render header?.()}
     </div>
   {/if}
   <div class="a-card-body" class:a-card-body--no-header={!hasHeader} class:a-card-body--no-footer={!hasFooter}>
-    <slot />
+    {@render children?.()}
   </div>
   {#if hasFooter}
-    <div class="a-card-footer"><slot name="footer" /></div>
+    <div class="a-card-footer">{@render footer?.()}</div>
   {/if}
 </a>
 `,
   Checkbox: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import Icon from '@iconify/svelte';
-  export let label: string | number = '';
-  export let modelValue = false;
-  export let checkIcon: any = 'si-glyph:checked';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: checked = modelValue;
+  let {
+    label = '',
+    modelValue = $bindable(false),
+    checkIcon = 'si-glyph:checked',
+    class: className = '',
+    onUpdateModelValue,
+    onChange,
+  } = $props();
   const update = () => {
-    checked = !checked;
-    dispatch('update:modelValue', checked);
-    dispatch('change', checked);
+    modelValue = !modelValue;
+    onUpdateModelValue?.(modelValue);
+    onChange?.(modelValue);
   };
 </script>
 
 <div
-  class="a-checkbox {checked ? 'a-checkbox--checked' : ''} {className}"
+  class="a-checkbox {modelValue ? 'a-checkbox--checked' : ''} {className}"
   role="checkbox"
   tabindex="0"
-  aria-checked={checked}
-  on:click={update}
-  on:keydown={(event) => {
+  aria-checked={modelValue}
+  onclick={update}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       update();
     }
   }}
 >
-  <div class="a-checkbox-checker">{#if checked}<Icon class="a-checkbox-checker__icon" aria-hidden="true" icon={checkIcon} />{/if}</div>
+  <div class="a-checkbox-checker">{#if modelValue}<Icon class="a-checkbox-checker__icon" aria-hidden="true" icon={checkIcon} />{/if}</div>
   <div class="a-checkbox-label">{label}</div>
 </div>
 `,
   Input: `
 <script lang="ts">
-  import { createEventDispatcher, getContext, onDestroy } from 'svelte';
-  export let modelValue: string | number = '';
-  export let width: string | number = '100%';
-  export let size = 'default';
-  export let round = false;
-  export let borderless = false;
-  export let disabled = false;
-  export let readonly = false;
-  export let editable = true;
-  export let prefix: unknown = undefined;
-  export let postfix: unknown = undefined;
-  export let postButton: unknown = undefined;
-  export let placeholder = '';
-  export let type = 'text';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  import { getContext, onDestroy } from 'svelte';
+  let {
+    modelValue = $bindable(''),
+    width = '100%',
+    size = 'default',
+    round = false,
+    borderless = false,
+    disabled = false,
+    readonly = false,
+    editable = true,
+    prefix = undefined,
+    postfix = undefined,
+    postButton = undefined,
+    placeholder = '',
+    type = 'text',
+    class: className = '',
+    onUpdateModelValue,
+    onInput,
+    onChange,
+    onSubmit,
+    onBlur,
+  } = $props();
   const formItem = getContext<any>('anyui-form-item') ?? {};
-  $: value = String(modelValue ?? '');
-  $: formattedWidth = typeof width === 'number' ? \`\${width}px\` : width;
+  const value = $derived(String(modelValue ?? ''));
+  const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
   let lastClearSignal = 0;
   const clearValue = () => {
-    value = '';
-    dispatch('update:modelValue', '');
-    dispatch('change', '');
+    modelValue = '';
+    onUpdateModelValue?.('');
+    onChange?.('');
   };
   const unsubscribeClearSignal = formItem.clearSignalStore?.subscribe((signal: number) => {
     if (signal > lastClearSignal) clearValue();
@@ -1950,7 +3142,7 @@ const svelteTemplates = {
 </script>
 
 <div class="a-input {size === 'large' ? 'a-input--large' : ''} {round ? 'a-input--round' : ''} {borderless ? 'a-input--borderless' : ''} {prefix ? 'a-input--has-prefix' : ''} {postfix ? 'a-input--has-postfix' : ''} {postButton ? 'a-input--has-post-button' : ''} {disabled ? 'a-input--disabled' : ''} {readonly ? 'a-input--readonly' : ''} {className}" style:width={formattedWidth}>
-  {#if prefix}<div class="a-input__prefix"><slot name="prefix">{prefix}</slot></div>{/if}
+  {#if prefix}<div class="a-input__prefix">{#if typeof prefix === 'function'}{@render prefix()}{:else}{prefix}{/if}</div>{/if}
   <input
     class="a-input__inner"
     {value}
@@ -1958,59 +3150,66 @@ const svelteTemplates = {
     {disabled}
     readonly={readonly || !editable}
     {type}
-    on:input={(event) => {
-      value = event.currentTarget.value;
-      dispatch('update:modelValue', value);
-      dispatch('input', event);
+    oninput={(event) => {
+      modelValue = event.currentTarget.value;
+      onUpdateModelValue?.(event.currentTarget.value);
+      onInput?.(event);
     }}
-    on:change={(event) => {
-      dispatch('change', event.currentTarget.value);
+    onchange={(event) => {
+      onChange?.(event.currentTarget.value);
       formItem.notifyChange?.();
     }}
-    on:blur={(event) => {
-      dispatch('blur', event);
+    onblur={(event) => {
+      onBlur?.(event);
       formItem.notifyBlur?.();
     }}
-    on:keydown={(event) => event.key === 'Enter' && dispatch('submit', value)}
+    onkeydown={(event) => event.key === 'Enter' && onSubmit?.(value)}
   />
   {#if postButton}
-    <div class="a-input__post-button"><slot name="postButton">{postButton}</slot></div>
+    <div class="a-input__post-button">{#if typeof postButton === 'function'}{@render postButton()}{:else}{postButton}{/if}</div>
   {:else if postfix}
-    <div class="a-input__postfix"><slot name="postfix">{postfix}</slot></div>
+    <div class="a-input__postfix">{#if typeof postfix === 'function'}{@render postfix()}{:else}{postfix}{/if}</div>
   {/if}
 </div>
 `,
   Textarea: `
 <script lang="ts">
-  import { createEventDispatcher, getContext, onDestroy } from 'svelte';
-  export let modelValue: string | number = '';
-  export let width: string | number = '100%';
-  export let height: string | number | undefined = undefined;
-  export let placeholder = '';
-  export let disabled = false;
-  export let readonly = false;
-  export let borderless = false;
-  export let disableResizeCorner = false;
-  export let resizable = false;
-  export let maxlength: number | undefined = undefined;
-  export let minlength: number | undefined = undefined;
-  export let autocomplete = 'off';
-  export let autocorrect = 'off';
-  export let spellcheck: boolean | string | undefined = undefined;
-  export let wrap: string | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  import { getContext, onDestroy } from 'svelte';
+  let {
+    modelValue = $bindable(''),
+    width = '100%',
+    height = undefined,
+    placeholder = '',
+    disabled = false,
+    readonly = false,
+    borderless = false,
+    disableResizeCorner = false,
+    resizable = false,
+    maxlength = undefined,
+    minlength = undefined,
+    autocomplete = 'off',
+    autocorrect = 'off',
+    spellcheck = undefined,
+    wrap = undefined,
+    class: className = '',
+    before,
+    after,
+    onUpdateModelValue,
+    onInput,
+    onChange,
+    onSubmit,
+    onBlur,
+  } = $props();
   const formItem = getContext<any>('anyui-form-item') ?? {};
-  $: value = String(modelValue ?? '');
-  $: formattedWidth = typeof width === 'number' ? \`\${width}px\` : width;
-  $: formattedHeight = typeof height === 'number' ? \`\${height}px\` : height;
-  $: isResizable = !disableResizeCorner && resizable;
+  const value = $derived(String(modelValue ?? ''));
+  const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
+  const formattedHeight = $derived(typeof height === 'number' ? height + 'px' : height);
+  const isResizable = $derived(!disableResizeCorner && resizable);
   let lastClearSignal = 0;
   const clearValue = () => {
-    value = '';
-    dispatch('update:modelValue', '');
-    dispatch('change', '');
+    modelValue = '';
+    onUpdateModelValue?.('');
+    onChange?.('');
   };
   const unsubscribeClearSignal = formItem.clearSignalStore?.subscribe((signal: number) => {
     if (signal > lastClearSignal) clearValue();
@@ -2020,7 +3219,7 @@ const svelteTemplates = {
 </script>
 
 <div class="a-textarea {borderless ? 'a-textarea--borderless' : ''} {isResizable ? 'a-textarea--resizable' : ''} {disableResizeCorner ? 'a-textarea--not-resizable' : ''} {className}" style:width={formattedWidth} style:height={formattedHeight}>
-  <slot name="before" />
+  {@render before?.()}
   <textarea
     class="a-textarea__inner"
     {value}
@@ -2033,62 +3232,87 @@ const svelteTemplates = {
     {autocorrect}
     {spellcheck}
     {wrap}
-    on:input={(event) => {
-      value = event.currentTarget.value;
-      dispatch('update:modelValue', value);
-      dispatch('input', event);
+    oninput={(event) => {
+      modelValue = event.currentTarget.value;
+      onUpdateModelValue?.(event.currentTarget.value);
+      onInput?.(event);
     }}
-    on:change={(event) => {
-      dispatch('change', event.currentTarget.value);
+    onchange={(event) => {
+      onChange?.(event.currentTarget.value);
       formItem.notifyChange?.();
     }}
-    on:blur={(event) => {
-      dispatch('blur', event);
+    onblur={(event) => {
+      onBlur?.(event);
       formItem.notifyBlur?.();
     }}
-    on:keydown={(event) => event.key === 'Enter' && dispatch('submit', value)}
+    onkeydown={(event) => event.key === 'Enter' && onSubmit?.(value)}
   ></textarea>
-  <slot name="after" />
+  {@render after?.()}
 </div>
 `,
   Select: `
 <script lang="ts">
-  import { createEventDispatcher, getContext, onDestroy } from 'svelte';
+  import { getContext, onDestroy } from 'svelte';
   import Icon from '@iconify/svelte';
   import type { ASelectItems } from '../types';
-  export let items: ASelectItems = [];
-  export let modelValue: string | number | null | undefined = '';
-  export let width: string | number = '100%';
-  export let size = 'default';
-  export let round = false;
-  export let placeholder = '';
-  export let disabled = false;
-  export let expandIcon = 'ic:outline-expand-more';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    items = [] as ASelectItems,
+    modelValue = $bindable(''),
+    width = '100%',
+    size = 'default',
+    round = false,
+    placeholder = '',
+    disabled = false,
+    multiple = false,
+    expandIcon = 'ic:outline-expand-more',
+    class: className = '',
+    onUpdateModelValue,
+    onChange,
+    onBlur,
+  } = $props();
   const formItem = getContext<any>('anyui-form-item') ?? {};
-  let expanded = false;
+  let expanded = $state(false);
   const dropdownId = 'a-select-dropdown-' + Math.random().toString(36).slice(2);
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedWidth = formatStyleSize(width);
-  $: selectedItem = items.find((item) => item.value === modelValue);
-  $: selectedText = selectedItem?.text ?? '';
+  const formattedWidth = $derived(formatStyleSize(width));
+  const selectedValues = $derived(Array.isArray(modelValue) ? (modelValue as Array<string | number>) : []);
+  const isItemSelected = (item: { text: string; value: string | number }) =>
+    multiple ? selectedValues.includes(item.value) : item.value === modelValue;
+  // always display the text of the selected items, never their raw values
+  const selectedText = $derived(
+    multiple
+      ? items.filter((item) => selectedValues.includes(item.value)).map((item) => item.text).join(', ')
+      : (items.find((item) => item.value === modelValue)?.text ?? ''),
+  );
   const toggle = () => {
     if (!disabled) expanded = !expanded;
   };
   const update = (item: { text: string; value: string | number }) => {
     if (disabled) return;
-    dispatch('update:modelValue', item.value);
-    dispatch('change', item.value);
+    if (multiple) {
+      const next = selectedValues.includes(item.value)
+        ? selectedValues.filter((value) => value !== item.value)
+        : [...selectedValues, item.value];
+      modelValue = next;
+      onUpdateModelValue?.(next);
+      onChange?.(next);
+      formItem.notifyChange?.();
+      // keep the dropdown open in multi-select mode
+      return;
+    }
+    modelValue = item.value;
+    onUpdateModelValue?.(item.value);
+    onChange?.(item.value);
     formItem.notifyChange?.();
     expanded = false;
   };
   let lastClearSignal = 0;
   const unsubscribeClearSignal = formItem.clearSignalStore?.subscribe((signal: number) => {
     if (signal > lastClearSignal) {
-      dispatch('update:modelValue', '');
-      dispatch('change', '');
+      const emptyValue = multiple ? [] : '';
+      modelValue = emptyValue;
+      onUpdateModelValue?.(emptyValue);
+      onChange?.(emptyValue);
     }
     lastClearSignal = signal;
   });
@@ -2103,8 +3327,8 @@ const svelteTemplates = {
     aria-controls={dropdownId}
     aria-expanded={expanded}
     aria-disabled={disabled}
-    on:click={toggle}
-    on:keydown={(event) => {
+    onclick={toggle}
+    onkeydown={(event) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         toggle();
@@ -2119,8 +3343,8 @@ const svelteTemplates = {
         {disabled}
         readonly
         autocomplete="off"
-        on:blur={(event) => {
-          dispatch('blur', event);
+        onblur={(event) => {
+          onBlur?.(event);
           formItem.notifyBlur?.();
         }}
       />
@@ -2131,22 +3355,27 @@ const svelteTemplates = {
   </div>
   {#if expanded && !disabled}
     <div class="a-select-dropdown__wrapper">
-      <div id={dropdownId} class="a-select-dropdown" role="listbox">
+      <div id={dropdownId} class="a-select-dropdown" role="listbox" aria-multiselectable={multiple || undefined}>
         {#each items as item}
           <div
-            class="a-select-dropdown__item"
+            class="a-select-dropdown__item {isItemSelected(item) ? 'a-select-dropdown__item--selected' : ''}"
             role="option"
             tabindex="0"
-            aria-selected={item.value === modelValue}
-            on:mousedown={(event) => event.preventDefault()}
-            on:click={() => update(item)}
-            on:keydown={(event) => {
+            aria-selected={isItemSelected(item)}
+            onmousedown={(event) => event.preventDefault()}
+            onclick={() => update(item)}
+            onkeydown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
                 update(item);
               }
             }}
-          >{item.text}</div>
+          >
+            <span class="a-select-dropdown__item-text">{item.text}</span>
+            {#if multiple && isItemSelected(item)}
+              <Icon class="a-select-dropdown__item-check a-icon" aria-hidden="true" icon="ic:round-check" />
+            {/if}
+          </div>
         {/each}
       </div>
     </div>
@@ -2155,12 +3384,12 @@ const svelteTemplates = {
 `,
   Radio: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let label = '';
-  export let checked = false;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    label = '',
+    checked = false,
+    class: className = '',
+    onChange,
+  } = $props();
 </script>
 
 <div
@@ -2168,11 +3397,11 @@ const svelteTemplates = {
   role="radio"
   tabindex="0"
   aria-checked={checked}
-  on:click={() => !checked && dispatch('change', !checked)}
-  on:keydown={(event) => {
+  onclick={() => !checked && onChange?.(!checked)}
+  onkeydown={(event) => {
     if ((event.key === 'Enter' || event.key === ' ') && !checked) {
       event.preventDefault();
-      dispatch('change', !checked);
+      onChange?.(!checked);
     }
   }}
 >
@@ -2182,16 +3411,18 @@ const svelteTemplates = {
 `,
   RadioGroup: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import type { ARadioGroupItems } from '../types';
-  export let items: ARadioGroupItems = [];
-  export let modelValue: string | number | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    items = [] as ARadioGroupItems,
+    modelValue = $bindable(undefined),
+    class: className = '',
+    onUpdateModelValue,
+    onChange,
+  } = $props();
   const update = (value: string | number) => {
-    dispatch('update:modelValue', value);
-    dispatch('change', value);
+    modelValue = value;
+    onUpdateModelValue?.(value);
+    onChange?.(value);
   };
 </script>
 
@@ -2202,8 +3433,8 @@ const svelteTemplates = {
       role="radio"
       tabindex="0"
       aria-checked={modelValue === item.value}
-      on:click={() => update(item.value)}
-      on:keydown={(event) => {
+      onclick={() => update(item.value)}
+      onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           update(item.value);
@@ -2218,64 +3449,169 @@ const svelteTemplates = {
 `,
   Tag: `
 <script lang="ts">
-  export let round = false;
-  export let size = 'default';
-  export let color = '';
-  export let bgColor = '';
-  export let className = '';
-  export { className as class };
+  let {
+    round = false,
+    size = 'default',
+    color = '',
+    bgColor = '',
+    class: className = '',
+    children,
+  } = $props();
+  // Vue applies the custom tag color at 0.2 alpha unless it is a css variable
+  const backgroundColor = $derived.by(() => {
+    const value = bgColor || color;
+    if (!value) return undefined;
+    return value.startsWith('var') ? value : \`color-mix(in srgb, \${value} 20%, transparent)\`;
+  });
 </script>
 
-<div class="a-tag a-tag--{size} {round ? 'a-tag--round' : ''} {(color || bgColor) ? 'a-tag--custom-color' : ''} {className}" style:color={color || undefined} style:background-color={bgColor || color || undefined}>
-  <slot />
+<div class="a-tag a-tag--{size} {round ? 'a-tag--round' : ''} {(color || bgColor) ? 'a-tag--custom-color' : ''} {className}" style:color={color || undefined} style:background-color={backgroundColor}>
+  {@render children?.()}
 </div>
 `,
   Drawer: `
-<script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let modelValue = false;
-  export let position = 'left';
-  export let width: string | number = '30%';
-  export let withMask = true;
-  export let zIndex = 100;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: formattedWidth = typeof width === 'number' ? \`\${width}px\` : width;
+<script module lang="ts">
+  // simple shared refcount so stacked drawers don't unlock each other
+  let scrollLockCount = 0;
+  const lockBodyScroll = () => {
+    scrollLockCount += 1;
+    if (scrollLockCount === 1 && typeof document !== 'undefined') {
+      document.body.classList.add('a-scroll-locked');
+    }
+  };
+  const unlockBodyScroll = () => {
+    scrollLockCount = Math.max(0, scrollLockCount - 1);
+    if (scrollLockCount === 0 && typeof document !== 'undefined') {
+      document.body.classList.remove('a-scroll-locked');
+    }
+  };
 </script>
 
-{#if modelValue}
-  <div class="a-drawer a-drawer--{position} {className}" role="dialog">
+<script lang="ts">
+  let {
+    modelValue = $bindable(false),
+    position = 'left',
+    width = '30%',
+    withMask = true,
+    appendToBody = true,
+    lockScroll = true,
+    zIndex = 100,
+    maskZIndex = undefined,
+    transitionName = '',
+    drawerClass = '',
+    maskClass = '',
+    bodyClass = '',
+    class: className = '',
+    children,
+    onUpdateModelValue,
+  } = $props();
+  const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
+  const transition = $derived(transitionName || 'a-drawer');
+  const close = () => {
+    modelValue = false;
+    onUpdateModelValue?.(false);
+  };
+
+  // replicates Vue's <transition> class flow using the same stylesheet classes
+  // svelte-ignore state_referenced_locally
+  let rendered = $state(modelValue);
+  let transitionClass = $state('');
+  let firstTransition = true;
+  $effect(() => {
+    const active = modelValue;
+    if (firstTransition) {
+      firstTransition = false;
+      rendered = active;
+      return;
+    }
+    if (active) {
+      rendered = true;
+      transitionClass = transition + '-enter-active ' + transition + '-enter-from';
+      const raf = requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          transitionClass = transition + '-enter-active ' + transition + '-enter-to';
+        }),
+      );
+      const timer = window.setTimeout(() => {
+        transitionClass = '';
+      }, 240);
+      return () => {
+        cancelAnimationFrame(raf);
+        window.clearTimeout(timer);
+      };
+    }
+    transitionClass = transition + '-leave-active ' + transition + '-leave-from';
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        transitionClass = transition + '-leave-active ' + transition + '-leave-to';
+      }),
+    );
+    const timer = window.setTimeout(() => {
+      rendered = false;
+      transitionClass = '';
+    }, 240);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  });
+
+  $effect(() => {
+    if (!modelValue || !lockScroll) return;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
+  });
+
+  const portal = (node: HTMLElement) => {
+    if (!appendToBody || typeof document === 'undefined') return undefined;
+    document.body.appendChild(node);
+    return {
+      destroy() {
+        node.remove();
+      },
+    };
+  };
+</script>
+
+{#if rendered}
+  <div class="a-drawer a-drawer--{position} {transitionClass} {drawerClass} {className}" role="dialog" use:portal>
     {#if withMask}<div
-      class="a-drawer__mask"
-      style:z-index={zIndex - 1}
+      class="a-drawer__mask {appendToBody ? 'a-drawer__mask--outside' : ''} {maskClass}"
+      style:z-index={maskZIndex || zIndex - 1}
       role="button"
       tabindex="0"
       aria-label="Close drawer"
-      on:click={() => dispatch('update:modelValue', false)}
-      on:keydown={(event) => {
+      onclick={close}
+      onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          dispatch('update:modelValue', false);
+          close();
         }
       }}
     ></div>{/if}
-    <div class="a-drawer__body" style:width={formattedWidth} style:z-index={zIndex}><slot /></div>
+    <div class="a-drawer__body {appendToBody ? 'a-drawer__body--outside' : ''} {bodyClass}" style:width={formattedWidth} style:z-index={zIndex}>{@render children?.()}</div>
   </div>
 {/if}
 `,
   Float: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let visible = false;
-  export let zIndex = 1000;
-  export let width: string | number = 800;
-  export let centered = false;
-  export let round = false;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: formattedWidth = typeof width === 'number' ? \`\${width}px\` : width;
+  let {
+    visible = $bindable(false),
+    zIndex = 1000,
+    width = 800,
+    centered = false,
+    round = false,
+    class: className = '',
+    children,
+    onClose,
+    onUpdateVisible,
+  } = $props();
+  const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
+  const close = () => {
+    visible = false;
+    onClose?.();
+    onUpdateVisible?.(false);
+  };
 </script>
 
 {#if visible}
@@ -2285,36 +3621,37 @@ const svelteTemplates = {
       role="button"
       tabindex="0"
       aria-label="Close"
-      on:click={() => { dispatch('close'); dispatch('update:visible', false); }}
-      on:keydown={(event) => {
+      onclick={close}
+      onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          dispatch('close');
-          dispatch('update:visible', false);
+          close();
         }
       }}
     ></div>
-    <div class="a-float__content" style:width={formattedWidth}><slot /></div>
+    <div class="a-float__content" style:width={formattedWidth}>{@render children?.()}</div>
   </div>
 {/if}
 `,
   Pagination: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import Icon from '@iconify/svelte';
   import type { PaginationMeta } from '../types';
-  export let pagination: PaginationMeta = { current: 1, pageSize: 10, total: 0 };
-  export let prevIcon: any = 'uil:angle-left';
-  export let nextIcon: any = 'uil:angle-right';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: totalPages = Math.max(1, Math.ceil(pagination.total / pagination.pageSize));
-  $: pages = Array.from({ length: totalPages }, (_, index) => index + 1).slice(0, 12);
+  let {
+    pagination = $bindable({ current: 1, pageSize: 10, total: 0 } as PaginationMeta),
+    prevIcon = 'uil:angle-left',
+    nextIcon = 'uil:angle-right',
+    class: className = '',
+    onUpdatePagination,
+    onChange,
+  } = $props();
+  const totalPages = $derived(Math.max(1, Math.ceil(pagination.total / pagination.pageSize)));
+  const pages = $derived(Array.from({ length: totalPages }, (_, index) => index + 1).slice(0, 12));
   const update = (current: number) => {
     const next = { ...pagination, current };
-    dispatch('update:pagination', next);
-    dispatch('change', next);
+    pagination = next;
+    onUpdatePagination?.(next);
+    onChange?.(next);
   };
 </script>
 
@@ -2325,8 +3662,8 @@ const svelteTemplates = {
     role="button"
     tabindex={pagination.current <= 1 ? -1 : 0}
     aria-disabled={pagination.current <= 1}
-    on:click={() => update(Math.max(1, pagination.current - 1))}
-    on:keydown={(event) => {
+    onclick={() => update(Math.max(1, pagination.current - 1))}
+    onkeydown={(event) => {
       if ((event.key === 'Enter' || event.key === ' ') && pagination.current > 1) {
         event.preventDefault();
         update(Math.max(1, pagination.current - 1));
@@ -2341,8 +3678,8 @@ const svelteTemplates = {
         role="button"
         tabindex="0"
         aria-current={page === pagination.current ? 'page' : undefined}
-        on:click={() => update(page)}
-        on:keydown={(event) => {
+        onclick={() => update(page)}
+        onkeydown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             update(page);
@@ -2357,8 +3694,8 @@ const svelteTemplates = {
     role="button"
     tabindex={pagination.current >= totalPages ? -1 : 0}
     aria-disabled={pagination.current >= totalPages}
-    on:click={() => update(Math.min(totalPages, pagination.current + 1))}
-    on:keydown={(event) => {
+    onclick={() => update(Math.min(totalPages, pagination.current + 1))}
+    onkeydown={(event) => {
       if ((event.key === 'Enter' || event.key === ' ') && pagination.current < totalPages) {
         event.preventDefault();
         update(Math.min(totalPages, pagination.current + 1));
@@ -2370,13 +3707,15 @@ const svelteTemplates = {
   Message: `
 <script lang="ts">
   import Icon from '@iconify/svelte';
-  export let type = 'default';
-  export let content = '';
-  export let icon = '';
-  export let showIcon = true;
-  export let round = false;
-  export let className = '';
-  export { className as class };
+  let {
+    type = 'default',
+    content = '',
+    icon = '',
+    showIcon = true,
+    round = false,
+    class: className = '',
+    children,
+  } = $props();
   const defaultMessageIcon: Record<string, string> = {
     default: '',
     success: 'ic:round-check-circle',
@@ -2384,8 +3723,8 @@ const svelteTemplates = {
     info: 'fluent:info-24-filled',
     error: 'si-glyph:circle-error',
   };
-  $: iconName = icon || defaultMessageIcon[type] || '';
-  $: displayIcon = showIcon && !!iconName;
+  const iconName = $derived(icon || defaultMessageIcon[type] || '');
+  const displayIcon = $derived(showIcon && !!iconName);
 </script>
 
 <div class="a-message a-message--{type} {displayIcon ? 'a-message--has-icon' : ''} {round ? 'a-message--round' : ''} {className}" role="dialog">
@@ -2394,54 +3733,88 @@ const svelteTemplates = {
       <Icon aria-hidden="true" icon={iconName} />
     </div>
   {/if}
-  <span class="a-message__text"><slot>{content}</slot></span>
+  <span class="a-message__text">{#if children}{@render children()}{:else}{content}{/if}</span>
 </div>
+`,
+  MessageContainer: `
+<script lang="ts">
+  import Message from './Message.svelte';
+  import type { MessageOptions } from '../types';
+
+  let { onCleared } = $props();
+
+  type QueueItem = MessageOptions & { key: string };
+
+  let messageQueue = $state<QueueItem[]>([]);
+
+  export function addMessage(options: MessageOptions) {
+    const key = String(Date.now()) + String(Math.random());
+    messageQueue = [{ ...options, key }, ...messageQueue];
+    const duration = options.duration ?? 5000;
+    if (duration > 0) {
+      window.setTimeout(() => {
+        messageQueue = messageQueue.filter((item) => item.key !== key);
+        if (!messageQueue.length) onCleared?.();
+      }, duration);
+    }
+  }
+</script>
+
+{#each messageQueue as item (item.key)}
+  <Message type={item.type} content={item.content} icon={item.icon} showIcon={item.showIcon} round={item.round} />
+{/each}
 `,
 };
 
 Object.assign(svelteTemplates, {
   Avatar: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let src: string | undefined = undefined;
-  export let alt = '';
-  export let size: string | number = 'medium';
-  export let width: string | number | undefined = undefined;
-  export let round = false;
-  export let fallback: unknown = '';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    src = undefined,
+    alt = '',
+    size = 'medium',
+    width = undefined,
+    round = false,
+    fallback = '',
+    class: className = '',
+    children,
+    onError,
+  } = $props();
   const sizes: Record<string, number> = { xlarge: 64, large: 48, medium: 32, small: 24, xsmall: 16 };
-  $: pixelSize = typeof size === 'number' ? size : sizes[size] ?? 32;
-  $: formattedSize = typeof width === 'number' ? width + 'px' : width || pixelSize + 'px';
+  const pixelSize = $derived(typeof size === 'number' ? size : sizes[size] ?? 32);
+  const formattedSize = $derived(typeof width === 'number' ? width + 'px' : width || pixelSize + 'px');
 </script>
 
 <div class="a-avatar {className}" style:width={formattedSize} style:height={formattedSize} style:border-radius={round ? '50%' : '8px'} style:overflow="hidden">
   {#if src}
-    <img {src} {alt} loading="lazy" on:error={(event) => dispatch('error', event)} />
+    <img {src} {alt} loading="lazy" onerror={(event) => onError?.(event)} />
+  {:else if children}
+    {@render children()}
   {:else}
-    <slot>{fallback}</slot>
+    {fallback}
   {/if}
 </div>
 `,
   Chat: `
 <script lang="ts">
   import type { AChatMessage } from '../types';
-  export let messages: AChatMessage[] = [];
-  export let className = '';
-  export { className as class };
+  let {
+    messages = [] as AChatMessage[],
+    class: className = '',
+    children,
+    message,
+  } = $props();
 </script>
 
 <div class="a-chat {className}">
   <div class="a-virtual-list">
     <div class="a-virtual-list__inner a-scroll-shadows">
       <div class="a-virtual-list__filler">
-        {#each messages as message, index (message.id)}
-          <div class="a-virtual-list__item" data-index={index} data-id={message.id}>
-            <div class="a-chat__message {message.role === 'self' ? 'a-chat__message--self' : 'a-chat__message--target'}">
+        {#each messages as item, index (item.id)}
+          <div class="a-virtual-list__item" data-index={index} data-id={item.id}>
+            <div class="a-chat__message {item.role === 'self' ? 'a-chat__message--self' : 'a-chat__message--target'}">
               <div class="a-chat__content">
-                <pre><slot name="message" message={message}>{message.content}</slot></pre>
+                <pre>{#if message}{@render message(item)}{:else}{item.content}{/if}</pre>
               </div>
             </div>
           </div>
@@ -2449,27 +3822,32 @@ Object.assign(svelteTemplates, {
       </div>
     </div>
   </div>
-  <slot />
+  {@render children?.()}
 </div>
 `,
   CheckboxGroup: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let items: Array<string | number> = [];
-  export let modelValue: Array<string | number> = [];
-  export let gap: string | number = 16;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  import Icon from '@iconify/svelte';
+  let {
+    items = [] as Array<string | number>,
+    modelValue = $bindable([] as Array<string | number>),
+    gap = 16,
+    checkIcon = 'si-glyph:checked',
+    class: className = '',
+    children,
+    onUpdateModelValue,
+    onChange,
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: values = new Set(modelValue);
-  $: formattedGap = formatStyleSize(gap);
+  const values = $derived(new Set(modelValue));
+  const formattedGap = $derived(formatStyleSize(gap));
   const update = (item: string | number) => {
     const next = new Set(values);
     next.has(item) ? next.delete(item) : next.add(item);
     const nextValue = Array.from(next);
-    dispatch('update:modelValue', nextValue);
-    dispatch('change', nextValue);
+    modelValue = nextValue;
+    onUpdateModelValue?.(nextValue);
+    onChange?.(nextValue);
   };
 </script>
 
@@ -2481,107 +3859,176 @@ Object.assign(svelteTemplates, {
       role="checkbox"
       tabindex="0"
       aria-checked={values.has(item)}
-      on:click={() => update(item)}
-      on:keydown={(event) => {
+      onclick={() => update(item)}
+      onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           update(item);
         }
       }}
     >
-      <div class="a-checkbox-checker">{#if values.has(item)}<span class="a-checkbox-checker__icon"></span>{/if}</div>
+      <div class="a-checkbox-checker">{#if values.has(item)}<Icon class="a-checkbox-checker__icon" aria-hidden="true" icon={checkIcon} />{/if}</div>
       <div class="a-checkbox-label">{item}</div>
     </div>
   {/each}
-  <slot />
+  {@render children?.()}
 </div>
 `,
   ClickableText: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let type = '';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    type = '',
+    class: className = '',
+    children,
+    onClick,
+  } = $props();
 </script>
 
 <span
   class="a-clickable-text {type ? 'a-clickable-text--' + type : ''} {className}"
   role="button"
   tabindex="0"
-  on:click={(event) => dispatch('click', event)}
-  on:keydown={(event) => {
+  onclick={(event) => onClick?.(event)}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      dispatch('click', event);
+      onClick?.(event);
     }
   }}
 >
-  <slot />
+  {@render children?.()}
 </span>
 `,
   Collapse: `
 <script lang="ts">
-  export let visible = false;
-  export let direction = 'vertical';
-  export let alwaysRender = false;
-  export let className = '';
-  export { className as class };
+  import { untrack } from 'svelte';
+  let {
+    visible = false,
+    direction = 'vertical',
+    alwaysRender = false,
+    renderWaitTime = 100,
+    class: className = '',
+    children,
+  } = $props();
+  // matches the Vue ACollapse transition duration (var(--anim-duration, 200ms))
+  const TRANSITION_DURATION = 200;
+  // svelte-ignore state_referenced_locally
+  let collapsed = $state(!visible);
+  // svelte-ignore state_referenced_locally
+  let rendered = $state(visible);
+  let sizeStyle = $state('');
+  let element = $state<HTMLDivElement>();
+  let firstRun = true;
+  const measure = (collapsedSize: boolean) => {
+    if (!element) return '';
+    const size =
+      direction === 'vertical'
+        ? element[collapsedSize ? 'clientHeight' : 'scrollHeight']
+        : element[collapsedSize ? 'clientWidth' : 'scrollWidth'];
+    return (direction === 'vertical' ? 'max-height: ' : 'max-width: ') + size + 'px;';
+  };
+  $effect(() => {
+    const active = visible;
+    if (firstRun) {
+      firstRun = false;
+      return;
+    }
+    return untrack(() => {
+      let raf = 0;
+      let animeTimeout: number | undefined;
+      let renderTimeout: number | undefined;
+      if (active) {
+        rendered = true;
+        // wait a frame so a freshly mounted element can be measured while still collapsed
+        raf = requestAnimationFrame(() => {
+          sizeStyle = measure(false);
+          collapsed = false;
+          animeTimeout = window.setTimeout(() => {
+            sizeStyle = '';
+          }, TRANSITION_DURATION);
+        });
+      } else {
+        // pin the current size so the transition has an explicit starting point
+        sizeStyle = measure(true);
+        raf = requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            sizeStyle = '';
+            collapsed = true;
+          }),
+        );
+        renderTimeout = window.setTimeout(() => {
+          rendered = false;
+        }, TRANSITION_DURATION + renderWaitTime);
+      }
+      return () => {
+        cancelAnimationFrame(raf);
+        if (animeTimeout) window.clearTimeout(animeTimeout);
+        if (renderTimeout) window.clearTimeout(renderTimeout);
+      };
+    });
+  });
 </script>
 
-{#if visible || alwaysRender}
-  <div class="a-collapse {!visible ? 'a-collapse--collapsed-' + direction : ''} {className}">
-    <slot />
+{#if rendered || alwaysRender}
+  <div bind:this={element} class="a-collapse {collapsed ? 'a-collapse--collapsed-' + direction : ''} {className}" style={sizeStyle || undefined}>
+    {@render children?.()}
   </div>
 {/if}
 `,
   Content: `
 <script lang="ts">
-  export let className = '';
-  export { className as class };
+  let { class: className = '', children } = $props();
 </script>
 
-<main class="a-layout-inner a-content {className}"><slot /></main>
+<main class="a-layout-inner a-content {className}">{@render children?.()}</main>
 `,
   Empty: `
 <script lang="ts">
   import Icon from '@iconify/svelte';
-  export let text = '';
-  export let icon = 'iconoir:file-not-found';
-  export let className = '';
-  export { className as class };
+  let {
+    text = '',
+    icon = 'iconoir:file-not-found',
+    class: className = '',
+    children,
+  } = $props();
 </script>
 
 <div class="a-empty {className}">
-  <Icon class="a-empty__icon a-icon" aria-hidden="true" icon={icon} />
+  <div class="a-empty__figure">
+    <Icon class="a-empty__icon a-icon" aria-hidden="true" icon={icon} />
+  </div>
   {#if text}<span class="a-empty__text">{text}</span>{/if}
-  <slot />
+  {#if children}<div class="a-empty__actions">{@render children()}</div>{/if}
 </div>
 `,
   Footer: `
 <script lang="ts">
-  export let height: string | number = '';
-  export let className = '';
-  export { className as class };
+  let {
+    height = '',
+    class: className = '',
+    children,
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedHeight = formatStyleSize(height);
+  const formattedHeight = $derived(formatStyleSize(height));
 </script>
 
-<footer class="a-layout-inner a-footer {className}" style:height={formattedHeight}><slot /></footer>
+<footer class="a-layout-inner a-footer {className}" style:height={formattedHeight}>{@render children?.()}</footer>
 `,
   Form: `
 <script lang="ts">
   import { setContext } from 'svelte';
-  import { get, writable } from 'svelte/store';
+  import { writable } from 'svelte/store';
   import ValidateSchema from 'async-validator';
   import type { Rules } from 'async-validator';
   import type { FormRuleItem } from '../types';
-  export let modelValue: Record<string, unknown> = {};
-  export let rules: Record<string, FormRuleItem[]> = {};
-  export let layout = 'default';
-  export let labelWidth: string | number = '20%';
-  export let className = '';
-  export { className as class };
+  let {
+    modelValue = {} as Record<string, unknown>,
+    rules = {} as Record<string, FormRuleItem[]>,
+    layout = 'default',
+    labelWidth = '20%',
+    class: className = '',
+    children,
+  } = $props();
   const validation = writable<Record<string, { isValid: boolean; message: string }>>({});
   const clearSignals = writable<Record<string, number>>({});
   const clearAllSignal = writable(0);
@@ -2687,21 +4134,23 @@ Object.assign(svelteTemplates, {
 </script>
 
 <div class="a-form {layout === 'inline' ? 'a-form--inline' : ''} {className}">
-  <slot />
+  {@render children?.()}
 </div>
 `,
   FormItem: `
 <script lang="ts">
   import { getContext, setContext } from 'svelte';
   import { derived, writable } from 'svelte/store';
-  export let label = '';
-  export let field = '';
-  export let prop = '';
-  export let isValid = true;
-  export let invalid = false;
-  export let invalidMessage = '';
-  export let className = '';
-  export { className as class };
+  let {
+    label = '',
+    field = '',
+    prop = '',
+    isValid = true,
+    invalid = false,
+    invalidMessage = '',
+    class: className = '',
+    children,
+  } = $props();
   const form = getContext<any>('anyui-form') ?? {};
   const fallbackValidation = writable<Record<string, { isValid: boolean; message: string }>>({});
   const fallbackClearSignals = writable<Record<string, number>>({});
@@ -2711,13 +4160,15 @@ Object.assign(svelteTemplates, {
   const clearAllSignalStore = form.clearAllSignal ?? fallbackClearAllSignal;
   const fieldStore = writable('');
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedLabelWidth = formatStyleSize(form.labelWidth);
-  $: fieldName = prop || field;
-  $: fieldStore.set(fieldName);
-  $: formValidation = fieldName ? $validationStore[fieldName] : undefined;
-  $: valid = Boolean(isValid) && !invalid && formValidation?.isValid !== false;
-  $: message = invalidMessage || formValidation?.message || '';
-  $: itemRules = fieldName ? form.rules?.[fieldName] : undefined;
+  const formattedLabelWidth = $derived(formatStyleSize(form.labelWidth));
+  const fieldName = $derived(prop || field);
+  $effect(() => {
+    fieldStore.set(fieldName);
+  });
+  const formValidation = $derived(fieldName ? $validationStore[fieldName] : undefined);
+  const valid = $derived(Boolean(isValid) && !invalid && formValidation?.isValid !== false);
+  const message = $derived(invalidMessage || formValidation?.message || '');
+  const itemRules = $derived(fieldName ? form.rules?.[fieldName] : undefined);
   const notifyChange = () => {
     if (fieldName && itemRules?.some((item: any) => item.triggerType === 'change')) setTimeout(() => form.validateField?.(fieldName));
   };
@@ -2740,7 +4191,7 @@ Object.assign(svelteTemplates, {
     {#if label}
       <div class="a-form-item-inner__label" style:width={formattedLabelWidth}><span>{label}</span></div>
     {/if}
-    <div class="a-form-item-inner__content"><slot /></div>
+    <div class="a-form-item-inner__content">{@render children?.()}</div>
   </div>
   {#if !valid}
     <div class="a-form-item-invalid">
@@ -2752,95 +4203,106 @@ Object.assign(svelteTemplates, {
 `,
   GradientText: `
 <script lang="ts">
-  export let gradient = '';
-  export let reverseGradient = false;
-  export let size: string | number | undefined = undefined;
-  export let primaryColor = 'var(--primary)';
-  export let secondaryColor = 'var(--secondary)';
-  export let splitPercent = 30;
-  export let className = '';
-  export { className as class };
+  let {
+    gradient = '',
+    reverseGradient = false,
+    size = undefined,
+    primaryColor = 'var(--primary)',
+    secondaryColor = 'var(--secondary)',
+    splitPercent = 30,
+    glow = false,
+    class: className = '',
+    children,
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: background = gradient || (!reverseGradient
+  const background = $derived(gradient || (!reverseGradient
     ? 'linear-gradient(90deg, ' + primaryColor + ', ' + secondaryColor + ' ' + splitPercent + '%, ' + secondaryColor + ' 100%)'
-    : 'linear-gradient(90deg, ' + secondaryColor + ', ' + primaryColor + ' ' + splitPercent + '%, ' + primaryColor + ' 100%)');
-  $: formattedSize = formatStyleSize(size);
+    : 'linear-gradient(90deg, ' + secondaryColor + ', ' + primaryColor + ' ' + splitPercent + '%, ' + primaryColor + ' 100%)'));
+  const formattedSize = $derived(formatStyleSize(size));
 </script>
 
-<span class="a-gradient-text {className}" style:background={background} style:font-size={formattedSize}>
-  <slot />
+<span class="a-gradient-text {glow ? 'a-gradient-text--glow' : ''} {className}" style:background={background} style:font-size={formattedSize}>
+  {@render children?.()}
 </span>
 `,
   Header: `
 <script lang="ts">
-  export let height: string | number = '';
-  export let className = '';
-  export { className as class };
+  let {
+    height = '',
+    class: className = '',
+    children,
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedHeight = formatStyleSize(height);
+  const formattedHeight = $derived(formatStyleSize(height));
 </script>
 
-<header class="a-layout-inner a-header {className}" style:height={formattedHeight}><slot /></header>
+<header class="a-layout-inner a-header {className}" style:height={formattedHeight}>{@render children?.()}</header>
 `,
   Image: `
 <script lang="ts">
-  export let src = '';
-  export let width: string | number = '100%';
-  export let height: string | number = '100%';
-  export let size = 'cover';
-  export let position = 'center';
-  export let repeat = 'no-repeat';
-  export let loading: unknown = undefined;
-  export let error: unknown = undefined;
-  export let className = '';
-  export { className as class };
+  let {
+    src = '',
+    width = '100%',
+    height = '100%',
+    size = 'cover',
+    position = 'center',
+    repeat = 'no-repeat',
+    loading = undefined,
+    error = undefined,
+    class: className = '',
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedWidth = formatStyleSize(width);
-  $: formattedHeight = formatStyleSize(height);
+  const formattedWidth = $derived(formatStyleSize(width));
+  const formattedHeight = $derived(formatStyleSize(height));
 </script>
 
 <div class="a-image {className}" data-src={src || undefined} style:width={formattedWidth} style:height={formattedHeight}>
   {#if loading}
-    <div class="a-image__loading"><slot name="loading">{loading}</slot></div>
+    <div class="a-image__loading">{#if typeof loading === 'function'}{@render loading()}{:else}{loading}{/if}</div>
   {:else if src}
     <div class="a-image__pic" style:background-image={'url(' + src + ')'} style:background-size={size} style:background-position={position} style:background-repeat={repeat}></div>
   {:else}
-    <div class="a-image__error"><slot name="error">{error}</slot></div>
+    <div class="a-image__error">{#if typeof error === 'function'}{@render error()}{:else}{error}{/if}</div>
   {/if}
 </div>
 `,
   Layout: `
 <script lang="ts">
-  export let direction = '';
-  export let fit = false;
-  export let hasSide = false;
-  export let className = '';
-  export { className as class };
+  let {
+    direction = '',
+    fit = false,
+    hasSide = false,
+    class: className = '',
+    children,
+  } = $props();
 </script>
 
 <div class="a-layout {fit ? 'a-layout--fill' : ''} {(hasSide || direction === 'horizontal') ? 'a-layout--has-side' : ''} {direction === 'vertical' ? 'a-layout--vertical' : ''} {className}">
-  <slot />
+  {@render children?.()}
 </div>
 `,
   ListMenu: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import type { AListMenuConfig, AListMenuDisplayItem, AListMenuItemConfig } from '../types';
-  export let menu: AListMenuConfig = [];
-  export let modelValue: string | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    menu = [] as AListMenuConfig,
+    modelValue = $bindable(undefined),
+    class: className = '',
+    children,
+    onUpdateModelValue,
+    onChange,
+  } = $props();
   const toItem = (item: AListMenuItemConfig): AListMenuDisplayItem =>
     typeof item === 'string' ? { type: 'item', label: item, value: item } : { type: 'item', ...item };
   const normalizeMenu = (input: AListMenuConfig): AListMenuDisplayItem[] => {
     if (Array.isArray(input)) return input.map(toItem);
     return Object.entries(input).flatMap(([label, list]) => [{ type: 'split' as const, label }, ...list.map(toItem)]);
   };
-  $: displayItems = normalizeMenu(menu);
+  const displayItems = $derived(normalizeMenu(menu));
   const update = (value: string | undefined) => {
-    dispatch('update:modelValue', value);
-    dispatch('change', value);
+    modelValue = value;
+    onUpdateModelValue?.(value);
+    onChange?.(value);
   };
 </script>
 
@@ -2853,8 +4315,8 @@ Object.assign(svelteTemplates, {
         class="a-list-menu__item {modelValue === item.value ? 'a-list-menu__item--selected' : ''}"
         role="button"
         tabindex="0"
-        on:click={() => update(item.value)}
-        on:keydown={(event) => {
+        onclick={() => update(item.value)}
+        onkeydown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             update(item.value);
@@ -2863,17 +4325,19 @@ Object.assign(svelteTemplates, {
       >{item.label}</div>
     {/if}
   {/each}
-  <slot />
+  {@render children?.()}
 </div>
 `,
   ListView: `
 <script lang="ts">
   import { setContext } from 'svelte';
-  export let fit = true;
-  export let type = '';
-  export let itemHeight: string | number | undefined = undefined;
-  export let className = '';
-  export { className as class };
+  let {
+    fit = true,
+    type = '',
+    itemHeight = undefined,
+    class: className = '',
+    children,
+  } = $props();
   const context = {
     get type() {
       return type;
@@ -2886,25 +4350,26 @@ Object.assign(svelteTemplates, {
 </script>
 
 <div class="a-list-view {fit ? 'a-list-view--fit' : ''} {className}">
-  <slot />
+  {@render children?.()}
 </div>
 `,
   ListViewItem: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import { getContext } from 'svelte';
-  export let selected = false;
-  export let label = '';
-  export let type = '';
-  export let itemHeight: string | number | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    selected = false,
+    label = '',
+    type = '',
+    itemHeight = undefined,
+    class: className = '',
+    children,
+    onClick,
+  } = $props();
   const listView = getContext<any>('anyui-list-view') ?? {};
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: itemStyleType = type || listView.type || 'borderless';
-  $: formattedHeight = formatStyleSize(itemHeight ?? listView.itemHeight);
-  $: hasLabel = Boolean(label);
+  const itemStyleType = $derived(type || listView.type || 'borderless');
+  const formattedHeight = $derived(formatStyleSize(itemHeight ?? listView.itemHeight));
+  const hasLabel = $derived(Boolean(label));
 </script>
 
 <div
@@ -2912,26 +4377,25 @@ Object.assign(svelteTemplates, {
   style:height={formattedHeight}
   role="button"
   tabindex="0"
-  on:click={(event) => dispatch('click', event)}
-  on:keydown={(event) => {
+  onclick={(event) => onClick?.(event)}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      dispatch('click', event);
+      onClick?.(event);
     }
   }}
 >
   {#if hasLabel}
     <span class="a-list-view-item__label">{label}</span>
-    <div class="a-list-view-item__content"><slot /></div>
+    <div class="a-list-view-item__content">{@render children?.()}</div>
   {:else}
-    <slot />
+    {@render children?.()}
   {/if}
 </div>
 `,
   Loading: `
 <script lang="ts">
-  export let className = '';
-  export { className as class };
+  let { class: className = '' } = $props();
   const circles = [1, 2, 3, 4];
 </script>
 
@@ -2946,27 +4410,82 @@ Object.assign(svelteTemplates, {
   Masonry: `
 <script lang="ts">
   import type { MasonryItem } from '../types';
-  export let items: MasonryItem[] = [];
-  export let columns: string | number = 3;
-  export let gap: string | number = 16;
-  export let className = '';
-  export { className as class };
-  const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedGap = formatStyleSize(gap);
+  let {
+    items = [] as MasonryItem[],
+    itemHeightGetter = undefined as ((item: MasonryItem) => number) | undefined,
+    colWidth = 240,
+    col = 0,
+    gap = 16,
+    fit = false,
+    class: className = '',
+    children,
+  } = $props();
+
+  let containerEl: HTMLDivElement | undefined = $state();
+  let containerWidth = $state(0);
+
+  $effect(() => {
+    if (!containerEl) return undefined;
+    // in fit mode the container width is pinned to the computed fit width,
+    // so measure the parent element to keep the column count responsive
+    const target = fit && !col ? (containerEl.parentElement ?? containerEl) : containerEl;
+    const measure = () => {
+      containerWidth = target.offsetWidth;
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', measure);
+      return () => window.removeEventListener('resize', measure);
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(target);
+    return () => observer.disconnect();
+  });
+
+  const columns = $derived(Math.max(1, col || Math.floor((containerWidth + gap) / (colWidth + gap))));
+  const layout = $derived.by(() => {
+    const columnHeights = new Array(columns).fill(0) as number[];
+    const positions = items.map((item: MasonryItem) => {
+      const rawHeight = typeof itemHeightGetter === 'function' ? itemHeightGetter(item) : Number(item?.height);
+      const height = Number.isFinite(rawHeight) && rawHeight > 0 ? rawHeight : colWidth;
+      let targetCol = 0;
+      for (let i = 1; i < columns; i += 1) {
+        if (columnHeights[i] < columnHeights[targetCol]) targetCol = i;
+      }
+      const position = { left: targetCol * (colWidth + gap), top: columnHeights[targetCol], height };
+      columnHeights[targetCol] += height + gap;
+      return position;
+    });
+    const maxHeight = positions.length ? Math.max(0, ...columnHeights.map((h) => h - gap)) : 0;
+    return { positions, maxHeight };
+  });
+  const fitWidth = $derived(columns * colWidth + (columns - 1) * gap);
 </script>
 
-<div class="a-masonry {className}" style:column-count={columns} style:column-gap={formattedGap}>
-  {#if items.length}
-    {#each items as item, index}
-      <div class="a-masonry__item"><slot item={item} index={index}>{item.id ?? index}</slot></div>
-    {/each}
-  {:else}
-    <slot />
-  {/if}
+<div
+  bind:this={containerEl}
+  class="a-masonry {className}"
+  style:position="relative"
+  style:width={fit ? fitWidth + 'px' : undefined}
+  style:height={layout.maxHeight + 'px'}
+>
+  {#each items as item, index (item.id ?? index)}
+    <div
+      class="a-masonry__item"
+      style:position="absolute"
+      style:top="0"
+      style:left="0"
+      style:width={colWidth + 'px'}
+      style:height={layout.positions[index].height + 'px'}
+      style:transform={'translateX(' + layout.positions[index].left + 'px) translateY(' + layout.positions[index].top + 'px)'}
+    >
+      {#if children}{@render children(item, index)}{:else}{String(item.id ?? index)}{/if}
+    </div>
+  {/each}
 </div>
 `,
   Popper: `
-<script context="module" lang="ts">
+<script module lang="ts">
   const groupListeners = new Set<(payload: { group: string; popperId: string }) => void>();
   const emitGroupShow = (payload: { group: string; popperId: string }) => {
     groupListeners.forEach((listener) => listener(payload));
@@ -2974,36 +4493,42 @@ Object.assign(svelteTemplates, {
 </script>
 
 <script lang="ts">
-  import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
   import type { APopperTriggerType } from '../types';
-  export let triggerType: APopperTriggerType = 'hover';
-  export let visible = false;
-  export let appendToBody = true;
-  export let placement = 'bottom';
-  export let offset = 18;
-  export let hideDelay = 100;
-  export let closeWhenClickOutside = true;
-  export let group = '';
-  export let popupClass = '';
-  export let zIndex = 3000;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    triggerType = 'hover' as APopperTriggerType,
+    visible = false,
+    appendToBody = true,
+    placement = 'bottom',
+    offset = 18,
+    hideDelay = 100,
+    closeWhenClickOutside = true,
+    group = '',
+    popupClass = '',
+    zIndex = 3000,
+    class: className = '',
+    children,
+    popup,
+    onPopupStatusChanged,
+  } = $props();
   const popperId = Date.now() + '_' + Math.random().toString(36).slice(2);
-  let triggerEl: HTMLSpanElement;
-  let popupEl: HTMLDivElement;
+  let triggerEl = $state<HTMLSpanElement>();
+  let popupEl = $state<HTMLDivElement>();
   let hideTimeout: ReturnType<typeof setTimeout> | undefined;
-  let open = triggerType === 'manual' ? visible : false;
-  let fixedStyle = '';
-  $: if (triggerType === 'manual') setOpen(Boolean(visible));
-  $: insetStyle = getInsetStyle();
-  $: popupStyle = appendToBody
+  // svelte-ignore state_referenced_locally
+  let open = $state(triggerType === 'manual' ? Boolean(visible) : false);
+  let fixedStyle = $state('');
+  $effect(() => {
+    if (triggerType === 'manual') setOpen(Boolean(visible));
+  });
+  const insetStyle = $derived(getInsetStyle());
+  const popupStyle = $derived(appendToBody
     ? fixedStyle || 'position: fixed; z-index: ' + zIndex + ';'
-    : insetStyle + ' z-index: ' + zIndex + ';';
+    : insetStyle + ' z-index: ' + zIndex + ';');
   function setOpen(next: boolean) {
     if (open === next) return;
     open = next;
-    dispatch('popupStatusChanged', next);
+    onPopupStatusChanged?.(next);
     if (next && group) emitGroupShow({ group, popperId });
   }
   function getFixedStyle() {
@@ -3102,26 +4627,26 @@ Object.assign(svelteTemplates, {
   style:position={appendToBody ? undefined : 'relative'}
   role="button"
   tabindex={triggerType === 'manual' ? -1 : 0}
-  on:mouseenter={triggerType === 'hover' ? show : undefined}
-  on:mouseleave={triggerType === 'hover' ? delayHide : undefined}
-  on:focus={triggerType === 'hover' ? show : undefined}
-  on:blur={triggerType === 'hover' ? delayHide : undefined}
-  on:click={triggerType === 'click' ? toggle : undefined}
-  on:keydown={(event) => {
+  onmouseenter={triggerType === 'hover' ? show : undefined}
+  onmouseleave={triggerType === 'hover' ? delayHide : undefined}
+  onfocus={triggerType === 'hover' ? show : undefined}
+  onblur={triggerType === 'hover' ? delayHide : undefined}
+  onclick={triggerType === 'click' ? toggle : undefined}
+  onkeydown={(event) => {
     if ((event.key === 'Enter' || event.key === ' ') && triggerType === 'click') {
       event.preventDefault();
       toggle();
     }
     if (event.key === 'Escape') hide();
   }}
-  on:contextmenu={(event) => {
+  oncontextmenu={(event) => {
     if (triggerType === 'contextmenu') {
       event.preventDefault();
       toggle();
     }
   }}
 >
-  <slot />
+  {@render children?.()}
   {#if open}
     <div
       bind:this={popupEl}
@@ -3129,88 +4654,160 @@ Object.assign(svelteTemplates, {
       class="a-popper__popup {popupClass}"
       style={popupStyle}
       role="presentation"
-      on:mouseenter={triggerType === 'hover' ? show : undefined}
-      on:mouseleave={triggerType === 'hover' ? delayHide : undefined}
-      on:click={(event) => !appendToBody && event.stopPropagation()}
-      on:keydown={() => undefined}
-    ><slot name="popup" /></div>
+      onmouseenter={triggerType === 'hover' ? show : undefined}
+      onmouseleave={triggerType === 'hover' ? delayHide : undefined}
+      onclick={(event) => !appendToBody && event.stopPropagation()}
+      onkeydown={() => undefined}
+    >{@render popup?.()}</div>
   {/if}
 </span>
 `,
   PopupMenu: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import Popper from './Popper.svelte';
   import type { APopperTriggerType, PopMenuItem } from '../types';
-  export let items: Array<PopMenuItem | string> = [];
-  export let triggerType: APopperTriggerType = 'hover';
-  export let visible = false;
-  export let appendToBody = true;
-  export let placement = 'bottom';
-  export let offset = 12;
-  export let hideDelay = 100;
-  export let width: string | number = 180;
-  export let zIndex = 3000;
-  export let popupClass = '';
-  export let menuClass = '';
-  export let hideAfterClick = false;
-  export let group = '';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  let popper: any;
+  let {
+    items = [] as Array<PopMenuItem | string>,
+    triggerType = 'hover' as APopperTriggerType,
+    visible = false,
+    appendToBody = true,
+    placement = 'bottom',
+    offset = 12,
+    hideDelay = 100,
+    width = 180,
+    zIndex = 3000,
+    popupClass = '',
+    menuClass = '',
+    hideAfterClick = false,
+    group = '',
+    class: className = '',
+    children,
+    onCommand,
+  } = $props();
+  let popper = $state<any>();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedWidth = formatStyleSize(width);
+  const formattedWidth = $derived(formatStyleSize(width));
   const getItemKey = (item: PopMenuItem | string) => (typeof item === 'string' ? item : item.key ?? item.name);
   const getItemName = (item: PopMenuItem | string) => (typeof item === 'string' ? item : item.name);
   const command = (item: PopMenuItem | string) => {
     if (hideAfterClick) popper?.hide?.();
-    dispatch('command', {
-      command: getItemKey(item),
-      extra: {
-        triggerEl: popper?.getTriggerEl?.(),
-        popupEl: popper?.getPopupEl?.(),
-      },
+    onCommand?.(getItemKey(item), {
+      triggerEl: popper?.getTriggerEl?.(),
+      popupEl: popper?.getPopupEl?.(),
     });
   };
 </script>
 
 <Popper bind:this={popper} class={className} {triggerType} {visible} {appendToBody} {placement} {offset} {hideDelay} {zIndex} {popupClass} {group}>
-  <slot />
-  <div slot="popup" class="a-popup-menu {menuClass}" style:width={formattedWidth}>
-    {#each items as item}
-      <div
-        class="a-popup-menu__item"
-        role="button"
-        tabindex="0"
-        on:click={() => command(item)}
-        on:keydown={(event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            command(item);
-          }
-        }}
-      ><span>{getItemName(item)}</span></div>
-    {/each}
-  </div>
+  {@render children?.()}
+  {#snippet popup()}
+    <div class="a-popup-menu {menuClass}" style:width={formattedWidth}>
+      {#each items as item}
+        <div
+          class="a-popup-menu__item"
+          role="button"
+          tabindex="0"
+          onclick={() => command(item)}
+          onkeydown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              command(item);
+            }
+          }}
+        ><span>{getItemName(item)}</span></div>
+      {/each}
+    </div>
+  {/snippet}
+</Popper>
+`,
+  DropdownMenu: `
+<script lang="ts">
+  import Icon from '@iconify/svelte';
+  import Popper from './Popper.svelte';
+  import type { DropdownMenuItem } from '../types';
+  let {
+    items = [] as DropdownMenuItem[],
+    triggerType = 'click',
+    placement = 'bottom-start',
+    disabled = false,
+    hideAfterClick = true,
+    width = undefined as number | string | undefined,
+    offset = 12,
+    hideDelay = 100,
+    zIndex = 3000,
+    appendToBody = true,
+    popupClass = '',
+    menuClass = '',
+    group = '',
+    class: className = '',
+    children,
+    item: itemSnippet,
+    onCommand,
+    onVisibleChange,
+  } = $props();
+  let popper = $state<any>();
+  const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
+  const minWidth = $derived(width === undefined ? undefined : formatStyleSize(width));
+  const command = (menuItem: DropdownMenuItem) => {
+    if (menuItem.disabled) return;
+    if (hideAfterClick) popper?.hide?.();
+    onCommand?.(menuItem.command, menuItem);
+  };
+</script>
+
+<Popper
+  bind:this={popper}
+  class={className}
+  triggerType={disabled ? 'manual' : triggerType}
+  {placement}
+  {offset}
+  {hideDelay}
+  {zIndex}
+  {appendToBody}
+  {popupClass}
+  {group}
+  onPopupStatusChanged={(visible: boolean) => onVisibleChange?.(visible)}
+>
+  {@render children?.()}
+  {#snippet popup()}
+    <div class="a-dropdown-menu {menuClass}" style:min-width={minWidth}>
+      {#each items as menuItem, index}
+        <div class="a-dropdown-menu__item-wrapper {menuItem.divided && index > 0 ? 'a-dropdown-menu__item-wrapper--divided' : ''}">
+          <div
+            class="a-dropdown-menu__item {menuItem.danger && !menuItem.disabled ? 'a-dropdown-menu__item--danger' : ''} {menuItem.disabled ? 'a-dropdown-menu__item--disabled' : ''}"
+            role="button"
+            tabindex={menuItem.disabled ? -1 : 0}
+            onclick={() => command(menuItem)}
+            onkeydown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                command(menuItem);
+              }
+            }}
+          >
+            {#if itemSnippet}{@render itemSnippet(menuItem)}{:else}
+              {#if menuItem.icon}<Icon class="a-dropdown-menu__icon" icon={menuItem.icon} />{/if}
+              <span class="a-dropdown-menu__label">{menuItem.label}</span>
+            {/if}
+          </div>
+        </div>
+      {/each}
+    </div>
+  {/snippet}
 </Popper>
 `,
   RadioButton: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let label: string | number = '';
-  export let value: string | number | undefined = undefined;
-  export let selected: string | number | undefined = undefined;
-  export let modelValue: string | number | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: current = selected ?? modelValue;
-  const update = () => {
-    dispatch('update:modelValue', value);
-    dispatch('change', value);
-    dispatch('click', value);
-  };
+  let {
+    label = '',
+    value = undefined,
+    selected = undefined,
+    modelValue = undefined,
+    class: className = '',
+    children,
+    onClick,
+  } = $props();
+  const current = $derived(selected ?? modelValue);
 </script>
 
 <div
@@ -3218,34 +4815,39 @@ Object.assign(svelteTemplates, {
   role="radio"
   tabindex="0"
   aria-checked={current === value}
-  on:click={update}
-  on:keydown={(event) => {
+  onclick={(event) => onClick?.(event, value)}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      update();
+      onClick?.(event, value);
     }
   }}
 >
-  <slot>{label}</slot>
+  {#if children}{@render children()}{:else}{label}{/if}
 </div>
 `,
   RadioButtonGroup: `
 <script lang="ts">
-  import { createEventDispatcher, tick } from 'svelte';
+  import { tick } from 'svelte';
   import type { ARadioGroupItems } from '../types';
-  export let items: ARadioGroupItems = [];
-  export let modelValue: string | number | undefined = undefined;
-  export let round = false;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  let containerEl: HTMLDivElement;
-  let bgBlockPosition: { width: number; left: number } | undefined = undefined;
-  $: paddingValue = round ? 6 : 4;
-  $: bgBlockStyle = bgBlockPosition
-    ? \`opacity: 1; transform: translateX(\${bgBlockPosition.left}px) scale(1); width: \${bgBlockPosition.width}px;\`
-    : 'opacity: 0; transform: scale(0.4);';
-  $: if (items && typeof modelValue !== 'undefined') updatePosition(modelValue);
+  let {
+    items = [] as ARadioGroupItems,
+    modelValue = $bindable(undefined),
+    round = false,
+    class: className = '',
+    children,
+    onUpdateModelValue,
+    onChange,
+  } = $props();
+  let containerEl = $state<HTMLDivElement>();
+  let bgBlockPosition = $state<{ width: number; left: number } | undefined>(undefined);
+  const paddingValue = $derived(round ? 6 : 4);
+  const bgBlockStyle = $derived(bgBlockPosition
+    ? 'opacity: 1; transform: translateX(' + bgBlockPosition.left + 'px) scale(1); width: ' + bgBlockPosition.width + 'px;'
+    : 'opacity: 0; transform: scale(0.4);');
+  $effect(() => {
+    if (items && typeof modelValue !== 'undefined') updatePosition(modelValue);
+  });
   const updatePosition = async (value: string | number | undefined) => {
     if (typeof value === 'undefined' || value === null) {
       bgBlockPosition = undefined;
@@ -3263,8 +4865,9 @@ Object.assign(svelteTemplates, {
     };
   };
   const update = (value: string | number) => {
-    dispatch('update:modelValue', value);
-    dispatch('change', value);
+    modelValue = value;
+    onUpdateModelValue?.(value);
+    onChange?.(value);
     updatePosition(value);
   };
 </script>
@@ -3278,8 +4881,8 @@ Object.assign(svelteTemplates, {
         role="radio"
         tabindex="0"
         aria-checked={modelValue === item.value}
-        on:click={() => update(item.value)}
-        on:keydown={(event) => {
+        onclick={() => update(item.value)}
+        onkeydown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             update(item.value);
@@ -3288,52 +4891,73 @@ Object.assign(svelteTemplates, {
       >{item.label}</div>
     {/each}
   </div>
-  <slot />
+  {@render children?.()}
 </div>
 `,
   Side: `
 <script lang="ts">
-  export let width: string | number | undefined = 300;
-  export let noDefault = false;
-  export let className = '';
-  export { className as class };
+  let {
+    width = 300,
+    noDefault = false,
+    class: className = '',
+    children,
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedWidth = noDefault && !width ? undefined : formatStyleSize(width);
+  const formattedWidth = $derived(noDefault && !width ? undefined : formatStyleSize(width));
 </script>
 
-<div class="a-layout-inner a-side {className}" style:width={formattedWidth}><slot /></div>
+<div class="a-layout-inner a-side {className}" style:width={formattedWidth}>{@render children?.()}</div>
 `,
   Spinner: `
 <script lang="ts">
   import Icon from '@iconify/svelte';
-  export let icon = 'quill:loading-spin';
-  export let className = '';
-  export { className as class };
+  let {
+    icon = '',
+    class: className = '',
+  } = $props();
 </script>
 
 <span class="a-spinner {className}">
-  <Icon class="a-spinner__inner a-icon" aria-hidden="true" icon={icon} />
+  {#if icon}
+    <Icon class="a-spinner__inner a-icon" aria-hidden="true" icon={icon} />
+  {:else}
+    <svg class="a-spinner__inner" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" pathLength="100" stroke-dasharray="75 100" />
+    </svg>
+  {/if}
 </span>
 `,
   Split: `
 <script lang="ts">
-  export let margin: string | number = 0;
-  export let color = '';
-  export let className = '';
-  export { className as class };
+  let {
+    height = 2,
+    color = 'var(--line)',
+    margin = 12,
+    round = false,
+    class: className = '',
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedMargin = formatStyleSize(margin);
+  const formattedMargin = $derived(formatStyleSize(margin));
+  const formattedHeight = $derived(formatStyleSize(height));
 </script>
 
-<div class="a-split {className}" style:margin={formattedMargin} style:background-color={color || undefined}></div>
+<div
+  class="a-split {className}"
+  style:height={formattedHeight}
+  style:background-color={color}
+  style:margin-top={formattedMargin}
+  style:margin-bottom={formattedMargin}
+  style:border-radius={round ? \`calc(\${formattedHeight} / 2)\` : undefined}
+></div>
 `,
   Step: `
 <script lang="ts">
-  export let steps: number | Array<string | null> = 2;
-  export let current = 1;
-  export let className = '';
-  export { className as class };
-  $: displaySteps = Array.isArray(steps) ? steps : Array.from({ length: steps }, () => null);
+  let {
+    steps = 2,
+    current = 1,
+    class: className = '',
+  } = $props();
+  const displaySteps = $derived(Array.isArray(steps) ? steps : Array.from({ length: steps }, () => null));
 </script>
 
 <div class="a-step {className}">
@@ -3350,29 +4974,29 @@ Object.assign(svelteTemplates, {
 `,
   Switch: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let modelValue = false;
-  export let disabled = false;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: checked = Boolean(modelValue);
+  let {
+    modelValue = $bindable(false),
+    disabled = false,
+    class: className = '',
+    onUpdateModelValue,
+    onChange,
+  } = $props();
   const update = () => {
     if (disabled) return;
-    checked = !checked;
-    dispatch('update:modelValue', checked);
-    dispatch('change', checked);
+    modelValue = !modelValue;
+    onUpdateModelValue?.(modelValue);
+    onChange?.(modelValue);
   };
 </script>
 
 <span
-  class="a-switch {checked ? 'a-switch--checked' : ''} {disabled ? 'a-switch--disabled' : ''} {className}"
+  class="a-switch {modelValue ? 'a-switch--checked' : ''} {disabled ? 'a-switch--disabled' : ''} {className}"
   role="switch"
   tabindex={disabled ? -1 : 0}
-  aria-checked={checked}
+  aria-checked={modelValue}
   aria-disabled={disabled}
-  on:click={update}
-  on:keydown={(event) => {
+  onclick={update}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       update();
@@ -3382,34 +5006,37 @@ Object.assign(svelteTemplates, {
 `,
   Upload: `
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let status = 'default';
-  export let clickable = true;
-  export let disabled = false;
-  export let multiple = false;
-  export let accept: string | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  let inputEl: HTMLInputElement;
-  let dragging = false;
-  $: showDefault = (status === 'default' || !status) && !dragging;
+  let {
+    status = 'default',
+    clickable = true,
+    disabled = false,
+    multiple = false,
+    accept = undefined,
+    class: className = '',
+    children,
+    dragging,
+    uploading,
+    error,
+    success,
+    onUpload,
+  } = $props();
+  let inputEl = $state<HTMLInputElement>();
+  let isDragging = $state(false);
+  const showDefault = $derived((status === 'default' || !status) && !isDragging);
   const choose = () => {
     if (!clickable || disabled) return;
     inputEl?.click();
   };
-  const onChange = (event: Event) => {
-    const files = (event.currentTarget as HTMLInputElement).files;
+  const emitUpload = (files?: FileList | null) => {
     const file = files?.[0];
-    dispatch('upload', file);
-    dispatch('change', file);
+    if (file) onUpload?.(file);
   };
-  const onDrop = (event: DragEvent) => {
-    if (!disabled) {
-      const file = event.dataTransfer?.files?.[0];
-      dispatch('upload', file);
-    }
-    dragging = false;
+  const handleChange = (event: Event) => {
+    emitUpload((event.currentTarget as HTMLInputElement).files);
+  };
+  const handleDrop = (event: DragEvent) => {
+    if (!disabled) emitUpload(event.dataTransfer?.files);
+    isDragging = false;
     event.preventDefault();
     event.stopPropagation();
   };
@@ -3420,90 +5047,83 @@ Object.assign(svelteTemplates, {
   role="button"
   tabindex={disabled ? -1 : 0}
   aria-disabled={disabled}
-  on:click={choose}
-  on:dragenter={(event) => {
-    dragging = true;
+  onclick={choose}
+  ondragenter={(event) => {
+    isDragging = true;
     event.preventDefault();
   }}
-  on:dragover={(event) => event.preventDefault()}
-  on:dragleave={(event) => {
+  ondragover={(event) => event.preventDefault()}
+  ondragleave={(event) => {
     if (event.currentTarget.contains(event.relatedTarget as Node)) return;
-    dragging = false;
+    isDragging = false;
   }}
-  on:drop={onDrop}
-  on:keydown={(event) => {
+  ondrop={handleDrop}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       choose();
     }
   }}
 >
-  <input bind:this={inputEl} type="file" hidden {multiple} {accept} on:change={onChange} />
-  {#if dragging}
-    <slot name="dragging" />
+  <input bind:this={inputEl} type="file" hidden {multiple} {accept} onchange={handleChange} />
+  {#if isDragging}
+    {@render dragging?.()}
   {:else if status === 'uploading'}
-    <slot name="uploading" />
+    {@render uploading?.()}
   {:else if status === 'error'}
-    <slot name="error" />
+    {@render error?.()}
   {:else if status === 'success'}
-    <slot name="success" />
+    {@render success?.()}
   {:else if showDefault}
-    <slot />
+    {@render children?.()}
   {/if}
 </div>
 `,
   VirtualListItem: `
 <script lang="ts">
   import type { VirtualListItem } from '../types';
-  export let item: VirtualListItem<unknown> | undefined = undefined;
-  export let className = '';
-  export { className as class };
+  let {
+    item = undefined as VirtualListItem<unknown> | undefined,
+    class: className = '',
+    children,
+  } = $props();
 </script>
 
 <div class="a-virtual-list__item {className}" data-index={item?.__listIndex} data-id={item?.id}>
-  <slot />
+  {@render children?.()}
 </div>
 `,
   VirtualList: `
 <script lang="ts">
-  import { afterUpdate, onDestroy, onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick, untrack } from 'svelte';
   import type { RawVirtualListItem, VirtualListItem } from '../types';
-  export let items: RawVirtualListItem<unknown>[] = [];
-  export let buffer = 1200;
-  export let estimatedItemHeight: number | undefined = undefined;
-  export let ignoreInvisibleItems = false;
-  export let className = '';
-  export { className as class };
-  let containerEl: HTMLDivElement;
-  let containerHeight = 0;
-  let scrollTop = 0;
+  let {
+    items = [] as RawVirtualListItem<unknown>[],
+    buffer = 1200,
+    estimatedItemHeight = undefined,
+    ignoreInvisibleItems = false,
+    class: className = '',
+    children,
+  } = $props();
+  let containerEl = $state<HTMLDivElement>();
+  let containerHeight = $state(0);
+  let scrollTop = $state(0);
   let resizeObserver: ResizeObserver | undefined;
-  let itemNodes = new Map<string, HTMLElement>();
-  let heightMap: Record<string, number> = {};
-  $: knownHeights = Object.values(heightMap).filter((value) => value > 0);
-  $: fallbackHeight = estimatedItemHeight && estimatedItemHeight > 0 ? estimatedItemHeight : knownHeights.length ? Math.min(...knownHeights) : 64;
-  $: itemHeights = items.map((item: any) => {
+  const itemNodes = new Map<string, HTMLElement>();
+  let heightMap = $state<Record<string, number>>({});
+  const knownHeights = $derived(Object.values(heightMap).filter((value) => value > 0));
+  const fallbackHeight = $derived(estimatedItemHeight && estimatedItemHeight > 0 ? estimatedItemHeight : knownHeights.length ? Math.min(...knownHeights) : 64);
+  const itemHeights = $derived(items.map((item: any) => {
     if (item.id && heightMap[item.id]) return heightMap[item.id];
     if (typeof item.height === 'number' && isFinite(item.height)) return item.height;
     return fallbackHeight;
-  });
-  $: prefixHeights = itemHeights.reduce((result, height) => {
+  }));
+  const prefixHeights = $derived(itemHeights.reduce((result, height) => {
     result.push(result[result.length - 1] + height);
     return result;
-  }, [0] as number[]);
-  $: totalHeight = prefixHeights[prefixHeights.length - 1] ?? 0;
-  $: visibleRange = getVisibleRange();
-  $: displayItems = items.slice(visibleRange.start, visibleRange.end).map((item: any, index) => {
-    const listIndex = visibleRange.start + index;
-    return {
-      ...item,
-      __listIndex: listIndex,
-      __itemHeight: itemHeights[listIndex],
-      __itemScrollTop: prefixHeights[listIndex],
-    };
-  });
-  $: firstItemTop = prefixHeights[visibleRange.start] ?? 0;
-  function getVisibleRange() {
+  }, [0] as number[]));
+  const totalHeight = $derived(prefixHeights[prefixHeights.length - 1] ?? 0);
+  const visibleRange = $derived.by(() => {
     if (!items.length) return { start: 0, end: 0 };
     const top = Math.max(0, scrollTop - buffer);
     const bottom = scrollTop + containerHeight + buffer;
@@ -3512,7 +5132,17 @@ Object.assign(svelteTemplates, {
     let end = start + 1;
     while (end < items.length && prefixHeights[end] <= bottom) end += 1;
     return { start, end: Math.min(items.length, end + 1) };
-  }
+  });
+  const displayItems = $derived(items.slice(visibleRange.start, visibleRange.end).map((item: any, index) => {
+    const listIndex = visibleRange.start + index;
+    return {
+      ...item,
+      __listIndex: listIndex,
+      __itemHeight: itemHeights[listIndex],
+      __itemScrollTop: prefixHeights[listIndex],
+    };
+  }));
+  const firstItemTop = $derived(prefixHeights[visibleRange.start] ?? 0);
   function setItemNode(node: HTMLElement, id: string) {
     itemNodes.set(id, node);
     resizeObserver?.observe(node);
@@ -3582,15 +5212,16 @@ Object.assign(svelteTemplates, {
     containerHeight = containerEl?.clientHeight ?? 0;
     return undefined;
   });
-  afterUpdate(() => {
-    itemNodes.forEach(measureNode);
+  $effect(() => {
+    void displayItems;
+    untrack(() => itemNodes.forEach(measureNode));
   });
   onDestroy(() => {
     resizeObserver?.disconnect();
   });
 </script>
 
-<div bind:this={containerEl} class="a-virtual-list {className}" on:scroll={refreshDisplay}>
+<div bind:this={containerEl} class="a-virtual-list {className}" onscroll={refreshDisplay}>
   <div class="a-virtual-list__inner a-scroll-shadows" style:height={totalHeight + 'px'}>
     <div class="a-virtual-list__filler" style:transform={'translateY(' + firstItemTop + 'px)'}>
       {#each displayItems as item (item.id)}
@@ -3599,19 +5230,786 @@ Object.assign(svelteTemplates, {
           class="a-virtual-list__item"
           data-index={item.__listIndex}
           data-id={item.id}
-        ><slot item={item} index={item.__listIndex}>{item.id}</slot></div>
+        >{#if children}{@render children(item, item.__listIndex)}{:else}{item.id}{/if}</div>
       {/each}
-      <slot />
+      {@render children?.()}
     </div>
   </div>
 </div>
 `,
 });
 
+Object.assign(svelteTemplates, {
+  Popup: `
+<script module lang="ts">
+  // simple shared refcount so stacked popups don't unlock each other
+  let scrollLockCount = 0;
+  const lockBodyScroll = () => {
+    scrollLockCount += 1;
+    if (scrollLockCount === 1 && typeof document !== 'undefined') {
+      document.body.classList.add('a-scroll-locked');
+    }
+  };
+  const unlockBodyScroll = () => {
+    scrollLockCount = Math.max(0, scrollLockCount - 1);
+    if (scrollLockCount === 0 && typeof document !== 'undefined') {
+      document.body.classList.remove('a-scroll-locked');
+    }
+  };
+</script>
+
+<script lang="ts">
+  // A low-level centered overlay primitive, used by Dialog and friends.
+  let {
+    modelValue = $bindable(false),
+    appendToBody = true,
+    maskClosable = true,
+    showMask = true,
+    width = undefined,
+    zIndex = 1000,
+    class: className = '',
+    children,
+    onUpdateModelValue,
+    onOpen,
+    onClose,
+  } = $props();
+
+  const panelWidth = $derived(
+    width === undefined ? undefined : typeof width === 'number' ? width + 'px' : width,
+  );
+
+  // replicates Vue's <transition> class flow using the same stylesheet classes.
+  let rendered = $state(modelValue);
+  let transitionClass = $state('');
+  let firstTransition = true;
+  $effect(() => {
+    const active = modelValue;
+    if (firstTransition) {
+      firstTransition = false;
+      rendered = active;
+      return;
+    }
+    if (active) {
+      rendered = true;
+      transitionClass = 'a-popup-enter-active a-popup-enter-from';
+      const raf = requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          transitionClass = 'a-popup-enter-active a-popup-enter-to';
+        }),
+      );
+      const timer = window.setTimeout(() => {
+        transitionClass = '';
+      }, 240);
+      return () => {
+        cancelAnimationFrame(raf);
+        window.clearTimeout(timer);
+      };
+    }
+    transitionClass = 'a-popup-leave-active a-popup-leave-from';
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        transitionClass = 'a-popup-leave-active a-popup-leave-to';
+      }),
+    );
+    const timer = window.setTimeout(() => {
+      rendered = false;
+      transitionClass = '';
+    }, 240);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  });
+
+  let firstEmit = true;
+  let selfClosed = false;
+  $effect(() => {
+    const active = modelValue;
+    if (firstEmit) {
+      firstEmit = false;
+      return;
+    }
+    if (active) {
+      onOpen?.();
+    } else if (selfClosed) {
+      selfClosed = false;
+    } else {
+      onClose?.();
+    }
+  });
+
+  $effect(() => {
+    if (!modelValue) return;
+    lockBodyScroll();
+    return () => unlockBodyScroll();
+  });
+
+  const doClose = () => {
+    if (!modelValue) return;
+    selfClosed = true;
+    modelValue = false;
+    onUpdateModelValue?.(false);
+    onClose?.();
+  };
+
+  const onMaskClicked = () => {
+    if (!maskClosable) return;
+    doClose();
+  };
+
+  const onWindowKeydown = (event: KeyboardEvent) => {
+    if (event.key !== 'Escape' || !modelValue || !maskClosable) return;
+    doClose();
+  };
+
+  const portal = (node: HTMLElement) => {
+    if (!appendToBody || typeof document === 'undefined') return undefined;
+    document.body.appendChild(node);
+    return {
+      destroy() {
+        node.remove();
+      },
+    };
+  };
+</script>
+
+<svelte:window onkeydown={onWindowKeydown} />
+
+{#if rendered}
+  <div
+    class="a-popup {transitionClass} {className}"
+    style:z-index={zIndex}
+    role="dialog"
+    aria-modal="true"
+    use:portal
+  >
+    {#if showMask}<div
+      class="a-popup__mask"
+      role="button"
+      tabindex="-1"
+      aria-label="Close"
+      onclick={onMaskClicked}
+      onkeydown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onMaskClicked();
+        }
+      }}
+    ></div>{/if}
+    <div class="a-popup__panel" style:width={panelWidth}>
+      {@render children?.()}
+    </div>
+  </div>
+{/if}
+`,
+  Dialog: `
+<script lang="ts">
+  import Icon from '@iconify/svelte';
+  import Button from './Button.svelte';
+  import Popup from './Popup.svelte';
+  // A standard dialog built on top of Popup.
+  let {
+    modelValue = $bindable(false),
+    title = '',
+    width = 420,
+    showClose = true,
+    maskClosable = true,
+    appendToBody = true,
+    zIndex = 1000,
+    class: className = '',
+    children,
+    header,
+    footer,
+    onUpdateModelValue,
+    onConfirm,
+    onCancel,
+    onOpen,
+    onClose,
+  } = $props();
+
+  const close = () => {
+    modelValue = false;
+    onUpdateModelValue?.(false);
+  };
+
+  const onCancelClicked = () => {
+    onCancel?.();
+    close();
+  };
+
+  const onConfirmClicked = () => {
+    onConfirm?.();
+    close();
+  };
+</script>
+
+<Popup bind:modelValue {width} {maskClosable} {appendToBody} {zIndex} {onUpdateModelValue} {onOpen} {onClose}>
+  <div class="a-dialog {className}">
+    <div class="a-dialog__header">
+      <div class="a-dialog__header-main">
+        {#if header}{@render header()}{:else}<span class="a-dialog__title">{title}</span>{/if}
+      </div>
+      {#if showClose}
+        <button type="button" class="a-dialog__close" aria-label="Close" onclick={close}>
+          <Icon class="a-icon" aria-hidden="true" icon="ic:round-close" />
+        </button>
+      {/if}
+    </div>
+    <div class="a-dialog__body">{@render children?.()}</div>
+    <div class="a-dialog__footer">
+      {#if footer}{@render footer()}{:else}
+        <Button size="small" onClick={onCancelClicked}>Cancel</Button>
+        <Button size="small" type="primary" onClick={onConfirmClicked}>OK</Button>
+      {/if}
+    </div>
+  </div>
+</Popup>
+`,
+  ConfirmModal: `
+<script lang="ts">
+  import Button from './Button.svelte';
+  import Dialog from './Dialog.svelte';
+  // A thin confirmation wrapper over Dialog.
+  let {
+    modelValue = $bindable(false),
+    title = '',
+    content = '',
+    confirmText = 'OK',
+    cancelText = 'Cancel',
+    type = 'primary',
+    loading = false,
+    closeOnConfirm = true,
+    width = 420,
+    maskClosable = true,
+    appendToBody = true,
+    zIndex = 1000,
+    class: className = '',
+    children,
+    onUpdateModelValue,
+    onConfirm,
+    onCancel,
+    onClose,
+  } = $props();
+
+  const close = () => {
+    modelValue = false;
+    onUpdateModelValue?.(false);
+  };
+
+  const onCancelClicked = () => {
+    onCancel?.();
+    close();
+  };
+
+  const onConfirmClicked = () => {
+    if (loading) return;
+    onConfirm?.();
+    if (closeOnConfirm) close();
+  };
+</script>
+
+<Dialog bind:modelValue {title} {width} {maskClosable} {appendToBody} {zIndex} {onUpdateModelValue} {onClose}>
+  <div class="a-confirm-modal__content {className}">
+    {#if children}{@render children()}{:else}{content}{/if}
+  </div>
+  {#snippet footer()}
+    <Button size="small" onClick={onCancelClicked}>{cancelText}</Button>
+    <Button size="small" type={type === 'danger' ? 'danger' : 'primary'} {loading} onClick={onConfirmClicked}>
+      {confirmText}
+    </Button>
+  {/snippet}
+</Dialog>
+`,
+  Alert: `
+<script lang="ts">
+  import Icon from '@iconify/svelte';
+  // A static inline banner for contextual feedback.
+  let {
+    type = 'info',
+    title = '',
+    closable = false,
+    showIcon = true,
+    class: className = '',
+    children,
+    icon,
+    onClose,
+  } = $props();
+
+  // default icons per type, reusing the message icon set
+  const defaultAlertIcon: Record<string, string> = {
+    info: 'fluent:info-24-filled',
+    success: 'ic:round-check-circle',
+    warn: 'ph:warning-fill',
+    danger: 'si-glyph:circle-error',
+  };
+  const iconName = $derived(defaultAlertIcon[type] || defaultAlertIcon.info);
+
+  let visible = $state(true);
+
+  // replicates Vue's leave <transition> classes before unmounting
+  let rendered = $state(true);
+  let transitionClass = $state('');
+  const onCloseClicked = () => {
+    if (!visible) return;
+    visible = false;
+    transitionClass = 'a-alert-leave-active a-alert-leave-from';
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        transitionClass = 'a-alert-leave-active a-alert-leave-to';
+      }),
+    );
+    window.setTimeout(() => {
+      rendered = false;
+      transitionClass = '';
+    }, 240);
+    onClose?.();
+  };
+</script>
+
+{#if rendered}
+  <div class="a-alert a-alert--{type} {transitionClass} {className}" role="alert">
+    {#if showIcon}
+      <div class="a-alert__icon">
+        {#if icon}{@render icon()}{:else}<Icon class="a-icon" aria-hidden="true" icon={iconName} />{/if}
+      </div>
+    {/if}
+    <div class="a-alert__main">
+      {#if title}<div class="a-alert__title">{title}</div>{/if}
+      {#if children}<div class="a-alert__content">{@render children()}</div>{/if}
+    </div>
+    {#if closable}
+      <button type="button" class="a-alert__close" aria-label="Close" onclick={onCloseClicked}>
+        <Icon class="a-icon" aria-hidden="true" icon="ic:round-close" />
+      </button>
+    {/if}
+  </div>
+{/if}
+`,
+  Toast: `
+<script lang="ts">
+  import Icon from '@iconify/svelte';
+  // A single corner notification card, stacked by the toast container.
+  let {
+    type = 'info',
+    title = '',
+    content = '',
+    closable = true,
+    class: className = '',
+    onClose,
+  } = $props();
+
+  const defaultToastIcon: Record<string, string> = {
+    info: 'fluent:info-24-filled',
+    success: 'ic:round-check-circle',
+    warning: 'ph:warning-fill',
+    error: 'si-glyph:circle-error',
+  };
+  const iconName = $derived(defaultToastIcon[type] || defaultToastIcon.info);
+</script>
+
+<div class="a-toast a-toast--{type} {className}" role="status">
+  <div class="a-toast__icon">
+    <Icon class="a-icon" aria-hidden="true" icon={iconName} />
+  </div>
+  <div class="a-toast__main">
+    {#if title}<div class="a-toast__title">{title}</div>{/if}
+    {#if content}<div class="a-toast__content">{content}</div>{/if}
+  </div>
+  {#if closable}
+    <button type="button" class="a-toast__close" aria-label="Close" onclick={() => onClose?.()}>
+      <Icon class="a-icon" aria-hidden="true" icon="ic:round-close" />
+    </button>
+  {/if}
+</div>
+`,
+  ToastContainer: `
+<script lang="ts">
+  import Toast from './Toast.svelte';
+  import type { ToastItem } from '../types';
+
+  let { onCleared } = $props();
+
+  type QueueItem = ToastItem & { anim: string };
+
+  let toastQueue = $state<QueueItem[]>([]);
+
+  const setAnim = (key: string, anim: string) => {
+    toastQueue = toastQueue.map((item) => (item.key === key ? { ...item, anim } : item));
+  };
+
+  const removeToast = (key: string) => {
+    const target = toastQueue.find((item) => item.key === key);
+    if (!target || target.anim.includes('leave')) return;
+    setAnim(key, 'a-toast-anim-leave-active a-toast-anim-leave-to');
+    window.setTimeout(() => {
+      toastQueue = toastQueue.filter((item) => item.key !== key);
+      if (!toastQueue.length) onCleared?.();
+    }, 240);
+  };
+
+  export function addToast(toast: Omit<ToastItem, 'key'>) {
+    const key = String(Date.now()) + String(Math.random());
+    toastQueue = [
+      { ...toast, key, anim: 'a-toast-anim-enter-active a-toast-anim-enter-from' },
+      ...toastQueue,
+    ];
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => setAnim(key, 'a-toast-anim-enter-active a-toast-anim-enter-to')),
+    );
+    window.setTimeout(() => setAnim(key, ''), 320);
+    if (toast.duration > 0) {
+      window.setTimeout(() => removeToast(key), toast.duration);
+    }
+  }
+</script>
+
+{#each toastQueue as item (item.key)}
+  <Toast
+    class={item.anim}
+    type={item.type}
+    title={item.title}
+    content={item.content}
+    closable={item.closable}
+    onClose={() => removeToast(item.key)}
+  />
+{/each}
+`,
+  LoadingMask: `
+<script lang="ts">
+  import Spinner from './Spinner.svelte';
+  // A loading overlay which covers its children (or the whole screen).
+  let {
+    loading = false,
+    text = '',
+    fullscreen = false,
+    zIndex = 2000,
+    class: className = '',
+    children,
+  } = $props();
+
+  // replicates Vue's <transition> fade classes
+  let rendered = $state(loading);
+  let transitionClass = $state('');
+  let firstTransition = true;
+  $effect(() => {
+    const active = loading;
+    if (firstTransition) {
+      firstTransition = false;
+      rendered = active;
+      return;
+    }
+    if (active) {
+      rendered = true;
+      transitionClass = 'a-loading-mask-enter-active a-loading-mask-enter-from';
+      const raf = requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          transitionClass = 'a-loading-mask-enter-active a-loading-mask-enter-to';
+        }),
+      );
+      const timer = window.setTimeout(() => {
+        transitionClass = '';
+      }, 240);
+      return () => {
+        cancelAnimationFrame(raf);
+        window.clearTimeout(timer);
+      };
+    }
+    transitionClass = 'a-loading-mask-leave-active a-loading-mask-leave-from';
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        transitionClass = 'a-loading-mask-leave-active a-loading-mask-leave-to';
+      }),
+    );
+    const timer = window.setTimeout(() => {
+      rendered = false;
+      transitionClass = '';
+    }, 240);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+    };
+  });
+</script>
+
+<div class="a-loading-mask-wrapper {className}">
+  {@render children?.()}
+  {#if rendered}
+    <div
+      class="a-loading-mask {fullscreen ? 'a-loading-mask--fullscreen' : ''} {transitionClass}"
+      style:z-index={fullscreen ? zIndex : undefined}
+    >
+      <Spinner class="a-loading-mask__spinner" />
+      {#if text}<span class="a-loading-mask__text">{text}</span>{/if}
+    </div>
+  {/if}
+</div>
+`,
+  LoadingMaskHost: `
+<script lang="ts">
+  import LoadingMask from './LoadingMask.svelte';
+
+  let visible = $state(false);
+  let text = $state('');
+  let zIndex = $state(2000);
+
+  export function setMaskState(next: { visible: boolean; text: string; zIndex: number }) {
+    visible = next.visible;
+    text = next.text;
+    zIndex = next.zIndex;
+  }
+</script>
+
+<LoadingMask loading={visible} {text} {zIndex} fullscreen />
+`,
+  Table: `
+<script lang="ts">
+  import Empty from './Empty.svelte';
+  import type { TableColumn, TableRow } from '../types';
+  // A clean data table with surface treatment.
+  let {
+    columns = [] as TableColumn[],
+    data = [] as TableRow[],
+    striped = false,
+    hoverable = true,
+    round = true,
+    emptyText = 'No data',
+    class: className = '',
+    empty,
+    renderCell,
+    onRowClick,
+  } = $props();
+
+  const getColWidth = (column: TableColumn) => {
+    if (column.width === undefined) return undefined;
+    return typeof column.width === 'number' ? column.width + 'px' : column.width;
+  };
+
+  const getCellAlign = (column: TableColumn) =>
+    column.align && column.align !== 'left' ? column.align : undefined;
+
+  const formatCell = (value: unknown) => (value === null || value === undefined ? '' : String(value));
+</script>
+
+<div
+  class="a-table {striped ? 'a-table--striped' : ''} {hoverable ? 'a-table--hoverable' : ''} {round ? 'a-table--round' : ''} {className}"
+>
+  <table class="a-table__inner">
+    <colgroup>
+      {#each columns as column (column.key)}
+        <col style:width={getColWidth(column)} />
+      {/each}
+    </colgroup>
+    <thead>
+      <tr>
+        {#each columns as column (column.key)}
+          <th class="a-table__th" style:text-align={getCellAlign(column)}>{column.title}</th>
+        {/each}
+      </tr>
+    </thead>
+    {#if data.length}
+      <tbody>
+        {#each data as row, index}
+          <tr class="a-table__row" onclick={() => onRowClick?.(row, index)}>
+            {#each columns as column (column.key)}
+              <td class="a-table__td" style:text-align={getCellAlign(column)}>
+                {#if renderCell}{@render renderCell(column, row, row[column.key], index)}{:else}{formatCell(row[column.key])}{/if}
+              </td>
+            {/each}
+          </tr>
+        {/each}
+      </tbody>
+    {/if}
+  </table>
+  {#if !data.length}
+    <div class="a-table__empty">
+      {#if empty}{@render empty()}{:else}<Empty text={emptyText} />{/if}
+    </div>
+  {/if}
+</div>
+`,
+});
+
+const svelteToastSource = `
+import { mount, unmount } from 'svelte';
+
+import ToastContainer from './components/ToastContainer.svelte';
+import type { ToastItem, ToastOptions, ToastPlacement, ToastType } from './types';
+
+interface ToastContainerRecord {
+  node: HTMLDivElement;
+  instance: Record<string, any>;
+}
+
+const containers = new Map<ToastPlacement, ToastContainerRecord>();
+
+const popupToast = ({
+  title = '',
+  content = '',
+  type = 'info',
+  duration = 4500,
+  closable = true,
+  placement = 'top-right',
+  zIndex = 2100,
+}: ToastOptions) => {
+  if (typeof document === 'undefined') return;
+  let record = containers.get(placement);
+  if (!record) {
+    const node = document.createElement('div');
+    node.className = 'a-toast-container a-toast-container--' + placement;
+    node.style.zIndex = String(zIndex);
+    document.body.appendChild(node);
+    const instance = mount(ToastContainer, {
+      target: node,
+      props: {
+        onCleared: () => {
+          const current = containers.get(placement);
+          if (!current) return;
+          containers.delete(placement);
+          window.setTimeout(() => {
+            unmount(current.instance);
+            current.node.remove();
+          }, 0);
+        },
+      },
+    }) as Record<string, any>;
+    record = { node, instance };
+    containers.set(placement, record);
+  }
+  const item: Omit<ToastItem, 'key'> = { title, content, type, duration, closable };
+  record.instance.addToast(item);
+};
+
+const toastFnFactory = (type: ToastType) => {
+  return (options: string | Omit<ToastOptions, 'type'>) => {
+    if (typeof options === 'string') {
+      popupToast({ type, content: options });
+      return;
+    }
+    popupToast({ type, ...options });
+  };
+};
+
+export const toast = Object.assign((options: ToastOptions) => popupToast(options), {
+  success: toastFnFactory('success'),
+  error: toastFnFactory('error'),
+  warning: toastFnFactory('warning'),
+  info: toastFnFactory('info'),
+});
+`;
+
+const svelteConfirmModalSource = `
+import { mount, unmount } from 'svelte';
+
+import ConfirmModal from './components/ConfirmModal.svelte';
+import type { ConfirmModalOptions } from './types';
+
+// wait for the popup leave transition before unmounting
+const CONFIRM_MODAL_DESTROY_DELAY = 400;
+
+export const confirmModal = (options: ConfirmModalOptions = {}): Promise<boolean> => {
+  if (typeof document === 'undefined') return Promise.resolve(false);
+  return new Promise<boolean>((resolve) => {
+    const node = document.createElement('div');
+    document.body.appendChild(node);
+    let settled = false;
+    const settle = (result: boolean) => {
+      if (settled) return;
+      settled = true;
+      resolve(result);
+    };
+    let destroyed = false;
+    const destroy = () => {
+      if (destroyed) return;
+      destroyed = true;
+      window.setTimeout(() => {
+        unmount(instance);
+        node.remove();
+      }, CONFIRM_MODAL_DESTROY_DELAY);
+    };
+    const instance = mount(ConfirmModal, {
+      target: node,
+      props: {
+        ...options,
+        modelValue: true,
+        onUpdateModelValue: (value: boolean) => {
+          if (!value) {
+            settle(false);
+            destroy();
+          }
+        },
+        onConfirm: () => settle(true),
+        onCancel: () => settle(false),
+      } as Record<string, any>,
+    });
+  });
+};
+`;
+
+const svelteLoadingMaskSource = `
+import { mount, unmount } from 'svelte';
+
+import LoadingMaskHost from './components/LoadingMaskHost.svelte';
+import type { LoadingMaskShowOptions } from './types';
+
+// wait for the fade-out transition before unmounting
+const LOADING_MASK_DESTROY_DELAY = 250;
+
+interface FullscreenMaskRecord {
+  node: HTMLDivElement;
+  instance: Record<string, any>;
+  state: { visible: boolean; text: string; zIndex: number };
+}
+
+let fullscreenMask: FullscreenMaskRecord | null = null;
+let destroyTimeout: number | undefined;
+
+const show = (options: LoadingMaskShowOptions = {}) => {
+  if (typeof document === 'undefined') return;
+  if (destroyTimeout) {
+    window.clearTimeout(destroyTimeout);
+    destroyTimeout = undefined;
+  }
+  if (!fullscreenMask) {
+    const node = document.createElement('div');
+    document.body.appendChild(node);
+    const instance = mount(LoadingMaskHost, { target: node }) as Record<string, any>;
+    fullscreenMask = { node, instance, state: { visible: false, text: '', zIndex: 2000 } };
+  }
+  fullscreenMask.state = {
+    visible: true,
+    text: options.text || '',
+    zIndex: typeof options.zIndex === 'number' ? options.zIndex : fullscreenMask.state.zIndex,
+  };
+  fullscreenMask.instance.setMaskState({ ...fullscreenMask.state });
+};
+
+const hide = () => {
+  if (!fullscreenMask) return;
+  fullscreenMask.state = { ...fullscreenMask.state, visible: false };
+  fullscreenMask.instance.setMaskState({ ...fullscreenMask.state });
+  destroyTimeout = window.setTimeout(() => {
+    if (!fullscreenMask) return;
+    const record = fullscreenMask;
+    fullscreenMask = null;
+    destroyTimeout = undefined;
+    unmount(record.instance);
+    record.node.remove();
+  }, LOADING_MASK_DESTROY_DELAY);
+};
+
+export const loadingMask = {
+  show,
+  hide,
+};
+`;
+
 const svelteIndexSource = `
 ${components.map((name) => `export { default as ${name} } from './components/${name}.svelte';`).join('\n')}
 export * from './types';
 export { message } from './message';
+export { toast } from './toast';
+export { confirmModal } from './confirmModal';
+export { loadingMask } from './loadingMask';
 
 import { message } from './message';
 ${components.map((name) => `import ${name} from './components/${name}.svelte';`).join('\n')}
@@ -3639,9 +6037,12 @@ const generateSvelte = async () => {
   await fs.mkdir(svelteComponentsDir, { recursive: true });
   await writeFile(path.resolve(svelteSrcDir, './types.ts'), typeSource);
   await writeFile(path.resolve(svelteSrcDir, './message.ts'), svelteMessageSource);
+  await writeFile(path.resolve(svelteSrcDir, './toast.ts'), svelteToastSource);
+  await writeFile(path.resolve(svelteSrcDir, './confirmModal.ts'), svelteConfirmModalSource);
+  await writeFile(path.resolve(svelteSrcDir, './loadingMask.ts'), svelteLoadingMaskSource);
   await writeFile(path.resolve(svelteSrcDir, './svelte-shims.d.ts'), svelteShimSource);
   await Promise.all(
-    components.map((name) =>
+    [...components, ...svelteInternalComponents].map((name) =>
       writeFile(
         path.resolve(svelteComponentsDir, `./${name}.svelte`),
         svelteTemplates[name] || svelteGenericComponent(name),

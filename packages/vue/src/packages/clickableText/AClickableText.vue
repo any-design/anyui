@@ -30,6 +30,7 @@ export default defineComponent({
 .a-clickable-text {
   color: var(--text);
   cursor: pointer;
+  transition: color var(--anim-duration-quick, 120ms) ease;
 }
 .a-clickable-text:hover {
   color: var(--text-85);

@@ -1,0 +1,37 @@
+// Design tokens for the cute & modern visual language.
+// Components reference these through `var(--a-*, fallback)` so user themes
+// and the optional liquid glass style can override them in one place.
+
+:root {
+  // radius scale — generous roundness is the core of the cute tone
+  --a-radius-xs: 6px;
+  --a-radius-sm: 10px;
+  --a-radius: 14px;
+  --a-radius-lg: 18px;
+  --a-radius-xl: 22px;
+  --a-radius-full: 999px;
+
+  // motion
+  --anim-duration-quick: 120ms;
+  --anim-duration-slow: 320ms;
+  // springy overshoot for presses / pop-ins
+  --a-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --a-ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  // elevation — soft, diffuse, never harsh
+  --a-shadow-xs: 0 1px 3px var(--shadow-4), 0 2px 8px var(--shadow-4);
+  --a-shadow-sm: 0 2px 6px var(--shadow-4), 0 6px 16px -4px var(--shadow-8);
+  --a-shadow-md: 0 4px 10px var(--shadow-5), 0 12px 28px -8px var(--shadow-10);
+  --a-shadow-lg: 0 8px 16px var(--shadow-6), 0 20px 44px -12px var(--shadow-12);
+
+  // focus ring
+  --a-focus-ring: 0 0 0 3px var(--primary-18);
+
+  // surface indirection layer — the liquid glass theme overrides these,
+  // so every surface component picks the style up without per-component code
+  --a-surface: var(--bg-bright);
+  --a-surface-input: var(--bg-semi-light);
+  --a-surface-border-color: transparent;
+  --a-surface-backdrop: none;
+  --a-surface-highlight: 0 0 #0000;
+}
