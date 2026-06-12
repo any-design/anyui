@@ -177,7 +177,7 @@ Generally, dark mode should be associated with a CSS class or an attribute on th
 
 To make things more flexible, we provide SCSS vars named `enable-prefer-query` and `dark-theme-selector`.
 
-```SCSS
+```scss
 $enable-prefer-query: true !default;
 $dark-theme-selector: 'html[theme="dark"]' !default;
 ```
