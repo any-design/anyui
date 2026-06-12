@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["../vue/src/*"],
+      "@any-design/anyui-vue": ["../vue/src/index.ts"],
+      "@any-design/anyui-react": ["../react/src/index.tsx"],
+      "@any-design/anyui-svelte": ["../svelte/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*", "vite.config.ts"]
+}

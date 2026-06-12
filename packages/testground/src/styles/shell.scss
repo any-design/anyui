@@ -1,0 +1,479 @@
+// Shell styles for the multi-framework testground.
+// Built on the AnyUI design tokens so the shell itself showcases the
+// cute / fresh / modern language (and turns glassy in liquid glass mode).
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-normal);
+  color: var(--text);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+.tg {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  // pastel backdrop blobs — keeps the canvas fresh and gives the
+  // liquid glass mode something to blur
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+
+    span {
+      position: absolute;
+      border-radius: var(--a-radius-full, 999px);
+      filter: blur(90px);
+      opacity: 0.5;
+    }
+
+    span:nth-child(1) {
+      width: 420px;
+      height: 420px;
+      left: -120px;
+      top: -140px;
+      background: var(--primary-20);
+    }
+    span:nth-child(2) {
+      width: 380px;
+      height: 380px;
+      right: -100px;
+      top: 10%;
+      background: var(--secondary-20);
+    }
+    span:nth-child(3) {
+      width: 460px;
+      height: 460px;
+      left: 30%;
+      bottom: -200px;
+      background: var(--primary-12);
+    }
+  }
+}
+
+// ---------------------------------------------------------------- sidebar
+
+.tg-sidebar {
+  position: relative;
+  z-index: 2;
+  width: 248px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 20px 14px 14px 14px;
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border-right: 1px solid var(--a-surface-border-color, var(--line));
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-sm, 0 2px 12px var(--shadow-5));
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 8px 16px 8px;
+
+    .logo {
+      height: 26px;
+      width: auto;
+      display: block;
+    }
+
+    .version {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-12);
+      border-radius: var(--a-radius-full, 999px);
+      padding: 2px 8px;
+    }
+  }
+
+  &__search {
+    margin: 0 4px 12px 4px;
+
+    input {
+      width: 100%;
+      height: 34px;
+      box-sizing: border-box;
+      padding: 0 14px;
+      border: 1px solid var(--border-light, var(--border));
+      border-radius: var(--a-radius-full, 999px);
+      background: var(--a-surface-input, var(--bg-semi-light));
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition:
+        border-color var(--anim-duration-quick, 120ms) ease,
+        box-shadow var(--anim-duration-quick, 120ms) ease;
+    }
+
+    input:focus {
+      border-color: var(--primary-80);
+      box-shadow: var(--a-focus-ring, 0 0 0 3px var(--primary-18));
+    }
+
+    input::placeholder {
+      color: var(--text-placeholder);
+    }
+  }
+
+  &__nav {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 2px 4px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 14px;
+    border-radius: var(--a-radius-sm, 10px);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+    transition:
+      background-color var(--anim-duration-quick, 120ms) ease,
+      color var(--anim-duration-quick, 120ms) ease,
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+
+    .badges {
+      display: flex;
+      gap: 3px;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: var(--a-radius-full, 999px);
+      opacity: 0.55;
+    }
+    .dot--vue {
+      background: #42b883;
+    }
+    .dot--react {
+      background: #58c4dc;
+    }
+    .dot--svelte {
+      background: #ff3e00;
+    }
+  }
+
+  &__item:hover {
+    background: var(--a-item-hover-bg, var(--bg-hover));
+    color: var(--text);
+  }
+
+  &__item:active {
+    transform: scale(0.97);
+  }
+
+  &__item--active,
+  &__item--active:hover {
+    background: var(--a-item-selected-bg, var(--primary-12));
+    color: var(--a-item-selected-color, var(--primary));
+    box-shadow:
+      var(--a-item-selected-highlight, 0 0 #0000),
+      var(--a-item-selected-shadow, 0 0 #0000);
+    font-weight: 600;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 10px 0 10px;
+    color: var(--text-secondary);
+    font-size: 12px;
+
+    a {
+      display: flex;
+      color: var(--text-secondary);
+      opacity: 0.6;
+      transition: opacity var(--anim-duration-quick, 120ms) ease;
+    }
+
+    a:hover {
+      opacity: 1;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------- main
+
+.tg-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tg-topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: 64px;
+  padding: 0 24px;
+
+  &__title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02rem;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.tg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 13px;
+  border-radius: var(--a-radius-full, 999px);
+  border: 1px solid var(--border-light, var(--border));
+  background: var(--a-surface, var(--bg-bright));
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    all var(--anim-duration-quick, 120ms) ease,
+    transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--a-radius-full, 999px);
+    background: currentColor;
+    opacity: 0.4;
+  }
+
+  &:hover {
+    border-color: var(--primary-60);
+    color: var(--text);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  &--on {
+    border-color: var(--primary-70);
+    background: var(--primary-12);
+    color: var(--primary);
+
+    .dot {
+      opacity: 1;
+    }
+  }
+
+  &--vue.tg-chip--on {
+    border-color: rgba(66, 184, 131, 0.6);
+    background: rgba(66, 184, 131, 0.12);
+    color: #2f9d6c;
+
+    .dot {
+      background: #42b883;
+    }
+  }
+
+  &--react.tg-chip--on {
+    border-color: rgba(88, 196, 220, 0.65);
+    background: rgba(88, 196, 220, 0.14);
+    color: #2a92ab;
+
+    .dot {
+      background: #58c4dc;
+    }
+  }
+
+  &--svelte.tg-chip--on {
+    border-color: rgba(255, 62, 0, 0.5);
+    background: rgba(255, 62, 0, 0.1);
+    color: #e23a02;
+
+    .dot {
+      background: #ff3e00;
+    }
+  }
+}
+
+html[theme='dark'] {
+  .tg-chip--vue.tg-chip--on {
+    color: #5fd0a0;
+  }
+  .tg-chip--react.tg-chip--on {
+    color: #6fd3e8;
+  }
+  .tg-chip--svelte.tg-chip--on {
+    color: #ff7245;
+  }
+}
+
+// ---------------------------------------------------------------- panels
+
+.tg-content {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 24px 32px 24px;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 18px;
+    align-items: start;
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 80px 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+}
+
+.tg-panel {
+  box-sizing: border-box;
+  border-radius: var(--a-radius-xl, 22px);
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border: 1px solid var(--a-surface-border-color, transparent);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-md, 0 8px 24px var(--shadow-6));
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px 0 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--a-radius-full, 999px);
+    }
+
+    .dot--vue {
+      background: #42b883;
+    }
+    .dot--react {
+      background: #58c4dc;
+    }
+    .dot--svelte {
+      background: #ff3e00;
+    }
+  }
+
+  &__body {
+    padding: 18px 20px 22px 20px;
+    min-height: 60px;
+  }
+
+  &__missing {
+    color: var(--text-placeholder);
+    font-size: 13px;
+    padding: 10px 0;
+  }
+}
+
+// ---------------------------------------------------------------- demo conventions
+// every demo (vue / react / svelte) uses these classes
+
+.demo-block {
+  & + & {
+    margin-top: 22px;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
+    text-transform: uppercase;
+    color: var(--text-placeholder);
+    margin-bottom: 10px;
+  }
+}
+
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+
+  & + & {
+    margin-top: 14px;
+  }
+}
+
+.demo-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}

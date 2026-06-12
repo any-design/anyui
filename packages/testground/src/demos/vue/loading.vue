@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="demo-block">
-      <div class="demo-block__label">Basic</div>
+      <div class="demo-block__label">Default</div>
       <div class="demo-row">
-        <<%= componentName %>></<%= componentName %>>
+        <a-loading style="font-size: 10px" />
       </div>
     </div>
   </div>

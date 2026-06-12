@@ -8,11 +8,8 @@
   "module": "../../dist/vue/anyui.mjs",
   "types": "../../dist/vue/index.d.ts",
   "scripts": {
-    "dev": "cross-env BUILD_TARGET=TESTGROUND vite",
-    "clean": "rimraf ../../dist/vue ../../styles dist-testground",
+    "clean": "rimraf ../../dist/vue ../../styles",
     "build": "vue-tsc -p tsconfig.json --noEmit && cross-env BUILD_TARGET=LIBRARY vite build && cross-env BUILD_TARGET=RESOLVER vite build && node ../../scripts/afterBuild.mjs",
-    "build:testground": "rimraf ./dist-testground && cross-env BUILD_TARGET=TESTGROUND vite build",
-    "serve": "vite preview",
     "lint": "vue-tsc -p tsconfig.json --noEmit",
     "lint-fix": "vue-tsc -p tsconfig.json --noEmit",
     "typecheck": "vue-tsc -p tsconfig.json --noEmit"

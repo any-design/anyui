@@ -5,7 +5,6 @@ import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import gfont from 'vite-plugin-gfont';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '../..');
@@ -15,7 +14,6 @@ const vueDistDir = path.resolve(rootDir, './dist/vue');
 const dtsOptions = {
   entryRoot: srcDir,
   outDir: vueDistDir,
-  exclude: ['src/testground/**'],
 };
 
 const BUILD_CONFIGS = {
@@ -72,30 +70,6 @@ const BUILD_CONFIGS = {
       },
       emptyOutDir: false,
       cssCodeSplit: false,
-    },
-  },
-  TESTGROUND: {
-    resolve: {
-      alias: {
-        '@': srcDir,
-      },
-    },
-    plugins: [
-      vue(),
-      vueJsx(),
-      gfont({
-        fonts: [
-          {
-            family: 'Quicksand',
-            styles: [400, 500, 600, 700],
-          },
-        ],
-      }),
-    ],
-    build: {
-      outDir: 'dist-testground',
-      sourcemap: false,
-      minify: true,
     },
   },
 };

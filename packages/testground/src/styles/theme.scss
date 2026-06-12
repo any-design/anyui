@@ -1,0 +1,7 @@
+// Testground theme entry.
+// Disables the prefers-color-scheme media query so the shell's manual
+// light / dark toggle is always authoritative.
+@use '@/styles/theme/color/vars.scss' with (
+  $enable-prefer-query: false
+);
+@use '@/styles/index.scss';

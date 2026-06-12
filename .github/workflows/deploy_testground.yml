@@ -7,22 +7,26 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout main
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: "16"
+          node-version: "22"
+          cache: "pnpm"
 
-      - name: Build project
-        run: npm install && npm run build:testground
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Reset project
-        run: git reset --hard
+      - name: Build testground
+        run: pnpm run build:testground
 
       - name: Deploy to remote
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -30,7 +34,7 @@ jobs:
           server: ${{ secrets.DEPLOY_REMOTE_SERVER }}
           username: ${{ secrets.DEPLOY_REMOTE_USER }}
           password: ${{ secrets.DEPLOY_REMOTE_PASSWORD }}
-          local_path: "./dist-testground/*"
+          local_path: "./packages/testground/dist-testground/*"
           remote_path: ${{ secrets.DEPLOY_REMOTE_PATH }}
           sftp_only: true
           sftpArgs: "-o ConnectTimeout=10"
