@@ -1,0 +1,16 @@
+---
+import { Code } from 'astro:components';
+
+interface Props {
+  code: string;
+  lang?: string;
+}
+
+const { code, lang = 'ts' } = Astro.props;
+---
+
+<Code
+  code={code}
+  lang={lang as never}
+  themes={{ light: 'one-light', dark: 'one-dark-pro' }}
+/>

@@ -1,0 +1,140 @@
+---
+import '../styles/site.scss';
+
+interface Props {
+  title?: string;
+  description?: string;
+  active?: string;
+}
+
+const {
+  title = 'AnyUI — a cute multi-framework design system',
+  description = 'AnyUI is a cute, fresh and modern design system and UI component library for Vue, React, and Svelte — with an optional liquid glass style.',
+  active = '',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <script is:inline>
+      // apply persisted theme before paint to avoid flashes
+      try {
+        const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
+        if (prefs.dark) document.documentElement.setAttribute('theme', 'dark');
+        if (prefs.glass) document.documentElement.setAttribute('data-anyui-style', 'glass');
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <div class="site-backdrop">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-header__brand" href="/">
+          <img src="/logo.svg" alt="AnyUI" />
+        </a>
+        <nav class="site-header__nav">
+          <a href="/docs/getting-started" aria-current={active === 'docs' ? 'true' : undefined}
+            >Docs</a
+          >
+          <a href="https://anyui-testground.pwp.sh" target="_blank">Testground</a>
+          <a href="https://github.com/any-design/anyui" target="_blank">GitHub</a>
+        </nav>
+        <div class="site-header__actions">
+          <button class="site-toggle" id="toggle-dark" type="button">🌙 Dark</button>
+          <button class="site-toggle" id="toggle-glass" type="button">🧊 Glass</button>
+        </div>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <span>Made with 🧁 by <a href="https://github.com/any-design">Any Design</a></span>
+        <a href="https://github.com/any-design/anyui">MIT Licensed</a>
+      </div>
+    </footer>
+
+    <script is:inline>
+      (() => {
+        const KEY = 'anyui-site-prefs';
+        const read = () => {
+          try {
+            return JSON.parse(localStorage.getItem(KEY) || '{}');
+          } catch {
+            return {};
+          }
+        };
+        const html = document.documentElement;
+        const darkBtn = document.getElementById('toggle-dark');
+        const glassBtn = document.getElementById('toggle-glass');
+        const sync = () => {
+          darkBtn.dataset.on = String(html.getAttribute('theme') === 'dark');
+          glassBtn.dataset.on = String(html.getAttribute('data-anyui-style') === 'glass');
+        };
+        darkBtn.addEventListener('click', () => {
+          const dark = html.getAttribute('theme') !== 'dark';
+          html.setAttribute('theme', dark ? 'dark' : 'light');
+          localStorage.setItem(KEY, JSON.stringify({ ...read(), dark }));
+          sync();
+        });
+        glassBtn.addEventListener('click', () => {
+          const glass = html.getAttribute('data-anyui-style') !== 'glass';
+          if (glass) {
+            html.setAttribute('data-anyui-style', 'glass');
+          } else {
+            html.removeAttribute('data-anyui-style');
+          }
+          localStorage.setItem(KEY, JSON.stringify({ ...read(), glass }));
+          sync();
+        });
+        sync();
+      })();
+
+      // professional code blocks: language badge + copy button on every shiki block
+      document.querySelectorAll('pre.astro-code').forEach((pre) => {
+        const frame = document.createElement('div');
+        frame.className = 'code-frame';
+        pre.parentNode.insertBefore(frame, pre);
+        frame.appendChild(pre);
+        const lang = pre.dataset.language;
+        if (lang && lang !== 'plaintext') {
+          const badge = document.createElement('span');
+          badge.className = 'code-frame__lang';
+          badge.textContent = lang;
+          frame.appendChild(badge);
+        }
+        const copy = document.createElement('button');
+        copy.className = 'code-frame__copy';
+        copy.type = 'button';
+        copy.textContent = 'Copy';
+        copy.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(pre.innerText);
+          } catch {
+            const helper = document.createElement('textarea');
+            helper.value = pre.innerText;
+            document.body.appendChild(helper);
+            helper.select();
+            document.execCommand('copy');
+            helper.remove();
+          }
+          copy.textContent = 'Copied!';
+          setTimeout(() => (copy.textContent = 'Copy'), 1400);
+        });
+        frame.appendChild(copy);
+      });
+    </script>
+  </body>
+</html>

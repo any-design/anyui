@@ -1,0 +1,718 @@
+// Website theme entry — AnyUI styles with the prefers-color-scheme query
+// disabled so the manual light/dark toggle is authoritative.
+@use '@/styles/theme/color/vars.scss' with (
+  $enable-prefer-query: false
+);
+@use '@/styles/index.scss';
+
+// ------------------------------------------------------------------ base
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-normal);
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+code {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+// pastel blobs behind everything — also feeds the liquid glass blur
+.site-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+
+  span {
+    position: absolute;
+    border-radius: var(--a-radius-full, 999px);
+    filter: blur(110px);
+    opacity: 0.5;
+  }
+
+  span:nth-child(1) {
+    width: 520px;
+    height: 520px;
+    left: -160px;
+    top: -180px;
+    background: var(--primary-20);
+  }
+  span:nth-child(2) {
+    width: 460px;
+    height: 460px;
+    right: -140px;
+    top: 60px;
+    background: var(--secondary-20);
+  }
+  span:nth-child(3) {
+    width: 560px;
+    height: 560px;
+    left: 32%;
+    top: 60%;
+    background: var(--primary-12);
+  }
+}
+
+// ------------------------------------------------------------------ header
+// floating capsule nav — always glassy, independent of the glass toggle
+
+.site-header {
+  position: fixed;
+  top: 14px;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+
+  &__inner {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 54px;
+    padding: 0 10px 0 20px;
+    border-radius: var(--a-radius-full, 999px);
+    background: color-mix(in srgb, var(--bg-bright) 58%, transparent);
+    -webkit-backdrop-filter: blur(26px) saturate(2) brightness(1.04);
+    backdrop-filter: blur(26px) saturate(2) brightness(1.04);
+    border: 1px solid color-mix(in srgb, #fff 42%, transparent);
+    box-shadow:
+      inset 0 1px 1px color-mix(in srgb, #fff 60%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #fff 14%, transparent),
+      0 8px 28px -8px var(--shadow-18);
+    transition: box-shadow var(--anim-duration, 200ms) ease;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+
+    img {
+      height: 26px;
+      width: auto;
+      display: block;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    a {
+      padding: 7px 15px;
+      border-radius: var(--a-radius-full, 999px);
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      transition:
+        background-color var(--anim-duration-quick, 120ms) ease,
+        color var(--anim-duration-quick, 120ms) ease,
+        transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+    }
+
+    a:hover {
+      background: color-mix(in srgb, #fff 30%, transparent);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+      color: var(--text);
+    }
+
+    a:active {
+      transform: scale(0.95);
+    }
+
+    a[aria-current='true'] {
+      background: color-mix(in srgb, #fff 44%, transparent);
+      box-shadow:
+        inset 0 1px 0 color-mix(in srgb, #fff 70%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, #fff 25%, transparent),
+        0 2px 8px var(--shadow-8);
+      color: var(--primary);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+html[theme='dark'] .site-header__inner {
+  background: color-mix(in srgb, var(--bg-bright) 52%, transparent);
+  border-color: color-mix(in srgb, #fff 14%, transparent);
+  box-shadow:
+    inset 0 1px 1px color-mix(in srgb, #fff 20%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, #fff 6%, transparent),
+    0 8px 28px -8px var(--shadow-30, var(--shadow-18));
+}
+
+html[theme='dark'] .site-header__nav {
+  a:hover {
+    background: color-mix(in srgb, #fff 9%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent);
+  }
+
+  a[aria-current='true'] {
+    background: color-mix(in srgb, #fff 14%, transparent);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, #fff 26%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #fff 9%, transparent),
+      0 2px 8px var(--shadow-20);
+  }
+}
+
+.site-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--a-radius-full, 999px);
+  border: 1px solid var(--border-light, var(--border));
+  background: var(--a-surface, var(--bg-bright));
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    all var(--anim-duration-quick, 120ms) ease,
+    transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+
+  &:hover {
+    border-color: var(--primary-60);
+    color: var(--text);
+  }
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  &[data-on='true'] {
+    border-color: var(--primary-70);
+    background: var(--primary-12);
+    color: var(--primary);
+  }
+}
+
+// ------------------------------------------------------------------ footer
+
+.site-footer {
+  border-top: 1px solid var(--line);
+  margin-top: 80px;
+
+  &__inner {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 28px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+
+  a {
+    color: var(--text-secondary);
+  }
+
+  a:hover {
+    color: var(--primary);
+  }
+}
+
+// ------------------------------------------------------------------ landing
+
+.hero {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 148px 24px 48px 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 56px;
+  align-items: center;
+
+  @media (max-width: 920px) {
+    grid-template-columns: 1fr;
+    padding-top: 56px;
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    border-radius: var(--a-radius-full, 999px);
+    background: var(--primary-12);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    font-size: 56px;
+    line-height: 1.12;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+
+    em {
+      font-style: normal;
+      background: linear-gradient(42deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  &__desc {
+    margin-top: 18px;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+    max-width: 480px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  &__install {
+    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    border-radius: var(--a-radius, 14px);
+    background: var(--a-surface, var(--bg-bright));
+    -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+    backdrop-filter: var(--a-surface-backdrop, none);
+    border: 1px solid var(--a-surface-border-color, var(--line));
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      var(--a-shadow-xs, 0 2px 10px var(--shadow-4));
+    font-size: 14px;
+
+    code {
+      color: var(--text);
+    }
+
+    button {
+      border: none;
+      background: none;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+  }
+}
+
+.hero-card {
+  border-radius: var(--a-radius-xl, 22px);
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border: 1px solid var(--a-surface-border-color, transparent);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-lg, 0 18px 44px var(--shadow-10));
+  padding: 26px;
+}
+
+.features {
+  max-width: 1160px;
+  margin: 72px auto 0 auto;
+  padding: 0 24px;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+
+    @media (max-width: 980px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-radius: var(--a-radius-xl, 22px);
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border: 1px solid var(--a-surface-border-color, transparent);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
+  padding: 26px;
+  transition:
+    transform var(--anim-duration, 200ms) var(--a-ease-spring, ease),
+    box-shadow var(--anim-duration, 200ms) ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      var(--a-shadow-md, 0 12px 28px var(--shadow-8));
+  }
+
+  &__icon {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    border-radius: var(--a-radius, 14px);
+    background: linear-gradient(135deg, var(--primary-12), var(--secondary-20));
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent);
+  }
+
+  &__title {
+    margin-top: 16px;
+    font-size: 16.5px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  &__desc {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-secondary);
+  }
+}
+
+// framework code cards on the landing page
+.code-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-sizing: border-box;
+  border-radius: var(--a-radius-xl, 22px);
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border: 1px solid var(--a-surface-border-color, transparent);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
+  padding: 20px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04rem;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--a-radius-full, 999px);
+    }
+
+    .dot--vue {
+      background: #42b883;
+    }
+    .dot--react {
+      background: #58c4dc;
+    }
+    .dot--svelte {
+      background: #ff3e00;
+    }
+  }
+
+  .astro-code {
+    flex: 1;
+    margin: 0;
+  }
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.section-desc {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin: 0 auto 28px auto;
+  max-width: 560px;
+  line-height: 1.65;
+}
+
+// ------------------------------------------------------------------ code blocks
+// shiki dual-theme output (one-light / one-dark-pro); the dark palette is
+// activated by the site's manual theme toggle
+
+.astro-code {
+  padding: 18px 20px;
+  border-radius: var(--a-radius, 14px);
+  border: 1px solid var(--line);
+  box-shadow: var(--a-shadow-xs, 0 2px 10px var(--shadow-4));
+  font-size: 13.5px;
+  line-height: 1.7;
+  overflow-x: auto;
+
+  code {
+    display: block;
+    min-width: max-content;
+  }
+}
+
+// runtime wrapper adding a language badge + copy button
+.code-frame {
+  position: relative;
+
+  &__lang {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06rem;
+    text-transform: uppercase;
+    color: var(--text-placeholder);
+    user-select: none;
+    transition: opacity var(--anim-duration-quick, 120ms) ease;
+  }
+
+  &__copy {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    padding: 3px 11px;
+    border-radius: var(--a-radius-full, 999px);
+    border: 1px solid var(--border-light, var(--border));
+    background: var(--a-surface, var(--bg-bright));
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      opacity var(--anim-duration-quick, 120ms) ease,
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+  }
+
+  &__copy:hover {
+    color: var(--primary);
+    border-color: var(--primary-60);
+  }
+
+  &__copy:active {
+    transform: scale(0.92);
+  }
+
+  &:hover &__copy {
+    opacity: 1;
+  }
+
+  &:hover &__lang {
+    opacity: 0;
+  }
+}
+
+html[theme='dark'] {
+  .astro-code,
+  .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+  }
+
+  .astro-code {
+    border-color: color-mix(in srgb, #fff 8%, transparent);
+  }
+}
+
+// ------------------------------------------------------------------ docs
+
+.docs {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 118px 24px 0 24px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 40px;
+
+  @media (max-width: 840px) {
+    grid-template-columns: 1fr;
+  }
+
+  &__nav {
+    position: sticky;
+    top: 118px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    a {
+      padding: 7px 14px;
+      border-radius: var(--a-radius-sm, 10px);
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition:
+        background-color var(--anim-duration-quick, 120ms) ease,
+        color var(--anim-duration-quick, 120ms) ease;
+    }
+
+    a:hover {
+      background: var(--bg-hover);
+      color: var(--text);
+    }
+
+    a[aria-current='true'] {
+      background: var(--primary-12);
+      color: var(--primary);
+      font-weight: 600;
+    }
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06rem;
+    text-transform: uppercase;
+    color: var(--text-placeholder);
+    padding: 0 14px;
+    margin: 14px 0 6px 0;
+  }
+}
+
+.prose {
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.75;
+
+  h1 {
+    font-size: 32px;
+    line-height: 1.25;
+    margin-bottom: 18px;
+  }
+
+  h2 {
+    font-size: 22px;
+    margin: 36px 0 12px 0;
+  }
+
+  h3 {
+    font-size: 17px;
+    margin: 26px 0 10px 0;
+  }
+
+  p {
+    margin: 12px 0;
+    color: var(--text);
+  }
+
+  ul,
+  ol {
+    padding-left: 24px;
+    margin: 12px 0;
+  }
+
+  li {
+    margin: 5px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  th {
+    color: var(--text-secondary);
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04rem;
+  }
+
+  :not(pre) > code {
+    background: var(--primary-8, var(--bg-semi-dark));
+    color: var(--primary);
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 0.86em;
+  }
+
+  pre {
+    margin: 16px 0;
+  }
+
+  blockquote {
+    border-left: 3px solid var(--primary-60);
+    background: var(--primary-8, var(--bg-semi-light));
+    border-radius: 0 var(--a-radius-sm, 10px) var(--a-radius-sm, 10px) 0;
+    padding: 10px 18px;
+    margin: 16px 0;
+    color: var(--text-secondary);
+  }
+}
+
+// demo conventions inside live examples
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+
+  & + & {
+    margin-top: 14px;
+  }
+}

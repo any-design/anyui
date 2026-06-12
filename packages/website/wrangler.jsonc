@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers static-assets deployment for the AnyUI website.
+  // Deploy manually with: pnpm run build:website && npx wrangler deploy
+  // (requires CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID)
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "anyui-website",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
