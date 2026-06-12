@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const templateDir = path.resolve(__dirname, './templates');
 const packagesTarget = path.resolve(__dirname, '../packages/vue/src/packages');
-const testgroundPath = path.resolve(__dirname, '../packages/vue/src/testground/sections');
+const testgroundPath = path.resolve(__dirname, '../packages/testground/src/demos/vue');
 const vueIndexPath = path.resolve(__dirname, '../packages/vue/src/index.ts');
 const frameworkGeneratorPath = path.resolve(__dirname, './generate-framework-packages.mjs');
 
