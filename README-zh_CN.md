@@ -21,6 +21,19 @@
 pnpm add @any-design/anyui
 ```
 
+### shadcn 无头安装
+
+AnyUI 同时提供兼容 shadcn 的 GitHub registry，可无交互安装：
+
+```bash
+pnpm dlx shadcn@latest add any-design/anyui/vue --yes --silent
+pnpm dlx shadcn@latest add any-design/anyui/react --yes --silent
+pnpm dlx shadcn@latest add any-design/anyui/svelte --yes --silent
+```
+
+这些命令会安装对应依赖，把 AnyUI 样式写入 shadcn 配置的 CSS 文件，并在项目内添加
+`@/lib/anyui-vue`、`@/lib/anyui-react` 或 `@/lib/anyui-svelte` 框架入口文件。
+
 AnyUI 现在以一个 npm 包发布，并通过框架 scope 提供入口：
 
 ```ts
@@ -105,15 +118,37 @@ pnpm run typecheck
 
 工作区包位于 `packages/vue`、`packages/react` 和 `packages/svelte`。React 与 Svelte 的源码由 `scripts/generate-framework-packages.mjs` 根据共享组件清单幂等生成；修改组件清单或共享 API 后请重新执行生成命令。
 
+`pnpm run dev` 会启动多框架 Testground（`packages/testground`），它直接基于库源码同时渲染 Vue / React / Svelte 三套组件，便于并排预览和测试——详见[它的 README](./packages/testground/README.md)。
+
 ## 自定义主题
 
-详见 [Theme Customization](./docs/theme/customization.md)。
+详见 [Theme Customization](./docs/theme/customization.md) 与[设计 Token 参考](./docs/theme/tokens.md)。
+
+## Liquid Glass 风格
+
+AnyUI 提供可选的液态玻璃（Liquid Glass）风格。开启后，按钮、卡片、输入框、下拉菜单、消息提示、抽屉等表面组件会变为带背景模糊与高光描边的半透明质感，并自动适配亮色与暗色主题。
+
+全局开启：
+
+```html
+<html data-anyui-style="glass">
+```
+
+或只作用于某个局部区域：
+
+```html
+<div class="a-glass">
+  <a-card>...</a-card>
+</div>
+```
+
+注意：传送（teleport）到 `<body>` 的浮层组件（popper、message、select 下拉等）只在全局模式下生效。
 
 ## 组件预览
 
 你可以在 Testground 内预览现有组件：
 
-[https://anyui-testground.pwp.app](https://anyui-testground.pwp.app)
+[https://anyui-testground.pwp.sh](https://anyui-testground.pwp.sh)
 
 ## 许可协议
 

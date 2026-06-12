@@ -21,6 +21,20 @@ IMPORTANT: This project is still a work in progress.
 pnpm add @any-design/anyui
 ```
 
+### Headless shadcn Install
+
+AnyUI also ships a shadcn-compatible GitHub registry for no-prompt installation:
+
+```bash
+pnpm dlx shadcn@latest add any-design/anyui/vue --yes --silent
+pnpm dlx shadcn@latest add any-design/anyui/react --yes --silent
+pnpm dlx shadcn@latest add any-design/anyui/svelte --yes --silent
+```
+
+These commands install the required packages, add AnyUI's stylesheet to your shadcn CSS
+file, and create a framework entry file under `@/lib/anyui-vue`, `@/lib/anyui-react`,
+or `@/lib/anyui-svelte`.
+
 AnyUI publishes one package with framework-scoped entrypoints:
 
 ```ts
@@ -105,15 +119,37 @@ pnpm run typecheck
 
 Workspace packages live under `packages/vue`, `packages/react`, and `packages/svelte`. React and Svelte sources are generated from the shared component manifest in `scripts/generate-framework-packages.mjs`, so regenerate them after changing the manifest or shared component API.
 
+`pnpm run dev` starts the multi-framework testground (`packages/testground`), which renders every component with Vue, React, and Svelte side by side against the library sources — see [its README](./packages/testground/README.md).
+
 ## Custom Theme
 
-See [Theme Customization](./docs/theme/customization.md) for more details.
+See [Theme Customization](./docs/theme/customization.md) and the [Design Tokens reference](./docs/theme/tokens.md) for more details.
+
+## Liquid Glass Style
+
+AnyUI ships an optional liquid glass style. Surface components (buttons, cards, inputs, dropdowns, messages, drawers, etc.) become translucent with a backdrop blur and a specular highlight, in both light and dark themes.
+
+Enable it globally:
+
+```html
+<html data-anyui-style="glass">
+```
+
+Or scope it to a subtree:
+
+```html
+<div class="a-glass">
+  <a-card>...</a-card>
+</div>
+```
+
+Note: floating elements teleported to `<body>` (popper, message, select dropdown) only pick the style up in global mode.
 
 ## Testground
 
 We've deployed a testground where you can explore the UI components:
 
-[https://anyui-testground.pwp.app](https://anyui-testground.pwp.app)
+[https://anyui-testground.pwp.sh](https://anyui-testground.pwp.sh)
 
 ## License
 
