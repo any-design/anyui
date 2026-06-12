@@ -1,0 +1,44 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  active: string;
+}
+
+const { title, active } = Astro.props;
+
+const nav = [
+  { label: 'Guide', items: [{ id: 'getting-started', label: 'Getting Started', href: '/docs/getting-started' }] },
+  {
+    label: 'Design',
+    items: [
+      { id: 'tokens', label: 'Design Tokens', href: '/docs/tokens' },
+      { id: 'theming', label: 'Theme Customization', href: '/docs/theming' },
+      { id: 'icons', label: 'Icons', href: '/docs/icons' },
+    ],
+  },
+];
+---
+
+<BaseLayout title={`${title} · AnyUI`} active="docs">
+  <div class="docs">
+    <nav class="docs__nav">
+      {
+        nav.map((group) => (
+          <>
+            <span class="docs__label">{group.label}</span>
+            {group.items.map((item) => (
+              <a href={item.href} aria-current={active === item.id ? 'true' : undefined}>
+                {item.label}
+              </a>
+            ))}
+          </>
+        ))
+      }
+    </nav>
+    <article class="prose">
+      <slot />
+    </article>
+  </div>
+</BaseLayout>

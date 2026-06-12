@@ -1,0 +1,135 @@
+---
+import CodeBlock from '../components/CodeBlock.astro';
+import HeroShowcase from '../components/vue/HeroShowcase.vue';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const features = [
+  {
+    emoji: '🧁',
+    title: 'Cute by default',
+    desc: 'Generous radii, springy press feedback and soft tinted shadows — a friendly visual language baked into every component through design tokens.',
+  },
+  {
+    emoji: '🔱',
+    title: 'One design system, three frameworks',
+    desc: 'Vue, React and Svelte packages share the same styles, class names and component API, generated from a single source of truth.',
+  },
+  {
+    emoji: '🧊',
+    title: 'Liquid glass, opt-in',
+    desc: 'Flip one attribute and every surface becomes translucent with backdrop blur and a specular highlight — light and dark, no per-component work.',
+  },
+  {
+    emoji: '🎨',
+    title: 'HCT-powered theming',
+    desc: 'Change a couple of brand colors and the whole palette — including an auto-derived dark theme — recomputes through HCT color science.',
+  },
+  {
+    emoji: '🪄',
+    title: 'shadcn-style registry',
+    desc: 'Install headlessly via the shadcn CLI with one command per framework, stylesheet wiring included.',
+  },
+  {
+    emoji: '📦',
+    title: 'Import on demand',
+    desc: 'Tree-shakable entrypoints and an unplugin resolver keep your bundle as small as your component usage.',
+  },
+];
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div>
+      <span class="hero__eyebrow">🌸 v0.4 — now with liquid glass</span>
+      <h1 class="hero__title">
+        A <em>cute</em> design system for Vue, React &amp; Svelte
+      </h1>
+      <p class="hero__desc">
+        AnyUI brings one fresh, modern, adorable visual language to all three frameworks — same
+        tokens, same classes, same API. Toggle 🌙 and 🧊 in the header to see it adapt live.
+      </p>
+      <div class="hero__actions">
+        <a href="/docs/getting-started"><button class="site-toggle" data-on="true" type="button">Get Started →</button></a>
+        <a href="https://anyui-testground.pwp.sh" target="_blank"
+          ><button class="site-toggle" type="button">Open Testground</button></a
+        >
+      </div>
+      <div class="hero__install">
+        <code id="install-cmd">pnpm add @any-design/anyui</code>
+        <button id="copy-install" type="button">Copy</button>
+      </div>
+    </div>
+    <div class="hero-card">
+      <HeroShowcase client:load />
+    </div>
+  </section>
+
+  <section class="features">
+    <h2 class="section-title">Why AnyUI</h2>
+    <p class="section-desc">
+      One coherent visual language — cute, fresh and modern — delivered to every major framework
+      through a single token system.
+    </p>
+    <div class="features__grid">
+      {
+        features.map((feature) => (
+          <div class="feature-card">
+            <div class="feature-card__icon">{feature.emoji}</div>
+            <div class="feature-card__title">{feature.title}</div>
+            <div class="feature-card__desc">{feature.desc}</div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="features">
+    <h2 class="section-title">Use it from any framework</h2>
+    <p class="section-desc">
+      Same components, same class names, same props — pick your framework and keep the design.
+    </p>
+    <div class="features__grid">
+      <div class="code-card">
+        <div class="code-card__header"><span class="dot dot--vue"></span>Vue</div>
+        <CodeBlock
+          lang="ts"
+          code={`import AnyUI from '@any-design/anyui/vue';
+import '@any-design/anyui/styles/index.css';
+
+app.use(AnyUI);`}
+        />
+      </div>
+      <div class="code-card">
+        <div class="code-card__header"><span class="dot dot--react"></span>React</div>
+        <CodeBlock
+          lang="tsx"
+          code={`import { Button } from '@any-design/anyui/react';
+import '@any-design/anyui/styles/index.css';
+
+<Button type="primary" round>Hi!</Button>`}
+        />
+      </div>
+      <div class="code-card">
+        <div class="code-card__header"><span class="dot dot--svelte"></span>Svelte</div>
+        <CodeBlock
+          lang="svelte"
+          code={`<script>
+  import { Button } from '@any-design/anyui/svelte';
+  import '@any-design/anyui/styles/index.css';
+</script>
+
+<Button type="primary" round>Hi!</Button>`}
+        />
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    document.getElementById('copy-install')?.addEventListener('click', async (event) => {
+      const button = event.currentTarget;
+      await navigator.clipboard.writeText('pnpm add @any-design/anyui');
+      button.textContent = 'Copied!';
+      setTimeout(() => (button.textContent = 'Copy'), 1500);
+    });
+  </script>
+</BaseLayout>

@@ -1,0 +1,98 @@
+---
+import CodeBlock from '../../components/CodeBlock.astro';
+
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout title="Getting Started" active="getting-started">
+  <h1>Getting Started</h1>
+  <p>
+    AnyUI ships a single package with framework-scoped entrypoints for Vue, React and Svelte, plus
+    a shared stylesheet that carries the design tokens, themes and the optional liquid glass
+    style.
+  </p>
+
+  <h2>Install</h2>
+  <CodeBlock lang="bash" code={`pnpm add @any-design/anyui`} />
+
+  <p>Or install headlessly through the shadcn-compatible registry:</p>
+  <CodeBlock
+    lang="bash"
+    code={`pnpm dlx shadcn@latest add any-design/anyui/vue --yes --silent
+pnpm dlx shadcn@latest add any-design/anyui/react --yes --silent
+pnpm dlx shadcn@latest add any-design/anyui/svelte --yes --silent`}
+  />
+
+  <h2>Vue</h2>
+  <CodeBlock
+    lang="ts"
+    code={`import { createApp } from 'vue';
+import AnyUI from '@any-design/anyui/vue';
+import '@any-design/anyui/styles/index.css';
+
+const app = createApp(App);
+app.use(AnyUI);
+app.mount('#app');`}
+  />
+  <p>
+    For on-demand imports, use the bundled resolver with <code>unplugin-vue-components</code> —
+    see the README for the full Vite setup.
+  </p>
+
+  <h2>React</h2>
+  <CodeBlock
+    lang="tsx"
+    code={`import { Button, Card, Input, message } from '@any-design/anyui/react';
+import '@any-design/anyui/styles/index.css';
+
+export default function App() {
+  return (
+    <Card title="Hello">
+      <Input placeholder="Type something cute..." round />
+      <Button type="primary" round onClick={() => message.success('Hi! 🎉')}>
+        Greet
+      </Button>
+    </Card>
+  );
+}`}
+  />
+
+  <h2>Svelte</h2>
+  <CodeBlock
+    lang="svelte"
+    code={`<script lang="ts">
+  import { Button, Card, Input, message } from '@any-design/anyui/svelte';
+  import '@any-design/anyui/styles/index.css';
+</script>
+
+<Card title="Hello">
+  <Input placeholder="Type something cute..." round />
+  <Button type="primary" round onClick={() => message.success('Hi! 🎉')}>Greet</Button>
+</Card>`}
+  />
+
+  <h2>Enable liquid glass</h2>
+  <p>Add one attribute on <code>&lt;html&gt;</code> (or scope it with <code>.a-glass</code>):</p>
+  <CodeBlock lang="html" code={`<html data-anyui-style="glass">`} />
+  <p>
+    Every surface component turns translucent with a backdrop blur and specular highlight, in both
+    light and dark themes. Try the 🧊 toggle in this site's header.
+  </p>
+
+  <h2>Dark theme</h2>
+  <p>
+    The dark palette is derived automatically from your theme colors. Activate it manually with
+    <code>&lt;html theme="dark"&gt;</code>, or let the user's system preference apply it via the
+    built-in <code>prefers-color-scheme</code> media query.
+  </p>
+
+  <h2>Next steps</h2>
+  <ul>
+    <li><a href="/docs/tokens">Design Tokens</a> — radii, motion, elevation and surfaces.</li>
+    <li><a href="/docs/theming">Theme Customization</a> — re-color the system via SCSS.</li>
+    <li>
+      <a href="https://anyui-testground.pwp.sh" target="_blank">Testground</a> — every component,
+      all three frameworks, side by side.
+    </li>
+  </ul>
+</DocsLayout>
