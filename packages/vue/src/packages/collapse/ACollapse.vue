@@ -119,8 +119,8 @@ export default defineComponent({
   width: max-content;
   height: max-content;
   overflow: hidden;
-  transition: max-width var(--anim-duration, 200ms) ease,
-    max-height var(--anim-duration, 200ms) ease-out;
+  transition: max-width var(--anim-duration, 200ms) var(--a-ease-soft, ease),
+    max-height var(--anim-duration, 200ms) var(--a-ease-soft, ease-out);
 }
 .a-collapse--collapsed-horizontal {
   max-width: 0;

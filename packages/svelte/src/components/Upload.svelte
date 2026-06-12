@@ -1,32 +1,35 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let status = 'default';
-  export let clickable = true;
-  export let disabled = false;
-  export let multiple = false;
-  export let accept: string | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  let inputEl: HTMLInputElement;
-  let dragging = false;
-  $: showDefault = (status === 'default' || !status) && !dragging;
+  let {
+    status = 'default',
+    clickable = true,
+    disabled = false,
+    multiple = false,
+    accept = undefined,
+    class: className = '',
+    children,
+    dragging,
+    uploading,
+    error,
+    success,
+    onUpload,
+  } = $props();
+  let inputEl = $state<HTMLInputElement>();
+  let isDragging = $state(false);
+  const showDefault = $derived((status === 'default' || !status) && !isDragging);
   const choose = () => {
     if (!clickable || disabled) return;
     inputEl?.click();
   };
-  const onChange = (event: Event) => {
-    const files = (event.currentTarget as HTMLInputElement).files;
+  const emitUpload = (files?: FileList | null) => {
     const file = files?.[0];
-    dispatch('upload', file);
-    dispatch('change', file);
+    if (file) onUpload?.(file);
   };
-  const onDrop = (event: DragEvent) => {
-    if (!disabled) {
-      const file = event.dataTransfer?.files?.[0];
-      dispatch('upload', file);
-    }
-    dragging = false;
+  const handleChange = (event: Event) => {
+    emitUpload((event.currentTarget as HTMLInputElement).files);
+  };
+  const handleDrop = (event: DragEvent) => {
+    if (!disabled) emitUpload(event.dataTransfer?.files);
+    isDragging = false;
     event.preventDefault();
     event.stopPropagation();
   };
@@ -37,34 +40,34 @@
   role="button"
   tabindex={disabled ? -1 : 0}
   aria-disabled={disabled}
-  on:click={choose}
-  on:dragenter={(event) => {
-    dragging = true;
+  onclick={choose}
+  ondragenter={(event) => {
+    isDragging = true;
     event.preventDefault();
   }}
-  on:dragover={(event) => event.preventDefault()}
-  on:dragleave={(event) => {
+  ondragover={(event) => event.preventDefault()}
+  ondragleave={(event) => {
     if (event.currentTarget.contains(event.relatedTarget as Node)) return;
-    dragging = false;
+    isDragging = false;
   }}
-  on:drop={onDrop}
-  on:keydown={(event) => {
+  ondrop={handleDrop}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       choose();
     }
   }}
 >
-  <input bind:this={inputEl} type="file" hidden {multiple} {accept} on:change={onChange} />
-  {#if dragging}
-    <slot name="dragging" />
+  <input bind:this={inputEl} type="file" hidden {multiple} {accept} onchange={handleChange} />
+  {#if isDragging}
+    {@render dragging?.()}
   {:else if status === 'uploading'}
-    <slot name="uploading" />
+    {@render uploading?.()}
   {:else if status === 'error'}
-    <slot name="error" />
+    {@render error?.()}
   {:else if status === 'success'}
-    <slot name="success" />
+    {@render success?.()}
   {:else if showDefault}
-    <slot />
+    {@render children?.()}
   {/if}
 </div>

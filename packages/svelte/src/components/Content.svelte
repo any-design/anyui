@@ -1,6 +1,5 @@
 <script lang="ts">
-  export let className = '';
-  export { className as class };
+  let { class: className = '', children } = $props();
 </script>
 
-<main class="a-layout-inner a-content {className}"><slot /></main>
+<main class="a-layout-inner a-content {className}">{@render children?.()}</main>

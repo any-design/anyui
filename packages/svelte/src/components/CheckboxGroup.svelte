@@ -1,20 +1,25 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let items: Array<string | number> = [];
-  export let modelValue: Array<string | number> = [];
-  export let gap: string | number = 16;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  import Icon from '@iconify/svelte';
+  let {
+    items = [] as Array<string | number>,
+    modelValue = $bindable([] as Array<string | number>),
+    gap = 16,
+    checkIcon = 'si-glyph:checked',
+    class: className = '',
+    children,
+    onUpdateModelValue,
+    onChange,
+  } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: values = new Set(modelValue);
-  $: formattedGap = formatStyleSize(gap);
+  const values = $derived(new Set(modelValue));
+  const formattedGap = $derived(formatStyleSize(gap));
   const update = (item: string | number) => {
     const next = new Set(values);
     next.has(item) ? next.delete(item) : next.add(item);
     const nextValue = Array.from(next);
-    dispatch('update:modelValue', nextValue);
-    dispatch('change', nextValue);
+    modelValue = nextValue;
+    onUpdateModelValue?.(nextValue);
+    onChange?.(nextValue);
   };
 </script>
 
@@ -26,17 +31,17 @@
       role="checkbox"
       tabindex="0"
       aria-checked={values.has(item)}
-      on:click={() => update(item)}
-      on:keydown={(event) => {
+      onclick={() => update(item)}
+      onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           update(item);
         }
       }}
     >
-      <div class="a-checkbox-checker">{#if values.has(item)}<span class="a-checkbox-checker__icon"></span>{/if}</div>
+      <div class="a-checkbox-checker">{#if values.has(item)}<Icon class="a-checkbox-checker__icon" aria-hidden="true" icon={checkIcon} />{/if}</div>
       <div class="a-checkbox-label">{item}</div>
     </div>
   {/each}
-  <slot />
+  {@render children?.()}
 </div>

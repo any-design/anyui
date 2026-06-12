@@ -2,6 +2,8 @@
 @use './color/vars.scss' as *;
 @use './color/generator.scss' as *;
 @use './color/getters.scss' as *;
+@use './tokens.scss';
+@use './glass.scss';
 
 :root {
   @include generate-colors($colors, $alphas, $lightness-adjustments);

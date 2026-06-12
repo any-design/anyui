@@ -1,14 +1,16 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import type { ARadioGroupItems } from '../types';
-  export let items: ARadioGroupItems = [];
-  export let modelValue: string | number | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    items = [] as ARadioGroupItems,
+    modelValue = $bindable(undefined),
+    class: className = '',
+    onUpdateModelValue,
+    onChange,
+  } = $props();
   const update = (value: string | number) => {
-    dispatch('update:modelValue', value);
-    dispatch('change', value);
+    modelValue = value;
+    onUpdateModelValue?.(value);
+    onChange?.(value);
   };
 </script>
 
@@ -19,8 +21,8 @@
       role="radio"
       tabindex="0"
       aria-checked={modelValue === item.value}
-      on:click={() => update(item.value)}
-      on:keydown={(event) => {
+      onclick={() => update(item.value)}
+      onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           update(item.value);

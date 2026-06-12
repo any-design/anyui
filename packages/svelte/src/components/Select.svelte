@@ -1,40 +1,65 @@
 <script lang="ts">
-  import { createEventDispatcher, getContext, onDestroy } from 'svelte';
+  import { getContext, onDestroy } from 'svelte';
   import Icon from '@iconify/svelte';
   import type { ASelectItems } from '../types';
-  export let items: ASelectItems = [];
-  export let modelValue: string | number | null | undefined = '';
-  export let width: string | number = '100%';
-  export let size = 'default';
-  export let round = false;
-  export let placeholder = '';
-  export let disabled = false;
-  export let expandIcon = 'ic:outline-expand-more';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
+  let {
+    items = [] as ASelectItems,
+    modelValue = $bindable(''),
+    width = '100%',
+    size = 'default',
+    round = false,
+    placeholder = '',
+    disabled = false,
+    multiple = false,
+    expandIcon = 'ic:outline-expand-more',
+    class: className = '',
+    onUpdateModelValue,
+    onChange,
+    onBlur,
+  } = $props();
   const formItem = getContext<any>('anyui-form-item') ?? {};
-  let expanded = false;
+  let expanded = $state(false);
   const dropdownId = 'a-select-dropdown-' + Math.random().toString(36).slice(2);
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
-  $: formattedWidth = formatStyleSize(width);
-  $: selectedItem = items.find((item) => item.value === modelValue);
-  $: selectedText = selectedItem?.text ?? '';
+  const formattedWidth = $derived(formatStyleSize(width));
+  const selectedValues = $derived(Array.isArray(modelValue) ? (modelValue as Array<string | number>) : []);
+  const isItemSelected = (item: { text: string; value: string | number }) =>
+    multiple ? selectedValues.includes(item.value) : item.value === modelValue;
+  // always display the text of the selected items, never their raw values
+  const selectedText = $derived(
+    multiple
+      ? items.filter((item) => selectedValues.includes(item.value)).map((item) => item.text).join(', ')
+      : (items.find((item) => item.value === modelValue)?.text ?? ''),
+  );
   const toggle = () => {
     if (!disabled) expanded = !expanded;
   };
   const update = (item: { text: string; value: string | number }) => {
     if (disabled) return;
-    dispatch('update:modelValue', item.value);
-    dispatch('change', item.value);
+    if (multiple) {
+      const next = selectedValues.includes(item.value)
+        ? selectedValues.filter((value) => value !== item.value)
+        : [...selectedValues, item.value];
+      modelValue = next;
+      onUpdateModelValue?.(next);
+      onChange?.(next);
+      formItem.notifyChange?.();
+      // keep the dropdown open in multi-select mode
+      return;
+    }
+    modelValue = item.value;
+    onUpdateModelValue?.(item.value);
+    onChange?.(item.value);
     formItem.notifyChange?.();
     expanded = false;
   };
   let lastClearSignal = 0;
   const unsubscribeClearSignal = formItem.clearSignalStore?.subscribe((signal: number) => {
     if (signal > lastClearSignal) {
-      dispatch('update:modelValue', '');
-      dispatch('change', '');
+      const emptyValue = multiple ? [] : '';
+      modelValue = emptyValue;
+      onUpdateModelValue?.(emptyValue);
+      onChange?.(emptyValue);
     }
     lastClearSignal = signal;
   });
@@ -49,8 +74,8 @@
     aria-controls={dropdownId}
     aria-expanded={expanded}
     aria-disabled={disabled}
-    on:click={toggle}
-    on:keydown={(event) => {
+    onclick={toggle}
+    onkeydown={(event) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         toggle();
@@ -65,8 +90,8 @@
         {disabled}
         readonly
         autocomplete="off"
-        on:blur={(event) => {
-          dispatch('blur', event);
+        onblur={(event) => {
+          onBlur?.(event);
           formItem.notifyBlur?.();
         }}
       />
@@ -77,22 +102,27 @@
   </div>
   {#if expanded && !disabled}
     <div class="a-select-dropdown__wrapper">
-      <div id={dropdownId} class="a-select-dropdown" role="listbox">
+      <div id={dropdownId} class="a-select-dropdown" role="listbox" aria-multiselectable={multiple || undefined}>
         {#each items as item}
           <div
-            class="a-select-dropdown__item"
+            class="a-select-dropdown__item {isItemSelected(item) ? 'a-select-dropdown__item--selected' : ''}"
             role="option"
             tabindex="0"
-            aria-selected={item.value === modelValue}
-            on:mousedown={(event) => event.preventDefault()}
-            on:click={() => update(item)}
-            on:keydown={(event) => {
+            aria-selected={isItemSelected(item)}
+            onmousedown={(event) => event.preventDefault()}
+            onclick={() => update(item)}
+            onkeydown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
                 update(item);
               }
             }}
-          >{item.text}</div>
+          >
+            <span class="a-select-dropdown__item-text">{item.text}</span>
+            {#if multiple && isItemSelected(item)}
+              <Icon class="a-select-dropdown__item-check a-icon" aria-hidden="true" icon="ic:round-check" />
+            {/if}
+          </div>
         {/each}
       </div>
     </div>

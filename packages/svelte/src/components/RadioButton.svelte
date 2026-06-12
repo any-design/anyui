@@ -1,18 +1,14 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let label: string | number = '';
-  export let value: string | number | undefined = undefined;
-  export let selected: string | number | undefined = undefined;
-  export let modelValue: string | number | undefined = undefined;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: current = selected ?? modelValue;
-  const update = () => {
-    dispatch('update:modelValue', value);
-    dispatch('change', value);
-    dispatch('click', value);
-  };
+  let {
+    label = '',
+    value = undefined,
+    selected = undefined,
+    modelValue = undefined,
+    class: className = '',
+    children,
+    onClick,
+  } = $props();
+  const current = $derived(selected ?? modelValue);
 </script>
 
 <div
@@ -20,13 +16,13 @@
   role="radio"
   tabindex="0"
   aria-checked={current === value}
-  on:click={update}
-  on:keydown={(event) => {
+  onclick={(event) => onClick?.(event, value)}
+  onkeydown={(event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      update();
+      onClick?.(event, value);
     }
   }}
 >
-  <slot>{label}</slot>
+  {#if children}{@render children()}{:else}{label}{/if}
 </div>

@@ -124,10 +124,20 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: border-color var(--anim-duration-quick, 120ms) ease,
+    transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
 }
 
 .a-upload--clickable {
   cursor: pointer;
+}
+
+.a-upload--clickable:not(.a-upload--disabled):hover {
+  border-color: var(--primary-70, var(--border));
+}
+
+.a-upload--clickable:not(.a-upload--disabled):active {
+  transform: scale(0.98);
 }
 
 .a-upload--disabled {

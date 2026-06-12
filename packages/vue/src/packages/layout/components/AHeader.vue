@@ -32,5 +32,8 @@ export default defineComponent({
   height: var(--a-header-height, 64px);
   line-height: var(--a-header-height, 64px);
   box-sizing: border-box;
+  background: var(--a-surface, transparent);
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
 }
 </style>

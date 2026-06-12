@@ -231,7 +231,8 @@ $regular-size: 32px;
     color: var(--text);
     cursor: pointer;
     @include inline-center();
-    transition: opacity 100ms ease;
+    transition: opacity var(--anim-duration-quick, 100ms) ease,
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
     font-size: 20px;
     line-height: $regular-size;
     position: relative;
@@ -249,6 +250,7 @@ $regular-size: 32px;
 
   &__guide:active {
     opacity: 0.6;
+    transform: scale(0.96);
   }
 
   &__guide--disabled {
@@ -267,7 +269,9 @@ $regular-size: 32px;
 
     cursor: pointer;
     margin: 0 4px;
-    transition: opacity 100ms ease, color 100ms ease;
+    transition: opacity var(--anim-duration-quick, 100ms) ease,
+      color var(--anim-duration-quick, 100ms) ease,
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
     line-height: 32px;
     position: relative;
 
@@ -288,6 +292,7 @@ $regular-size: 32px;
 
   &__page:active {
     opacity: 0.6;
+    transform: scale(0.96);
   }
 
   &__page--selected {
@@ -301,9 +306,10 @@ $regular-size: 32px;
 
   &__page--selected::before {
     background: linear-gradient(135deg, var(--secondary), var(--primary));
-    box-shadow: 2px 2px 6px var(--shadow-8);
+    box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--primary) 45%, transparent),
+      2px 2px 6px var(--shadow-8);
     @include regular-size-rect();
-    border-radius: 6px;
+    border-radius: var(--a-radius-sm, 10px);
     position: absolute;
     top: 0;
     left: 0;
@@ -318,6 +324,7 @@ $regular-size: 32px;
 
   &__page--selected:active {
     opacity: 1;
+    transform: none;
     transition: none;
   }
 
@@ -332,6 +339,7 @@ $regular-size: 32px;
 
   &__page--disabled:active {
     opacity: 1;
+    transform: none;
     transition: none;
   }
 }

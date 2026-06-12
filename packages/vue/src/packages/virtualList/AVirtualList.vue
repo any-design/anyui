@@ -623,7 +623,7 @@ onBeforeUnmount(() => {
 
 .a-virtual-list::-webkit-scrollbar-thumb {
   width: 6px;
-  border-radius: 6px;
+  border-radius: var(--a-radius-full, 6px);
   background: var(--scrollbar);
 }
 

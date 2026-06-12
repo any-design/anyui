@@ -8,12 +8,7 @@
   >
     <div class="a-checkbox-checker">
       <transition :name="iconTransition">
-        <Icon
-          v-show="checked"
-          class="a-checkbox-checker__icon"
-          :icon="checkIcon"
-          color="var(--primary)"
-        />
+        <Icon v-show="checked" class="a-checkbox-checker__icon" :icon="checkIcon" />
       </transition>
     </div>
     <div class="a-checkbox-label">
@@ -101,15 +96,20 @@ export default defineComponent({
     justify-content: center;
     background-color: var(--bg-light);
     margin-right: 10px;
-    box-shadow: 0px 2px 8px var(--shadow-5);
-    border-radius: 4px;
+    box-shadow: var(--a-shadow-xs, 0px 2px 8px var(--shadow-5));
+    border-radius: 7px;
     box-sizing: border-box;
     position: relative;
+    transition:
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease),
+      border-color var(--anim-duration-quick, 120ms) ease,
+      background-color var(--anim-duration-quick, 120ms) ease,
+      box-shadow var(--anim-duration-quick, 120ms) ease;
 
     &__icon {
       width: 14px;
       display: block;
-      text-shadow: 2px 2px 2px var(--shadow-8);
+      color: var(--text-btn, #fff);
       position: absolute;
       top: 1px;
       left: 2px;
@@ -119,15 +119,30 @@ export default defineComponent({
 .a-checkbox:hover {
   .a-checkbox-checker {
     border: 1px solid var(--primary-70);
+    transform: scale(1.08);
+  }
+}
+.a-checkbox:active {
+  .a-checkbox-checker {
+    transform: scale(0.92);
   }
 }
 .a-checkbox--checked {
   .a-checkbox-checker {
-    border: 1px solid var(--primary-70);
+    border: 1px solid var(--primary);
+    background-color: var(--primary);
+    box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--primary) 50%, transparent);
+  }
+}
+.a-checkbox--checked:hover {
+  .a-checkbox-checker {
+    border: 1px solid var(--primary);
   }
 }
 
-.a-trans-check-icon-enter-active,
+.a-trans-check-icon-enter-active {
+  transition: all var(--anim-duration, 200ms) var(--a-ease-spring, ease-out);
+}
 .a-trans-check-icon-leave-active {
   transition: all var(--anim-duration-quick, 100ms) ease-out;
 }

@@ -83,14 +83,14 @@ export default defineComponent({
 @keyframes message-in {
   0% {
     opacity: 0;
-    transform: translateY(-50%);
+    transform: translateY(-60%) scale(0.92);
   }
-  80% {
+  60% {
     opacity: 1;
-    transform: translateY(8%);
+    transform: translateY(6%) scale(1.02);
   }
   100% {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -99,15 +99,20 @@ export default defineComponent({
   max-width: 90vw;
   display: flex;
   align-items: center;
-  padding: 0 12px;
+  padding: 0 14px;
   height: 40px;
-  border-radius: 6px;
-  box-shadow: 0px 2px 8px var(--shadow-10);
+  border-radius: var(--a-radius, 14px);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-md, 0px 2px 8px var(--shadow-10));
   box-sizing: border-box;
   margin-bottom: 12px;
-  background: var(--bg-bright);
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border: 1px solid var(--a-surface-border-color, transparent);
   user-select: none;
-  animation: message-in 145ms ease-out 0s 1 forwards;
+  animation: message-in var(--anim-duration-slow, 320ms) var(--a-ease-spring, ease-out) 0s 1 forwards;
 
   &__icon {
     width: 18px;
@@ -150,24 +155,29 @@ export default defineComponent({
 }
 
 .a-message--round {
-  border-radius: 20px;
+  border-radius: var(--a-radius-full, 999px);
   padding: 0 16px;
 }
 
-.a-message--success {
-  background: var(--success);
+@mixin colored-message($color) {
+  background: var(--#{$color});
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    0 6px 18px -6px color-mix(in srgb, var(--#{$color}) 55%, transparent),
+    0 2px 6px var(--shadow-4);
   @include white-content();
+}
+
+.a-message--success {
+  @include colored-message('success');
 }
 .a-message--error {
-  background: var(--danger);
-  @include white-content();
+  @include colored-message('danger');
 }
 .a-message--warning {
-  background: var(--warn);
-  @include white-content();
+  @include colored-message('warn');
 }
 .a-message--info {
-  background: var(--info);
-  @include white-content();
+  @include colored-message('info');
 }
 </style>

@@ -1,6 +1,5 @@
 <script lang="ts">
-  export let className = '';
-  export { className as class };
+  let { class: className = '' } = $props();
   const circles = [1, 2, 3, 4];
 </script>
 

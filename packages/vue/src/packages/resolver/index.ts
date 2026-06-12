@@ -19,11 +19,16 @@ const NATIVE_NAMES = [
 // some component contains generated ui, it will directly use some other component
 const STYLE_LINKED_COMPONENT_MAP = {
   checkboxGroup: 'checkbox',
+  confirmModal: ['dialog', 'popup', 'button'],
+  dialog: ['popup', 'button'],
+  dropdownMenu: ['popper', 'popupMenu'],
+  loadingMask: 'spinner',
   radioGroup: 'radio',
   radioButtonGroup: 'radioButton',
   listMenu: 'listMenuItem',
   popupMenu: 'popper',
   select: ['input', 'popper'],
+  table: 'empty',
 };
 
 const NO_STYLE_COMPONENTS = ['checkboxGroup', 'virtualListItem'];

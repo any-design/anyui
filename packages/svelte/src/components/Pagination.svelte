@@ -1,19 +1,21 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
   import Icon from '@iconify/svelte';
   import type { PaginationMeta } from '../types';
-  export let pagination: PaginationMeta = { current: 1, pageSize: 10, total: 0 };
-  export let prevIcon: any = 'uil:angle-left';
-  export let nextIcon: any = 'uil:angle-right';
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: totalPages = Math.max(1, Math.ceil(pagination.total / pagination.pageSize));
-  $: pages = Array.from({ length: totalPages }, (_, index) => index + 1).slice(0, 12);
+  let {
+    pagination = $bindable({ current: 1, pageSize: 10, total: 0 } as PaginationMeta),
+    prevIcon = 'uil:angle-left',
+    nextIcon = 'uil:angle-right',
+    class: className = '',
+    onUpdatePagination,
+    onChange,
+  } = $props();
+  const totalPages = $derived(Math.max(1, Math.ceil(pagination.total / pagination.pageSize)));
+  const pages = $derived(Array.from({ length: totalPages }, (_, index) => index + 1).slice(0, 12));
   const update = (current: number) => {
     const next = { ...pagination, current };
-    dispatch('update:pagination', next);
-    dispatch('change', next);
+    pagination = next;
+    onUpdatePagination?.(next);
+    onChange?.(next);
   };
 </script>
 
@@ -24,8 +26,8 @@
     role="button"
     tabindex={pagination.current <= 1 ? -1 : 0}
     aria-disabled={pagination.current <= 1}
-    on:click={() => update(Math.max(1, pagination.current - 1))}
-    on:keydown={(event) => {
+    onclick={() => update(Math.max(1, pagination.current - 1))}
+    onkeydown={(event) => {
       if ((event.key === 'Enter' || event.key === ' ') && pagination.current > 1) {
         event.preventDefault();
         update(Math.max(1, pagination.current - 1));
@@ -40,8 +42,8 @@
         role="button"
         tabindex="0"
         aria-current={page === pagination.current ? 'page' : undefined}
-        on:click={() => update(page)}
-        on:keydown={(event) => {
+        onclick={() => update(page)}
+        onkeydown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             update(page);
@@ -56,8 +58,8 @@
     role="button"
     tabindex={pagination.current >= totalPages ? -1 : 0}
     aria-disabled={pagination.current >= totalPages}
-    on:click={() => update(Math.min(totalPages, pagination.current + 1))}
-    on:keydown={(event) => {
+    onclick={() => update(Math.min(totalPages, pagination.current + 1))}
+    onkeydown={(event) => {
       if ((event.key === 'Enter' || event.key === ' ') && pagination.current < totalPages) {
         event.preventDefault();
         update(Math.min(totalPages, pagination.current + 1));

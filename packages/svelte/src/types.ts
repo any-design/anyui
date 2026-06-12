@@ -43,6 +43,15 @@ export interface PopMenuItem {
   key?: string;
 }
 
+export interface DropdownMenuItem {
+  command: string | number;
+  label: string;
+  icon?: string;
+  disabled?: boolean;
+  danger?: boolean;
+  divided?: boolean;
+}
+
 export interface PopMenuCommandExtra {
   triggerEl?: HTMLElement;
   popupEl?: HTMLElement;
@@ -121,3 +130,59 @@ export interface SectionRecord {
   head?: number;
   tail?: number;
 }
+
+export type AlertType = 'info' | 'success' | 'warn' | 'danger';
+
+export type ToastType = 'info' | 'success' | 'warning' | 'error';
+
+export type ToastPlacement = 'top-right' | 'bottom-right';
+
+export interface ToastOptions {
+  title?: string;
+  content?: string;
+  type?: ToastType;
+  duration?: number;
+  closable?: boolean;
+  placement?: ToastPlacement;
+  zIndex?: number;
+}
+
+export interface ToastItem {
+  key: string;
+  title: string;
+  content: string;
+  type: ToastType;
+  duration: number;
+  closable: boolean;
+}
+
+export type AToastTypedOptions = string | Omit<ToastOptions, 'type'>;
+
+export type ConfirmModalType = 'primary' | 'danger';
+
+export interface ConfirmModalOptions {
+  title?: string;
+  content?: string;
+  confirmText?: string;
+  cancelText?: string;
+  type?: ConfirmModalType;
+  width?: number | string;
+  maskClosable?: boolean;
+  zIndex?: number;
+}
+
+export interface LoadingMaskShowOptions {
+  text?: string;
+  zIndex?: number;
+}
+
+export type TableColumnAlign = 'left' | 'center' | 'right';
+
+export interface TableColumn {
+  key: string;
+  title: string;
+  width?: number | string;
+  align?: TableColumnAlign;
+}
+
+export type TableRow = Record<string, unknown>;

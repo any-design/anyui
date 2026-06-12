@@ -323,18 +323,31 @@ export default defineComponent({
     box-sizing: border-box;
     padding: 8px 12px;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg-light);
+    border-radius: var(--a-radius-sm, 10px);
+    background: var(--a-surface-input, var(--bg-light));
+    -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+    backdrop-filter: var(--a-surface-backdrop, none);
     color: var(--text);
     text-shadow: 1px 1px 2px var(--shadow-2);
-    transition: border-color 100ms ease-out, box-shadow 100ms ease-out;
+    transition:
+      border-color var(--anim-duration-quick, 120ms) var(--a-ease-soft, ease-out),
+      box-shadow var(--anim-duration-quick, 120ms) var(--a-ease-soft, ease-out);
     outline: none !important;
-    box-shadow: 2px 6px 14px var(--shadow-4);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      var(--a-shadow-xs, 2px 6px 14px var(--shadow-4));
+  }
+
+  &__inner:hover:not(:focus):not(:disabled) {
+    border-color: var(--primary-60, var(--border));
   }
 
   &__inner:focus {
     border: 1px solid var(--primary-80);
-    box-shadow: 1px 4px 12px var(--primary-18);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      var(--a-focus-ring, 0 0 0 3px var(--primary-18)),
+      1px 4px 12px var(--primary-18);
   }
 
   &__inner:focus::-webkit-scrollbar-thumb {

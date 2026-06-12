@@ -41,7 +41,7 @@ const styles = computed<StyleValue>(() => {
 <style lang="scss">
 .a-avatar {
   display: inline-block;
-  box-shadow: 2px 3px 12px var(--shadow-8);
+  box-shadow: var(--a-shadow-sm, 2px 3px 12px var(--shadow-8));
 
   img {
     width: 100%;

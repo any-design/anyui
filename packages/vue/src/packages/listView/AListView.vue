@@ -55,6 +55,13 @@ provide('itemHeight', formattedItemHeight);
   height: 100%;
 }
 
+// bordered variant: hairline container with generous rounding
+.a-list-view:has(.a-list-view-item--bordered) {
+  border: 1px solid var(--line);
+  border-radius: var(--a-radius-lg, 18px);
+  box-sizing: border-box;
+}
+
 .a-list-view::-webkit-scrollbar {
   width: 6px;
 }
@@ -65,7 +72,7 @@ provide('itemHeight', formattedItemHeight);
 
 .a-list-view::-webkit-scrollbar-thumb {
   width: 6px;
-  border-radius: 6px;
+  border-radius: var(--a-radius-full, 6px);
   background: var(--scrollbar);
 }
 

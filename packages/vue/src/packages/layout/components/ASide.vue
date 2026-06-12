@@ -57,5 +57,8 @@ export default defineComponent({
 .a-side {
   position: relative;
   box-sizing: border-box;
+  background: var(--a-surface, transparent);
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
 }
 </style>

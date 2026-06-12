@@ -245,7 +245,10 @@ export default defineComponent({
   }
   &__body {
     position: absolute;
-    background-color: var(--bg);
+    background-color: var(--a-surface, var(--bg));
+    -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+    backdrop-filter: var(--a-surface-backdrop, none);
+    box-sizing: border-box;
   }
   &__body--outside {
     position: fixed;
@@ -257,7 +260,12 @@ export default defineComponent({
     left: 0;
     top: 0;
     bottom: 0;
-    box-shadow: 4px 0 12px var(--shadow-w-10);
+    border-radius: 0 var(--a-radius-lg, 18px) var(--a-radius-lg, 18px) 0;
+    border-right: 1px solid var(--a-surface-border-color, transparent);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      8px 0 16px var(--shadow-6),
+      24px 0 48px -12px var(--shadow-12);
   }
   .a-drawer__body--outside {
     height: 100vh;
@@ -269,6 +277,12 @@ export default defineComponent({
     right: 0;
     top: 0;
     bottom: 0;
+    border-radius: var(--a-radius-lg, 18px) 0 0 var(--a-radius-lg, 18px);
+    border-left: 1px solid var(--a-surface-border-color, transparent);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      -8px 0 16px var(--shadow-6),
+      -24px 0 48px -12px var(--shadow-12);
   }
   .a-drawer__body--outside {
     height: 100vh;

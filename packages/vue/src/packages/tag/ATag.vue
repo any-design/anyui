@@ -66,7 +66,10 @@ export default defineComponent({
 .a-tag {
   height: 26px;
   padding: 6px 16px;
-  background: var(--bg-bright);
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border: 1px solid var(--a-surface-border-color, transparent);
   color: var(--text);
   box-sizing: border-box;
   display: flex;
@@ -74,8 +77,10 @@ export default defineComponent({
   justify-content: center;
   font-size: 14px;
   line-height: 14px;
-  border-radius: 14px;
-  box-shadow: 1px 2px 8px var(--shadow-6);
+  border-radius: var(--a-radius-full, 999px);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-xs, 1px 2px 8px var(--shadow-6));
   white-space: nowrap;
 }
 .a-tag--small {
@@ -83,13 +88,11 @@ export default defineComponent({
   padding: 4px 10px;
   font-size: 10px;
   line-height: 10px;
-  border-radius: 10px;
 }
 .a-tag--large {
   height: 32px;
   padding: 8px 20px;
   font-size: 15px;
   line-height: 16px;
-  border-radius: 16px;
 }
 </style>

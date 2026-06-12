@@ -75,10 +75,15 @@ export default defineComponent({
 .a-card {
   height: max-content;
   position: relative;
-  box-shadow: 0 8px 12px var(--shadow-5);
-  border-radius: 16px;
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-sm, 0 2px 6px var(--shadow-4));
+  border-radius: var(--a-radius-xl, 22px);
   overflow: hidden;
-  background: var(--bg-bright);
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+  border: 1px solid var(--a-surface-border-color, var(--line));
   display: block;
   text-decoration: none;
   user-select: none;
@@ -88,24 +93,24 @@ export default defineComponent({
   }
   &-header {
     width: 100%;
-    padding: 10px 18px 4px 18px;
+    padding: 14px 20px 6px 20px;
     &__title {
       color: var(--text);
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
       width: 100%;
-      line-height: 32px;
+      line-height: 28px;
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      letter-spacing: 0.05rem;
+      letter-spacing: 0.02rem;
     }
   }
   &-body {
     width: 100%;
     height: max-content;
     position: relative;
-    padding: 0px 18px 12px 18px;
+    padding: 0px 20px 12px 20px;
   }
   &-body--no-header {
     padding-top: 14px;
@@ -117,12 +122,21 @@ export default defineComponent({
     width: 100%;
     height: max-content;
     position: relative;
-    padding: 10px 18px 11px 18px;
-    border-top: 1px solid var(--border-semi-dark);
+    padding: 10px 20px 11px 20px;
+    border-top: 1px solid var(--line);
   }
 }
 .a-card--has-link {
   cursor: pointer;
+  transition:
+    transform var(--anim-duration, 200ms) var(--a-ease-spring, ease),
+    box-shadow var(--anim-duration, 200ms) ease;
+}
+.a-card--has-link:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-lg, 0 12px 24px var(--shadow-8));
 }
 .a-card--clean {
   .a-card-body {

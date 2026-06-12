@@ -191,9 +191,25 @@ export default defineComponent({
   margin-bottom: 0;
 }
 
+// invalid fields get a danger ring instead of the primary one
+.a-form-item--invalid {
+  .a-input__inner,
+  .a-textarea__inner {
+    border-color: var(--danger-75, var(--danger));
+  }
+
+  .a-input__inner:focus,
+  .a-textarea__inner:focus {
+    border-color: var(--danger-75, var(--danger));
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      0 0 0 3px color-mix(in srgb, var(--danger) 16%, transparent);
+  }
+}
+
 .a-form-item-invalid-enter-active,
 .a-form-item-invalid-leave-active {
-  transition: transform var(--anim-duration-quick, 100ms) ease-out;
+  transition: transform var(--anim-duration-quick, 100ms) var(--a-ease-soft, ease-out);
 }
 .a-form-item-invalid-enter-to {
   opacity: 1;

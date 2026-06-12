@@ -1,14 +1,21 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
-  export let visible = false;
-  export let zIndex = 1000;
-  export let width: string | number = 800;
-  export let centered = false;
-  export let round = false;
-  export let className = '';
-  export { className as class };
-  const dispatch = createEventDispatcher();
-  $: formattedWidth = typeof width === 'number' ? `${width}px` : width;
+  let {
+    visible = $bindable(false),
+    zIndex = 1000,
+    width = 800,
+    centered = false,
+    round = false,
+    class: className = '',
+    children,
+    onClose,
+    onUpdateVisible,
+  } = $props();
+  const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
+  const close = () => {
+    visible = false;
+    onClose?.();
+    onUpdateVisible?.(false);
+  };
 </script>
 
 {#if visible}
@@ -18,15 +25,14 @@
       role="button"
       tabindex="0"
       aria-label="Close"
-      on:click={() => { dispatch('close'); dispatch('update:visible', false); }}
-      on:keydown={(event) => {
+      onclick={close}
+      onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          dispatch('close');
-          dispatch('update:visible', false);
+          close();
         }
       }}
     ></div>
-    <div class="a-float__content" style:width={formattedWidth}><slot /></div>
+    <div class="a-float__content" style:width={formattedWidth}>{@render children?.()}</div>
   </div>
 {/if}
