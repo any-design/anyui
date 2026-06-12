@@ -1,0 +1,78 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "anyui",
+  "homepage": "https://github.com/any-design/anyui",
+  "items": [
+    {
+      "name": "vue",
+      "type": "registry:lib",
+      "title": "AnyUI Vue",
+      "description": "Headless shadcn install adapter for AnyUI Vue.",
+      "author": "any-design <https://github.com/any-design/anyui>",
+      "dependencies": [
+        "@any-design/anyui",
+        "@iconify/vue",
+        "@popperjs/core",
+        "vue"
+      ],
+      "css": {
+        "@import \"@any-design/anyui/styles/index.css\"": {}
+      },
+      "files": [
+        {
+          "path": "registry/vue/anyui-vue.ts",
+          "type": "registry:lib",
+          "target": "@lib/anyui-vue.ts"
+        }
+      ],
+      "docs": "Install with `pnpm dlx shadcn@latest add any-design/anyui/vue --yes --silent`, then import from `@/lib/anyui-vue`."
+    },
+    {
+      "name": "react",
+      "type": "registry:lib",
+      "title": "AnyUI React",
+      "description": "Headless shadcn install adapter for AnyUI React.",
+      "author": "any-design <https://github.com/any-design/anyui>",
+      "dependencies": [
+        "@any-design/anyui",
+        "@iconify/react",
+        "react",
+        "react-dom"
+      ],
+      "css": {
+        "@import \"@any-design/anyui/styles/index.css\"": {}
+      },
+      "files": [
+        {
+          "path": "registry/react/anyui-react.ts",
+          "type": "registry:lib",
+          "target": "@lib/anyui-react.ts"
+        }
+      ],
+      "docs": "Install with `pnpm dlx shadcn@latest add any-design/anyui/react --yes --silent`, then import from `@/lib/anyui-react`."
+    },
+    {
+      "name": "svelte",
+      "type": "registry:lib",
+      "title": "AnyUI Svelte",
+      "description": "Headless shadcn install adapter for AnyUI Svelte.",
+      "author": "any-design <https://github.com/any-design/anyui>",
+      "dependencies": [
+        "@any-design/anyui",
+        "@iconify/svelte",
+        "svelte"
+      ],
+      "css": {
+        "@import \"@any-design/anyui/styles/index.css\"": {}
+      },
+      "files": [
+        {
+          "path": "registry/svelte/anyui-svelte.ts",
+          "type": "registry:lib",
+          "target": "@lib/anyui-svelte.ts"
+        }
+      ],
+      "docs": "Install with `pnpm dlx shadcn@latest add any-design/anyui/svelte --yes --silent`, then import from `@/lib/anyui-svelte`."
+    }
+  ]
+}
