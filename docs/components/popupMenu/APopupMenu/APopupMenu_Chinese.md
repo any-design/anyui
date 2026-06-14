@@ -1,78 +1,93 @@
-# APopupMenu 组件文档
+# APopupMenu
 
-这是一个基于 popper 的菜单组件。
+`APopupMenu` 是基于 `APopper` 的轻量右键菜单。选项可以是纯字符串或 `{ name, key }` 对象。默认 hover 触发，通过 `command` 事件返回已选 key。
 
-## 基本用法和示例
+## 引入
 
-你可以使用 `APopupMenu` 组件来创建一个菜单：
+```ts
+import { PopupMenu } from '@any-design/anyui/vue';
+// React:  import { PopupMenu } from '@any-design/anyui/react';
+// Svelte: import { PopupMenu } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <APopupMenu
-    :items="['编辑', '复制', '删除']"
-    @command="(key: string) => handleMessage(key)"
-    triggerType="click"
-  >
-    <button>点击我</button>
+  <APopupMenu :items="items" @command="onCommand">
+    <AButton>选项</AButton>
   </APopupMenu>
 </template>
+
+<script setup>
+const items = ['编辑', '复制', '删除'];
+const onCommand = (key) => console.log('已选：', key);
+</script>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 右键上下文菜单
 
-| 属性名         | 类型    | 默认值            | 说明                                       |
-| -------------- | ------- | ----------------- | ------------------------------------------ |
-| placement      | String  | 'bottom'          | popper 的放置位置，同 APopper 组件         |
-| offset         | Number  | 12                | 菜单位置相对于触发元素的偏移量，单位为 px  |
-| items          | Array   | []                | 菜单中要渲染的项                           |
-| width          | Number  | 180               | 菜单的宽度                                 |
-| hideDelay      | Number  | 100               | 鼠标移出菜单 popper 时，菜单隐藏的延迟时间 |
-| zIndex         | Number  | 3000              | 菜单 popper 的 z-index                     |
-| appendToBody   | Boolean | true              | 如果为 true，菜单将被追加到 body           |
-| transition     | String  | 'a-trans-popmenu' | 过渡类名                                   |
-| popupClass     | String  |                   | 应用于弹出窗的类                           |
-| menuClass      | String  |                   | 应用于菜单的类                             |
-| hideAfterClick | Boolean | false             | 如果为 true，点击菜单项后菜单将自动隐藏    |
-| triggerType    | String  | 'hover'           | 触发类型，与 APopper 组件相同              |
-| group          | String  | ''                | 分组名称                                   |
+设置 `triggerType="contextmenu"` 改为右键打开。
+
+```vue
+<template>
+  <APopupMenu :items="items" trigger-type="contextmenu">
+    <div class="canvas">在此右键</div>
+  </APopupMenu>
+</template>
+
+<script setup>
+const items = ['重命名', '复制副本', '移除'];
+</script>
+```
+
+### 带 key 的对象项
+
+当 key 需要与标签不同时，传入 `{ name, key }` 对象。
+
+```vue
+<template>
+  <APopupMenu :items="items" @command="onCommand">
+    <AClickableText type="primary">菜单</AClickableText>
+  </APopupMenu>
+</template>
+
+<script setup>
+const items = [
+  { name: '新建文件', key: 'new' },
+  { name: '新建文件夹', key: 'folder' },
+];
+const onCommand = (key) => console.log(key);
+</script>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `items` | Array<string \| { name, key? }> | [] | 菜单项（支持纯字符串）。 |
+| `placement` | Placement | 'bottom' | Popper 位置。 |
+| `triggerType` | 'hover' \| 'click' \| 'contextmenu' \| 'manual' | 'hover' | 触发方式。 |
+| `offset` | Number | 12 | 偏移（px）。 |
+| `width` | Number | 180 | 菜单宽度。 |
+| `hideDelay` | Number | 100 | 隐藏延迟（ms）。 |
+| `hideAfterClick` | Boolean | false | 点击后隐藏。 |
+| `zIndex` | Number | 3000 | z-index。 |
+| `appendToBody` | Boolean | true | 挂载到 body。 |
+| `transition` | String | 'a-trans-popmenu' | 过渡名。 |
+| `popupClass / menuClass` | String | undefined | 类名钩子。 |
+| `group` | String | '' | 共享 popper 分组。 |
 
 ## 事件
 
-该组件将发出以下事件：
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `command` | (key, { triggerEl, popupEl }) | 点击菜单项。 |
 
-- command: 当用户点击一个菜单项时发出。该事件将返回两个参数，第一个是点击的菜单项的键（key），第二个是一个额外的 PopMenuCommandExtra 对象，包含了触发元素（triggerEl）和弹出元素（popupEl）。
+## 插槽
 
-示例：
-
-```vue
-<template>
-  <APopupMenu
-    :items="[
-      { key: 'edit', name: '编辑' },
-      { key: 'copy', name: '复制' },
-      { key: 'delete', name: '删除' },
-    ]"
-    trigger="click"
-    @command="(key, extra) => handleCommand(key, extra)"
-  >
-    <a-button>点击我</a-button>
-  </APopupMenu>
-</template>
-
-<script>
-import { APopupMenu } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    APopupMenu,
-  },
-  methods: {
-    handleCommand(key, extra) {
-      console.log(`Selected command: ${key}, triggered by element: ${extra.triggerEl}`);
-    },
-  },
-};
-</script>
-```
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `default` | — | 触发元素。 |

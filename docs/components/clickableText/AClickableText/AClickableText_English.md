@@ -1,78 +1,74 @@
-# AClickableText Component
+# AClickableText
 
-The `AClickableText` component is a clickable text component designed for use in Vue3 projects. It has two available values for the `type` prop which are `'primary'` and `'secondary'`.
+`AClickableText` is a themed, link-styled text trigger. Set a `type` to color it (primary, secondary, danger, warn, info), and listen to `click`. Use it for inline actions like "Edit", "View all", or "Delete".
 
-## Basic Usage
+## Import
 
-To use the `AClickableText` component, first import it into your Vue3 SFC file using:
-
-```javascript
-import { AClickableText } from '@any-design/anyui/vue';
+```ts
+import { ClickableText } from '@any-design/anyui/vue';
+// React:  import { ClickableText } from '@any-design/anyui/react';
+// Svelte: import { ClickableText } from '@any-design/anyui/svelte';
 ```
 
-Then, you can use the component in your template with the following code:
+## Basic usage
 
-```html
-<a-clickable-text type="secondary">Click me</a-clickable-text>
+```vue
+<template>
+  <AClickableText type="primary" @click="onClick">View details</AClickableText>
+</template>
+
+<script setup>
+const onClick = () => console.log('clicked');
+</script>
 ```
 
-You can replace the text "Click me" with any text you would like to use in your project.
+## Examples
+
+### Danger action
+
+Use `type="danger"` for destructive inline actions like delete.
+
+```vue
+<template>
+  <AClickableText type="danger" @click="onDelete">Remove</AClickableText>
+</template>
+
+<script setup>
+const onDelete = () => console.log('delete');
+</script>
+```
+
+### In a sentence
+
+Mix it into body text for inline links.
+
+```vue
+<template>
+  <p>
+    New here?
+    <AClickableText type="primary" @click="goSignup">Create an account</AClickableText>
+  </p>
+</template>
+
+<script setup>
+const goSignup = () => console.log('signup');
+</script>
+```
 
 ## Props
 
-The following props are available to be passed into the `AClickableText` component:
-
-### type
-
-- **type**: String
-- **default**: `''`
-
-The `type` prop defines the color scheme of the text. It accepts two values which are `'primary'` and `'secondary'`.
-
-#### Example
-
-To use the `'primary'` type, pass it in as a prop like so:
-
-```html
-<a-clickable-text type="primary">Click me</a-clickable-text>
-```
-
-And to use the `'secondary'` type, pass it in as a prop like so:
-
-```html
-<a-clickable-text type="secondary">Click me</a-clickable-text>
-```
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `type` | 'primary' \| 'secondary' \| 'danger' \| 'warn' \| 'info' | '' | Theme color (empty = default text color). |
 
 ## Events
 
-The `AClickableText` component emits the following event:
+| Event | Payload | Description |
+| --- | --- | --- |
+| `click` | MouseEvent | Native click. |
 
-### click
+## Slots
 
-This event is emitted when a user clicks on the clickable text.
-
-#### Example
-
-To use this event, you can define a method in your component that will be executed when the `click` event is emitted. First, add the event listener to the `a-clickable-text` element like so:
-
-```html
-<a-clickable-text type="primary" @click="handleClick">Click me</a-clickable-text>
-```
-
-Then, define a method called `handleClick` in your Vue3 component like so:
-
-```javascript
-methods: {
-  handleClick() {
-    // your code here
-  },
-},
-```
-
-## Exposed Methods
-
-The `AClickableText` component exposes no methods.
-
-## Exposed Values
-
-The `AClickableText` component exposes no values.
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | — | Text content. |

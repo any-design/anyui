@@ -1,23 +1,50 @@
-# Introduction
+# ASpinner
 
-The `a-spinner` component is a part of the `@any-design/anyui` package. It is a simple spinner component that can be used to indicate loading or processing.
+`ASpinner` renders a rotating icon — a simple spinning loader. Pass an `icon` prop (any Iconify name) to swap the default spinner, or leave it empty for the built-in one.
 
-# Basic Usage
+## Import
 
-To use the `a-spinner` component, simply import it from the `@any-design/anyui/vue` package and include it in your template. You can pass in an icon name as a prop to display a particular type of spinner.
+```ts
+import { Spinner } from '@any-design/anyui/vue';
+// React:  import { Spinner } from '@any-design/anyui/react';
+// Svelte: import { Spinner } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
 
 ```vue
 <template>
-  <a-spinner icon="quill:loading-spin"></a-spinner>
+  <ASpinner />
 </template>
 ```
 
-# Props
+## Examples
 
-The `a-spinner` component has one prop:
+### Custom icon
 
-## icon
+Pass any [Iconify](https://iconify.design/) icon name to spin it instead of the default.
 
-- **Type:** `String`
-- **Default Value:** `'quill:loading-spin'`
-- **Description:** The icon name of the spinner to be displayed. This prop is optional. Defaults to a loading spinner icon.
+```vue
+<template>
+  <ASpinner icon="ri:loader-4-line" />
+</template>
+```
+
+### Inline in a button
+
+Like `ALoading`, the spinner works well inside a button to indicate an in-flight action.
+
+```vue
+<template>
+  <AButton type="primary" disabled>
+    <ASpinner icon="ri:loader-4-line" />
+    <span>Loading</span>
+  </AButton>
+</template>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `icon` | String \| IconifyIcon | '' | The icon to spin (defaults to the built-in spinner). |

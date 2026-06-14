@@ -1,63 +1,80 @@
-# AImage 组件文档
+# AImage
 
-这个组件是一个图片容器，用于展示图片，并提供图片加载状态和错误状态的提示。
+`AImage` 是支持懒加载的图片组件。它将 `src` 作为背景图渲染，可控制 `size`、`position` 与 `repeat`，并提供 `loading` 与 `error` 插槽以自定义这些状态。
 
-## 基本用法和示例
+## 引入
 
-使用 `AImage` 组件，可以展示一张指定的图片：
+```ts
+import { Image } from '@any-design/anyui/vue';
+// React:  import { Image } from '@any-design/anyui/react';
+// Svelte: import { Image } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <AImage src="https://example.com/image.jpg"></AImage>
+  <AImage src="/photos/cover.jpg" width="320" height="200" />
 </template>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 固定尺寸与 cover
 
-| 属性名   | 类型   | 默认值      | 说明             |
-| -------- | ------ | ----------- | ---------------- |
-| src      | String |             | 图片的 url       |
-| width    | mixed  | '100%'      | 图片容器的宽度   |
-| height   | mixed  | '100%'      | 图片容器的高度   |
-| size     | String | 'cover'     | 背景图的尺寸     |
-| position | String | 'center'    | 背景图的位置     |
-| repeat   | String | 'no-repeat' | 背景图的重复模式 |
-
-例如：
+`size`、`position`、`repeat` 分别对应 `background-*` CSS 属性。`cover`（默认）填充区域且不变形。
 
 ```vue
 <template>
-  <AImage
-    src="https://example.com/image.jpg"
-    width="200px"
-    height="200px"
-    size="contain"
-    position="center"
-  ></AImage>
+  <AImage src="/photos/cover.jpg" width="400" height="240" size="cover" />
 </template>
 ```
 
-## Events
+### 自定义加载态
 
-该组件会发出以下事件：
+`loading` 插槽在图片加载过程中渲染。
 
-| 事件名 | 说明         |
-| ------ | ------------ |
-| load   | 图片开始加载 |
-| loaded | 图片加载完成 |
-| error  | 图片加载出错 |
+```vue
+<template>
+  <AImage src="/photos/heavy.jpg" width="320" height="200">
+    <template #loading>
+      <div style="display:flex;justify-content:center;padding:80px">
+        <ASpinner />
+      </div>
+    </template>
+  </AImage>
+</template>
+```
 
-## Setup 返回值
+### 自定义错误态
 
-该组件暴露以下变量：
+`error` 插槽在图片加载失败时渲染。
 
-| 变量名          | 类型              | 说明                   |
-| --------------- | ----------------- | ---------------------- |
-| isLoading       | ref(Boolean)      | 图片是否正在加载       |
-| isError         | ref(Boolean)      | 图片是否加载出错       |
-| containerRef    | ref(HtmlElement?) | 图片容器的 DOM 引用    |
-| containerStyles | Object            | 图片容器的样式对象     |
-| picStyles       | CSSProperties     | 背景图片的样式对象     |
-| imageId         | String            | 图片容器的唯一 ID 标识 |
+```vue
+<template>
+  <AImage src="/broken.jpg" width="320" height="200">
+    <template #error>
+      <AEmpty text="图片未找到" />
+    </template>
+  </AImage>
+</template>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `src` | String | undefined | 图片地址。 |
+| `width` | String \| Number | '100%' | 宽度。 |
+| `height` | String \| Number | '100%' | 高度。 |
+| `size` | String | 'cover' | background-size 值。 |
+| `position` | String | 'center' | background-position 值。 |
+| `repeat` | String | 'no-repeat' | background-repeat 值。 |
+| `threshold` | Number | — | IntersectionObserver 阈值（使用库默认值）。 |
+
+## 插槽
+
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `loading` | — | 加载中显示。 |
+| `error` | — | 出错时显示。 |

@@ -1,58 +1,60 @@
-# @any-design/anyui AChat Component
+# AChat
 
-The AChat component is used to display a chat interface. It is built using Vue3 and contains a single child component named AVirtualList which enables the use of a virtual list to optimize the performance of rendering the list of messages.
+`AChat` renders an auto-scrolling chat transcript built on `AVirtualList`. Pass a `messages` array of `{ id, content, role }` where `role` is `'self'` or `'target'`. The list automatically scrolls to the bottom when new messages arrive.
 
-## Basic Usage
+## Import
 
-```html
+```ts
+import { Chat } from '@any-design/anyui/vue';
+// React:  import { Chat } from '@any-design/anyui/react';
+// Svelte: import { Chat } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
+
+```vue
 <template>
-  <a-chat :messages="messages" :enable-deep-watch="false"></a-chat>
+  <AChat :messages="messages" style="height: 400px" />
 </template>
 
 <script setup>
-  import { reactive } from 'vue';
-  import { AChat } from '@any-design/anyui/vue';
+import { ref } from 'vue';
+const messages = ref([
+  { id: 1, content: 'Hi there!', role: 'target' },
+  { id: 2, content: 'Hello!', role: 'self' },
+]);
+</script>
+```
 
-  const messages = reactive([
-    { id: 1, content: 'Hello', role: 'self' },
-    { id: 2, content: 'Hi', role: 'target' },
-  ]);
+## Examples
+
+### Adding messages
+
+Push new messages to the array — the transcript auto-scrolls to show the latest.
+
+```vue
+<template>
+  <AChat :messages="messages" style="height: 400px" />
+  <AInput v-model="text" @submit="send" placeholder="Type and press Enter" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const text = ref('');
+const messages = ref([
+  { id: 1, content: 'Hey!', role: 'target' },
+]);
+const send = () => {
+  if (!text.value) return;
+  messages.value.push({ id: Date.now(), content: text.value, role: 'self' });
+  text.value = '';
+};
 </script>
 ```
 
 ## Props
 
-### messages
-
-Type: `Array<AChatMessage>`
-
-An array of objects that contains messages to be displayed in the chat. Each object has the following AChatMessage type: `{ id: string | number; content: string; role: AChatMessageRole; }`.
-
-Tip: Each message should have an unique id.
-
-Default: `[]`
-
-Usage:
-
-```html
-<a-chat
-  :messages="[
-  { id: 1, content: 'Hello', role: 'self' },
-  { id: 2, content: 'Hi', role: 'target' },
-]"
-></a-chat>
-```
-
-### enableDeepWatch
-
-Type: `Boolean`
-
-Enable or disable deep watching of the changes in the messages array.
-
-Default: `false`
-
-Usage:
-
-```html
-<a-chat :messages="data.messages" :enable-deep-watch="true"></a-chat>
-```
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `messages` | Array<{ id, content, role }> | [] | Messages; `role` is `self` or `target`. |
+| `enableDeepWatch` | Boolean | false | Deep-watch `messages`. |

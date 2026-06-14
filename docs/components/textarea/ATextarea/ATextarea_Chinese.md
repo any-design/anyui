@@ -1,120 +1,110 @@
-# ATextarea 组件文档
+# ATextarea
 
-这个组件是一个文本框。
+`ATextarea` 是多行文本框，会随内容自适应高度，并在最小 / 最大行数之间收缩。它支持 `v-model`、Ctrl/Cmd + Enter 提交，以及 `before` / `after` 插槽用于放置周边内容。
 
-## 基本用法和示例
+## 引入
 
-使用 `ATextarea` 组件，可以创建一个多行文本框：
+```ts
+import { Textarea } from '@any-design/anyui/vue';
+// React:  import { Textarea } from '@any-design/anyui/react';
+// Svelte: import { Textarea } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <ATextarea v-model="message" />
+  <ATextarea v-model="msg" placeholder="写点什么…" />
 </template>
 
-<script>
-import { ATextarea } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ATextarea,
-  },
-  data() {
-    return {
-      message: '',
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const msg = ref('');
 </script>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 控制高度
 
-| 属性名              | 类型             | 默认值 | 说明                                                                                    |
-| ------------------- | ---------------- | ------ | --------------------------------------------------------------------------------------- |
-| minRows             | Number           | 3      | 文本框的最小显示行数                                                                    |
-| maxRows             | Number           | 10     | 文本框的最大显示行数                                                                    |
-| readonly            | Boolean          | false  | 是否只读                                                                                |
-| disabled            | Boolean          | false  | 是否禁用                                                                                |
-| modelValue          | String           | ''     | 文本框的值，与 Vue 的 `v-model` 绑定                                                    |
-| placeholder         | String           | ''     | 占位符                                                                                  |
-| lineHeight          | Number           | 1.5    | 行高                                                                                    |
-| maxlength           | Number           |        | 最大字符数                                                                              |
-| minlength           | Number           |        | 最小字符数                                                                              |
-| autocomplete        | String           | 'off'  | 自动完成                                                                                |
-| autocorrect         | String           | 'off'  | 自动纠错                                                                                |
-| spellcheck          | String / Boolean |        | 是否开启拼写检查，设置为 `false` 可以关闭拼写检查，设置为 `true` 或不传值则开启拼写检查 |
-| wrap                | String           |        | 自动换行属性                                                                            |
-| disableResizeCorner | Boolean          | false  | 是否禁止拉伸角                                                                          |
-| autoMatchHeight     | Boolean          | false  | 是否自适应高度                                                                          |
-| borderless          | Boolean          | false  | 是否无边框                                                                              |
-
-## Events
-
-该组件会 emit 以下事件：
-
-| 事件名            | 说明                    |
-| ----------------- | ----------------------- |
-| update:modelValue | 当文本框的值发生变化时  |
-| submit            | 当输入 `Enter` 键时触发 |
-
-## Slots
-
-该组件支持以下插槽：
-
-| 插槽名 | 说明                 |
-| ------ | -------------------- |
-| before | 在文本框之前插入元素 |
-| after  | 在文本框之后插入元素 |
-
-示例：
+`minRows` 设置初始高度；`maxRows` 是开始滚动而非继续增高的阈值。
 
 ```vue
 <template>
-  <ATextarea placeholder="Write something..." :minRows="5" :maxRows="10">
-    <template #before>
-      <div>Before</div>
-    </template>
+  <ATextarea v-model="msg" :min-rows="2" :max-rows="6" placeholder="2–6 行" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const msg = ref('');
+</script>
+```
+
+### Ctrl/Cmd + Enter 提交
+
+按下 Ctrl/Cmd + Enter 时会触发 `submit` 事件并返回当前值 —— 适合聊天或评论框。
+
+```vue
+<template>
+  <ATextarea v-model="msg" placeholder="按 ⌘/Ctrl + Enter 发送" @submit="onSend" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const msg = ref('');
+const onSend = (value) => { console.log('已发送：', value); msg.value = ''; };
+</script>
+```
+
+### 状态与插槽
+
+`disabled`、`readonly`、`borderless` 对应不同模式。`after` 插槽是放置工具栏的好位置。
+
+```vue
+<template>
+  <ATextarea v-model="msg" placeholder="添加备注">
     <template #after>
-      <div>After</div>
+      <AButton type="primary" size="small" @click="save">保存</AButton>
     </template>
   </ATextarea>
 </template>
-```
 
-## Exposed methods and values
-
-该组件暴露如下方法和值：
-
-| 名称            | 类型        | 说明                         |
-| --------------- | ----------- | ---------------------------- |
-| storedValue     | ref(String) | 文本框的值                   |
-| innerStyles     | computed    | 文本框内部样式               |
-| wrapperRef      | ref         | 文本框外层 div 对象          |
-| innerRef        | ref         | 文本框内部 textarea 对象     |
-| handleInput     | function    | 当文本框的值发生变化时的方法 |
-| handleEnterDown | function    | 按下 `Enter` 键时的方法      |
-
-示例：
-
-```vue
-<template>
-  <ATextarea ref="messageTextarea" />
-</template>
-
-<script>
-import { ATextarea } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ATextarea,
-  },
-  methods: {
-    clearMessage() {
-      this.$refs.messageTextarea.storedValue = '';
-    },
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const msg = ref('');
+const save = () => console.log(msg.value);
 </script>
 ```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` | String | '' | 绑定值（`v-model`）。 |
+| `placeholder` | String | '' | 占位文本。 |
+| `minRows` | Number | 3 | 最小高度（行）。 |
+| `maxRows` | Number | 10 | 最大高度（行），超过后滚动。 |
+| `lineHeight` | Number | 1.5 | 用于高度计算的行高。 |
+| `readonly` | Boolean | false | 只读。 |
+| `disabled` | Boolean | false | 禁用。 |
+| `disableResizeCorner` | Boolean | false | 隐藏原生缩放手柄。 |
+| `autoMatchHeight` | Boolean | false | 持续匹配内容高度（无上限）。 |
+| `borderless` | Boolean | false | 移除边框。 |
+| `maxlength / minlength` | Number | undefined | 原生长度约束。 |
+| `autocomplete` | String | 'off' | 原生 autocomplete。 |
+
+## 事件
+
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | String | 值变化。 |
+| `input / change` | InputEvent | 原生事件。 |
+| `blur` | FocusEvent | 原生 blur。 |
+| `submit` | String | Ctrl/Cmd + Enter 时触发。 |
+
+## 插槽
+
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `before` | — | 文本框上方的区域。 |
+| `after` | — | 文本框下方的区域。 |

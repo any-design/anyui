@@ -1,77 +1,93 @@
-# APopupMenu Component Documentation
+# APopupMenu
 
-The `APopupMenu` component is designed to create a menu based on the popper. The component comes with various props enabling customization such as items to render, positioning, delay and hover effect, etc.
+`APopupMenu` is a lightweight context menu built on top of `APopper`. Items can be plain strings or `{ name, key }` objects. It defaults to hover-trigger and emits `command` with the selected key.
 
-## Basic usage and Example
+## Import
 
-Here is a basic usage example of the `APopupMenu` component:
+```ts
+import { PopupMenu } from '@any-design/anyui/vue';
+// React:  import { PopupMenu } from '@any-design/anyui/react';
+// Svelte: import { PopupMenu } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
 
 ```vue
 <template>
-  <APopupMenu :items="['item1', 'item2', 'item3']" triggerType="click">
-    <button>Click Me</button>
+  <APopupMenu :items="items" @command="onCommand">
+    <AButton>Options</AButton>
   </APopupMenu>
 </template>
 
-<script>
-import { APopupMenu } from '@any-design/anyui/vue';
+<script setup>
+const items = ['Edit', 'Copy', 'Delete'];
+const onCommand = (key) => console.log('selected:', key);
+</script>
+```
 
-export default {
-  components: {
-    APopupMenu,
-  },
-};
+## Examples
+
+### Right-click context menu
+
+Set `triggerType="contextmenu"` to open on right-click.
+
+```vue
+<template>
+  <APopupMenu :items="items" trigger-type="contextmenu">
+    <div class="canvas">Right-click here</div>
+  </APopupMenu>
+</template>
+
+<script setup>
+const items = ['Rename', 'Duplicate', 'Remove'];
+</script>
+```
+
+### Object items with keys
+
+Pass `{ name, key }` objects when you need a key distinct from the label.
+
+```vue
+<template>
+  <APopupMenu :items="items" @command="onCommand">
+    <AClickableText type="primary">Menu</AClickableText>
+  </APopupMenu>
+</template>
+
+<script setup>
+const items = [
+  { name: 'New file', key: 'new' },
+  { name: 'New folder', key: 'folder' },
+];
+const onCommand = (key) => console.log(key);
 </script>
 ```
 
 ## Props
 
-The component accepts the following props:
-
-| Prop name      | Type    | Default           | Description                                                      |
-| -------------- | ------- | ----------------- | ---------------------------------------------------------------- |
-| placement      | String  | 'bottom'          | The placement position of the popper                             |
-| offset         | Number  | 12                | The menu position offset to the trigger element, unit is px      |
-| items          | Array   | []                | Items to render in the menu                                      |
-| width          | Number  | 180               | The menu width                                                   |
-| hideDelay      | Number  | 100               | Menu hide delay when mouse move out the menu popper              |
-| zIndex         | Number  | 3000              | The zIndex of the menu popper                                    |
-| appendToBody   | Boolean | true              | If true, the menu will be appended to body                       |
-| transition     | String  | 'a-trans-popmenu' | The transition class name                                        |
-| popupClass     | String  |                   | The class applied to the popup                                   |
-| menuClass      | String  |                   | The class applied to the menu                                    |
-| hideAfterClick | Boolean | false             | If true, menu will hide itself automatically after a click event |
-| triggerType    | String  | 'hover'           | The trigger type to show the menu                                |
-| group          | String  |                   | The group name                                                   |
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | Array<string \| { name, key? }> | [] | Items (plain strings allowed). |
+| `placement` | Placement | 'bottom' | Popper placement. |
+| `triggerType` | 'hover' \| 'click' \| 'contextmenu' \| 'manual' | 'hover' | Trigger type. |
+| `offset` | Number | 12 | Offset (px). |
+| `width` | Number | 180 | Menu width. |
+| `hideDelay` | Number | 100 | Hide delay (ms). |
+| `hideAfterClick` | Boolean | false | Hide after click. |
+| `zIndex` | Number | 3000 | z-index. |
+| `appendToBody` | Boolean | true | Append to body. |
+| `transition` | String | 'a-trans-popmenu' | Transition name. |
+| `popupClass / menuClass` | String | undefined | Class hooks. |
+| `group` | String | '' | Shared popper group. |
 
 ## Events
 
-The component emits the following events:
+| Event | Payload | Description |
+| --- | --- | --- |
+| `command` | (key, { triggerEl, popupEl }) | Item clicked. |
 
-- **`command`** - will be emitted when user click on a menu item. It emits the key of the clicked item and extra information about the event.
+## Slots
 
-Example usage:
-
-```vue
-<template>
-  <APopupMenu @command="handleCommand" :items="['item1', 'item2', 'item3']"></APopupMenu>
-</template>
-
-<script>
-export default {
-  methods: {
-    handleCommand(command, extra) {
-      // perform some action here
-    },
-  },
-};
-</script>
-```
-
-## Exposed Methods
-
-The component exposes the following methods:
-
-- **`getItemKey(item)`** - it's used to get the key of the item which can be a string or a `PopMenuItem`.
-- **`getItemName(item)`** - it's used to get the name of the item which can be a string or a `PopMenuItem`.
-- **`handleItemClick(key)`** - it's used to handle the click event on an item. If `hideAfterClick` is true, it hides the menu and emits the `command` event.
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | — | Trigger element. |

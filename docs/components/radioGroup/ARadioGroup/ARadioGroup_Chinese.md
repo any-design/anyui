@@ -1,59 +1,68 @@
-# ARadioGroup 组件文档
+# ARadioGroup
 
-这个组件是一组单选框。
+`ARadioGroup` 将单个选中值绑定到由 `items` 列表生成的一组单选框。每个选项为 `{ label, value }`；分组会保持 `modelValue` 同步并保证单选 —— 非常适合选择套餐、配送方式或主题。
 
-## 基本用法和示例
+## 引入
 
-使用 `ARadioGroup` 组件，可以创建一组单选框：
+```ts
+import { RadioGroup } from '@any-design/anyui/vue';
+// React:  import { RadioGroup } from '@any-design/anyui/react';
+// Svelte: import { RadioGroup } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
+
+用 `v-model` 绑定已选值，并传入 `items`。
 
 ```vue
 <template>
-  <ARadioGroup :items="items" v-model="selected"></ARadioGroup>
+  <ARadioGroup v-model="plan" :items="items" />
 </template>
 
-<script>
-import { ARadioGroup } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ARadioGroup,
-  },
-  data() {
-    return {
-      items: [
-        { label: '选项1', value: '1' },
-        { label: '选项2', value: '2' },
-        { label: '选项3', value: '3' },
-      ],
-      selected: '1',
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: '免费版', value: 'free' },
+  { label: '专业版', value: 'pro' },
+  { label: '企业版', value: 'enterprise' },
+];
+const plan = ref('pro');
 </script>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 监听变化
 
-| 属性名     | 类型                                      | 默认值       | 说明                                                             |
-| ---------- | ----------------------------------------- | ------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| items      | `[{ label: string, value: string }]` 类型 | `[]`         | 由多个对象组成的数组，每个对象包含 `label` 和 `value` 两个属性。 |
-| modelValue | `string                                   | number` 类型 | `none`                                                           | 单选框组件被选中的项的值，必须使用 v-model 进行双向绑定。若属性值不在 items 数组中，则不会有任何选中项的效果。 |
+监听 `change` 事件，在用户选择新选项时执行逻辑。
 
-## Events
+```vue
+<template>
+  <ARadioGroup v-model="color" :items="items" @change="onChange" />
+</template>
 
-该组件会触发以下事件：
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: '浅色', value: 'light' },
+  { label: '深色', value: 'dark' },
+  { label: '跟随系统', value: 'system' },
+];
+const color = ref('system');
+const onChange = (val) => console.log('主题：', val);
+</script>
+```
 
-| 事件名            | 说明                                                                   |
-| ----------------- | ---------------------------------------------------------------------- |
-| update:modelValue | 当单选框组件被选中的项的值发生改变时触发。会传递被选中项的值作为参数。 |
+## 属性
 
-## Exposed Methods & Values
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` | String \| Number | undefined | 已选值（`v-model`）。 |
+| `items` | Array<{ label, value }> | undefined | 单选项。 |
 
-该组件暴露以下方法：
+## 事件
 
-| 方法名           | 说明                                                                        |
-| ---------------- | --------------------------------------------------------------------------- |
-| selected         | 用于获取或设置当前选中的项的值。当值为 `undefined` 时，表示没有选中任何项。 |
-| handleItemChange | 当单选框组件被选中的项的值发生改变时被调用。会传递被选中项作为参数。        |
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | value | 选择变化。 |
+| `change` | value | 选择变化。 |

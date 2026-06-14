@@ -1,65 +1,68 @@
-# ARadioGroup Component
+# ARadioGroup
 
-The `ARadioGroup` component is used to render multiple radio buttons as a group. It accepts an array of objects with `label` and `value` properties as `items` prop. The value of the selected radio button will be bound to the `modelValue` prop.
+`ARadioGroup` binds a single selected value to a set of radios generated from an `items` list. Each option is `{ label, value }`; the group keeps `modelValue` in sync and enforces single selection — perfect for choosing a plan, a shipping method, or a theme.
 
-## Basic Usage
+## Import
+
+```ts
+import { RadioGroup } from '@any-design/anyui/vue';
+// React:  import { RadioGroup } from '@any-design/anyui/react';
+// Svelte: import { RadioGroup } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
+
+Bind the chosen value with `v-model` and pass `items`.
 
 ```vue
 <template>
-  <a-radio-group v-model="selected">
-    <a-radio :label="1">Radio 1</a-radio>
-    <a-radio :label="2">Radio 2</a-radio>
-    <a-radio :label="3">Radio 3</a-radio>
-  </a-radio-group>
+  <ARadioGroup v-model="plan" :items="items" />
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue';
-export default defineComponent({
-  setup() {
-    const selected = ref(1);
-    return { selected };
-  },
-});
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'Free', value: 'free' },
+  { label: 'Pro', value: 'pro' },
+  { label: 'Enterprise', value: 'enterprise' },
+];
+const plan = ref('pro');
 </script>
 ```
 
-In the above example, `a-radio-group` component is used to render a group of radio buttons. The `v-model` directive binds the selected value to `selected` data property. So, initially the first radio button will be selected.
+## Examples
+
+### Reacting to change
+
+Listen to `change` to run logic when the user picks a new option.
+
+```vue
+<template>
+  <ARadioGroup v-model="color" :items="items" @change="onChange" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'Light', value: 'light' },
+  { label: 'Dark', value: 'dark' },
+  { label: 'System', value: 'system' },
+];
+const color = ref('system');
+const onChange = (val) => console.log('theme:', val);
+</script>
+```
 
 ## Props
 
-### items
-
-- **Type:** `Array`
-- **Required:** `true`
-
-This prop contains an array of objects with `label` and `value` properties. It is used to render a group of radio buttons.
-
-### modelValue
-
-- **Type:** `String | Number`
-- **Required:** `false`
-
-This prop contains the value of the selected radio button in the group. It is used to bind the selected value to the component.
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `modelValue` | String \| Number | undefined | Selected value (`v-model`). |
+| `items` | Array<{ label, value }> | undefined | Radio options. |
 
 ## Events
 
-### update:modelValue
-
-This event will be emitted when the selected radio button is changed or cleared. It will return the value of the selected radio button as its argument.
-
-## Exposed Methods and Values
-
-### selected
-
-This is a reactive reference to the currently selected radio button's value. It can be used to bind the value of a radio button group to the component using the `v-model` directive.
-
-### handleItemChange(item)
-
-This method handles the change event of the radio button. It takes an object as its argument and sets the selected value to the given item's value. It will emit the `update:modelValue` event with the selected radio button's value.
-
-### handleClear()
-
-This method will clear the selected value of the radio button group. It should be called when the `clear` event is emitted from `AFormItem` component or any parent component that provides this event.
-
-Note: The internal styles of the component are not documented according to the rules mentioned above.
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:modelValue` | value | Selection change. |
+| `change` | value | Selection change. |

@@ -1,139 +1,108 @@
-# AForm Component
+# AForm
 
-The `AForm` component is a Vue3 component that allows users to define a form with custom validation rules and validation error handling. `AForm` provides options for handling validation and event bus functionality.
+`AForm` is a validation-powered container that coordinates `AFormItem` children. Pass a `modelValue` object and a `rules` map keyed by field name, then call the exposed `validate()` method (via a template ref) to run validation before submit.
 
-## Basic Usage
+## Import
 
-To use `AForm`, import it from `@any-design/anyui` package and insert it into the template. The template typically contains `a-form-item`, `a-input` and `a-select` components to create a form.
+```ts
+import { Form, FormItem } from '@any-design/anyui/vue';
+// React:  import { Form, FormItem } from '@any-design/anyui/react';
+// Svelte: import { Form, FormItem } from '@any-design/anyui/svelte';
+```
 
-Here's a basic example of how to use `AForm`:
+## Basic usage
 
-```html
+A login form with two required fields. `validate()` resolves with a boolean.
+
+```vue
 <template>
-  <a-form :model-value="form">
-    <a-form-item label="Name:" prop="name">
-      <a-input v-model="form.name" />
-    </a-form-item>
-    <a-form-item label="Email:" prop="email">
-      <a-input v-model="form.email" />
-    </a-form-item>
-    <a-form-item>
-      <a-button type="primary" @click="handleSubmit"> Submit </a-button>
-    </a-form-item>
-  </a-form>
+  <AForm ref="formRef" :model-value="model" :rules="rules">
+    <AFormItem prop="email" label="Email">
+      <AInput v-model="model.email" placeholder="you@anyui.dev" />
+    </AFormItem>
+    <AFormItem prop="password" label="Password">
+      <AInput v-model="model.password" type="password" />
+    </AFormItem>
+    <AButton type="primary" @click="onSubmit">Sign in</AButton>
+  </AForm>
 </template>
 
-<script>
-  import { ref } from 'vue';
-  import { AForm, AFormItem, AInput, AButton } from '@any-design/anyui/vue';
+<script setup>
+import { ref } from 'vue';
+const formRef = ref();
+const model = ref({ email: '', password: '' });
+const rules = {
+  email: [{ required: true, message: 'Email is required' }],
+  password: [{ required: true, message: 'Password is required' }],
+};
+const onSubmit = async () => {
+  const ok = await formRef.value.validate();
+  if (ok) console.log('submit', model.value);
+};
+</script>
+```
 
-  export default {
-    components: {
-      AForm,
-      AFormItem,
-      AInput,
-      AButton,
-    },
-    setup() {
-      const form = ref({
-        name: '',
-        email: '',
-      });
+## Examples
 
-      const handleSubmit = async () => {
-        const isValid = await formRef.validate();
-        if (isValid) {
-          console.log('Form submitted successfully.');
-        }
-      };
+### Inline layout
 
-      const formRef = ref();
+Set `layout="inline"` to render items horizontally — good for filter bars.
 
-      return {
-        form,
-        handleSubmit,
-        formRef,
-      };
-    },
-  };
+```vue
+<template>
+  <AForm :model-value="model" :rules="rules" layout="inline">
+    <AFormItem prop="keyword" label="Search">
+      <AInput v-model="model.keyword" />
+    </AFormItem>
+    <AButton type="primary">Apply</AButton>
+  </AForm>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const model = ref({ keyword: '' });
+const rules = { keyword: [{ required: true, message: 'Required' }] };
+</script>
+```
+
+### Programmatic validation and reset
+
+Use the exposed methods to validate a single field, clear validation, or clear values.
+
+```vue
+<template>
+  <AForm ref="formRef" :model-value="model" :rules="rules">
+    <AFormItem prop="name" label="Name">
+      <AInput v-model="model.name" />
+    </AFormItem>
+  </AForm>
+  <AButton @click="formRef.validateField('name')">Check name</AButton>
+  <AButton @click="formRef.clearValidation()">Reset errors</AButton>
+  <AButton @click="formRef.clearFields()">Clear values</AButton>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const formRef = ref();
+const model = ref({ name: '' });
+const rules = { name: [{ required: true, message: 'Name is required' }] };
 </script>
 ```
 
 ## Props
 
-The `AForm` component has the following props:
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `modelValue` | Object | undefined | The form model object. |
+| `rules` | Record<string, FormRuleItem[]> | undefined | Validation rules keyed by field name. |
+| `layout` | 'default' \| 'inline' | 'default' | Stacked or inline layout. |
+| `labelWidth` | String \| Number | '20%' | Width of the label column. |
 
-| Props      | Type              | Default Value | Description                                                   |
-| ---------- | ----------------- | ------------- | ------------------------------------------------------------- |
-| modelValue | `Object`          | `{}`          | The form values which will be bound to this component         |
-| rules      | `Object`          | `{}`          | The validation rules which can be used in async-validator     |
-| layout     | `String`          | `'default'`   | The layout type of the form; can be `'default'` or `'inline'` |
-| labelWidth | `String`/`Number` | `'20%'`       | The width of the label; can be percentage or number           |
+## Methods
 
-## Exposed Methods and Values
-
-The `AForm` component exposes the following methods and values:
-
-| Methods / Values               | Description                                 |
-| ------------------------------ | ------------------------------------------- |
-| emitter                        | The event bus of the form                   |
-| formattedLabelWidth            | The formatted label width of the form       |
-| validate()                     | Validates all the form items by rules       |
-| validateField(field: string)   | Validates a single form item by rule        |
-| clearField(field: string)      | Clears the value of the specified form item |
-| clearFields()                  | Clears all the values                       |
-| clearValidation(field?:string) | Clears the validation states                |
-
-## Example
-
-Here's an example of how to use `AForm` with some of the exposed methods:
-
-```html
-<template>
-  <a-form ref="formRef" v-model="form">
-    <a-form-item label="Name:" prop="name" :rules="{ required: true, message: 'Name is required' }">
-      <a-input v-model="form.name"></a-input>
-    </a-form-item>
-    <a-form-item label="Age:" prop="age" :rules="{ required: true, message: 'Age is required' }">
-      <a-input v-model="form.age"></a-input>
-    </a-form-item>
-    <a-form-item>
-      <a-button type="primary" @click="handleValidate"> Validate </a-button>
-      <a-button type="error" @click="handleClear"> Clear Validation </a-button>
-    </a-form-item>
-  </a-form>
-</template>
-
-<script>
-  import { ref } from 'vue';
-  import { AForm, AFormItem, AInput, AButton } from '@any-design/anyui/vue';
-
-  export default {
-    components: { AForm, AFormItem, AInput, AButton },
-    setup() {
-      const form = ref({
-        name: '',
-        age: '',
-      });
-      const formRef = ref();
-      const handleValidate = async () => {
-        const isValid = await formRef.value.validate();
-        if (isValid) {
-          console.log('Form is valid.');
-        } else {
-          console.log('Form is invalid.');
-        }
-      };
-      const handleClear = async () => {
-        await formRef.value.clearValidation();
-      };
-      return {
-        form,
-        formRef,
-        handleValidate,
-        handleClear,
-      };
-    },
-  };
-</script>
-```
+| Method | Signature | Description |
+| --- | --- | --- |
+| `validate` | () => Promise<boolean> | Validate the whole form; resolves with overall validity. |
+| `validateField` | (field) => Promise<boolean> | Validate a single field. |
+| `clearField / clearFields` | (field?) => void | Clear value(s) and validation state. |
+| `clearValidation` | (field?) => void | Clear validation messages only. |

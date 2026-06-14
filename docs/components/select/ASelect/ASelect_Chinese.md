@@ -1,66 +1,94 @@
-# ASelect 组件文档
+# ASelect
 
-这个组件是一个带下拉框的选择器。
+`ASelect` 是下拉选择器。传入 `{ text, value }` 形式的 `items` 选项数组，用 `v-model` 绑定已选值。开启 `multiple` 即可多选。
 
-## 基本用法和示例
+## 引入
 
-使用 `ASelect` 组件，可以创建一个带下拉框的选择器：
+```ts
+import { Select } from '@any-design/anyui/vue';
+// React:  import { Select } from '@any-design/anyui/react';
+// Svelte: import { Select } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <ASelect v-model="selectedValue" :items="items" />
+  <ASelect v-model="city" :items="cities" placeholder="选择城市" />
 </template>
 
-<script>
-import { ASelect } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ASelect,
-  },
-  data() {
-    return {
-      selectedValue: '',
-      items: [
-        { text: '选项1', value: 'value1' },
-        { text: '选项2', value: 'value2' },
-        { text: '选项3', value: 'value3' },
-      ],
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const city = ref('');
+const cities = [
+  { text: '东京', value: 'tokyo' },
+  { text: '巴黎', value: 'paris' },
+  { text: '纽约', value: 'ny' },
+];
 </script>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 尺寸与圆角
 
-| 属性名      | 类型                         | 默认值                   | 说明                       |
-| ----------- | ---------------------------- | ------------------------ | -------------------------- |
-| width       | String/Number                | '100%'                   | 组件宽度                   |
-| size        | String                       | 'default'                | 组件尺寸                   |
-| round       | Boolean                      | false                    | 是否应用圆角边框到选择器   |
-| modelValue  | String/Number/undefined/null | ''                       | 绑定的值                   |
-| placeholder | String                       | ''                       | 未选中时的占位符           |
-| disabled    | Boolean                      | false                    | 是否禁用选择器             |
-| items       | Object                       | undefined                | 选择器的选项列表           |
-| expandIcon  | String                       | 'ic:outline-expand-more' | 选择器展开按钮的 icon 类型 |
+```vue
+<template>
+  <div class="demo-col">
+    <ASelect size="small" :items="items" placeholder="Small" />
+    <ASelect :items="items" placeholder="Default" />
+    <ASelect round :items="items" placeholder="Round" />
+  </div>
+</template>
+```
 
-## Events
+### 多选
 
-该组件会发出以下 Events：
+开启 `multiple` 后，绑定的值为数组。
 
-| 事件名               | 说明                                                         |
-| -------------------- | ------------------------------------------------------------ |
-| update:modelValue    | 选中选项的 value 发生变化时触发，传递变化后的 value          |
-| popup-status-changed | 下拉框的显示状态发生变化时触发，传递变化后的状态：true/false |
+```vue
+<template>
+  <ASelect v-model="tags" :items="items" multiple placeholder="选择标签" />
+  <p>已选：{{ tags }}</p>
+</template>
 
-## 提供的插槽
+<script setup>
+import { ref } from 'vue';
+const tags = ref([]);
+const items = [
+  { text: 'Vue', value: 'vue' },
+  { text: 'React', value: 'react' },
+  { text: 'Svelte', value: 'svelte' },
+];
+</script>
+```
 
-该组件提供以下插槽：
+### 禁用
 
-| 插槽名  | 说明                           |
-| ------- | ------------------------------ |
-| default | 选择器文本区域的插槽，接受内容 |
-| popup   | 下拉框的插槽，接受内容         |
+```vue
+<template>
+  <ASelect :items="items" disabled placeholder="禁用" />
+</template>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` | String \| Number \| Array \| null | '' | 绑定值（多选时为数组）。 |
+| `items` | Array<{ text, value }> | undefined | 选项列表。 |
+| `placeholder` | String | '' | 占位文本。 |
+| `width` | String \| Number | '100%' | 选择器宽度。 |
+| `size` | 'default' \| 'small' \| 'large' | 'default' | 尺寸。 |
+| `round` | Boolean | false | 圆角样式。 |
+| `multiple` | Boolean | false | 开启多选。 |
+| `disabled` | Boolean | false | 禁用。 |
+| `expandIcon` | String \| IconifyIcon | 'ic:outline-expand-more' | 尾部展开图标。 |
+
+## 事件
+
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | value | 值变化。 |
+| `change` | value | 提交时触发。 |
+| `blur` | FocusEvent | 原生 blur。 |

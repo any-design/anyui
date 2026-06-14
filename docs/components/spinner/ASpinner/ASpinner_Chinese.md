@@ -1,29 +1,50 @@
-# ASpinner 组件文档
+# ASpinner
 
-这个组件是一个加载中的 spinner 图标。
+`ASpinner` 渲染一个旋转的图标 —— 简单的旋转加载动画。通过 `icon` 属性（任意 Iconify 图标名）可替换默认图标，留空则使用内置图标。
 
-## 基本用法和示例
+## 引入
 
-使用 `ASpinner` 组件，可以创建一个包含 spinner 图标的加载中效果：
+```ts
+import { Spinner } from '@any-design/anyui/vue';
+// React:  import { Spinner } from '@any-design/anyui/react';
+// Svelte: import { Spinner } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <ASpinner></ASpinner>
+  <ASpinner />
 </template>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 自定义图标
 
-| 属性名 | 类型   | 默认值               | 说明                     |
-| ------ | ------ | -------------------- | ------------------------ |
-| icon   | String | 'quill:loading-spin' | spinner 图标的 icon 名称 |
-
-示例：
+传入任意 [Iconify](https://iconify.design/) 图标名，旋转它以替代默认图标。
 
 ```vue
 <template>
-  <ASpinner :icon="'fluent:loading_24_regular'"></ASpinner>
+  <ASpinner icon="ri:loader-4-line" />
 </template>
 ```
+
+### 内联在按钮中
+
+与 `ALoading` 类似，spinner 适合放在按钮内表示操作进行中。
+
+```vue
+<template>
+  <AButton type="primary" disabled>
+    <ASpinner icon="ri:loader-4-line" />
+    <span>加载中</span>
+  </AButton>
+</template>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `icon` | String \| IconifyIcon | '' | 旋转的图标（默认使用内置的 spinner）。 |

@@ -1,99 +1,88 @@
-# ACheckboxGroup 组件文档
+# ACheckboxGroup
 
-这个组件是一个复选框组，可以选择多个值。
+`ACheckboxGroup` 将一个选中值数组绑定到由 `items` 列表渲染的一组复选框。每个选项传 `{ label, value }`，用户切换时 `modelValue` 会自动同步 —— 非常适合多选筛选、权限选择和标签选择等场景。
 
-## 基本用法和示例
+## 引入
 
-使用 `ACheckboxGroup` 组件，可以创建一个多选框组：
+```ts
+import { CheckboxGroup } from '@any-design/anyui/vue';
+// React:  import { CheckboxGroup } from '@any-design/anyui/react';
+// Svelte: import { CheckboxGroup } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
+
+用 `v-model` 绑定数组，并传入 `items`。
 
 ```vue
 <template>
-  <ACheckboxGroup :items="['选项1', '选项2', '选项3']" v-model="selectedItems" />
+  <ACheckboxGroup v-model="picked" :items="items" />
 </template>
 
-<script>
-import { ACheckboxGroup } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ACheckboxGroup,
-  },
-  setup() {
-    const selectedItems = ref([]);
-    return {
-      selectedItems,
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: '苹果', value: 'apple' },
+  { label: '香蕉', value: 'banana' },
+  { label: '樱桃', value: 'cherry' },
+];
+const picked = ref(['apple']);
 </script>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 预选值
 
-| 属性名     | 类型                      | 默认值 | 说明                        |
-| ---------- | ------------------------- | ------ | --------------------------- |
-| modelValue | Array                     | []     | 选中的选项的值              |
-| items      | Array\<string \| number\> | -      | 选项的列表                  |
-| gap        | Number                    | 16     | 选项之间的间隙，单位为 px。 |
+在 `modelValue` 中放入初始需要选中的值即可。
+
+```vue
+<template>
+  <ACheckboxGroup v-model="roles" :items="items" />
+  <p>已选：{{ roles }}</p>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: '读取', value: 'read' },
+  { label: '写入', value: 'write' },
+  { label: '管理员', value: 'admin' },
+];
+const roles = ref(['read', 'write']);
+</script>
+```
+
+### 自定义间距
+
+通过 `gap`（像素）调整选项之间的间距。
+
+```vue
+<template>
+  <ACheckboxGroup v-model="tags" :items="items" :gap="32" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'Vue', value: 'vue' },
+  { label: 'React', value: 'react' },
+  { label: 'Svelte', value: 'svelte' },
+];
+const tags = ref([]);
+</script>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` | Array<string \| number> | undefined | 已选值（`v-model`）。 |
+| `items` | Array | undefined | 必填。复选框选项。 |
+| `gap` | Number | 16 | 各项之间的间距（px）。 |
 
 ## 事件
 
-该组件会在下列情况下触发 emit 事件：
-
-| 事件名            | 参数含义                                                         |
-| ----------------- | ---------------------------------------------------------------- |
-| update:modelValue | 当选中的选项改变时，触发该事件，将新的选中的选项值更新至父组件。 |
-
-## 方法和值
-
-该组件暴露了以下方法和值：
-
-### 子组件组合值 `storedValues`
-
-代表了每个选项的选中状态。该值的类型为 `Record<string, boolean>`。
-
-### 生成各个选项所需的样式 `checkboxItemStyles`
-
-`checkboxItemStyles` 是一个计算属性，其工作是为每个选项生成需要的 CSS 样式。
-
-### `changeMethodFactory(item: string | number)`
-
-根据传入的选项值生成函数，用于实时响应用户的选项选择。
-
-### `handleItemChange(checked: boolean, item: string | number)`
-
-处理单个选项的选中状态改变。
-
-示例：
-
-```vue
-<template>
-  <ACheckboxGroup :items="['选项1', '选项2', '选项3']" v-model="selectedItems" />
-</template>
-
-<script>
-import { ACheckboxGroup } from '@any-design/anyui/vue';
-import { ref } from 'vue';
-
-export default {
-  components: {
-    ACheckboxGroup,
-  },
-  setup() {
-    const selectedItems = ref([]);
-    const { storedValues, changeMethodFactory, handleItemChange } = ACheckboxGroup.setup({
-      items: ['选项1', '选项2', '选项3'],
-      modelValue: [],
-    });
-    return {
-      selectedItems,
-      storedValues,
-      changeMethodFactory,
-      handleItemChange,
-    };
-  },
-};
-</script>
-```
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | Array | 选择变化。 |

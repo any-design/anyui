@@ -1,92 +1,130 @@
-# AInput Component Documentation
+# AInput
 
-This component `AInput` is an input field. It provides different variants of input field with the ability to set custom padding for inner content, prefix and postfix sections, and explicit remeasurement of slots if necessary.
+`AInput` is a text field for single-line user input. It supports `v-model` binding, three sizes, prefix/postfix adornment slots, password and other native types, and emits a `submit` event on Enter.
 
-## Basic Usage and Examples
+## Import
 
-The below example illustrates the simple usage of `AInput` component:
+```ts
+import { Input } from '@any-design/anyui/vue';
+// React:  import { Input } from '@any-design/anyui/react';
+// Svelte: import { Input } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
+
+Bind the value with `v-model` and set a placeholder.
 
 ```vue
 <template>
-  <AInput v-model="name"></AInput>
+  <AInput v-model="value" placeholder="Your name" />
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      name: '',
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const value = ref('');
+</script>
+```
+
+## Examples
+
+### Sizes and round
+
+```vue
+<template>
+  <div class="demo-col">
+    <AInput size="small" placeholder="Small" />
+    <AInput placeholder="Default" />
+    <AInput size="large" placeholder="Large" />
+    <AInput round placeholder="Rounded" />
+  </div>
+</template>
+```
+
+### States
+
+Use `disabled` to grey out the field and `readonly` to make it selectable but not editable.
+
+```vue
+<template>
+  <div class="demo-col">
+    <AInput model-value="read only" readonly />
+    <AInput model-value="disabled" disabled />
+    <AInput placeholder="Borderless" borderless />
+  </div>
+</template>
+```
+
+### Password and submit
+
+Set `type="password"` for masked entry. The `submit` event fires when the user presses Enter, carrying the current value.
+
+```vue
+<template>
+  <AInput v-model="pw" type="password" placeholder="Password" @submit="onSubmit" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const pw = ref('');
+const onSubmit = (value) => console.log('submitted:', value);
+</script>
+```
+
+### Prefix, postfix and post-button slots
+
+The `prefix` and `postfix` slots render adornments inside the field (commonly icons), while `post-button` adds a clickable trailing button — perfect for a search box.
+
+```vue
+<template>
+  <AInput v-model="q" placeholder="Search…">
+    <template #prefix><AIcon name="ri:search-line" /></template>
+    <template #post-button>
+      <AButton type="primary" size="small" @click="search">Go</AButton>
+    </template>
+  </AInput>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const q = ref('');
+const search = () => console.log(q.value);
 </script>
 ```
 
 ## Props
 
-The `AInput` component accepts the following props:
-
-| Prop           | Type           | Default   | Description                                                |
-| -------------- | -------------- | --------- | ---------------------------------------------------------- |
-| width          | String, Number | '100%'    | Width of the input field                                   |
-| size           | String         | 'default' | Determines the size of the input field                     |
-| round          | Boolean        | false     | Whether round corners should be applied to the input field |
-| borderless     | Boolean        | false     | When true, no border will be applied to the input field    |
-| modelValue     | String, Number | ''        | Value of the input field                                   |
-| placeholder    | String         | ''        | Placeholder for the input field                            |
-| disabled       | Boolean        | false     | Disables the input field, if set to true                   |
-| readonly       | Boolean        | false     | Set the input field to readonly                            |
-| editable       | Boolean        | true      | Allows input field to be editable                          |
-| type           | String         |           | HTML5 input type of the input field                        |
-| max            | Number         |           | Maximum value for the input field                          |
-| min            | Number         |           | Minimum value for the input field                          |
-| maxlength      | Number         |           | Maximum length of the string in the input field            |
-| minlength      | Number         |           | Minimum length of the string in the input field            |
-| autocomplete   | String         | 'off'     | Sets whether autocomplete is enabled for the input field   |
-| prefixPadding  | Number         |           | Apply padding to the prefix in the input field             |
-| postfixPadding | Number         |           | Apply padding to the postfix in the input field            |
-| leftPadding    | Number         |           | Apply left padding to the input field                      |
-| rightPadding   | Number         |           | Apply right padding to the input field                     |
-| measureSlots   | Boolean        | true      | Measure size of used slots or not                          |
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `modelValue` | String \| Number | '' | Bound value; use `v-model` (Vue) / `bind:` (Svelte) / `value` + `onUpdateModelValue` (React). |
+| `placeholder` | String | '' | Placeholder text. |
+| `width` | String \| Number | '100%' | Width of the input (number → px). |
+| `size` | 'default' \| 'small' \| 'large' | 'default' | Input size. |
+| `round` | Boolean | false | Pill-shaped rounded input. |
+| `borderless` | Boolean | false | Removes the default border. |
+| `disabled` | Boolean | false | Disables the input. |
+| `readonly` | Boolean | false | Makes the input read-only. |
+| `editable` | Boolean | true | When false, the field cannot be edited (still focusable). |
+| `type` | String | undefined | Native input `type`, e.g. `password`, `file`, `number`. |
+| `max / min` | Number | undefined | Native numeric bounds (for `type="number"`). |
+| `maxlength / minlength` | Number | undefined | Native length constraints. |
+| `autocomplete` | String | 'off' | Native autocomplete attribute. |
+| `prefixPadding / postfixPadding` | Number | undefined | Manual padding (px) for the prefix/postfix area when `measureSlots` is off. |
+| `measureSlots` | Boolean | true | Auto-measure prefix/postfix slot widths to pad the text area. (Vue only.) |
 
 ## Events
 
-The `AInput` component emits the following events:
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:modelValue` | String \| Number | Emitted on every value change. |
+| `input` | InputEvent | Native input event. |
+| `change` | InputEvent | Native change event. |
+| `submit` | String | Emitted with the current value on Enter. |
+| `blur` | FocusEvent | Native blur event. |
 
-- 'update:modelValue': This event is emitted whenever the input value changes, it emits the current value of the input field as a payload.
-- 'submit': This event is emitted when Enter key is pressed, it emits the current value of the input field as a payload.
+## Slots
 
-## Example
-
-The below example depicts the use of various props of the `AInput` component:
-
-```vue
-<template>
-  <AInput
-    v-model="name"
-    size="large"
-    placeholder="Enter your name"
-    round
-    width="50%"
-    autocomplete="on"
-    :disabled="false"
-    :readonly="false"
-    :editable="true"
-    maxlength="100"
-    minlength="2"
-    type="text"
-  />
-</template>
-
-<script>
-export default {
-  data() {
-    return {
-      name: '',
-    };
-  },
-};
-</script>
-```
-
-In the given example, a rounded input field with size "large", placeholder "Enter your name", width "50%", autocomplete enabled, and editable is configured. The minlength and maxlength for the input are set to 2 and 100, respectively.
+| Slot | Props | Description |
+| --- | --- | --- |
+| `prefix` | — | Content rendered before the text (e.g. an icon). |
+| `postfix` | — | Content rendered after the text. |
+| `post-button` | — | A clickable button after the text. |

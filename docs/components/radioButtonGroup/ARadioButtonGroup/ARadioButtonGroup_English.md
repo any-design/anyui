@@ -1,75 +1,94 @@
-# @any-design/anyui ARadioButtonGroup Component
+# ARadioButtonGroup
 
-The `ARadioButtonGroup` component is part of the `@any-design/anyui` package and can be used to create a group of radio buttons. It provides a customizable and flexible solution for creating a list of radio items.
+`ARadioButtonGroup` is a button-styled radio group. It behaves like `ARadioGroup` — bind one value with `v-model` and render options from `items` — but each option renders as a segmented button, with an optional `round` pill shape. The package also exports `ARadioButton` for hand-placed button radios.
 
-## Basic Usage
+## Import
 
-To use `ARadioButtonGroup`, include it in your Vue component like this:
+```ts
+import { RadioButtonGroup } from '@any-design/anyui/vue';
+// React:  import { RadioButtonGroup } from '@any-design/anyui/react';
+// Svelte: import { RadioButtonGroup } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
+
+Bind the selected value and pass `items`.
 
 ```vue
 <template>
-  <ARadioButtonGroup :items="radioItems" v-model="selectedItem" :round="isRound" />
+  <ARadioButtonGroup v-model="view" :items="items" />
 </template>
 
-<script>
-import { defineComponent, reactive } from 'vue';
-import { RadioButtonGroup } from '@any-design/anyui/vue';
-
-export default defineComponent({
-  components: {
-    ARadioButtonGroup: RadioButtonGroup,
-  },
-  setup() {
-    const state = reactive({
-      radioItems: [
-        { label: 'Option 1', value: '1' },
-        { label: 'Option 2', value: '2' },
-        { label: 'Option 3', value: '3' },
-      ],
-      selectedItem: '',
-      isRound: true,
-    });
-
-    return state;
-  },
-});
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'List', value: 'list' },
+  { label: 'Grid', value: 'grid' },
+  { label: 'Map', value: 'map' },
+];
+const view = ref('list');
 </script>
 ```
 
-In the example above, the `ARadioButtonGroup` component is imported from the `@any-design/anyui/vue` package and included in the template section of the Vue component. Props can be passed to `ARadioButtonGroup` to customize it. The `items` prop is an array of objects with two properties: `label` and `value`. The `v-model` directive is used to bind the selected radio button value to `selectedItem`. The `round` prop is used to set a rounded border style to the `ARadioButtonGroup` component.
+## Examples
+
+### Rounded variant
+
+Add `round` for a pill-shaped segmented control.
+
+```vue
+<template>
+  <ARadioButtonGroup v-model="size" :items="items" round />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'S', value: 's' },
+  { label: 'M', value: 'm' },
+  { label: 'L', value: 'l' },
+  { label: 'XL', value: 'xl' },
+];
+const size = ref('m');
+</script>
+```
+
+### Reacting to change
+
+Use `change` to react when the user switches segments.
+
+```vue
+<template>
+  <ARadioButtonGroup v-model="range" :items="items" @change="onChange" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'Today', value: 'today' },
+  { label: 'Week', value: 'week' },
+  { label: 'Month', value: 'month' },
+];
+const range = ref('week');
+const onChange = (val) => console.log('range:', val);
+</script>
+```
 
 ## Props
 
-### items
-
-- Type: `Array`
-- Required: `false`
-
-An array of objects that will be rendered as a group of radio buttons. Each object must have `label` and `value` properties.
-
-### modelValue
-
-- Type: `String` or `Number`
-- Required: `false`
-
-The value of the currently selected radio button. This value is bound to the component and can be accessed via the `v-model` directive.
-
-### round
-
-- Type: `Boolean`
-- Required: `false`
-- Default: `false`
-
-Set this prop to `true` to apply a rounded border style to the `ARadioButtonGroup` component.
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `modelValue` | String \| Number | undefined | Selected value (`v-model`). |
+| `items` | Array<{ label, value }> | undefined | Options. |
+| `round` | Boolean | false | Pill-shaped group. |
 
 ## Events
 
-The `ARadioButtonGroup` component emits the following events:
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:modelValue` | value | Selection change. |
+| `change` | value | Selection change. |
 
-### update:modelValue
+## Notes
 
-This event will be emitted when the user clicks on a radio button in the group or when the value has been cleared. The `value` parameter of the emitted event is the value of the clicked radio button.
-
-## Exposed Methods or Values
-
-The `ARadioButtonGroup` component doesn't expose any methods or values other than the props and events mentioned above.
+The package also registers `ARadioButton` (exported as `RadioButton`) for use as individual button radios.

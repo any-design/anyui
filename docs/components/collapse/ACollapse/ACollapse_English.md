@@ -1,40 +1,79 @@
-# @any-design/anyui: Collapse Component
+# ACollapse
 
-## Introduction
+`ACollapse` is a transition wrapper that animates its content between expanded and collapsed states. Toggle `visible` to expand or collapse. Set `direction` for horizontal collapse, and `alwaysRender` to keep content in the DOM when hidden.
 
-The `@any-design/anyui` collapse component provides the functionality of hiding expanded content on user interactions. When the user performs an interaction, the component collapses, hiding the hierarchy information.
+## Import
 
-## Basic Usage
-
-You can start using the `@any-design/anyui` collapse component by importing it as shown below:
-
-```javascript
+```ts
 import { Collapse } from '@any-design/anyui/vue';
+// React:  import { Collapse } from '@any-design/anyui/react';
+// Svelte: import { Collapse } from '@any-design/anyui/svelte';
 ```
 
-After importing, you can use it in your Vue application or component as shown below:
+## Basic usage
 
-```html
+```vue
 <template>
-  <!-- Required tags for Collapse -->
-  <a-collapse :visible="isExpanded">
-    <div>
-      <h2>This is the header of the content</h2>
-      <p>This is the main content which will be hidden on collapse</p>
-    </div>
-  </a-collapse>
+  <AButton @click="open = !open">Toggle</AButton>
+  <ACollapse :visible="open">
+    <p>This content expands and collapses smoothly.</p>
+  </ACollapse>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const open = ref(true);
+</script>
 ```
 
-The first tag required for the collapse is the `a-collapse` tag. You should enclose the content you want to hide with `a-collapse` tag. The `visible` attribute is used to control whether the content is visible or hidden by default. If `visible` is set to `true`, the default content of the tag will be visible on the page. If `visible` is set to `false`, the content of the tag will be hidden on the page.
+## Examples
+
+### Horizontal
+
+Set `direction="horizontal"` to collapse width instead of height.
+
+```vue
+<template>
+  <AButton @click="open = !open">Toggle</AButton>
+  <ACollapse :visible="open" direction="horizontal">
+    <div style="width: 300px">Collapses horizontally.</div>
+  </ACollapse>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const open = ref(true);
+</script>
+```
+
+### Always render
+
+By default the content is removed from the DOM after collapsing. Set `alwaysRender` to keep it mounted (useful for forms that shouldn't lose state).
+
+```vue
+<template>
+  <ACollapse :visible="open" always-render>
+    <AInput placeholder="State is preserved" />
+  </ACollapse>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const open = ref(true);
+</script>
+```
 
 ## Props
 
-The `@any-design/anyui` collapse component includes the following props:
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `visible` | Boolean | false | Whether content is expanded. |
+| `direction` | 'horizontal' \| 'vertical' | 'vertical' | Collapse direction. |
+| `alwaysRender` | Boolean | false | Keep content in the DOM when collapsed. |
+| `renderWaitTime` | Number | 100 | Delay (ms) before removing content after collapse. |
 
-| Name           | Type    | Options/Default | Description                                                       |
-| -------------- | ------- | --------------- | ----------------------------------------------------------------- |
-| visible        | Boolean | false           | The initial visibility state of the collapse content              |
-| direction      | String  | 'vertical'      | the direction of the collapse, can be 'horizontal' or 'vertical'. |
-| alwaysRender   | Boolean | false           | If true, the collapse will not be destroyed when it is collapsed. |
-| renderWaitTime | Number  | 100             | A render delay after the value changed, in milliseconds.          |
+## Slots
+
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | — | Collapsible content. |

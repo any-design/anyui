@@ -1,86 +1,94 @@
-# ARadioButtonGroup 组件文档
+# ARadioButtonGroup
 
-这个组件是一个单选按钮组。
+`ARadioButtonGroup` 是按钮样式的单选组。它的行为与 `ARadioGroup` 一致 —— 用 `v-model` 绑定单个值，并通过 `items` 渲染选项 —— 但每个选项渲染为分段按钮，并支持 `round` 胶囊外形。该包还导出 `ARadioButton`，可手动放置按钮式单选项。
 
-## 基本用法和示例
+## 引入
 
-使用 `ARadioButtonGroup` 组件，可以创建一个单选按钮组：
+```ts
+import { RadioButtonGroup } from '@any-design/anyui/vue';
+// React:  import { RadioButtonGroup } from '@any-design/anyui/react';
+// Svelte: import { RadioButtonGroup } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
+
+绑定已选值并传入 `items`。
 
 ```vue
 <template>
-  <ARadioButtonGroup
-    :items="[
-      { label: '选项1', value: '1' },
-      { label: '选项2', value: '2' },
-      { label: '选项3', value: '3' },
-    ]"
-    v-model="selectedValue"
-    :round="false"
-  />
+  <ARadioButtonGroup v-model="view" :items="items" />
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: '列表', value: 'list' },
+  { label: '网格', value: 'grid' },
+  { label: '地图', value: 'map' },
+];
+const view = ref('list');
+</script>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 圆角变体
 
-| 属性名     | 类型                               | 默认值 | 说明                                                           |
-| ---------- | ---------------------------------- | ------ | -------------------------------------------------------------- |
-| items      | Array<{label: string, value: any}> | -      | 单选按钮组中每个选项的信息，必须用 `label` 和 `value` 属性表示 |
-| modelValue | String/Number                      | -      | 绑定单选按钮组的值                                             |
-| round      | Boolean                            | false  | 是否应用圆角边框到单选按钮组                                   |
+添加 `round` 即可获得胶囊形分段控件。
+
+```vue
+<template>
+  <ARadioButtonGroup v-model="size" :items="items" round />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'S', value: 's' },
+  { label: 'M', value: 'm' },
+  { label: 'L', value: 'l' },
+  { label: 'XL', value: 'xl' },
+];
+const size = ref('m');
+</script>
+```
+
+### 监听变化
+
+使用 `change` 事件响应用户切换分段。
+
+```vue
+<template>
+  <ARadioButtonGroup v-model="range" :items="items" @change="onChange" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: '今天', value: 'today' },
+  { label: '本周', value: 'week' },
+  { label: '本月', value: 'month' },
+];
+const range = ref('week');
+const onChange = (val) => console.log('范围：', val);
+</script>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` | String \| Number | undefined | 已选值（`v-model`）。 |
+| `items` | Array<{ label, value }> | undefined | 选项。 |
+| `round` | Boolean | false | 胶囊形圆角组。 |
 
 ## 事件
 
-该组件会触发以下事件：
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | value | 选择变化。 |
+| `change` | value | 选择变化。 |
 
-| 事件名            | 参数                 | 说明                                           |
-| ----------------- | -------------------- | ---------------------------------------------- |
-| update:modelValue | value: String/Number | 单选按钮组选择改变时触发，会把新值作为参数传递 |
+## 说明
 
-## 作用域插槽
-
-该组件没有作用域插槽。
-
-## 内部属性和方法
-
-该组件没有暴露任何内部属性或方法。
-
-## ARadioButton 组件
-
-单选按钮组内部使用了 `ARadioButton` 组件，该组件可以单独使用，也可以在单选按钮组内部使用。
-
-### Props
-
-`ARadioButton` 组件接受以下 props：
-
-| 属性名   | 类型            | 默认值 | 说明           |
-| -------- | --------------- | ------ | -------------- |
-| item     | Object          | -      | 单选按钮的信息 |
-| selected | Boolean         | -      | 是否被选中     |
-| onClick  | Function(value) | -      | 点击事件回调   |
-
-其中，`item` 对象必须含有 `label` 和 `value` 属性。
-
-示例：
-
-```vue
-<template>
-  <ARadioButton :item="{ label: '选项1', value: '1' }" :selected="true" :onClick="handleClick" />
-</template>
-
-<script>
-import { ARadioButton } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ARadioButton,
-  },
-  methods: {
-    handleClick(value) {
-      console.log('clicked:', value);
-    },
-  },
-};
-</script>
-```
+该包还注册了 `ARadioButton`（以 `RadioButton` 导出），可作为独立的按钮式单选项使用。

@@ -1,120 +1,87 @@
-# ADrawer 组件文档
+# ADrawer
 
-这个组件是一个抽屉。
+`ADrawer` 是从视口左 / 右边缘滑入的侧边面板。通过 `v-model` 控制显隐，用 `position` 选择停靠边，并控制遮罩与滚动锁定行为。
 
-## 基本用法和示例
+## 引入
 
-使用 `ADrawer` 组件，可以创建一个抽屉：
+```ts
+import { Drawer } from '@any-design/anyui/vue';
+// React:  import { Drawer } from '@any-design/anyui/react';
+// Svelte: import { Drawer } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <ADrawer v-model="isDrawerVisible">我是抽屉</ADrawer>
+  <AButton @click="open = true">打开抽屉</AButton>
+  <ADrawer v-model="open" title="筛选">
+    <p>在这里精炼你的结果。</p>
+  </ADrawer>
 </template>
 
-<script>
-import { ADrawer } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ADrawer,
-  },
-  data() {
-    return {
-      isDrawerVisible: false,
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const open = ref(false);
 </script>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 右侧、自定义宽度
 
-| 属性名         | 类型                   | 默认值          | 说明                               |
-| -------------- | ---------------------- | --------------- | ---------------------------------- |
-| drawerClass    | String                 |                 | 应用于抽屉的 class                 |
-| maskClass      | String                 |                 | 应用于抽屉遮罩的 class             |
-| bodyClass      | String                 |                 | 应用于抽屉主体的 class             |
-| appendToBody   | Boolean                | true            | 是否移动到 body 上                 |
-| position       | String                 | 'left'          | 抽屉的位置，可选值为 'left' 或 'right' |
-| modelValue     | Boolean                | false           | 表示抽屉是否可见的 Boolean 值      |
-| withMask       | Boolean                | true            | 是否显示遮罩                       |
-| width          | String/Number          | '30%'           | 抽屉的宽度                         |
-| zIndex         | Number                 | 100             | 抽屉的 z-index                     |
-| maskZIndex     | Number                 |                 | 遮罩的 z-index                     |
-| transitionName | String                 |                 | 抽屉过渡效果的名称                 |
-| lockScroll     | Boolean                | true            | 是否锁定抽屉展开时，父容器不可滚动 |
-| lockTarget     | String                 | 'document.body' | 容器锁定的元素                     |
-
-### position
-
-该属性用于设置抽屉的位置。可以是以下值:
-
-- left(默认)，表示抽屉出现在左侧
-- right，表示抽屉出现在右侧
-
-### width
-
-该属性设置抽屉的宽度，默认为 '30%' 。除了基本的字符串之外，也可以传递数字表示像素。
-
-### transitionName
-
-该属性设置抽屉过渡效果的名称。
-
-### lockTarget
-
-该属性用于定义锁定抽屉展开时父容器不可滚动的目标元素，默认为 'document.body' 。
-
-### lockScroll
-
-该属性用于控制锁定父容器是否可滚动，true 为锁定不可滚动，false 为不锁定，抽屉展开时仍然可以滚动父容器。
-
-## Events
-
-该组件将会触发以下事件：
-
-| 事件名            | 说明             |
-| ----------------- | ---------------- |
-| update:modelValue | 更改视图是否可见 |
-
-## Slots
-
-该组件含有默认 slot，用法如下：
+`position="right"` 让面板停靠在右侧；`width` 接受任意 CSS 长度。
 
 ```vue
 <template>
-  <ADrawer v-model="isDrawerVisible">
-    <p>这是 slot 内的内容</p>
+  <ADrawer v-model="open" position="right" width="420px">
+    <h3>账户设置</h3>
+    <AInput placeholder="显示名" />
+  </ADrawer>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const open = ref(true);
+</script>
+```
+
+### 无遮罩
+
+设置 `with-mask="false"` 可在抽屉打开时保持页面可交互。
+
+```vue
+<template>
+  <ADrawer v-model="open" :with-mask="false">
+    <p>背后的页面仍可操作。</p>
   </ADrawer>
 </template>
 ```
 
-## 示例代码
+## 属性
 
-下面的代码演示了一个 `ADrawer` 的基本用法：
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` | Boolean | false | 是否可见（`v-model`）。 |
+| `position` | 'left' \| 'right' | 'left' | 抽屉滑出的边缘。 |
+| `width` | String \| Number | '30%' | 宽度。 |
+| `withMask` | Boolean | true | 显示遮罩。 |
+| `appendToBody` | Boolean | true | 挂载到 body。 |
+| `lockScroll` | Boolean | true | 打开时锁定滚动。 |
+| `lockTarget` | String | 'document.body' | 锁定元素的 CSS 选择器（传给 querySelector）。 |
+| `zIndex` | Number | 100 | 面板的 z-index。 |
+| `maskZIndex` | Number | undefined | 遮罩的 z-index。 |
+| `drawerClass / maskClass / bodyClass` | String | undefined | 额外的类名钩子。 |
+| `transitionName` | String | undefined | 覆盖过渡名。 |
 
-```vue
-<template>
-  <div>
-    <button @click="isDrawerVisible = true">打开抽屉</button>
-    <ADrawer v-model="isDrawerVisible">
-      <p>这是一个抽屉</p>
-    </ADrawer>
-  </div>
-</template>
+## 事件
 
-<script>
-import { ADrawer } from '@any-design/anyui/vue';
-export default {
-  components: {
-    ADrawer,
-  },
-  data() {
-    return {
-      isDrawerVisible: false,
-    };
-  },
-};
-</script>
-```
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | Boolean | 可见性变化。 |
+
+## 插槽
+
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `default` | — | 抽屉内容。 |

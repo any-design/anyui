@@ -1,64 +1,52 @@
-# ASplit 组件文档
+# ASplit
 
-这个组件是一条分割线。
+`ASplit` 是横向分割线，用于分隔内容区块。它没有插槽 —— 只渲染一条线，可配置 `height`、`color`、`margin` 与 `round`。
 
-## 基本用法和示例
+## 引入
 
-使用 `ASplit` 组件，可以创建一条分割线：
+```ts
+import { Split } from '@any-design/anyui/vue';
+// React:  import { Split } from '@any-design/anyui/react';
+// Svelte: import { Split } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <ASplit :height="4" color="red" :round="true" margin="20px"></ASplit>
+  <p>第一部分</p>
+  <ASplit />
+  <p>第二部分</p>
 </template>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 自定义颜色
 
-| 属性名 | 类型                   | 默认值          | 说明                                   |
-| ------ | ---------------------- | --------------- | -------------------------------------- |
-| height | `String`或`Number`类型 | `2`             | 分割线的高度，可以是百分比或数字       |
-| color  | `String`类型           | `'var(--line)'` | 分割线的颜色                           |
-| margin | `String`或`Number`类型 | `12`            | 分割线的上下外边距，可以是百分比或数字 |
-| round  | `Boolean`类型          | `false`         | 分割线是否显示带圆角边框               |
-
-分割线高度示例:
+向 `color` 传入任意 CSS 颜色。
 
 ```vue
 <template>
-  <ASplit :height="200"></ASplit>
+  <ASplit color="var(--primary)" />
 </template>
-
-<script>
-import { ASplit } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ASplit,
-  },
-};
-</script>
 ```
 
-圆角边框示例：
+### 圆角与间距
+
+`round` 柔化线条两端；`margin` 设置纵向间距。
 
 ```vue
 <template>
-  <ASplit :height="4" color="red" :round="true" margin="20px"></ASplit>
+  <ASplit round :margin="24" />
 </template>
-
-<script>
-import { ASplit } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ASplit,
-  },
-};
-</script>
 ```
 
-## 暴露的方法与值
+## 属性
 
-该组件没有暴露的方法与值。
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `height` | String \| Number | 2 | 线条粗细。 |
+| `color` | String | 'var(--line)' | 颜色。 |
+| `margin` | String \| Number | 12 | 纵向间距（px）。 |
+| `round` | Boolean | false | 圆角线条。 |

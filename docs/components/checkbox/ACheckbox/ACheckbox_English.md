@@ -1,163 +1,76 @@
-# ACheckbox Component
+# ACheckbox
 
-The `ACheckbox` component is a Vue component that allows the user to select an item by clicking an icon. The component provides an option for a label after the checkbox, a check icon to be shown if the checkbox is checked, and a bound value to the component.
+`ACheckbox` is a standalone checkbox control. Bind its checked state with `v-model`, give it a descriptive `label`, and optionally swap the check icon. It is the building block behind `ACheckboxGroup` but works perfectly on its own for boolean toggles like "remember me" or "agree to terms".
 
-## Basic Usage
+## Import
+
+```ts
+import { Checkbox } from '@any-design/anyui/vue';
+// React:  import { Checkbox } from '@any-design/anyui/react';
+// Svelte: import { Checkbox } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
+
+Bind a boolean with `v-model` and listen to `change`.
 
 ```vue
 <template>
-  <a-checkbox label="anyui checkbox" v-model="checked" />
+  <ACheckbox v-model="checked">Remember me</ACheckbox>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue';
-import { ACheckbox } from '@any-design/anyui/vue';
+<script setup>
+import { ref } from 'vue';
+const checked = ref(false);
+</script>
+```
 
-export default defineComponent({
-  components: {
-    ACheckbox,
-  },
-  setup() {
-    const checked = ref(false);
+## Examples
 
-    return {
-      checked,
-    };
-  },
-});
+### With a label
+
+Set `label` for the text next to the box, or just put text in the default slot.
+
+```vue
+<template>
+  <ACheckbox label="Subscribe to newsletter" v-model="sub" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const sub = ref(true);
+</script>
+```
+
+### Checked by default and custom icon
+
+Pre-set `model-value` to `true` and override `checkIcon` with any Iconify name.
+
+```vue
+<template>
+  <ACheckbox v-model="agree" checkIcon="ri:check-line">
+    I accept the terms of service
+  </ACheckbox>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const agree = ref(true);
 </script>
 ```
 
 ## Props
 
-### label
-
-- Type: `String`
-
-A label text after the checkbox.
-
-Example:
-
-```vue
-<a-checkbox label="anyui checkbox" />
-```
-
-### checkIcon
-
-- Type: `String`
-- Default: `'si-glyph:checked'`
-
-The icon which will be showed when the checkbox is checked.
-
-Example:
-
-```vue
-<a-checkbox check-icon="fas fa-check-circle" />
-```
-
-### modelValue
-
-- Type: `Boolean`
-- Default: `false`
-
-The value which will be bound to this component.
-
-Example:
-
-```vue
-<a-checkbox v-model="checked" />
-```
-
-### iconTransition
-
-- Type: `String`
-- Default: `'a-trans-check-icon'`
-
-The class name of icon for transition.
-
-Example:
-
-```vue
-<a-checkbox icon-transition="a-example-icon-transition" />
-```
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `modelValue` | Boolean | false | Checked state (`v-model`). |
+| `label` | String \| Number | undefined | Label shown next to the box. |
+| `checkIcon` | String \| IconifyIcon | 'si-glyph:checked' | Icon used for the checked state. |
+| `iconTransition` | String | 'a-trans-check-icon' | Transition name for the check icon. |
 
 ## Events
 
-### change
-
-- Payload: `Boolean`
-
-Emits when the value changed. With the new value.
-
-Example:
-
-```vue
-<a-checkbox @change="onChange" />
-
-<script>
-export default {
-  methods: {
-    onChange(newValue) {
-      console.log(newValue);
-    },
-  },
-};
-</script>
-```
-
-### update:modelValue
-
-- Payload: `Boolean`
-
-Emits when the value changed and will update the value in parent.
-
-Example:
-
-```vue
-<a-checkbox v-model="checked" />
-
-<script>
-export default {
-  data() {
-    return {
-      checked: false,
-    };
-  },
-};
-</script>
-```
-
-## Exposed Methods and Values
-
-### checked
-
-- Type: `ref<Boolean>`
-
-The value of the checkbox, and it is reactive.
-
-Example:
-
-```vue
-<template>
-  <a-checkbox v-model="checked" />
-  {{ checked }} // true/false
-</template>
-
-<script>
-import { ref } from 'vue';
-import { ACheckbox } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ACheckbox,
-  },
-  setup() {
-    const checked = ref(false);
-
-    return {
-      checked,
-    };
-  },
-};
-</script>
-```
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:modelValue` | Boolean | Checked state change. |
+| `change` | Boolean | Same as update. |

@@ -1,16 +1,65 @@
-# APopper Component
+# APopper
 
-The `APopper` component is a versatile wrapper that provides common functionalities such as show/hide poppers, event listeners, and popper rendering. It supports different options that control how the component should be triggered, where it should be placed, and how it should handle external clicks.
+`APopper` is the low-level positioning primitive (built on Popper.js) that powers `ATooltip`, `ADropdownMenu`, and `APopupMenu`. Use it directly when you need a custom popup anchored to a trigger with full control over placement and trigger behavior.
 
-## Basic Usage of APopper Component
+## Import
 
-Here is an example how to use `APopper` component in Vue:
+```ts
+import { Popper } from '@any-design/anyui/vue';
+// React:  import { Popper } from '@any-design/anyui/react';
+// Svelte: import { Popper } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
+
+Hover the trigger to show the popup slot.
 
 ```vue
 <template>
-  <APopper triggerType="click" placement="bottom" closeWhenClickOutside>
-    <template v-slot:popup>
-      <!-- The content of the popup goes here. -->
+  <APopper placement="top">
+    <AButton>Hover me</AButton>
+    <template #popup>
+      <div class="custom-pop">Custom popup content!</div>
+    </template>
+  </APopper>
+</template>
+```
+
+## Examples
+
+### Manual trigger
+
+Set `triggerType="manual"` and call the exposed `show()` / `hide()` methods via a template ref for full programmatic control.
+
+```vue
+<template>
+  <APopper ref="popper" trigger-type="manual">
+    <AButton @click="popper.show()">Open</AButton>
+    <template #popup>
+      <div class="custom-pop">
+        Controlled popup
+        <AButton size="small" @click="popper.hide()">Close</AButton>
+      </div>
+    </template>
+  </APopper>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const popper = ref();
+</script>
+```
+
+### Right-click
+
+Use `triggerType="contextmenu"` to anchor a popup to a right-click.
+
+```vue
+<template>
+  <APopper trigger-type="contextmenu" placement="bottom-start">
+    <div class="canvas">Right-click me</div>
+    <template #popup>
+      <div class="custom-pop">Context actions here</div>
     </template>
   </APopper>
 </template>
@@ -18,53 +67,35 @@ Here is an example how to use `APopper` component in Vue:
 
 ## Props
 
-`APopper` accepts the following props:
-
-| Prop                  | Type    | Default  | Description                                                                                                      |
-| --------------------- | ------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
-| hideDelay             | Number  | 100      | The delay in milliseconds before the popper is hidden.                                                           |
-| placement             | String  | 'bottom' | The placement of the popper, same as the popperjs.                                                               |
-| triggerType           | String  | 'hover'  | The trigger type of the popper. It can be 'hover', 'click', or 'manual'.                                         |
-| offset                | Number  | 18       | The offset between the trigger element and the popup.                                                            |
-| zIndex                | Number  | 3000     | The z-index value of the popup.                                                                                  |
-| appendToBody          | Boolean | true     | If true, the popup will be appended to the body.                                                                 |
-| popupClass            | String  |          | The class name of the popup.                                                                                     |
-| transition            | String  |          | The transition class name of the popup.                                                                          |
-| closeWhenClickOutside | Boolean | true     | If true, the popup will be closed when clicking outside of it. It only takes effect when triggerType is "click". |
-| group                 | String  |          | Group id for mutually exclusive popups.                                                                          |
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `placement` | Placement | 'bottom' | Placement. |
+| `triggerType` | 'hover' \| 'click' \| 'contextmenu' \| 'manual' | 'hover' | Trigger type. |
+| `offset` | Number | 18 | Offset (px). |
+| `hideDelay` | Number | 100 | Hide delay (ms). |
+| `closeWhenClickOutside` | Boolean | true | Close on outside click. |
+| `zIndex` | Number | 3000 | z-index. |
+| `appendToBody` | Boolean | true | Append to body. |
+| `transition` | String | undefined | Transition name. |
+| `popupClass` | String | undefined | Class hook. |
+| `group` | String | '' | Shared popper group. |
 
 ## Events
 
-The `APopper` component emits the following event:
+| Event | Payload | Description |
+| --- | --- | --- |
+| `popupStatusChanged` | Boolean | Visibility change. |
 
-- popupStatusChanged: This event is triggered when the visibility state of the popup changes. The new visibility state is emitted as the payload.
+## Slots
 
-## Exposed Methods
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | — | Trigger element. |
+| `popup` | — | Popup content. |
 
-`APopper` exposes the following methods:
+## Methods
 
-- `show`: This method is used to show the popup. There are no arguments.
-- `hide`: This method is used to hide the popup. There are no arguments.
-- `getTriggerEl`: This method is used to get the trigger element. It returns `HTMLElement` and accepts no arguments.
-- `getPopupEl`: This method is used to get the popup element. It returns `HTMLElement` and accepts no arguments.
-
-## Example
-
-Here is an example of using the `APopper` component with customized props and slots:
-
-```vue
-<template>
-  <APopper triggerType="click" placement="top" :appendToBody="false" popupClass="my-popup">
-    <button slot="default">Open Popover</button>
-    <div slot="popup">This is the popup content!</div>
-  </APopper>
-</template>
-
-<script>
-export default {
-  components: {
-    APopper,
-  },
-};
-</script>
-```
+| Method | Signature | Description |
+| --- | --- | --- |
+| `show / hide` | () => void | Programmatic control (useful with `triggerType="manual"`). |
+| `getTriggerEl / getPopupEl` | () => HTMLElement | DOM accessors. |

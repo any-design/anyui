@@ -1,60 +1,31 @@
-# ARadioButton Component
+# ARadioButton
 
-The ARadioButton is a component that allows you to display a radio button.
+ARadioButton is a single button-style radio, exported alongside ARadioButtonGroup.
+
+## Import
+
+```ts
+import { RadioButton } from '@any-design/anyui/vue';
+```
+
+For React and Svelte, import from `@any-design/anyui/react` and `@any-design/anyui/svelte` respectively — the component API is identical.
 
 ## Basic Usage
 
-You can use the ARadioButton component in your Vue templates like this:
-
 ```vue
 <template>
-  <ARadioButton item="{label: string, value: string}" selected="{Boolean}" @click="handleClicked" />
+  <ARadioButton />
 </template>
 
-<script>
+<script setup>
 import { RadioButton } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ARadioButton: RadioButton,
-  },
-  methods: {
-    handleClicked(event) {
-      console.log(event);
-      // handle when clicked the button.
-      // Will print an object with the value of the button and the position of it.
-      // Example: { value: "anyValue", position: { width: 10, left: 20 } }
-    },
-  },
-};
 </script>
 ```
 
 ## Props
 
-The ARadioButton component accepts the following props:
-
-### item
-
-- **Description:** A object with `label` and `value` properties that will be used to render the radio button.
-- **Type:** `Object`
-- **Required:** `false`
-- **Default value:** `null`
-- **Example:** `{ label: 'Option 1', value: 'opt1' }`
-
-### selected
-
-- **Description:** Whether the radio button is selected or not.
-- **Type:** `Boolean`
-- **Required:** `false`
-- **Default value:** `false`
-- **Example:** `selected="{true}"`
-
-## Events
-
-The ARadioButton component emits the following event:
-
-### click
-
-- **Description:** Triggered when the radio button is clicked. Returns an object with the value of the button and the position of it.
-- **Example:** `{ value: "anyValue", position: { width: 10, left: 20 } }`
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `label` | String | '' | Label shown on the button. |
+| `value` | String \| Number | undefined | Value this button represents. |
+| `disabled` | Boolean | false | Disabled. |

@@ -1,63 +1,92 @@
-# AUpload component documentation
+# AUpload
 
-This component is designed as a drag-and-drop file uploader.
+`AUpload` is a drag-and-drop / click file surface. It emits a single `File` via the `upload` event — it does **not** perform the HTTP request itself. Drive its `status` prop to show uploading / success / error states, each with its own slot.
 
-## Basic usage and examples
+## Import
 
-Using the `AUpload` component, you can create a drag-and-drop area for file uploading:
+```ts
+import { Upload } from '@any-design/anyui/vue';
+// React:  import { Upload } from '@any-design/anyui/react';
+// Svelte: import { Upload } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
 
 ```vue
 <template>
-  <AUpload />
+  <AUpload @upload="onUpload" />
+</template>
+
+<script setup>
+const onUpload = (file) => {
+  console.log('got file:', file.name);
+  // send to your API here
+};
+</script>
+```
+
+## Examples
+
+### Status-driven states
+
+Set `status` to show the corresponding slot (`uploading`, `success`, `error`).
+
+```vue
+<template>
+  <AUpload :status="status" @upload="handle">
+    <template #uploading>Uploading {{ fileName }}…</template>
+    <template #success>{{ fileName }} uploaded!</template>
+    <template #error>Upload failed — try again.</template>
+  </AUpload>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const status = ref('');
+const fileName = ref('');
+const handle = async (file) => {
+  fileName.value = file.name;
+  status.value = 'uploading';
+  try {
+    // await api.upload(file)
+    status.value = 'success';
+  } catch {
+    status.value = 'error';
+  }
+};
+</script>
+```
+
+### Disabled
+
+Lock the upload area with `disabled`.
+
+```vue
+<template>
+  <AUpload disabled />
 </template>
 ```
 
 ## Props
 
-The component accepts the following props:
-
-| Property  | Type    | Default value | Description                                                                                                 |
-| --------- | ------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
-| status    | String  | ''            | The upload status of the uploader, can be 'default', 'uploading', 'error', or 'success'.                    |
-| clickable | Boolean | true          | If set to true, the uploader will be clickable.                                                             |
-| disabled  | Boolean | false         | Disables the uploader when set to true. While disabled, it won't respond to any click or drop behaviours. |
-
-- status: The upload status of the uploader; it can be 'default', 'uploading', 'error', or 'success'. The default value is an empty string ''.
-- clickable: If set to true, the uploader will be clickable. The default value is true.
-- disabled: If set to true, the uploader will be disabled; it won't respond to any click or drop behaviours. This property is useful when you do not want to trigger another upload operation while the file is uploading. The default value is false.
-
-Example:
-
-```vue
-<template>
-  <AUpload status="uploading" :clickable="false" :disabled="true" />
-</template>
-```
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `status` | 'default' \| 'uploading' \| 'error' \| 'success' | '' | Current status (empty = default). |
+| `clickable` | Boolean | true | Allow click-to-pick. |
+| `disabled` | Boolean | false | Disable all interactions. |
 
 ## Events
 
-This component emits the following event:
+| Event | Payload | Description |
+| --- | --- | --- |
+| `upload` | File | Emitted when a file is dropped or picked. |
 
-| Event  | Value Type | Description                                                      |
-| ------ | ---------- | ---------------------------------------------------------------- |
-| upload | File       | Triggered when a file is chosen or dropped in the uploader by the user. The input value is the file that the user chose or dropped. |
+## Slots
 
-Example:
-
-```vue
-<template>
-  <AUpload @upload="handleUpload" />
-</template>
-
-<script>
-export default {
-  methods: {
-    handleUpload(file) {
-      console.log(file);
-    },
-  },
-};
-</script>
-```
-
-Please note that this component does not handle the upload operation itself. It's just a template and supports exposing dropped files to its parent. The parent component should handle the uploaded file properly.
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | — | Default idle state. |
+| `dragging` | — | Shown while a file is being dragged over. |
+| `uploading` | — | Shown when `status="uploading"`. |
+| `error` | — | Shown when `status="error"`. |
+| `success` | — | Shown when `status="success"`. |

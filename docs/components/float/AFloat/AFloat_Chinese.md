@@ -1,100 +1,95 @@
-# AFloat 组件文档
+# AFloat
 
-这个组件是一个浮动层，用于显示对话框、弹窗等内容。
+`AFloat` 是停靠在视口边缘的浮动面板。通过 `v-model:visible` 控制显隐，用 `top` 调整位置，可选 `centered` 改为居中而非停靠。适合命令面板、通知堆叠或辅助面板。
 
-## 基本用法和示例
+## 引入
 
-使用 `AFloat` 组件，可以创建一个浮动层：
+```ts
+import { Float } from '@any-design/anyui/vue';
+// React:  import { Float } from '@any-design/anyui/react';
+// Svelte: import { Float } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <AFloat v-model:visible="showFloat" width="600" padding="24">
-    <h2>这是一个浮动层</h2>
-    <p>这里可以放置任何内容。</p>
-    <button @click="showFloat = false">关闭</button>
+  <AButton @click="visible = true">打开面板</AButton>
+  <AFloat v-model:visible="visible" :top="80" width="480">
+    <div style="padding: 16px">
+      <AInput placeholder="搜索命令…" />
+    </div>
   </AFloat>
-  <button @click="showFloat = true">打开浮动层</button>
 </template>
 
-<script>
-import { AFloat } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    AFloat,
-  },
-  data() {
-    return {
-      showFloat: false,
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const visible = ref(false);
 </script>
 ```
-
-## Props
-
-该组件接受以下 props：
-
-| 属性名           | 类型          | 默认值    | 说明                                                             |
-| ---------------- | ------------- | --------- | ---------------------------------------------------------------- |
-| class            | String        |           | 自定义类名                                                       |
-| top              | Number/String | 96        | 浮动层顶部距离                                                   |
-| padding          | Number/String | undefined | 浮动层内容内边距                                                 |
-| visible          | Boolean       | false     | 浮动层的可见性                                                   |
-| zIndex           | Number        | 1000      | 浮动层的 z-index 值                                              |
-| width            | String/Number | 800       | 浮动层的宽度                                                     |
-| roundRadius      | Number/String | undefined | 浮动层的圆角半径                                                 |
-| round            | Boolean       | false     | 自动给浮动层添加大圆角 (24px)                                    |
-| lockScroll       | Boolean       | true      | 是否禁止页面滚动                                                 |
-| scrollLockTarget | String        | 'html'    | 禁止滚动的元素（默认为整个页面），只在 lockScroll 为 true 时生效 |
-
-## 事件
-
-该组件会触发以下事件：
-
-| 事件名         | 回调参数 | 说明                                       |
-| -------------- | -------- | ------------------------------------------ |
-| close          | -        | 浮动层关闭时触发                           |
-| update:visible | visible  | 浮动层的可见性发生变化时触发，参数为可见性 |
 
 ## 示例
 
+### 居中
+
+设置 `centered` 获得类似模态的居中面板，而非停靠。
+
 ```vue
 <template>
-  <AFloat
-    :visible="showFloat"
-    lockScroll
-    scrollLockTarget=".content"
-    width="600"
-    roundRadius="8"
-    top="64"
-    padding="24"
-  >
-    <h2>这是一个浮动层</h2>
-    <p>这里可以放置任何内容。</p>
-    <button @click="showFloat = false">关闭</button>
-  </AFloat>
-  <div class="content">
-    <p>这是一个有滚动条的 div。</p>
-    <div style="height: 800px;">
-      <button @click="showFloat = true">打开浮动层</button>
+  <AFloat v-model:visible="visible" centered width="560">
+    <div style="padding: 24px">
+      <h3>快捷操作</h3>
     </div>
-  </div>
+  </AFloat>
 </template>
 
-<script>
-import { AFloat } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    AFloat,
-  },
-  data() {
-    return {
-      showFloat: false,
-    };
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const visible = ref(true);
 </script>
 ```
+
+### 圆角
+
+添加 `round` 获得胶囊形圆角。
+
+```vue
+<template>
+  <AFloat v-model:visible="visible" round :top="60" width="420">
+    <div style="padding: 16px">圆角浮动面板</div>
+  </AFloat>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const visible = ref(true);
+</script>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `visible` | Boolean | false | 是否可见（`v-model:visible`）。 |
+| `top` | Number \| String | undefined | 距顶部偏移。 |
+| `width` | String \| Number | 800 | 面板宽度。 |
+| `padding` | String \| Number | undefined | 内边距。 |
+| `round` | Boolean | false | 圆角。 |
+| `roundRadius` | Number \| String | undefined | 自定义圆角。 |
+| `centered` | Boolean | false | 居中而非停靠。 |
+| `lockScroll` | Boolean | true | 打开时锁定滚动。 |
+| `scrollLockTarget` | String | 'html' | 锁定元素的选择器。 |
+| `zIndex` | Number | 1000 | z-index。 |
+
+## 事件
+
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:visible` | Boolean | 可见性变化。 |
+| `close` | — | 关闭时触发。 |
+
+## 插槽
+
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `default` | — | 面板内容。 |

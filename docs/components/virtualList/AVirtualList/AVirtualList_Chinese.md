@@ -1,89 +1,108 @@
-# AVirtualList 组件文档
+# AVirtualList
 
-这是一个虚拟列表组件，使用二进制索引树查找滚动高度，性能优越。不像其他同类功能的组件，我们的虚拟列表不会让用户设置项高度getter，它会自动测量合适的项高度。同时默认支持动态项高度。
+`AVirtualList` 是面向大数据量的高性能虚拟列表，可高效渲染上万条数据。传入 `items`（每项**必须**含 `id`），通过 `default` 插槽渲染每行，可选设置 `estimatedItemHeight` 以获得更精确的布局。该包还导出 `AVirtualListItem`。
 
-## 基本用法和示例
+## 引入
 
-使用 `AVirtualList` 组件，可以创建一个虚拟滚动列表：
+```ts
+import { VirtualList } from '@any-design/anyui/vue';
+// React:  import { VirtualList } from '@any-design/anyui/react';
+// Svelte: import { VirtualList } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <AVirtualList :items="items" :buffer="1200">
-    <template v-slot="{ item }">
-      <!-- 在这里放置列表项的模板 -->
+  <AVirtualList :items="items" :estimated-item-height="40">
+    <template #default="{ item }">
+      <div class="row">{{ item.label }}</div>
     </template>
   </AVirtualList>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      items: [
-        { id: 1, content: 'Item 1' },
-        { id: 2, content: 'Item 2' },
-        // ...
-      ],
-    };
-  },
-};
+<script setup>
+const items = Array.from({ length: 5000 }, (_, i) => ({
+  id: i,
+  label: `项目 ${i}`,
+}));
 </script>
 ```
 
-## Props
+## 示例
 
-| 属性名               | 类型                           | 默认值    | 说明                                     |
-| -------------------- | ------------------------------ | --------- | ---------------------------------------- |
-| items                | RawVirtualListItem<unknown>[]  | []        | 将在虚拟列表中渲染的数据列表                                       |
-| buffer               | Number                         | 1200      | 列表的滚动缓冲区大小，较大的数值意味着将渲染更多的项               |
-| estimatedItemHeight  | Number                         |           | 如果已知适当的项高度，可以在此处设置以跳过高度测量                 |
-| enableDeepWatch      | Boolean                        | false     | 如果为真，组件将深度观察项目                                     |
-| firstScreenThreshold | Number                         | 10        | 将用于高度测量的元素数量                                           |
+### 滚动到底部
 
-- items：将在虚拟列表中渲染的数据列表，它将被传递给 `AVirutalListItem` 组件，并最终传递给你的自定义组件。确保列表中的所有项目都有一个唯一的id。
-- buffer：列表的滚动缓冲区大小，以px为单位接受一个数字。较大的数值意味着将渲染更多的项。
-- estimatedItemHeight：如果已知适当的项高度，可以在此处设置以跳过高度测量。
-- enableDeepWatch：如果为真，组件将深度观察项目。
-- firstScreenThreshold：将用于高度测量的元素数量。
-
-## 事件
-
-`AVirtualList` 组件不发出任何事件。
-
-## 公开的方法
-
-`AVirtualList` 提供了以下公开方法：
-
-- refresh：刷新项目列表
-- scrollToBottom：滚动到底部
-- scrollTo：滚动到指定的顶部偏移量
-- getContainer：获取列表容器的引用
-
-例子：
+通过模板 ref 调用 `scrollToBottom()` —— 适合聊天或日志视图。
 
 ```vue
-<!-- 在 template 中 -->
-<AVirtualList ref="virtualListRef" :items="items"></AVirtualList>
+<template>
+  <AVirtualList ref="listRef" :items="items" :estimated-item-height="40">
+    <template #default="{ item }">
+      <div class="row">{{ item.label }}</div>
+    </template>
+  </AVirtualList>
+  <AButton @click="listRef.scrollToBottom()">跳到底部</AButton>
+</template>
 
-<!-- 在 script 中 -->
-import type { VirtualListExposure } from 'AnyUI';
-
-export default {
-  data() {
-    return {
-      virtualListRef: ref<VirtualListExposure | null>(null),
-      items: [
-        { id: 1, content: 'Item 1' },
-        { id: 2, content: 'Item 2' },
-        // ...
-      ],
-    };
-  },
-
-  mounted() {
-    if (this.virtualListRef) {
-      this.virtualListRef.scrollToBottom();
-    }
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const listRef = ref();
+const items = Array.from({ length: 2000 }, (_, i) => ({
+  id: i,
+  label: `第 ${i} 行`,
+}));
+</script>
 ```
+
+### 自定义高度与缓冲
+
+根据行高调整 `estimatedItemHeight`，增大 `buffer` 以渲染更多屏外项（快速滚动时更流畅）。
+
+```vue
+<template>
+  <AVirtualList :items="items" :estimated-item-height="80" :buffer="2000">
+    <template #default="{ item }">
+      <ACard :title="item.label">行内容</ACard>
+    </template>
+  </AVirtualList>
+</template>
+
+<script setup>
+const items = Array.from({ length: 1000 }, (_, i) => ({
+  id: i,
+  label: `卡片 ${i}`,
+}));
+</script>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `items` | Array<{ id, ... }> | [] | 数据项（每项必须含 `id`）。 |
+| `estimatedItemHeight` | Number | undefined | 用于布局估算的行高。 |
+| `buffer` | Number | 1200 | 额外渲染缓冲（px）。 |
+| `firstScreenThreshold` | Number | 10 | 首屏渲染的项目数。 |
+| `preserveScrollTop` | Boolean | true | 数据变化时保持滚动位置。 |
+| `ignoreInvisibleItems` | Boolean | false | 布局中跳过不可见项。 |
+| `dynamicEstimatedHeight` | Boolean | true | 根据测量值优化估算高度。 |
+| `enableDeepWatch` | Boolean | false | 深度监听 `items`。 |
+
+## 插槽
+
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `default` | { item } | 项目模板。 |
+
+## 方法
+
+| 方法 | 签名 | 说明 |
+| --- | --- | --- |
+| `scrollToItem / scrollToBottom / scrollTo` | (index \| top) => void | 命令式滚动。 |
+| `refresh / refreshDisplay` | () => void | 重新计算布局。 |
+| `getContainer` | () => HTMLElement | DOM 访问器。 |
+
+## 说明
+
+该包还注册了 `AVirtualListItem`（以 `VirtualListItem` 导出）。

@@ -1,89 +1,78 @@
-# APagination Component Documentation
+# APagination
 
-This is a documentation for the APagination component. This component is a pagination control that provides interactive navigation through a set of pages. Customizable page ranges and navigation icons are provided to guide the user through the pagination control.
+`APagination` navigates paged data. Bind a `pagination` object (`{ current, pageSize, total }`) with `v-model:pagination`, and listen to `change` to fetch the next page. `siblingCount` and `boundaryCount` control how many page numbers appear around the current page and at the edges.
 
-## Basic Usage and Examples
+## Import
 
-Here is a basic usage of the `APagination` component:
-
-```vue
-<template>
-  <APagination :pagination="{ current: 1, pageSize: 10, total: 100 }" />
-</template>
+```ts
+import { Pagination } from '@any-design/anyui/vue';
+// React:  import { Pagination } from '@any-design/anyui/react';
+// Svelte: import { Pagination } from '@any-design/anyui/svelte';
 ```
 
-In this example, a simple pagination component is created, initially with 1 current page, each page having the size of 10, and total items of 100.
-
-## Props
-
-The component takes in the following props:
-
-| Prop          | Type                      | Default             | Description                                                                                         |
-| ------------- | ------------------------- | ------------------- | --------------------------------------------------------------------------------------------------- |
-| pagination    | `PaginationMeta`          | `{}`                | The meta-information about the pagination such as the current page, page size, and total item count |
-| siblingCount  | Number                    | 1                   | The count of page items to display on each side of the current page                                 |
-| boundaryCount | Number                    | 1                   | The count of page items at the start and end of pagination range                                    |
-| prevIcon      | `String` or `IconifyIcon` | `'uil:angle-left'`  | The Icon to be displayed as the Previous Page button                                                |
-| nextIcon      | `String` or `IconifyIcon` | `'uil:angle-right'` | The Icon to be displayed as the Next Page button                                                    |
-
-Example:
+## Basic usage
 
 ```vue
 <template>
-  <APagination
-    :pagination="{ current: 1, pageSize: 10, total: 100 }"
-    siblingCount="2"
-    boundaryCount="2"
-    prevIcon="icon-prev.png"
-    nextIcon="icon-next.png"
-  />
-</template>
-```
-
-## Events
-
-The component emits the following events: `update:pagination` and `change`
-
-| Event               | Payload          | Description                       |
-| ------------------- | ---------------- | --------------------------------- |
-| `update:pagination` | `PaginationMeta` | Triggered when pagination changes |
-| `change`            | `PaginationMeta` | Duplicate of `update:pagination`  |
-
-Example:
-
-```vue
-<template>
-  <APagination
-    @update:pagination="handlePaginationChange"
-    @change="handlePaginationChange"
-    :pagination="{ current: 1, pageSize: 10, total: 100 }"
-  />
+  <APagination v-model:pagination="meta" @change="fetchPage" />
 </template>
 
-<script>
-export default {
-  methods: {
-    handlePaginationChange(pagination) {
-      // handle pagination change
-    },
-  },
-};
+<script setup>
+import { ref } from 'vue';
+const meta = ref({ current: 1, pageSize: 20, total: 200 });
+const fetchPage = (m) => console.log('fetch page', m.current);
 </script>
 ```
 
-## Computed Properties and Methods
+## Examples
 
-The component exposes the following computed properties and methods
+### More page numbers
 
-- `currentPage`: the current page in the pagination
-- `totalPages`: the total pages calculated from given `pageSize` and `total`, using the pagination prop.
-- `shouldDisablePrev`: computed property to evaluate if the Previous page button should be disabled.
-- `shouldDisableNext`: computed property to evaluate if the Next page button should be disabled.
+Increase `siblingCount` to show more pages around the current one, and `boundaryCount` to show more at the start and end.
 
-The following methods are used to handle clicks on different parts of the pagination:
+```vue
+<template>
+  <APagination v-model:pagination="meta" :sibling-count="2" :boundary-count="2" />
+</template>
 
-- `handlePrevClicked`: handles clicking of the Previous page button
-- `handleNextClicked`: handles clicking of the Next page button
-- `handlePageClicked`: handles clicking of any page number in the pagination.
+<script setup>
+import { ref } from 'vue';
+const meta = ref({ current: 5, pageSize: 10, total: 500 });
+</script>
+```
 
-These methods are unfortunately part of the component's internal API and cannot be accessed from outside.
+### Custom nav icons
+
+Swap the prev/next arrow icons via `prevIcon` and `nextIcon` (any [Iconify](https://iconify.design/) name).
+
+```vue
+<template>
+  <APagination
+    v-model:pagination="meta"
+    prev-icon="ri:arrow-left-s-line"
+    next-icon="ri:arrow-right-s-line"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const meta = ref({ current: 1, pageSize: 20, total: 100 });
+</script>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `pagination` | { current, pageSize, total } | undefined | Pagination metadata (`v-model:pagination`). |
+| `siblingCount` | Number | 1 | Pages shown on each side of the current. |
+| `boundaryCount` | Number | 1 | Pages shown at the start and end. |
+| `prevIcon` | String \| IconifyIcon | 'uil:angle-left' | Previous button icon. |
+| `nextIcon` | String \| IconifyIcon | 'uil:angle-right' | Next button icon. |
+
+## Events
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `change` | { current, pageSize, total } | Page changed. |
+| `update:pagination` | meta | Pagination update. |

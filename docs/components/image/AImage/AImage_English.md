@@ -1,84 +1,80 @@
-## @any-design/anyui AImage Component
+# AImage
 
-The `AImage` component is designed to display an image with customized styles and handle loading and error states.
+`AImage` is a lazy-loading image component. It renders its `src` as a background image with controllable `size`, `position`, and `repeat`, and exposes `loading` and `error` slots so you can customize those states.
 
-### Basic Usage
+## Import
+
+```ts
+import { Image } from '@any-design/anyui/vue';
+// React:  import { Image } from '@any-design/anyui/react';
+// Svelte: import { Image } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
 
 ```vue
 <template>
-  <AImage src="[Image URL]" />
+  <AImage src="/photos/cover.jpg" width="320" height="200" />
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { AImage } from '@any-design/anyui/vue';
-
-export default defineComponent({
-  components: {
-    AImage,
-  },
-});
-</script>
 ```
 
-### Props
+## Examples
 
-The component can receive the following props:
+### Fixed dimensions with cover
 
-#### src
+`size`, `position`, and `repeat` map to the corresponding `background-*` CSS properties. `cover` (the default) fills the box without distortion.
 
-- Type: String
-- Required: Yes
+```vue
+<template>
+  <AImage src="/photos/cover.jpg" width="400" height="240" size="cover" />
+</template>
+```
 
-The source URL of the image.
+### Custom loading state
 
-#### width
+The `loading` slot renders while the image is being fetched.
 
-- Type: String | Number
-- Default: `'100%'`
+```vue
+<template>
+  <AImage src="/photos/heavy.jpg" width="320" height="200">
+    <template #loading>
+      <div style="display:flex;justify-content:center;padding:80px">
+        <ASpinner />
+      </div>
+    </template>
+  </AImage>
+</template>
+```
 
-The width of the image, which can be either a percentage or a number.
+### Custom error state
 
-#### height
+The `error` slot renders when the image fails to load.
 
-- Type: String | Number
-- Default: `'100%'`
+```vue
+<template>
+  <AImage src="/broken.jpg" width="320" height="200">
+    <template #error>
+      <AEmpty text="Image not found" />
+    </template>
+  </AImage>
+</template>
+```
 
-The height of the image, which can be either a percentage or a number.
+## Props
 
-#### size
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `src` | String | undefined | Image URL. |
+| `width` | String \| Number | '100%' | Width. |
+| `height` | String \| Number | '100%' | Height. |
+| `size` | String | 'cover' | background-size value. |
+| `position` | String | 'center' | background-position value. |
+| `repeat` | String | 'no-repeat' | background-repeat value. |
+| `threshold` | Number | — | IntersectionObserver threshold (library default). |
 
-- Type: String
-- Default: `'cover'`
+## Slots
 
-The size style string of the image, same as background-size.
-
-#### position
-
-- Type: String
-- Default: `'center'`
-
-The position style string of the image, same as background-position.
-
-#### repeat
-
-- Type: String
-- Default: `'no-repeat'`
-
-The repeat mode of the image, same as background-repeat.
-
-### Events
-
-The `AImage` component will emit the following events:
-
-#### load
-
-Emitted when the image starts loading.
-
-#### loaded
-
-Emitted when the image has finished loading.
-
-#### error
-
-Emitted when an error occurs during the loading process.
+| Slot | Props | Description |
+| --- | --- | --- |
+| `loading` | — | Shown while loading. |
+| `error` | — | Shown on error. |
