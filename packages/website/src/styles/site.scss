@@ -22,6 +22,7 @@ body {
   background: var(--bg);
   min-height: 100vh;
   overflow-x: hidden;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 }
 
 a {
@@ -29,8 +30,11 @@ a {
   text-decoration: none;
 }
 
-code {
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+code,
+pre,
+kbd,
+.astro-code {
+  font-family: var(--font-mono);
 }
 
 // pastel blobs behind everything — also feeds the liquid glass blur
