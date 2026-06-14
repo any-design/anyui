@@ -325,8 +325,6 @@ export default defineComponent({
     border: 1px solid var(--border);
     border-radius: var(--a-radius-sm, 10px);
     background: var(--a-surface-input, var(--bg-light));
-    -webkit-backdrop-filter: var(--a-surface-backdrop, none);
-    backdrop-filter: var(--a-surface-backdrop, none);
     color: var(--text);
     text-shadow: 1px 1px 2px var(--shadow-2);
     transition:
@@ -358,26 +356,26 @@ export default defineComponent({
     color: var(--placeholder);
   }
 
-  // scroll bar defs
+  // scroll bar defs — keep in sync with the shared `.a-scrollbar-styled`
+  // recipe in styles/basic/scrollbar.scss
 
   &__inner::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
-    border-radius: 12px;
+    width: 8px;
+    height: 8px;
   }
 
   &__inner::-webkit-scrollbar-button {
-    opacity: 0;
-    height: 2px;
+    display: none;
   }
 
   &__inner::-webkit-scrollbar-thumb {
-    width: 12px;
-    height: 12px;
-    border-radius: 12px;
-    background-color: var(--scrollbar);
+    border-radius: var(--a-radius-full, 999px);
+    background-color: var(--scrollbar, var(--border));
     transition: background-color 100ms ease-out;
-    border: 3px solid var(--bg);
+  }
+
+  &__inner::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-60);
   }
 
   &__inner::-webkit-scrollbar-track {
