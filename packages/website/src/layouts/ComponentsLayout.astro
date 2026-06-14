@@ -1,0 +1,71 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { componentsByCategory } from '../data/components';
+import { LANG_LABELS } from '../i18n/lang';
+
+interface Props {
+  title: string;
+  active: string;
+}
+
+const { title, active } = Astro.props;
+const groups = componentsByCategory();
+---
+
+<BaseLayout title={`${title} · AnyUI`} active="components">
+  <div class="docs docs--components">
+    <nav class="docs__nav">
+      <a href="/components" aria-current={active === 'overview' ? 'true' : undefined}>Overview</a>
+      {
+        groups.map(({ category, items }) => (
+          <>
+            <span class="docs__label">{category.label.en}</span>
+            {items.map((item) => (
+              <a href={`/components/${item.slug}`} aria-current={active === item.slug ? 'true' : undefined}>
+                {item.name}
+              </a>
+            ))}
+          </>
+        ))
+      }
+    </nav>
+
+    <article class="prose">
+      <div class="doc-toolbar">
+        <slot name="toolbar" />
+        <div class="lang-pill" role="group" aria-label="Language">
+          <button type="button" data-lang-btn="en" aria-pressed="true">{LANG_LABELS.en}</button>
+          <button type="button" data-lang-btn="zh" aria-pressed="false">{LANG_LABELS.zh}</button>
+        </div>
+      </div>
+      <slot />
+    </article>
+  </div>
+
+  <script is:inline>
+    (() => {
+      const KEY = 'anyui-site-prefs';
+      const read = () => {
+        try {
+          return JSON.parse(localStorage.getItem(KEY) || '{}');
+        } catch {
+          return {};
+        }
+      };
+      const buttons = document.querySelectorAll('[data-lang-btn]');
+      const sync = () => {
+        const lang = read().lang === 'zh' ? 'zh' : 'en';
+        buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.langBtn === lang)));
+      };
+      buttons.forEach((b) => {
+        b.addEventListener('click', () => {
+          const lang = b.dataset.langBtn === 'zh' ? 'zh' : 'en';
+          localStorage.setItem(KEY, JSON.stringify({ ...read(), lang }));
+          sync();
+          window.dispatchEvent(new CustomEvent('anyui:lang-change', { detail: lang }));
+        });
+      });
+      sync();
+    })();
+  </script>
+</BaseLayout>

@@ -1,0 +1,11 @@
+---
+import * as enDoc from '../../../../../docs/components/kbd/AKbd/AKbd_English.md';
+import * as zhDoc from '../../../../../docs/components/kbd/AKbd/AKbd_Chinese.md';
+
+import LocalizedDoc from '../../components/LocalizedDoc.astro';
+import ComponentsLayout from '../../layouts/ComponentsLayout.astro';
+---
+
+<ComponentsLayout title="AKbd" active="kbd">
+  <LocalizedDoc en={enDoc} zh={zhDoc} />
+</ComponentsLayout>

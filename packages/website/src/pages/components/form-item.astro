@@ -1,0 +1,11 @@
+---
+import * as enDoc from '../../../../../docs/components/formItem/AFormItem/AFormItem_English.md';
+import * as zhDoc from '../../../../../docs/components/formItem/AFormItem/AFormItem_Chinese.md';
+
+import LocalizedDoc from '../../components/LocalizedDoc.astro';
+import ComponentsLayout from '../../layouts/ComponentsLayout.astro';
+---
+
+<ComponentsLayout title="AFormItem" active="form-item">
+  <LocalizedDoc en={enDoc} zh={zhDoc} />
+</ComponentsLayout>

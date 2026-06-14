@@ -1,0 +1,57 @@
+---
+// Renders English + Chinese Markdown for a component side-by-side in the DOM,
+// then toggles visibility client-side based on the active language.
+//
+// Both docs are imported at build time; the inline script reads the persisted
+// language from localStorage (shared key with the language pill) and adds a
+// `lang` attribute on the wrapper. CSS shows only the matching block.
+
+interface Props {
+  en: unknown; // markdown module: { Content }
+  zh: unknown;
+}
+
+const { en, zh } = Astro.props;
+
+const En = (en as { Content: any }).Content;
+const Zh = (zh as { Content: any }).Content;
+---
+
+<div class="localized-doc" data-lang="en">
+  <div class="localized-doc__pane" data-lang="en">
+    <En />
+  </div>
+  <div class="localized-doc__pane" data-lang="zh">
+    <Zh />
+  </div>
+</div>
+
+<style is:global>
+  .localized-doc[data-lang='en'] > .localized-doc__pane[data-lang='zh'],
+  .localized-doc[data-lang='zh'] > .localized-doc__pane[data-lang='en'] {
+    display: none;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const KEY = 'anyui-site-prefs';
+    const read = () => {
+      try {
+        return JSON.parse(localStorage.getItem(KEY) || '{}');
+      } catch {
+        return {};
+      }
+    };
+    const apply = (lang) => {
+      const target = lang === 'zh' ? 'zh' : 'en';
+      document.querySelectorAll('.localized-doc').forEach((el) => {
+        el.setAttribute('data-lang', target);
+      });
+    };
+    // initial paint from storage
+    apply(read().lang);
+    // react to the language pill in the layout
+    window.addEventListener('anyui:lang-change', (e) => apply(e.detail));
+  })();
+</script>

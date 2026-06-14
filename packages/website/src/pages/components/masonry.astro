@@ -1,0 +1,11 @@
+---
+import * as enDoc from '../../../../../docs/components/masonry/AMasonry/AMasonry_English.md';
+import * as zhDoc from '../../../../../docs/components/masonry/AMasonry/AMasonry_Chinese.md';
+
+import LocalizedDoc from '../../components/LocalizedDoc.astro';
+import ComponentsLayout from '../../layouts/ComponentsLayout.astro';
+---
+
+<ComponentsLayout title="AMasonry" active="masonry">
+  <LocalizedDoc en={enDoc} zh={zhDoc} />
+</ComponentsLayout>
