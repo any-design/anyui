@@ -1,67 +1,54 @@
 # AStep
 
-The `AStep` component is a Vue3 component, which allows you to create a step progress bar.
+`AStep` is a horizontal step indicator for multi-step flows like checkout or onboarding. Set `steps` (a count, or an array of labels) and track progress with `current` (1-based).
 
-## Basic Usage
+## Import
 
-The following example shows how to use this component.
+```ts
+import { Step } from '@any-design/anyui/vue';
+// React:  import { Step } from '@any-design/anyui/react';
+// Svelte: import { Step } from '@any-design/anyui/svelte';
+```
 
-```html
+## Basic usage
+
+```vue
 <template>
-  <div>
-    <a-step :steps="4" :current="2" />
-  </div>
+  <AStep :steps="4" :current="2" />
+</template>
+```
+
+## Examples
+
+### With labels
+
+Pass an array of strings to label each step.
+
+```vue
+<template>
+  <AStep :steps="['Account', 'Profile', 'Payment', 'Done']" :current="3" />
+</template>
+```
+
+### Tracking progress
+
+Bind `current` to a ref to advance the indicator as the user moves through the flow.
+
+```vue
+<template>
+  <AStep :steps="3" :current="current" />
+  <AButton @click="current = Math.min(3, current + 1)">Next</AButton>
 </template>
 
 <script setup>
-  import { AStep } from '@any-design/anyui/vue';
+import { ref } from 'vue';
+const current = ref(1);
 </script>
 ```
 
 ## Props
 
-The `AStep` component accepts the following props:
-
-### steps
-
-The `steps` prop is used to pass the array or number of steps. The default value for the `steps` prop is `2`.
-
-#### Example
-
-```html
-<template>
-  <div>
-    <a-step :steps="4" />
-  </div>
-</template>
-
-<script setup>
-  import { AStep } from '@any-design/anyui/vue';
-</script>
-```
-
-### current
-
-The `current` prop is used to pass the current step number. The default value for the `current` prop is `1`.
-
-#### Example
-
-```html
-<template>
-  <div>
-    <a-step :steps="4" :current="2" />
-  </div>
-</template>
-
-<script setup>
-  import { AStep } from '@any-design/anyui/vue';
-</script>
-```
-
-## Events
-
-The `AStep` component doesn't emit any events.
-
-## Exposed Methods or Values
-
-The `AStep` component doesn't expose any methods or values.
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `steps` | Number \| String[] | 2 | Number of steps, or an array of labels. |
+| `current` | Number | 1 | Current step (1-based). |

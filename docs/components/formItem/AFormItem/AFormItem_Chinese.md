@@ -1,67 +1,82 @@
-# AFormItem 组件文档
+# AFormItem
 
-这个组件是一个表单项。
+`AFormItem` 是 `AForm` 内部使用的带标签字段容器。用 `label` 设置标题，用 `prop` 将该项绑定到表单模型的某个键 —— 父级 `AForm` 正是通过 `prop` 来对该字段执行校验并显示错误信息。
 
-## 基本用法和示例
+## 引入
 
-使用 `AFormItem` 组件，可以创建一个表单项。
+```ts
+import { FormItem } from '@any-design/anyui/vue';
+// React:  import { FormItem } from '@any-design/anyui/react';
+// Svelte: import { FormItem } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
+
+包裹一个控件，设置 `label`，并将 `prop` 指向对应的模型键。
 
 ```vue
 <template>
-  <AFormItem label="用户名" prop="username">
-    <input type="text" v-model="formData.username" />
+  <AFormItem label="邮箱" prop="email">
+    <AInput v-model="model.email" placeholder="you@example.com" />
   </AFormItem>
 </template>
 
-<script>
-import { AFormItem } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    AFormItem,
-  },
-  data() {
-    return {
-      formData: {
-        username: '',
-      },
-    };
-  },
-};
+<script setup>
+import { reactive } from 'vue';
+const model = reactive({ email: '' });
 </script>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
+### 在表单上下文中使用
 
-| 属性名 | 类型   | 默认值 | 说明                     |
-| ------ | ------ | ------ | ------------------------ |
-| prop   | String | -      | 表单项在表单数据中的名称 |
-| label  | String | -      | 表单项的标签文本         |
-
-示例：
+将多个 `AFormItem` 放入 `AForm`，并传入共享的 `model`；每个项上的 `prop` 把字段与校验关联起来。
 
 ```vue
 <template>
-  <AFormItem label="用户名" prop="username">
-    <input type="text" v-model="formData.username" />
-  </AFormItem>
+  <AForm :model="model">
+    <AFormItem label="用户名" prop="username">
+      <AInput v-model="model.username" />
+    </AFormItem>
+    <AFormItem label="密码" prop="password">
+      <AInput v-model="model.password" type="password" />
+    </AFormItem>
+  </AForm>
 </template>
+
+<script setup>
+import { reactive } from 'vue';
+const model = reactive({ username: '', password: '' });
+</script>
 ```
 
-## Events
+### 插槽中放置任意控件
 
-该组件会发出以下事件：
+默认插槽可以放任意输入控件 —— 选择器、多行文本、滑块等。
 
-### clear
+```vue
+<template>
+  <AFormItem label="国家" prop="country">
+    <AInput v-model="model.country" placeholder="选择国家" />
+  </AFormItem>
+</template>
 
-当父表单需要清空表单项时，该事件会发出。
+<script setup>
+import { reactive } from 'vue';
+const model = reactive({ country: '' });
+</script>
+```
 
-## 暴露的属性和方法
+## 属性
 
-该组件暴露以下属性和方法：
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `prop` | String | undefined | 该字段绑定的模型键（用于校验）。 |
+| `label` | String | undefined | 标签文本。 |
 
-### emitter
+## 插槽
 
-在参数对象 `expose` 中可访问，该属性是组件自身的事件发射器实例，用于表单内部通信。
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `default` | — | 表单控件。 |

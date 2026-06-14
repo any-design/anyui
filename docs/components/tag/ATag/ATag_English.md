@@ -1,40 +1,70 @@
-# @any-design/anyui - A-Tag Component
+# ATag
 
-The A-Tag component is designed to show a clickable tag. It has various available features that can customize the tag's size, shape, color, and text.
+`ATag` is a compact label chip for categories, statuses, or short metadata. It supports three sizes, a pill shape, and fully custom text/background colors.
 
-## Basic Usage
+## Import
 
-```html
+```ts
+import { Tag } from '@any-design/anyui/vue';
+// React:  import { Tag } from '@any-design/anyui/react';
+// Svelte: import { Tag } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
+
+```vue
 <template>
-  <a-tag>Default Tag</a-tag>
-  <a-tag round> Round Tag</a-tag>
-  <a-tag size="small" color="#1faeff">Custom Tag</a-tag>
+  <ATag>New</ATag>
 </template>
+```
 
-<script lang="ts">
-  import { defineComponent } from 'vue';
-  import { ATag } from '@any-design/anyui/vue';
+## Examples
 
-  export default defineComponent({
-    components: { ATag },
-  });
-</script>
+### Sizes
+
+```vue
+<template>
+  <div class="demo-row">
+    <ATag size="small">Small</ATag>
+    <ATag>Default</ATag>
+    <ATag size="large">Large</ATag>
+  </div>
+</template>
+```
+
+### Rounded
+
+```vue
+<template>
+  <ATag round>featured</ATag>
+</template>
+```
+
+### Custom colors
+
+Pass any CSS color to `color` (text) and `bgColor` (background) — useful for status badges that don't map to a theme token.
+
+```vue
+<template>
+  <div class="demo-row">
+    <ATag color="#fff" bgColor="#16a34a">success</ATag>
+    <ATag color="#fff" bgColor="#dc2626">error</ATag>
+    <ATag color="#1e293b" bgColor="#fde68a">warning</ATag>
+  </div>
+</template>
 ```
 
 ## Props
 
-| Prop Name | Type    | Default   | Description                                                                   |
-| --------- | ------- | --------- | ----------------------------------------------------------------------------- |
-| `round`   | Boolean | `false`   | If `true`, the tag will have a rounded border.                                |
-| `size`    | String  | `default` | Sets the size of the tag. Default values are `default`, `small`, and `large`. |
-| `color`   | String  | `null`    | Sets the background color of the tag in hexadecimal format.                   |
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `round` | Boolean | false | Pill shape. |
+| `size` | 'default' \| 'small' \| 'large' | 'default' | Tag size. |
+| `color` | String | '' | Text color. |
+| `bgColor` | String | '' | Background color. |
 
-## Events
+## Slots
 
-The A-Tag component emits no events.
-
-## Exposed Methods or Values
-
-The A-Tag component provides no exposed methods or values.
-
-**Note:** The styles from internal <style> tags have not been explained here, they are not part of the component's API.
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | — | Tag content. |

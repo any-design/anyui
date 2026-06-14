@@ -1,57 +1,52 @@
-# ASplit Component
+# ASplit
 
-The `ASplit` component is a Vue component that creates a colored line to indicate a split between two sections. The component accepts a few props for customization.
+`ASplit` is a horizontal divider line. Use it to separate sections of content. It takes no slots — just renders a line with configurable `height`, `color`, `margin`, and `round`.
 
-## Basic Usage
+## Import
 
-To use the `ASplit` component, you can import it from the `@any-design/anyui/vue` package and add it to your template. The component can be used with default values like this:
+```ts
+import { Split } from '@any-design/anyui/vue';
+// React:  import { Split } from '@any-design/anyui/react';
+// Svelte: import { Split } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
 
 ```vue
 <template>
+  <p>Section one</p>
   <ASplit />
+  <p>Section two</p>
+</template>
+```
+
+## Examples
+
+### Colored
+
+Pass any CSS color to `color`.
+
+```vue
+<template>
+  <ASplit color="var(--primary)" />
+</template>
+```
+
+### Rounded with margin
+
+`round` softens the line ends; `margin` sets vertical spacing.
+
+```vue
+<template>
+  <ASplit round :margin="24" />
 </template>
 ```
 
 ## Props
 
-The `ASplit` component accepts the following props:
-
-- `height` (default: `2`) - The height of the split line. This can be a percentage or a number.
-
-  Example:
-
-  ```html
-  <ASplit height="10" />
-  ```
-
-- `color` (default: `var(--line)`) - The color of the split line.
-
-  Example:
-
-  ```html
-  <ASplit color="red" />
-  ```
-
-- `margin` (default: `12`) - The top and bottom margin of the split line. This can be a percentage or a number.
-
-  Example:
-
-  ```html
-  <ASplit margin="20" />
-  ```
-
-- `round` (default: `false`) - If set to `true`, the split line will have a rounded border.
-
-  Example:
-
-  ```html
-  <ASplit round />
-  ```
-
-## Events
-
-The `ASplit` component does not emit any events.
-
-## Exposed Methods and Values
-
-The `ASplit` component does not expose any methods or values.
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `height` | String \| Number | 2 | Line thickness. |
+| `color` | String | 'var(--line)' | Line color. |
+| `margin` | String \| Number | 12 | Vertical margin (px). |
+| `round` | Boolean | false | Rounded line. |

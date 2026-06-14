@@ -1,81 +1,101 @@
-# APopper 组件文档
+# APopper
 
-APopper 是一个可触发显示一些内容的组件，比如用于实现提示框（Tooltip）或者下拉菜单（Dropdown）等。
+`APopper` 是底层定位原语（基于 Popper.js），支撑 `ATooltip`、`ADropdownMenu` 与 `APopupMenu`。当你需要自定义弹出层并锚定到触发元素、且要完全控制位置和触发行为时，可直接使用它。
 
-## 基本用法和示例
+## 引入
 
-可以通过指定触发方式和弹出内容的位置，来创建一个 Popper：
+```ts
+import { Popper } from '@any-design/anyui/vue';
+// React:  import { Popper } from '@any-design/anyui/react';
+// Svelte: import { Popper } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
+
+悬停触发元素即可显示 popup 插槽。
 
 ```vue
 <template>
-  <APopper triggerType="hover" placement="bottom">
-    <template #default>
-      <div>点击查看详情</div>
-    </template>
+  <APopper placement="top">
+    <AButton>悬停我</AButton>
     <template #popup>
-      <div>这是详情内容。</div>
+      <div class="custom-pop">自定义弹出内容！</div>
     </template>
   </APopper>
 </template>
 ```
 
-## Props
+## 示例
 
-APopper 组件可以接受以下 props：
+### 手动触发
 
-| 属性名                | 类型    | 默认值   | 说明                                                       |
-| --------------------- | ------- | -------- | ---------------------------------------------------------- |
-| hideDelay             | Number  | 100      | 隐藏延迟时间，以毫秒为单位                                 |
-| placement             | String  | 'bottom' | Popper 的位置，与 popperjs 的 placement 相同               |
-| triggerType           | String  | 'hover'  | Popper 的触发方式，可选项为 'hover'，'click'，'manual'     |
-| offset                | Number  | 18       | 触发元素和弹出窗口之间的距离                               |
-| zIndex                | Number  | 3000     | 弹出窗口的 z-index 值                                      |
-| appendToBody          | Boolean | true     | 如果为 true，弹出窗口将附加到 body                         |
-| popupClass            | String  |          | 弹出窗口的类名                                             |
-| transition            | String  |          | 弹出窗口的过渡类名                                         |
-| closeWhenClickOutside | Boolean | true     | 仅在 triggerType 为 "click" 时有效，点击外部时关闭弹出窗口 |
-| group                 | String  |          | 用于互斥的组 id                                            |
-
-- hideDelay：隐藏延迟时间，单位是毫秒，默认值是 100。
-- placement：Popper 的位置，它的值与 popperjs 的 placement 相同，默认值是 'bottom'。
-- triggerType：Popper 的触发方式，可选值是 'hover'，'click'，'manual'，默认是 'hover'。
-- offset：触发元素和弹出窗口之间的距离，默认值是 18。
-- zIndex：弹出窗口的 z-index 值，默认值是 3000。
-- appendToBody：如果为 true，弹出窗口将附加到 body，默认值是 true。
-- popupClass：弹出窗口的类名，该值是一个字符串。
-- transition：弹出窗口的过渡类名，该值是一个字符串。
-- closeWhenClickOutside：仅在 triggerType 为 "click" 时有效，若为 true，则当点击外部时关闭弹出窗口，默认值是 true。
-- group：用于互斥的组 id，该值是一个字符串。
-
-## Events
-
-APopper 组件会触发以下事件：
-
-| 事件名             | 参数              | 说明                                       |
-| ------------------ | ----------------- | ------------------------------------------ |
-| popupStatusChanged | popupShowed:value | 当弹出窗口的可视状态发生变化时会触发该事件 |
-
-- popupStatusChanged：当弹出窗口的可视状态发生变化时会触发该事件，会传递一个参数，该参数表示弹出窗口是否显示。
-
-## Methods
-
-APopper 类型暴露以下方法：
-
-- show：显示 Popper。
-- hide：隐藏 Popper。
-
-示例：
+设置 `triggerType="manual"`，通过模板 ref 调用暴露的 `show()` / `hide()` 方法实现完全的命令式控制。
 
 ```vue
 <template>
-  <APopper ref="popper" triggerType="click" placement="bottom"></APopper>
-  <button @click="$refs.popper.show()">打开</button>
+  <APopper ref="popper" trigger-type="manual">
+    <AButton @click="popper.show()">打开</AButton>
+    <template #popup>
+      <div class="custom-pop">
+        受控弹出层
+        <AButton size="small" @click="popper.hide()">关闭</AButton>
+      </div>
+    </template>
+  </APopper>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import APopper from './APopper.vue';
-
-const popper = ref(null);
+const popper = ref();
 </script>
 ```
+
+### 右键
+
+使用 `triggerType="contextmenu"` 将弹出层锚定到右键。
+
+```vue
+<template>
+  <APopper trigger-type="contextmenu" placement="bottom-start">
+    <div class="canvas">右键点击我</div>
+    <template #popup>
+      <div class="custom-pop">此处放置上下文操作</div>
+    </template>
+  </APopper>
+</template>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `placement` | Placement | 'bottom' | 位置。 |
+| `triggerType` | 'hover' \| 'click' \| 'contextmenu' \| 'manual' | 'hover' | 触发方式。 |
+| `offset` | Number | 18 | 偏移（px）。 |
+| `hideDelay` | Number | 100 | 隐藏延迟（ms）。 |
+| `closeWhenClickOutside` | Boolean | true | 点击外部关闭。 |
+| `zIndex` | Number | 3000 | z-index。 |
+| `appendToBody` | Boolean | true | 挂载到 body。 |
+| `transition` | String | undefined | 过渡名。 |
+| `popupClass` | String | undefined | 类名钩子。 |
+| `group` | String | '' | 共享 popper 分组。 |
+
+## 事件
+
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `popupStatusChanged` | Boolean | 可见性变化。 |
+
+## 插槽
+
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `default` | — | 触发元素。 |
+| `popup` | — | 弹出内容。 |
+
+## 方法
+
+| 方法 | 签名 | 说明 |
+| --- | --- | --- |
+| `show / hide` | () => void | 命令式控制（配合 `triggerType="manual"` 使用）。 |
+| `getTriggerEl / getPopupEl` | () => HTMLElement | DOM 访问器。 |

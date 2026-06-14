@@ -1,98 +1,108 @@
-# AForm 组件文档
+# AForm
 
-## 介绍
+`AForm` 是带校验能力的表单容器，协调内部的 `AFormItem`。传入 `modelValue` 数据对象与按字段名配置的 `rules` 规则，再通过模板 ref 调用暴露的 `validate()` 方法在提交前执行校验。
 
-`AForm` Component 是一个帮助开发者更方便地构建表单的组件。该组件采用 async-validator 进行表单验证，支持布局（或暂不支持）。
+## 引入
 
-使用此组件，您可以通过绑定`modelValue`，并通过设置`rules`验证表单。
-
-## 基本使用
-
-您可以使用该组件作为 vue 组件：
-
-```vue
-<template>
-  <AForm v-model="formValues" :rules="formRules">
-    <AFormItem name="username" label="请输入名字：">
-      <AInput v-model="formValues.username" />
-    </AFormItem>
-    <AFormItem name="gender" label="请选择性别：">
-      <ASelect v-model="formValues.gender" :items="genderOptions" />
-    </AFormItem>
-    <AFormItem>
-      <AButton type="primary" @click="submitForm">提交</AButton>
-    </AFormItem>
-  </AForm>
-</template>
+```ts
+import { Form, FormItem } from '@any-design/anyui/vue';
+// React:  import { Form, FormItem } from '@any-design/anyui/react';
+// Svelte: import { Form, FormItem } from '@any-design/anyui/svelte';
 ```
 
-## Props
+## 基础用法
 
-`AForm` 组件接受以下 props：
-
-- **modelValue**: 表单的值，要求为一个 Object 类型。默认值为 `{}`。
-- **rules**: 规定表单验证规则的对象，要求为一个 Object 类型。默认为 `{}`。
-- **layout**: 表单布局类型。可以是 `'default'` 或 `'inline'`。默认为 `'default'`。
-- **labelWidth**：表单标签的宽度，可以是百分比或者数字(munber)。默认为 `'20%'`。
-
-## 方法
-
-此组件将以下方法暴露给其父组件：
-
-- **emitter**: 表单的事件总线。
-- **formattedLabelWidth**: 经过格式化的表单标签宽度。
-- **validate**: 对表单进行整体验证。
-- **validatefield**: 对表单的单个值进行验证。参数：field(string)。
-- **clearField**: 清空表单项的值。参数：field(string)。
-- **clearFields**: 清空全部表单项的值和验证状态。
-- **clearValidation**: 清空表单项的验证状态。
-
-示例：
+一个含两个必填项的登录表单。`validate()` 返回 Promise<boolean>。
 
 ```vue
 <template>
-  <AForm v-model="formValues" :rules="formRules" ref="formRef">
-    <AFormItem name="username" label="请输入名字：">
-      <AInput v-model="formValues.username" />
+  <AForm ref="formRef" :model-value="model" :rules="rules">
+    <AFormItem prop="email" label="邮箱">
+      <AInput v-model="model.email" placeholder="you@anyui.dev" />
     </AFormItem>
-    <AFormItem name="gender" label="请选择性别：">
-      <ASelect v-model="formValues.gender" :items="genderOptions" />
+    <AFormItem prop="password" label="密码">
+      <AInput v-model="model.password" type="password" />
     </AFormItem>
-    <AFormItem>
-      <AButton type="primary" @click="handleSubmit">提交</AButton>
-    </AFormItem>
+    <AButton type="primary" @click="onSubmit">登录</AButton>
   </AForm>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
-import { AForm, AFormItem, AInput, ASelect, AButton } from '@any-design/anyui/vue';
-export default {
-  components: { AForm, AFormItem, AInput, ASelect, AButton },
-  setup() {
-    const formValues = ref({ username: '', gender: '' });
-    const genderOptions = [
-      { text: '男', value: 'male' },
-      { text: '女', value: 'female' },
-    ];
-    const formRules = ref({ username: { required: true, message: '请输入名字' } });
-    const formRef = ref(null);
-
-    // 提交表单
-    const handleSubmit = async () => {
-      if (await formRef.value.validate()) {
-        console.log(formValues.value);
-      }
-    };
-
-    return {
-      formValues,
-      genderOptions,
-      formRules,
-      formRef,
-      handleSubmit,
-    };
-  },
+const formRef = ref();
+const model = ref({ email: '', password: '' });
+const rules = {
+  email: [{ required: true, message: '请填写邮箱' }],
+  password: [{ required: true, message: '请填写密码' }],
+};
+const onSubmit = async () => {
+  const ok = await formRef.value.validate();
+  if (ok) console.log('提交', model.value);
 };
 </script>
 ```
+
+## 示例
+
+### 行内布局
+
+设置 `layout="inline"` 让表单项横向排列 —— 适合筛选条。
+
+```vue
+<template>
+  <AForm :model-value="model" :rules="rules" layout="inline">
+    <AFormItem prop="keyword" label="搜索">
+      <AInput v-model="model.keyword" />
+    </AFormItem>
+    <AButton type="primary">应用</AButton>
+  </AForm>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const model = ref({ keyword: '' });
+const rules = { keyword: [{ required: true, message: '必填' }] };
+</script>
+```
+
+### 命令式校验与重置
+
+使用暴露的方法可以校验单个字段、清除校验信息或清除值。
+
+```vue
+<template>
+  <AForm ref="formRef" :model-value="model" :rules="rules">
+    <AFormItem prop="name" label="姓名">
+      <AInput v-model="model.name" />
+    </AFormItem>
+  </AForm>
+  <AButton @click="formRef.validateField('name')">校验姓名</AButton>
+  <AButton @click="formRef.clearValidation()">清除错误</AButton>
+  <AButton @click="formRef.clearFields()">清空值</AButton>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const formRef = ref();
+const model = ref({ name: '' });
+const rules = { name: [{ required: true, message: '请填写姓名' }] };
+</script>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` | Object | undefined | 表单数据对象。 |
+| `rules` | Record<string, FormRuleItem[]> | undefined | 按字段名配置的校验规则。 |
+| `layout` | 'default' \| 'inline' | 'default' | 堆叠或行内布局。 |
+| `labelWidth` | String \| Number | '20%' | 标签列宽度。 |
+
+## 方法
+
+| 方法 | 签名 | 说明 |
+| --- | --- | --- |
+| `validate` | () => Promise<boolean> | 校验整个表单，返回整体是否通过。 |
+| `validateField` | (field) => Promise<boolean> | 校验单个字段。 |
+| `clearField / clearFields` | (field?) => void | 清除值与校验状态。 |
+| `clearValidation` | (field?) => void | 仅清除校验信息。 |

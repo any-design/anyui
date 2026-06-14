@@ -1,81 +1,70 @@
-# ATag 组件文档
+# ATag
 
-该组件用于创建一个 tag。
+`ATag` 是用于分类、状态或简短元数据的紧凑标签胶囊。它支持三种尺寸、胶囊形圆角，以及完全自定义的文字 / 背景颜色。
 
-## 基本用法和示例
+## 引入
 
-通过使用 `ATag` 组件，可以创建一个 tag：
+```ts
+import { Tag } from '@any-design/anyui/vue';
+// React:  import { Tag } from '@any-design/anyui/react';
+// Svelte: import { Tag } from '@any-design/anyui/svelte';
+```
+
+## 基础用法
 
 ```vue
 <template>
-  <ATag>标签</ATag>
+  <ATag>新</ATag>
 </template>
 ```
 
-## Props
+## 示例
 
-该组件接受以下 props：
-
-| 属性名 | 类型    | 默认值    | 说明                                                    |
-| ------ | ------- | --------- | ------------------------------------------------------- |
-| round  | Boolean | false     | 是否显示圆角                                            |
-| size   | String  | 'default' | tag 的尺寸，可以是 'default'，'small'，'large' 中的一种 |
-| color  | String  | null      | tag 的颜色值（hex 格式），如 '#1faeff'                  |
-
-示例：
+### 尺寸
 
 ```vue
 <template>
-  <ATag round size="small" color="#1faeff">小标签</ATag>
+  <div class="demo-row">
+    <ATag size="small">Small</ATag>
+    <ATag>Default</ATag>
+    <ATag size="large">Large</ATag>
+  </div>
 </template>
-
-<script>
-import { ATag } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ATag,
-  },
-};
-</script>
 ```
 
-## 组件样式
+### 圆角
 
-该组件的样式如下：
-
-```scss
-.a-tag {
-  height: 26px;
-  padding: 6px 16px;
-  background: #fff;
-  color: var(--text);
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  line-height: 14px;
-  border-radius: 14px;
-  box-shadow: 1px 2px 8px var(--shadow-6);
-  white-space: nowrap;
-}
-
-.a-tag--small {
-  height: 20px;
-  padding: 4px 10px;
-  font-size: 10px;
-  line-height: 10px;
-  border-radius: 10px;
-}
-
-.a-tag--large {
-  height: 32px;
-  padding: 8px 20px;
-  font-size: 15px;
-  line-height: 16px;
-  border-radius: 16px;
-}
+```vue
+<template>
+  <ATag round>精选</ATag>
+</template>
 ```
 
-请注意：上方样式是组件内部实现的，不是 prop 配置项，无法更改。
+### 自定义颜色
+
+通过 `color`（文字）与 `bgColor`（背景）传入任意 CSS 颜色 —— 适用于无法映射到主题 token 的状态徽标。
+
+```vue
+<template>
+  <div class="demo-row">
+    <ATag color="#fff" bgColor="#16a34a">success</ATag>
+    <ATag color="#fff" bgColor="#dc2626">error</ATag>
+    <ATag color="#1e293b" bgColor="#fde68a">warning</ATag>
+  </div>
+</template>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `round` | Boolean | false | 胶囊形。 |
+| `size` | 'default' \| 'small' \| 'large' | 'default' | 尺寸。 |
+| `color` | String | '' | 文字颜色。 |
+| `bgColor` | String | '' | 背景颜色。 |
+
+## 插槽
+
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `default` | — | 标签内容。 |

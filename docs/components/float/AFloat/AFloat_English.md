@@ -1,156 +1,95 @@
 # AFloat
 
-`<AFloat>` is a Vue component of "@any-design/anyui" package.
+`AFloat` is a floating panel that docks to a viewport edge. Toggle it with `v-model:visible`, position it with `top`, and optionally `center` it instead of docking. Useful for command palettes, notification stacks, or helper panels.
 
-## Usage
+## Import
 
-Here is an example of how to use `<AFloat>` component :
+```ts
+import { Float } from '@any-design/anyui/vue';
+// React:  import { Float } from '@any-design/anyui/react';
+// Svelte: import { Float } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
 
 ```vue
 <template>
-  <a-float
-    :visible="true"
-    top="200"
-    padding="20"
-    width="400"
-    round-radius="10"
-    z-index="30"
-    lock-scroll="true"
-    :scroll-lock-target="'#app'"
-    @close="handleClose"
-    @update:visible="handleVisible"
-  >
-    <p>This is the content of AFloat component.</p>
-  </a-float>
+  <AButton @click="visible = true">Open panel</AButton>
+  <AFloat v-model:visible="visible" :top="80" width="480">
+    <div style="padding: 16px">
+      <AInput placeholder="Search commands…" />
+    </div>
+  </AFloat>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const visible = ref(false);
+</script>
+```
+
+## Examples
+
+### Centered
+
+Set `centered` for a modal-like centered panel instead of a docked one.
+
+```vue
+<template>
+  <AFloat v-model:visible="visible" centered width="560">
+    <div style="padding: 24px">
+      <h3>Quick actions</h3>
+    </div>
+  </AFloat>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const visible = ref(true);
+</script>
+```
+
+### Rounded
+
+Add `round` for pill-shaped corners.
+
+```vue
+<template>
+  <AFloat v-model:visible="visible" round :top="60" width="420">
+    <div style="padding: 16px">Rounded floating panel</div>
+  </AFloat>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const visible = ref(true);
+</script>
 ```
 
 ## Props
 
-These are the props for `<AFloat>` component :
-
-### `class`
-
-- type: `String`
-
-Allows to add custom class name(s) to the component to overwrite styles.
-
-### `top`
-
-- type: `Number` or `String`
-- default: `96`
-
-Sets the distance from the top of the screen, in pixels, or in the string representation of a CSS measurement to allow the component to be positioned.
-
-### `padding`
-
-- type: `Number` or `String`
-- default: `undefined`
-
-Sets the padding of the component , accepts a value in pixels or the string representation of a CSS measurement.
-
-### `visible`
-
-- type: `Boolean`
-- default: `false`
-
-Specifies the visible state of the component. It can be used for disappearing and appearing animations.
-
-### `zIndex`
-
-- type: `Number`
-- default: `1000`
-
-Sets the z-index value of the component.
-
-### `width`
-
-- type: `Number` or `String`
-- default: `800`
-
-Sets the width of the component. It can accept a value in pixels or the string representation of a CSS measurement.
-
-### `roundRadius`
-
-- type: `Number` or `String`
-- default: `undefined`
-
-Sets the border-radius of the component, can be set using pixels or the string representation of a CSS measurement.
-
-### `round`
-
-- type: `Boolean`
-- default: `false`
-
-If true, the component will be applied a 24px border-radius automaticlly.
-
-### `lockScroll`
-
-- type: `Boolean`
-- default: `true`
-
-When set to `true`, locks the page's scrolling feature when the component is visible.
-
-### `scrollLockTarget`
-
-- type: `String`
-- default: `'html'`
-
-Sets the target of locking the page's scroll feature, accepts a CSS selector.
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `visible` | Boolean | false | Visibility (`v-model:visible`). |
+| `top` | Number \| String | undefined | Offset from the top. |
+| `width` | String \| Number | 800 | Panel width. |
+| `padding` | String \| Number | undefined | Inner padding. |
+| `round` | Boolean | false | Rounded corners. |
+| `roundRadius` | Number \| String | undefined | Custom radius. |
+| `centered` | Boolean | false | Center the panel instead of docking. |
+| `lockScroll` | Boolean | true | Lock scroll while open. |
+| `scrollLockTarget` | String | 'html' | Selector of the element to lock. |
+| `zIndex` | Number | 1000 | z-index. |
 
 ## Events
 
-`<AFloat>` component will emit the following events:
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:visible` | Boolean | Visibility change. |
+| `close` | — | Closed. |
 
-### `close`
+## Slots
 
-Emitted after the component is closed completely.
-
-### `update:visible`
-
-Emitted when the visibility value of the component changes.
-
-## Methods
-
-`<AFloat>` component exposes no methods.
-
-## CSS Classes
-
-These are explicitly defined CSS classes for the component.
-
-### `.a-float__mask`
-
-- It is used to style the mask used to cover the area outside the float component.
-- It has the following properties:
-  - `width`: sets the width of the mask to 100%.
-  - `height`: sets the height of the mask to 100%.
-  - `background`: By default it has a transparent black color gradient using rgba value 'rgba(0, 0, 0, 0.8)' and accepts any css valid color.
-  - `position`: sets the position of the mask to absolute.
-  - `top`: sets the top position of the mask to zero.
-  - `left`: sets the left position of the mask to zero.
-  - `z-index`: sets the z-index position of the mask behind the main component.
-  - `backdrop-filter`: sets the backdrop-filter property to blur(4px) for browser support.
-
-### `.a-float__content`
-
-- It is used to style the content of the float component which includes the slot content.
-- It has the following properties:
-  - `height`: sets the height of the component to maximum available height.
-  - `background`: By default it has same color as the whole component's background and accepts any css valid color.
-  - `margin-left`: sets the left margin to auto.
-  - `margin-right`: sets the right margin to auto.
-  - `z-index`: sets the z-index position of the component above the mask.
-  - `box-shadow`: sets the box-shadow value to '0 12px 40px var(--shadow-w-10)' for browser support.
-  - `box-sizing`: sets the box-sizing property of the element.
-
-### `.scroll-locked`
-
-By default, the component locks the page's scrolling feature. It adds the 'scroll-locked' class to the document body, and its value is:
-
-```css
-.scroll-locked {
-  overflow: hidden;
-}
-```
-
-It sets the `overflow` property of the body to `hidden` to prevent the page's scrolling feature.
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | — | Panel content. |

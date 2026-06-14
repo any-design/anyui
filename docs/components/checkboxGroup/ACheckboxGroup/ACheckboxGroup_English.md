@@ -1,57 +1,88 @@
-# @any-design/anyui A-Checkbox Group Component
+# ACheckboxGroup
 
-The `a-checkbox-group` component is used to group multiple related checkboxes. It has an array of checkboxes and provides the ability for the user to pick more than one options.
+`ACheckboxGroup` binds an array of selected values to a set of checkboxes rendered from an `items` list. Pass each option as `{ label, value }`, and the group keeps `modelValue` in sync as users toggle boxes — ideal for multi-select filters, permission pickers, and tag choosers.
 
-## Basic Usage
+## Import
 
-```html
+```ts
+import { CheckboxGroup } from '@any-design/anyui/vue';
+// React:  import { CheckboxGroup } from '@any-design/anyui/react';
+// Svelte: import { CheckboxGroup } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
+
+Bind an array with `v-model` and pass `items`.
+
+```vue
 <template>
-  <a-checkbox-group v-model="selectedFruits" :items="fruits" gap="10" />
+  <ACheckboxGroup v-model="picked" :items="items" />
 </template>
 
-<script>
-  import { defineComponent } from 'vue';
-  import { ACheckboxGroup } from '@any-design/anyui/vue';
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'Apple', value: 'apple' },
+  { label: 'Banana', value: 'banana' },
+  { label: 'Cherry', value: 'cherry' },
+];
+const picked = ref(['apple']);
+</script>
+```
 
-  export default defineComponent({
-    components: {
-      ACheckboxGroup,
-    },
-    setup() {
-      const fruits = ['Apple', 'Banana', 'Cherry', 'Orange'];
-      const selectedFruits = ['Banana', 'Orange'];
+## Examples
 
-      return {
-        fruits,
-        selectedFruits,
-      };
-    },
-  });
+### Pre-selected values
+
+Seed `modelValue` with the values that should start checked.
+
+```vue
+<template>
+  <ACheckboxGroup v-model="roles" :items="items" />
+  <p>Selected: {{ roles }}</p>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'Read', value: 'read' },
+  { label: 'Write', value: 'write' },
+  { label: 'Admin', value: 'admin' },
+];
+const roles = ref(['read', 'write']);
+</script>
+```
+
+### Custom gap
+
+Tighten or loosen spacing between options with `gap` (pixels).
+
+```vue
+<template>
+  <ACheckboxGroup v-model="tags" :items="items" :gap="32" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'Vue', value: 'vue' },
+  { label: 'React', value: 'react' },
+  { label: 'Svelte', value: 'svelte' },
+];
+const tags = ref([]);
 </script>
 ```
 
 ## Props
 
-The following props can be passed into the `a-checkbox-group` component:
-
-| Name         | Type   | Default | Description                                       |
-| ------------ | ------ | ------- | ------------------------------------------------- |
-| `modelValue` | Object | (none)  | The values which will be bound to this component. |
-| `items`      | Array  | (none)  | The pairing labels to the values.                 |
-| `gap`        | Number | 16      | Gap between the checkboxes, the unit is `px`.     |
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `modelValue` | Array<string \| number> | undefined | Selected values (`v-model`). |
+| `items` | Array | undefined | Required. Checkbox options. |
+| `gap` | Number | 16 | Gap (px) between items. |
 
 ## Events
 
-The `a-checkbox-group` component emits the following events:
-
-| Name                | Parameters | Description                                                                             |
-| ------------------- | ---------- | --------------------------------------------------------------------------------------- |
-| `update:modelValue` | Array      | Will be emitted when any item was checked or unchecked, to update new values to parent. |
-
-## Methods
-
-The `a-checkbox-group` component does not expose any methods.
-
-## Values
-
-The `a-checkbox-group` component does not expose any values.
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:modelValue` | Array | Selection change. |

@@ -1,81 +1,108 @@
-# AVirtualList Component Documentation
+# AVirtualList
 
-This document includes comprehensive details of the `AVirtualList` Vue component from "@any-design/anyui/vue" JavaScript library. The `AVirtualList` is a performant virtual scroll list that uses a binary indexed tree to determine the scroll top. It automatically measures the optimal item height and supports dynamic item height.
+`AVirtualList` is a high-performance virtualized list for rendering thousands of items efficiently. Pass `items` (each item **must** have an `id`), provide a `default` slot to render each row, and optionally set `estimatedItemHeight` for more accurate layout math. The package also exports `AVirtualListItem`.
 
-## Basic Usage and Example
+## Import
 
-Below is an example of how to use the `AVirtualList` component:
+```ts
+import { VirtualList } from '@any-design/anyui/vue';
+// React:  import { VirtualList } from '@any-design/anyui/react';
+// Svelte: import { VirtualList } from '@any-design/anyui/svelte';
+```
+
+## Basic usage
 
 ```vue
 <template>
-  <AVirtualList :items="dataItems" :buffer="800" :estimatedItemHeight="50" :enableDeepWatch="true" :firstScreenThreshold="15">
-    <template v-slot="{item}">
-      <div>{{ item.name }}</div>
+  <AVirtualList :items="items" :estimated-item-height="40">
+    <template #default="{ item }">
+      <div class="row">{{ item.label }}</div>
     </template>
   </AVirtualList>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      dataItems: Array.from({ length: 500 }, (_, index) => ({ id: index, name: `item-${index}` }))
-    }
-  },
-};
+<script setup>
+const items = Array.from({ length: 5000 }, (_, i) => ({
+  id: i,
+  label: `Item ${i}`,
+}));
+</script>
+```
+
+## Examples
+
+### Scroll to bottom
+
+Use a template ref to call `scrollToBottom()` — handy for chat or log views.
+
+```vue
+<template>
+  <AVirtualList ref="listRef" :items="items" :estimated-item-height="40">
+    <template #default="{ item }">
+      <div class="row">{{ item.label }}</div>
+    </template>
+  </AVirtualList>
+  <AButton @click="listRef.scrollToBottom()">Jump to bottom</AButton>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const listRef = ref();
+const items = Array.from({ length: 2000 }, (_, i) => ({
+  id: i,
+  label: `Row ${i}`,
+}));
+</script>
+```
+
+### Custom height and buffer
+
+Tune `estimatedItemHeight` for your row size and increase `buffer` to render more off-screen items (smoother fast scrolling).
+
+```vue
+<template>
+  <AVirtualList :items="items" :estimated-item-height="80" :buffer="2000">
+    <template #default="{ item }">
+      <ACard :title="item.label">Row content</ACard>
+    </template>
+  </AVirtualList>
+</template>
+
+<script setup>
+const items = Array.from({ length: 1000 }, (_, i) => ({
+  id: i,
+  label: `Card ${i}`,
+}));
 </script>
 ```
 
 ## Props
 
-The `AVirtualList` component accepts the following props:
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | Array<{ id, ... }> | [] | Items (each must have an `id`). |
+| `estimatedItemHeight` | Number | undefined | Estimated row height for layout math. |
+| `buffer` | Number | 1200 | Extra render buffer (px). |
+| `firstScreenThreshold` | Number | 10 | Items rendered on first paint. |
+| `preserveScrollTop` | Boolean | true | Preserve scroll on items change. |
+| `ignoreInvisibleItems` | Boolean | false | Skip invisible items in layout. |
+| `dynamicEstimatedHeight` | Boolean | true | Refine estimated height from measurements. |
+| `enableDeepWatch` | Boolean | false | Deep-watch `items`. |
 
-| Prop                 | Type          | Default   | Description                                                                        |
-| -------------------- | ------------- | --------- | ---------------------------------------------------------------------------------- |
-| items                | Array<Object> | []        | The data list to be rendered in the virtual list                                   |
-| buffer               | Number        | 1200      | The scroll buffer of the list in pixels/units                                      |
-| estimatedItemHeight  | Number        | undefined | Expected height for each item in pixels/units, if known                            |
-| enableDeepWatch      | Boolean       | false     | If true, the items will be deeply watched                                          |
-| firstScreenThreshold | Number        | 10        | The number of elements that will be used for initial height measure                |
+## Slots
 
-- `items`: This is an array of items that will be rendered in the virtual list. Each item in the array should have a unique id.
-- `buffer`: This prop is a buffer size (in pixels) for the list. A larger number means that more items will be rendered. Default value is 1200.
-- `estimatedItemHeight`: If you know the proper height of your items, you can set it here to skip the height measurement.
-- `enableDeepWatch`: If set to true, the component will deeply watch the items.
-- `firstScreenThreshold`: This prop dictates how many elements will be used for initial height measure. Default value is 10.
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | { item } | Item template. |
 
-## Events
+## Methods
 
-The `AVirtualList` component does not emit any Vue events of its own.
+| Method | Signature | Description |
+| --- | --- | --- |
+| `scrollToItem / scrollToBottom / scrollTo` | (index \| top) => void | Programmatic scroll. |
+| `refresh / refreshDisplay` | () => void | Recompute the layout. |
+| `getContainer` | () => HTMLElement | DOM accessor. |
 
-## Exposed Methods
+## Notes
 
-The `AVirtualList` component exposes several methods for usage:
-
-- `refresh()`: Refreshes the list. Useful when items in the list get updated or changes occur in the list layout.
-- `scrollToBottom()`: Scrolls to the bottom of the list.
-- `scrollTo(top: number)`: Scrolls the list to the specified scroll top. The argument `top` represents the top position in pixels/units.
-- `getContainer()`: Returns a reference to the underlying list container.
-
-Example on accessing an exposed method:
-
-```vue
-<template>
-    <a-virtual-list ref="virtualListRef" :items="items"></a-virtual-list>
-</template>
-
-<script>
-export default {
-    data() {
-        return {
-            items: Array.from({ length: 500 }, (_, index) => ({ id: index, name: `item-${index}` }))
-        }
-    },
-    mounted() {
-      this.$nextTick(() =>{
-           this.$refs.virtualListRef.refresh();
-      });
-    }
-}
-</script>
-```
+The package also registers `AVirtualListItem` (exported as `VirtualListItem`).

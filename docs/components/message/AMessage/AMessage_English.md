@@ -1,96 +1,92 @@
-# AMessage - Message Box
+# AMessage
 
-The `AMessage` component is used to display messages to users in a message box format. It offers types for different message boxes, including 'default', 'info', 'warning', 'success', and 'error'. You can use an icon along with your messages to make them more expressive.
+`AMessage` renders a transient top-center notification. The primary way to use it is the imperative `message` API (`message.info` / `.success` / `.warning` / `.error`), which pops a notification without adding markup. The declarative `<AMessage>` component is available too, but most apps reach for the imperative calls.
 
-## Basic Usage
+## Import
 
-Here is a basic example of how to use the `AMessage` component:
+```ts
+import { Message, message } from '@any-design/anyui/vue';
+// React:  import { Message, message } from '@any-design/anyui/react';
+// Svelte: import { Message, message } from '@any-design/anyui/svelte';
+```
 
-```html
+## Basic usage
+
+Call `message.success` imperatively — no template needed.
+
+```vue
 <template>
-  <AMessage type="success" content="Your payment was successful" />
+  <AButton type="primary" @click="save">Save</AButton>
 </template>
 
-<script>
-import { AMessage } from '@any-design/anyui/vue';
+<script setup>
+import { message } from '@any-design/anyui/vue';
+const save = () => message.success('Saved!');
+</script>
+```
 
-export default {
-  components: {
-    AMessage,
-  },
+## Examples
+
+### Imperative with options
+
+Pass an options object to set `content`, `duration`, and more.
+
+```vue
+<template>
+  <AButton @click="notify">Notify</AButton>
+</template>
+
+<script setup>
+import { message } from '@any-design/anyui/vue';
+const notify = () => {
+  message.warning({ content: 'Storage almost full', duration: 5000 });
 };
 </script>
 ```
 
-You can replace "success" with other types, including `info`, `warning`, and `error`.
+### Each status type
+
+Use the matching helper for each severity.
+
+```vue
+<template>
+  <AButton @click="message.info('Info')">Info</AButton>
+  <AButton @click="message.success('Done')">Success</AButton>
+  <AButton @click="message.warning('Careful')">Warning</AButton>
+  <AButton @click="message.error('Failed')">Error</AButton>
+</template>
+
+<script setup>
+import { message } from '@any-design/anyui/vue';
+</script>
+```
+
+### Declarative usage
+
+For static, in-flow banners use the component directly.
+
+```vue
+<template>
+  <AMessage type="success" content="Profile updated" />
+</template>
+```
 
 ## Props
 
-The following props can be passed to the `AMessage` component:
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `type` | 'info' \| 'success' \| 'warning' \| 'error' | undefined | Status type. |
+| `content` | String | undefined | Message text. |
+| `icon` | String \| IconifyIcon | '' | Custom icon. |
+| `showIcon` | Boolean | true | Show the type icon. |
+| `round` | Boolean | false | Rounded corners. |
 
-### type
+## Methods
 
-- Type: String
-- Default: 'default'
-- This prop sets the type of the message box. The available options are 'default', 'info', 'warning', 'success', and 'error'.
+| Method | Signature | Description |
+| --- | --- | --- |
+| `message.info / .success / .warning / .error` | (content \| options) => void | Imperative helpers; options also accept `duration` and `zIndex`. |
 
-```html
-<template>
-  <AMessage type="warning" />
-</template>
-```
+## Notes
 
-### content
-
-- Type: String
-- This prop defines the message to be displayed in the box.
-
-```html
-<template>
-  <AMessage content="Warning: Unauthorized access" />
-</template>
-```
-
-### icon
-
-- Type: String
-- Default: ''
-- If you want to add an icon to your message, you can set the name of the icon file to this prop.
-
-```html
-<template>
-  <AMessage icon="warning-filled" />
-</template>
-```
-
-### showIcon
-
-- Type: Boolean
-- Default: true
-- This prop determines whether the icon should be shown. If you want to hide the icon, you can set this prop to `false`.
-
-```html
-<template>
-  <AMessage show-icon="false" />
-</template>
-```
-
-### round
-
-- Type: Boolean
-- Default: false
-- If you want to display the message box with a circular shape, you can set this prop to `true`.
-
-```html
-<template>
-  <AMessage round />
-</template>
-```
-
-## Events
-
-The `AMessage` component doesn't emit any events.
-
-## Exposed Methods and Values
-
-The `AMessage` component doesn't expose any methods or values.
+Install globally to also expose `$message` on Vue app instance. `duration` and `zIndex` are only available on the imperative API, not as component props.

@@ -1,47 +1,31 @@
-# ARadioButton 组件文档
+# ARadioButton
 
-这个组件是一个单选按钮。
+ARadioButton 是单个按钮式单选项，随 ARadioButtonGroup 一起导出。
 
-## 基本用法和示例
+## 引入
 
-使用 `ARadioButton` 组件，可以创建一个单选按钮：
+```ts
+import { RadioButton } from '@any-design/anyui/vue';
+```
+
+React 与 Svelte 的引入路径分别是 `@any-design/anyui/react` 和 `@any-design/anyui/svelte`，组件 API 保持一致。
+
+## 基础用法
 
 ```vue
 <template>
-  <ARadioButton :item="{ label: '选项1', value: 'option1' }" :selected="false" @click="handleClick"
-    >选项1</ARadioButton
-  >
+  <ARadioButton />
 </template>
 
-<script>
-import { ARadioButton } from '@any-design/anyui/vue';
-
-export default {
-  components: {
-    ARadioButton,
-  },
-  methods: {
-    handleClick(e) {
-      console.log('clicked: ', e);
-    },
-  },
-};
+<script setup>
+import { RadioButton } from '@any-design/anyui/vue';
 </script>
 ```
 
-## Props
+## 属性
 
-该组件接受以下 props：
-
-| 属性名   | 类型    | 默认值 | 说明                                                |
-| -------- | ------- | ------ | --------------------------------------------------- |
-| item     | Object  | null   | 以 `{ label, value }` 形式的 object，将会渲染为按钮 |
-| selected | Boolean | false  | 指定该单选按钮是否被选中                            |
-
-## Events
-
-该组件包含以下事件：
-
-| 事件名 | 说明                                                                                                                                    |
-| ------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| click  | 单选按钮被点击时触发，返回一个包含当前单选按钮的值和其位置信息的对象，例如 `{ value: 'option1', position: { width: 100, left: 20 } }`。 |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | String | '' | 按钮上显示的标签。 |
+| `value` | String \| Number | undefined | 该按钮代表的值。 |
+| `disabled` | Boolean | false | 禁用。 |

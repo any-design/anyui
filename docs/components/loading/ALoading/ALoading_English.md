@@ -1,26 +1,63 @@
-# Component Documentation: A-loading
+# ALoading
 
-This document is intended to help developers understand and use the `A-loading` component. This component is included in the "@any-design/anyui" package.
+`ALoading` renders four bouncing dots — a lightweight, purely presentational loading indicator. It takes no props; just drop it inline wherever you need a small "working…" signal.
 
-## Introduction
+## Import
 
-`A-loading` is a component that displays a loading animation with four circles that move up and down in a wave-like pattern.
+```ts
+import { Loading } from '@any-design/anyui/vue';
+// React:  import { Loading } from '@any-design/anyui/react';
+// Svelte: import { Loading } from '@any-design/anyui/svelte';
+```
 
 ## Basic usage
 
-To use the A-loading component, simply import it into your .vue file and add the following tag to your template:
-
-```html
-<A-loading />
-```
-
-Here is an example of how you can use the A-loading component:
-
-```html
+```vue
 <template>
-  <div>
-    <h1>Loading Data...</h1>
-    <A-loading />
-  </div>
+  <ALoading />
 </template>
 ```
+
+## Examples
+
+### Inline inside a button
+
+A common pattern: show the dots inside a button while an async action runs.
+
+```vue
+<template>
+  <AButton type="primary" :disabled="saving">
+    <ALoading v-if="saving" />
+    <span v-else>Save</span>
+  </AButton>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const saving = ref(false);
+</script>
+```
+
+### Centered in a region
+
+Wrap it in a flex container to center it over content that hasn't loaded yet.
+
+```vue
+<template>
+  <div class="loading-wrap">
+    <ALoading />
+  </div>
+</template>
+
+<style scoped>
+.loading-wrap { display: flex; justify-content: center; padding: 40px; }
+</style>
+```
+
+## Props
+
+_This component has no configurable props._
+
+## Notes
+
+No props — purely presentational. Use inside a button or inline where you need a tiny indicator.
