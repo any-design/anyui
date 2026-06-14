@@ -1,0 +1,31 @@
+// Shared custom scrollbar recipe for components that keep native scrolling.
+// Apply `.a-scrollbar-styled` (or mirror these values on a custom selector):
+// 8px bar, transparent track, rounded thumb that tints primary on hover.
+.a-scrollbar-styled {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: var(--a-radius-full, 999px);
+    background: var(--scrollbar, var(--border));
+    transition: background-color 100ms ease-out;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-60);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}

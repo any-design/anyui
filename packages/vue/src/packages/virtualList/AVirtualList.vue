@@ -613,8 +613,11 @@ onBeforeUnmount(() => {
   }
 }
 
+// keep in sync with the shared `.a-scrollbar-styled` recipe in
+// styles/basic/scrollbar.scss
 .a-virtual-list::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 .a-virtual-list::-webkit-scrollbar-button {
@@ -622,16 +625,20 @@ onBeforeUnmount(() => {
 }
 
 .a-virtual-list::-webkit-scrollbar-thumb {
-  width: 6px;
-  border-radius: var(--a-radius-full, 6px);
-  background: var(--scrollbar);
+  border-radius: var(--a-radius-full, 999px);
+  background: var(--scrollbar, var(--border));
+  transition: background-color 100ms ease-out;
+}
+
+.a-virtual-list::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-60);
 }
 
 .a-virtual-list::-webkit-scrollbar-track {
-  background: var(--bg);
+  background: transparent;
 }
 
 .a-virtual-list::-webkit-scrollbar-corner {
-  background: var(--bg);
+  background: transparent;
 }
 </style>

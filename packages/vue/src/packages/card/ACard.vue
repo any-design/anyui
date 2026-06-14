@@ -122,8 +122,19 @@ export default defineComponent({
     width: 100%;
     height: max-content;
     position: relative;
-    padding: 10px 20px 11px 20px;
-    border-top: 1px solid var(--line);
+    padding: 11px 20px 12px 20px;
+
+    // inset hairline divider instead of an edge-to-edge border
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20px;
+      right: 20px;
+      height: 1px;
+      border-radius: 1px;
+      background: var(--line);
+    }
   }
 }
 .a-card--has-link {
@@ -144,7 +155,10 @@ export default defineComponent({
   }
   .a-card-footer {
     padding: 0;
-    border: none;
+
+    &::before {
+      display: none;
+    }
   }
 }
 </style>
