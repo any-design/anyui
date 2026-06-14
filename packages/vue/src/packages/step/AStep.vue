@@ -1,6 +1,15 @@
 <template>
   <div class="a-step">
-    <div class="a-step__line"></div>
+    <div class="a-step__lines">
+      <div
+        v-for="lineIndex in Math.max(displaySteps.length - 1, 0)"
+        :key="`line-${lineIndex}`"
+        :class="{
+          'a-step__line': true,
+          'a-step__line--active': lineIndex < current,
+        }"
+      ></div>
+    </div>
     <div class="a-step__content">
       <div
         v-for="(item, index) in displaySteps"
@@ -53,15 +62,33 @@ export default defineComponent({
   width: 100%;
   height: max-content;
   position: relative;
-  &__line {
-    height: 2px;
-    width: calc(100% - 28px);
+  &__lines {
     position: absolute;
     top: 20px;
     left: 14px;
+    right: 14px;
+    display: flex;
+    z-index: 0;
+  }
+  // each connector is its own segment so the completed path can fill forward
+  &__line {
+    flex: 1;
+    height: 2px;
     background: var(--line);
     border-radius: var(--a-radius-full, 999px);
-    z-index: 0;
+    &::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: var(--a-radius-full, 999px);
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary-40);
+      transition: width var(--anim-duration, 200ms) var(--a-ease-soft, ease);
+    }
+  }
+  &__line--active::after {
+    width: 100%;
   }
   &__content {
     width: 100%;

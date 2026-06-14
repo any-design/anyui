@@ -2,6 +2,8 @@
 // Components reference these through `var(--a-*, fallback)` so user themes
 // and the optional liquid glass style can override them in one place.
 
+@use './color/vars.scss' as *;
+
 :root {
   // radius scale — generous roundness is the core of the cute tone
   --a-radius-xs: 6px;
@@ -30,8 +32,40 @@
   // surface indirection layer — the liquid glass theme overrides these,
   // so every surface component picks the style up without per-component code
   --a-surface: var(--bg-bright);
+  // small interactive controls (buttons, tags, inputs) — kept blur-free even
+  // under liquid glass: animated backdrop-filter regions are the main source
+  // of jank, and blurred fills muddy thin borders on small elements
+  --a-surface-control: var(--bg-bright);
   --a-surface-input: var(--bg-semi-light);
   --a-surface-border-color: transparent;
   --a-surface-backdrop: none;
   --a-surface-highlight: 0 0 #0000;
+}
+
+// Dark theme keeps the cute depth: pure black drop shadows vanish on a dark
+// canvas, so elevation gets deeper ambient shadows, every surface receives a
+// faint light hairline + top sheen for definition, and the primary glow gets
+// a touch stronger.
+@mixin dark-tokens {
+  --a-shadow-xs: 0 1px 3px var(--shadow-30), 0 3px 10px var(--shadow-24);
+  --a-shadow-sm: 0 2px 8px var(--shadow-30), 0 8px 22px -4px var(--shadow-36);
+  --a-shadow-md: 0 4px 12px var(--shadow-30), 0 14px 34px -8px var(--shadow-40);
+  --a-shadow-lg: 0 8px 18px var(--shadow-36), 0 26px 56px -12px var(--shadow-40);
+
+  --a-surface-border-color: color-mix(in srgb, #fff 8%, transparent);
+  --a-surface-highlight: inset 0 1px 0 color-mix(in srgb, #fff 5%, transparent);
+
+  --a-focus-ring: 0 0 0 3px var(--primary-30, var(--primary-18));
+}
+
+#{$dark-theme-selector} {
+  @include dark-tokens;
+}
+
+@if $enable-prefer-query {
+  @media (prefers-color-scheme: dark) {
+    :root {
+      @include dark-tokens;
+    }
+  }
 }

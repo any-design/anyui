@@ -137,9 +137,7 @@ export default defineComponent({
   height: 42px;
   line-height: 30px;
   padding: 4px 20px;
-  background: var(--a-surface, var(--bg));
-  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
-  backdrop-filter: var(--a-surface-backdrop, none);
+  background: var(--a-surface-control, var(--bg));
   border-radius: var(--a-radius, 14px);
   box-shadow:
     var(--a-surface-highlight, 0 0 #0000),

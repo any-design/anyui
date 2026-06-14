@@ -62,8 +62,11 @@ provide('itemHeight', formattedItemHeight);
   box-sizing: border-box;
 }
 
+// keep in sync with the shared `.a-scrollbar-styled` recipe in
+// styles/basic/scrollbar.scss
 .a-list-view::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 .a-list-view::-webkit-scrollbar-button {
@@ -71,9 +74,13 @@ provide('itemHeight', formattedItemHeight);
 }
 
 .a-list-view::-webkit-scrollbar-thumb {
-  width: 6px;
-  border-radius: var(--a-radius-full, 6px);
-  background: var(--scrollbar);
+  border-radius: var(--a-radius-full, 999px);
+  background: var(--scrollbar, var(--border));
+  transition: background-color 100ms ease-out;
+}
+
+.a-list-view::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-60);
 }
 
 .a-list-view::-webkit-scrollbar-track {

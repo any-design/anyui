@@ -66,9 +66,7 @@ export default defineComponent({
 .a-tag {
   height: 26px;
   padding: 6px 16px;
-  background: var(--a-surface, var(--bg-bright));
-  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
-  backdrop-filter: var(--a-surface-backdrop, none);
+  background: var(--a-surface-control, var(--bg-bright));
   border: 1px solid var(--a-surface-border-color, transparent);
   color: var(--text);
   box-sizing: border-box;

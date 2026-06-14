@@ -17,9 +17,12 @@
 @use './color/vars.scss' as *;
 
 @mixin glass-surface-light {
-  --a-surface: color-mix(in srgb, var(--bg-bright) 52%, transparent);
-  --a-surface-input: color-mix(in srgb, var(--bg-semi-light) 46%, transparent);
-  --a-surface-backdrop: blur(26px) saturate(2) brightness(1.04);
+  --a-surface: color-mix(in srgb, var(--bg-bright) 55%, transparent);
+  --a-surface-control: color-mix(in srgb, var(--bg-bright) 82%, transparent);
+  --a-surface-input: color-mix(in srgb, var(--bg-semi-light) 75%, transparent);
+  // moderate blur: cost grows with radius, and large panels are the only
+  // backdrop-filter consumers — small controls stay blur-free for performance
+  --a-surface-backdrop: blur(18px) saturate(1.7);
   --a-surface-border-color: color-mix(in srgb, #fff 46%, transparent);
   // specular top edge + thickness rim + soft bottom sheen
   --a-surface-highlight:
@@ -43,9 +46,10 @@
 }
 
 @mixin glass-surface-dark {
-  --a-surface: color-mix(in srgb, var(--bg-bright) 46%, transparent);
-  --a-surface-input: color-mix(in srgb, var(--bg-semi-light) 42%, transparent);
-  --a-surface-backdrop: blur(28px) saturate(1.55) brightness(1.12);
+  --a-surface: color-mix(in srgb, var(--bg-bright) 50%, transparent);
+  --a-surface-control: color-mix(in srgb, var(--bg-bright) 78%, transparent);
+  --a-surface-input: color-mix(in srgb, var(--bg-semi-light) 70%, transparent);
+  --a-surface-backdrop: blur(20px) saturate(1.45) brightness(1.1);
   --a-surface-border-color: color-mix(in srgb, #fff 16%, transparent);
   --a-surface-highlight:
     inset 0 1px 1px color-mix(in srgb, #fff 22%, transparent),
