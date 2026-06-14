@@ -37,6 +37,19 @@ kbd,
   font-family: var(--font-mono);
 }
 
+// AnyUI's bundled layout.scss ships a global reset
+// (div,span,p,a,input,button,textarea,pre { font-family: var(--font-normal) })
+// which competes with the rule above at equal specificity. Force mono on
+// code blocks, their inline spans, and inline prose code so it always wins.
+.astro-code,
+.astro-code span,
+.astro-code code,
+.prose pre,
+.prose :not(pre) > code,
+.prose kbd {
+  font-family: var(--font-mono) !important;
+}
+
 // pastel blobs behind everything — also feeds the liquid glass blur
 .site-backdrop {
   position: fixed;

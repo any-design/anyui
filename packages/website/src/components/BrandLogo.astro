@@ -1,0 +1,45 @@
+---
+// Inline brand logo rendered as SVG so it paints with the HTML on first paint
+// (no separate network request, no layout shift, no flash of empty <img>).
+---
+
+<svg
+  class="site-logo"
+  viewBox="0 0 1660 512"
+  role="img"
+  aria-label="AnyUI"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="brand-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#55b5ff"></stop>
+      <stop offset="55%" stop-color="#2f7df6"></stop>
+      <stop offset="100%" stop-color="#2456e6"></stop>
+    </linearGradient>
+    <linearGradient id="word-logo" gradientUnits="userSpaceOnUse" x1="630" y1="0" x2="1660" y2="0">
+      <stop offset="0%" stop-color="#3b8df9"></stop>
+      <stop offset="100%" stop-color="#2456e6"></stop>
+    </linearGradient>
+  </defs>
+  <path
+    fill="url(#brand-logo)"
+    d="M118.934,77.178C136.155,109.356,77.4,297.533,196,333c150.192,44.915,234.335-128.512,286-102,31.611,25.493,10.5,62-62,132C232.36,523.034,41.307,462.966,18,265c-6.406-75.776-4.113-131.212,19-172S101.712,45,118.934,77.178Zm69.5,81.788c13.388,1.421,67.454,28.819,67.454,28.819a650.051,650.051,0,0,1,58.905,34.341c29.67,18.68,45.308,33.425,39.061,42.022-7.059,10.141-34.909,2.011-51.663-1.166-37.18-11.042-55.574-17.58-92.064-32.854-27.858-12.962-39.754-23.143-43.168-26.665-2.868-2.426-19.973-17.957-11.425-32.223S175.043,157.546,188.43,158.966Z"
+  ></path>
+  <g stroke="url(#word-logo)" stroke-width="44" stroke-linecap="round" fill="none">
+    <circle cx="700" cy="238" r="70"></circle>
+    <path d="M792 168 V308"></path>
+    <path d="M876 308 V168 M876 238 a70 70 0 0 1 140 0 V308"></path>
+    <path d="M1090 168 V238 a70 70 0 0 0 140 0 V168 M1230 168 V370 a64 64 0 0 1 -118 22"></path>
+    <path d="M1302 168 V238 a70 70 0 0 0 140 0 V168 M1442 168 V308"></path>
+    <path d="M1546 168 V308"></path>
+  </g>
+  <circle cx="1546" cy="84" r="26" fill="url(#word-logo)"></circle>
+</svg>
+
+<style>
+  .site-logo {
+    height: 26px;
+    width: auto;
+    display: block;
+  }
+</style>
