@@ -30,4 +30,14 @@
       <Avatar size="large" fallback="A" />
     </div>
   </div>
+  <div class="demo-block">
+    <div class="demo-block__label">Name initials fallback</div>
+    <div class="demo-row">
+      <Avatar src="" name="Ada Lovelace" size="large" round />
+      <Avatar src="" name="Turing" size="large" />
+      <Avatar src="" name="宮崎駿" size="large" round />
+      <Avatar src="https://broken.example/missing.png" name="Grace Hopper" width={40} round />
+      <Avatar src="" name="Linus Torvalds" size="small" round />
+    </div>
+  </div>
 </div>

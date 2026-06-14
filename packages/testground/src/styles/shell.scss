@@ -31,6 +31,8 @@ body {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
+  padding: 14px 0 14px 14px;
+  gap: 4px;
   overflow: hidden;
 
   // pastel backdrop blobs — keeps the canvas fresh and gives the
@@ -84,13 +86,14 @@ body {
   flex-direction: column;
   box-sizing: border-box;
   padding: 20px 14px 14px 14px;
+  border-radius: var(--a-radius-xl, 22px);
   background: var(--a-surface, var(--bg-bright));
   -webkit-backdrop-filter: var(--a-surface-backdrop, none);
   backdrop-filter: var(--a-surface-backdrop, none);
-  border-right: 1px solid var(--a-surface-border-color, var(--line));
+  border: 1px solid var(--a-surface-border-color, var(--line));
   box-shadow:
     var(--a-surface-highlight, 0 0 #0000),
-    var(--a-shadow-sm, 0 2px 12px var(--shadow-5));
+    var(--a-shadow-md, 0 8px 24px var(--shadow-6));
 
   &__brand {
     display: flex;
