@@ -1,0 +1,11 @@
+---
+import * as enDoc from '../../../../../docs/components/split/ASplit/ASplit_English.md';
+import * as zhDoc from '../../../../../docs/components/split/ASplit/ASplit_Chinese.md';
+
+import LocalizedDoc from '../../components/LocalizedDoc.astro';
+import ComponentsLayout from '../../layouts/ComponentsLayout.astro';
+---
+
+<ComponentsLayout title="ASplit" active="split">
+  <LocalizedDoc en={enDoc} zh={zhDoc} />
+</ComponentsLayout>

@@ -720,3 +720,107 @@ html[theme='dark'] {
     margin-top: 14px;
   }
 }
+
+// ------------------------------------------------------------------ components
+
+.doc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.lang-pill {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: var(--a-radius-full, 999px);
+  background: var(--bg-hover);
+  border: 1px solid var(--line);
+
+  button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: var(--a-radius-full, 999px);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition:
+      background-color var(--anim-duration-quick, 120ms) ease,
+      color var(--anim-duration-quick, 120ms) ease;
+  }
+
+  button[aria-pressed='true'] {
+    background: var(--primary);
+    color: #fff;
+  }
+}
+
+.components-index {
+  &__hero {
+    margin-bottom: 8px;
+  }
+
+  &__intro {
+    color: var(--text-secondary);
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 640px;
+    margin-top: 10px;
+  }
+
+  &__group {
+    margin-top: 40px;
+  }
+
+  &__group-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06rem;
+    text-transform: uppercase;
+    color: var(--text-placeholder);
+    margin-bottom: 14px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  &__card {
+    display: block;
+    padding: 16px 18px;
+    border-radius: var(--a-radius-lg, 18px);
+    background: var(--a-surface, var(--bg-bright));
+    border: 1px solid var(--line);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease),
+      border-color var(--anim-duration-quick, 120ms) ease,
+      box-shadow var(--anim-duration-quick, 120ms) ease;
+  }
+
+  &__card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-60);
+    box-shadow: 0 6px 20px -10px var(--primary-40);
+  }
+
+  &__card-name {
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  &__card-blurb {
+    margin-top: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+}
