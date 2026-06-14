@@ -5,6 +5,8 @@ export * from './packages/chat/types';
 export * from './packages/drawer/types';
 export * from './packages/dropdownMenu/types';
 export * from './packages/helper';
+export * from './packages/item/types';
+export * from './packages/kbd/types';
 export * from './packages/masonry/types';
 export * from './packages/message/types';
 export * from './packages/otpInput/types';
