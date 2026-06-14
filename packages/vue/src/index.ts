@@ -20,6 +20,8 @@ import FormItem from './packages/formItem';
 import GradientText from './packages/gradientText';
 import Image from './packages/image';
 import Input from './packages/input';
+import Item from './packages/item';
+import Kbd from './packages/kbd';
 import Layout, { Header, Content, Footer, Side } from './packages/layout';
 import ListMenu from './packages/listMenu';
 import ListView, { ListViewItem } from './packages/listView';
@@ -27,6 +29,7 @@ import Loading from './packages/loading';
 import LoadingMask, { loadingMask } from './packages/loadingMask';
 import Masonry from './packages/masonry';
 import Message, { message } from './packages/message';
+import OtpInput from './packages/otpInput';
 import Pagination from './packages/pagination';
 import Popper from './packages/popper';
 import Popup from './packages/popup';
@@ -34,7 +37,9 @@ import PopupMenu from './packages/popupMenu';
 import Radio from './packages/radio';
 import RadioButtonGroup, { RadioButton } from './packages/radioButtonGroup';
 import RadioGroup from './packages/radioGroup';
+import ScrollArea from './packages/scrollArea';
 import Select from './packages/select';
+import Slider from './packages/slider';
 import Spinner from './packages/spinner';
 import Split from './packages/split';
 import Step from './packages/step';
@@ -43,6 +48,7 @@ import Table from './packages/table';
 import Tag from './packages/tag';
 import Textarea from './packages/textarea';
 import Toast, { toast } from './packages/toast';
+import Tooltip from './packages/tooltip';
 import Upload from './packages/upload';
 import VirtualList, { VirtualListItem } from './packages/virtualList';
 
@@ -67,6 +73,8 @@ const defaultComponentList = [
   GradientText,
   Input,
   Image,
+  Item,
+  Kbd,
   Layout,
   ListMenu,
   ListView,
@@ -74,6 +82,7 @@ const defaultComponentList = [
   LoadingMask,
   Masonry,
   Message,
+  OtpInput,
   Pagination,
   Popper,
   Popup,
@@ -82,7 +91,9 @@ const defaultComponentList = [
   RadioButton,
   RadioGroup,
   RadioButtonGroup,
+  ScrollArea,
   Select,
+  Slider,
   Spinner,
   Split,
   Step,
@@ -91,6 +102,7 @@ const defaultComponentList = [
   Tag,
   Textarea,
   Toast,
+  Tooltip,
   Upload,
   VirtualList,
 ];
@@ -138,6 +150,10 @@ export {
   Input as AInput,
   Image,
   Image as AImage,
+  Item,
+  Item as AItem,
+  Kbd,
+  Kbd as AKbd,
   Form,
   Form as AForm,
   FormItem,
@@ -166,6 +182,8 @@ export {
   Masonry as AMasonry,
   Message,
   Message as AMessage,
+  OtpInput,
+  OtpInput as AOtpInput,
   Pagination,
   Pagination as APagination,
   Popper,
@@ -182,8 +200,12 @@ export {
   RadioGroup as ARadioGroup,
   RadioButtonGroup,
   RadioButtonGroup as ARadioButtonGroup,
+  ScrollArea,
+  ScrollArea as AScrollArea,
   Select,
   Select as ASelect,
+  Slider,
+  Slider as ASlider,
   Step,
   Step as AStep,
   Split,
@@ -202,6 +224,8 @@ export {
   Textarea as ATextarea,
   Toast,
   Toast as AToast,
+  Tooltip,
+  Tooltip as ATooltip,
   Upload,
   Upload as AUpload,
   VirtualList,
