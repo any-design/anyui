@@ -23,7 +23,7 @@
         class="a-select__inner"
         :size="size"
         :round="round"
-        :placeholder="placeholder"
+        :placeholder="displayPlaceholder"
         :disabled="disabled"
         :editable="false"
         @change="handleSelectChange"
@@ -39,6 +39,19 @@
           />
         </template>
       </a-input>
+      <div v-if="multiple && selectedItems.length" class="a-select__tags">
+        <span v-for="item in selectedItems" :key="item.value" class="a-select__tag">
+          <span class="a-select__tag-text">{{ item.text }}</span>
+          <span
+            class="a-select__tag-close"
+            role="button"
+            :aria-label="`Remove ${item.text}`"
+            @click.stop="removeTag(item)"
+          >
+            <Icon icon="ic:round-close" />
+          </span>
+        </span>
+      </div>
     </div>
     <template #popup>
       <div class="a-select-dropdown">
@@ -171,11 +184,17 @@ export default defineComponent({
       return selected.value === item.value;
     };
 
-    const getMultipleText = (values: SelectedValues) =>
-      (props.items ?? [])
-        .filter((item) => values.includes(item.value))
-        .map((item) => item.text)
-        .join(', ');
+    // in multiple mode the selected options are displayed as closable tags,
+    // so the text input itself stays empty
+    const selectedItems = computed(() =>
+      props.multiple
+        ? (props.items ?? []).filter((item) => getSelectedValues().includes(item.value))
+        : [],
+    );
+
+    const displayPlaceholder = computed(() =>
+      props.multiple && selectedItems.value.length ? '' : props.placeholder,
+    );
 
     const handleItemClick = (item: ASelectItem) => {
       if (props.multiple) {
@@ -187,7 +206,6 @@ export default defineComponent({
           values.push(item.value);
         }
         selected.value = values;
-        selectedText.value = getMultipleText(values);
         emit('update:modelValue', values);
         emit('change', values);
         formItemEventEmitter?.emit('change');
@@ -201,6 +219,18 @@ export default defineComponent({
       formItemEventEmitter?.emit('change');
       // hide popper
       popperRef.value?.hide();
+    };
+
+    // remove a single value from the multi-select without toggling the dropdown
+    const removeTag = (item: ASelectItem) => {
+      if (props.disabled) {
+        return;
+      }
+      const values = getSelectedValues().filter((value) => value !== item.value);
+      selected.value = values;
+      emit('update:modelValue', values);
+      emit('change', values);
+      formItemEventEmitter?.emit('change');
     };
 
     const clear = () => {
@@ -238,7 +268,8 @@ export default defineComponent({
         if (props.multiple) {
           const values = Array.isArray(props.modelValue) ? [...props.modelValue] : [];
           selected.value = values;
-          selectedText.value = getMultipleText(values);
+          // selected options are rendered as tags, keep the input text empty
+          selectedText.value = '';
           return;
         }
         selected.value = Array.isArray(props.modelValue) ? undefined : props.modelValue;
@@ -280,11 +311,14 @@ export default defineComponent({
     return {
       selected,
       selectedText,
+      selectedItems,
+      displayPlaceholder,
       expanded,
       dropdownClass,
       isItemSelected,
       handlePopupStatusChanged,
       handleItemClick,
+      removeTag,
       popperRef,
       handleSelectChange,
       handleSelectBlur,
@@ -299,6 +333,55 @@ export default defineComponent({
   position: relative;
   .a-select {
     width: 100%;
+    position: relative;
+    .a-select__tags {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 14px;
+      right: 40px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      overflow: hidden;
+      // let clicks fall through to the field so the dropdown still toggles
+      pointer-events: none;
+    }
+    .a-select__tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 22px;
+      padding: 0 6px 0 10px;
+      border-radius: var(--a-radius-full, 999px);
+      background: var(--primary-12);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      pointer-events: auto;
+      user-select: none;
+    }
+    .a-select__tag-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: var(--a-radius-full, 999px);
+      cursor: pointer;
+      transition: background-color var(--anim-duration-quick, 120ms) ease;
+      svg {
+        width: 12px;
+        height: 12px;
+      }
+      &:hover {
+        background: var(--primary-12);
+      }
+    }
     .a-select__inner {
       .a-input__inner {
         cursor: pointer;
@@ -361,6 +444,9 @@ export default defineComponent({
       border-radius: var(--a-radius-sm, 10px);
       transition: all var(--anim-duration-quick, 120ms) ease;
       cursor: pointer;
+    }
+    &__item + &__item {
+      margin-top: 2px;
     }
     &__item:hover {
       background: var(--a-item-hover-bg, var(--bg-semi-dark));
