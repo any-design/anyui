@@ -25,12 +25,23 @@
   const selectedValues = $derived(Array.isArray(modelValue) ? (modelValue as Array<string | number>) : []);
   const isItemSelected = (item: { text: string; value: string | number }) =>
     multiple ? selectedValues.includes(item.value) : item.value === modelValue;
-  // always display the text of the selected items, never their raw values
-  const selectedText = $derived(
-    multiple
-      ? items.filter((item) => selectedValues.includes(item.value)).map((item) => item.text).join(', ')
-      : (items.find((item) => item.value === modelValue)?.text ?? ''),
+  // in multiple mode the selected options render as closable tags, so the
+  // input text stays empty; in single mode display the text, never the raw value
+  const selectedItems = $derived(
+    multiple ? items.filter((item) => selectedValues.includes(item.value)) : [],
   );
+  const selectedText = $derived(
+    multiple ? '' : (items.find((item) => item.value === modelValue)?.text ?? ''),
+  );
+  const displayPlaceholder = $derived(multiple && selectedItems.length ? '' : placeholder);
+  const removeValue = (value: string | number) => {
+    if (disabled) return;
+    const next = selectedValues.filter((selected) => selected !== value);
+    modelValue = next;
+    onUpdateModelValue?.(next);
+    onChange?.(next);
+    formItem.notifyChange?.();
+  };
   const toggle = () => {
     if (!disabled) expanded = !expanded;
   };
@@ -86,7 +97,7 @@
       <input
         class="a-input__inner"
         value={selectedText}
-        {placeholder}
+        placeholder={displayPlaceholder}
         {disabled}
         readonly
         autocomplete="off"
@@ -99,9 +110,38 @@
         <Icon class="a-select__icon a-icon {expanded ? 'a-select__icon--expanded' : ''}" aria-hidden="true" icon={expandIcon} />
       </div>
     </div>
+    {#if multiple && selectedItems.length}
+      <div class="a-select__tags">
+        {#each selectedItems as item (item.value)}
+          <span class="a-select__tag">
+            <span class="a-select__tag-text">{item.text}</span>
+            <span
+              class="a-select__tag-close"
+              role="button"
+              tabindex="-1"
+              aria-label={'Remove ' + item.text}
+              onclick={(event) => {
+                // remove the value without toggling the dropdown
+                event.stopPropagation();
+                removeValue(item.value);
+              }}
+              onkeydown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  removeValue(item.value);
+                }
+              }}
+            >
+              <Icon class="a-icon" aria-hidden="true" icon="ic:round-close" />
+            </span>
+          </span>
+        {/each}
+      </div>
+    {/if}
   </div>
   {#if expanded && !disabled}
-    <div class="a-select-dropdown__wrapper">
+    <div class="a-select-dropdown__wrapper" style="margin-top: 8px">
       <div id={dropdownId} class="a-select-dropdown" role="listbox" aria-multiselectable={multiple || undefined}>
         {#each items as item}
           <div

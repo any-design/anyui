@@ -21,6 +21,8 @@ export { default as GradientText } from './components/GradientText.svelte';
 export { default as Header } from './components/Header.svelte';
 export { default as Image } from './components/Image.svelte';
 export { default as Input } from './components/Input.svelte';
+export { default as Item } from './components/Item.svelte';
+export { default as Kbd } from './components/Kbd.svelte';
 export { default as Layout } from './components/Layout.svelte';
 export { default as ListMenu } from './components/ListMenu.svelte';
 export { default as ListView } from './components/ListView.svelte';
@@ -29,6 +31,7 @@ export { default as Loading } from './components/Loading.svelte';
 export { default as LoadingMask } from './components/LoadingMask.svelte';
 export { default as Masonry } from './components/Masonry.svelte';
 export { default as Message } from './components/Message.svelte';
+export { default as OtpInput } from './components/OtpInput.svelte';
 export { default as Pagination } from './components/Pagination.svelte';
 export { default as Popper } from './components/Popper.svelte';
 export { default as Popup } from './components/Popup.svelte';
@@ -37,8 +40,10 @@ export { default as Radio } from './components/Radio.svelte';
 export { default as RadioButton } from './components/RadioButton.svelte';
 export { default as RadioButtonGroup } from './components/RadioButtonGroup.svelte';
 export { default as RadioGroup } from './components/RadioGroup.svelte';
+export { default as ScrollArea } from './components/ScrollArea.svelte';
 export { default as Select } from './components/Select.svelte';
 export { default as Side } from './components/Side.svelte';
+export { default as Slider } from './components/Slider.svelte';
 export { default as Spinner } from './components/Spinner.svelte';
 export { default as Split } from './components/Split.svelte';
 export { default as Step } from './components/Step.svelte';
@@ -47,6 +52,7 @@ export { default as Table } from './components/Table.svelte';
 export { default as Tag } from './components/Tag.svelte';
 export { default as Textarea } from './components/Textarea.svelte';
 export { default as Toast } from './components/Toast.svelte';
+export { default as Tooltip } from './components/Tooltip.svelte';
 export { default as Upload } from './components/Upload.svelte';
 export { default as VirtualList } from './components/VirtualList.svelte';
 export { default as VirtualListItem } from './components/VirtualListItem.svelte';
@@ -80,6 +86,8 @@ import GradientText from './components/GradientText.svelte';
 import Header from './components/Header.svelte';
 import Image from './components/Image.svelte';
 import Input from './components/Input.svelte';
+import Item from './components/Item.svelte';
+import Kbd from './components/Kbd.svelte';
 import Layout from './components/Layout.svelte';
 import ListMenu from './components/ListMenu.svelte';
 import ListView from './components/ListView.svelte';
@@ -88,6 +96,7 @@ import Loading from './components/Loading.svelte';
 import LoadingMask from './components/LoadingMask.svelte';
 import Masonry from './components/Masonry.svelte';
 import Message from './components/Message.svelte';
+import OtpInput from './components/OtpInput.svelte';
 import Pagination from './components/Pagination.svelte';
 import Popper from './components/Popper.svelte';
 import Popup from './components/Popup.svelte';
@@ -96,8 +105,10 @@ import Radio from './components/Radio.svelte';
 import RadioButton from './components/RadioButton.svelte';
 import RadioButtonGroup from './components/RadioButtonGroup.svelte';
 import RadioGroup from './components/RadioGroup.svelte';
+import ScrollArea from './components/ScrollArea.svelte';
 import Select from './components/Select.svelte';
 import Side from './components/Side.svelte';
+import Slider from './components/Slider.svelte';
 import Spinner from './components/Spinner.svelte';
 import Split from './components/Split.svelte';
 import Step from './components/Step.svelte';
@@ -106,6 +117,7 @@ import Table from './components/Table.svelte';
 import Tag from './components/Tag.svelte';
 import Textarea from './components/Textarea.svelte';
 import Toast from './components/Toast.svelte';
+import Tooltip from './components/Tooltip.svelte';
 import Upload from './components/Upload.svelte';
 import VirtualList from './components/VirtualList.svelte';
 import VirtualListItem from './components/VirtualListItem.svelte';
@@ -136,6 +148,8 @@ const defaultComponentList = [
   Header,
   Image,
   Input,
+  Item,
+  Kbd,
   Layout,
   ListMenu,
   ListView,
@@ -144,6 +158,7 @@ const defaultComponentList = [
   LoadingMask,
   Masonry,
   Message,
+  OtpInput,
   Pagination,
   Popper,
   Popup,
@@ -152,8 +167,10 @@ const defaultComponentList = [
   RadioButton,
   RadioButtonGroup,
   RadioGroup,
+  ScrollArea,
   Select,
   Side,
+  Slider,
   Spinner,
   Split,
   Step,
@@ -162,6 +179,7 @@ const defaultComponentList = [
   Tag,
   Textarea,
   Toast,
+  Tooltip,
   Upload,
   VirtualList,
   VirtualListItem,

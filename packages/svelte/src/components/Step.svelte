@@ -8,7 +8,11 @@
 </script>
 
 <div class="a-step {className}">
-  <div class="a-step__line"></div>
+  <div class="a-step__lines">
+    {#each displaySteps.slice(0, -1) as _, index}
+      <div class="a-step__line {index + 1 < current ? 'a-step__line--active' : ''}"></div>
+    {/each}
+  </div>
   <div class="a-step__content">
     {#each displaySteps as item, index}
       <div class="a-step-item {current === index + 1 ? 'a-step-item--current' : ''}">

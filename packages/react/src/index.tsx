@@ -517,10 +517,21 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
   const selectedValues: Array<string | number> = Array.isArray(selectedValue) ? selectedValue : [];
   const isItemSelected = (item: { text: string; value: string | number }) =>
     multiple ? selectedValues.includes(item.value) : item.value === selectedValue;
-  // always display the text of the selected items, never their raw values
+  // in multiple mode the selected options render as closable tags, so the
+  // input text stays empty; in single mode display the text, never the raw value
+  const selectedItems = multiple ? items.filter((item) => selectedValues.includes(item.value)) : [];
   const displayText = multiple
-    ? items.filter((item) => selectedValues.includes(item.value)).map((item) => item.text).join(', ')
+    ? ''
     : (items.find((item) => item.value === selectedValue)?.text ?? '');
+  const displayPlaceholder = multiple && selectedItems.length ? '' : placeholder;
+  const removeValue = (value: string | number) => {
+    if (disabled) return;
+    const next = selectedValues.filter((selected) => selected !== value);
+    setSelectedValue(next);
+    onUpdateModelValue?.(next);
+    onChange?.(next);
+    formItem?.notifyChange();
+  };
   const selectItem = (item: { text: string; value: string | number }) => {
     if (disabled) return;
     if (multiple) {
@@ -561,7 +572,7 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
           <input
             className="a-input__inner"
             value={displayText}
-            placeholder={placeholder}
+            placeholder={displayPlaceholder}
             disabled={disabled}
             readOnly
             autoComplete="off"
@@ -574,9 +585,30 @@ export const Select = forwardRef<HTMLDivElement, AnyUIReactProps>(function Selec
             <Icon className={cx('a-select__icon', expanded && 'a-select__icon--expanded')} icon={expandIcon} />
           </div>
         </div>
+        {multiple && selectedItems.length ? (
+          <div className="a-select__tags">
+            {selectedItems.map((item) => (
+              <span key={String(item.value)} className="a-select__tag">
+                <span className="a-select__tag-text">{item.text}</span>
+                <span
+                  className="a-select__tag-close"
+                  role="button"
+                  aria-label={'Remove ' + item.text}
+                  onClick={(event) => {
+                    // remove the value without toggling the dropdown
+                    event.stopPropagation();
+                    removeValue(item.value);
+                  }}
+                >
+                  <Icon icon="ic:round-close" />
+                </span>
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
       {expanded && !disabled ? (
-        <div className="a-select-dropdown__wrapper">
+        <div className="a-select-dropdown__wrapper" style={{ marginTop: '8px' }}>
           <div id={dropdownId} className="a-select-dropdown" role="listbox" aria-multiselectable={multiple || undefined}>
             {items.map((item) => (
               <div
@@ -644,15 +676,56 @@ export const GradientText = forwardRef<HTMLSpanElement, AnyUIReactProps>(functio
   );
 });
 
+const getNameInitials = (value?: string) => {
+  const trimmed = (value ?? '').trim();
+  if (!trimmed) return '';
+  const words = trimmed.split(/\s+/);
+  if (words.length >= 2) return (String(Array.from(words[0])[0]) + String(Array.from(words[1])[0])).toUpperCase();
+  return Array.from(trimmed).slice(0, 2).join('').toUpperCase();
+};
+
 export const Avatar = forwardRef<HTMLImageElement, AnyUIReactProps>(function Avatar(
-  { className, src, alt = '', size = 'medium', width, round = false, fallback, onError, ...rest },
+  { className, src, alt = '', size = 'medium', width, round = false, name = '', fallback, onError, ...rest },
   ref,
 ) {
+  const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
   const pixelSize = typeof size === 'number' ? size : ({ xlarge: 64, large: 48, medium: 32, small: 24, xsmall: 16 } as Record<string, number>)[size] ?? 32;
   const avatarWidth = formatStyleSize(width ?? pixelSize);
+  const numericSize =
+    typeof width === 'number'
+      ? width
+      : typeof width === 'string' && !Number.isNaN(Number.parseFloat(width))
+        ? Number.parseFloat(width)
+        : pixelSize;
+  const initials = getNameInitials(name);
+  const fallbackNode =
+    fallback ??
+    (initials ? (
+      <span className="a-avatar__initials" style={{ fontSize: Math.round(numericSize * 0.4) }}>
+        {initials}
+      </span>
+    ) : null);
+  const showImage = Boolean(src) && (!failed || !fallbackNode);
   return (
     <div className={cx('a-avatar', className)} style={{ width: avatarWidth, height: avatarWidth, borderRadius: round ? '50%' : '8px', overflow: 'hidden', ...rest.style }}>
-      {src ? <img {...pickDataAttrs(rest)} ref={ref} src={src} alt={alt} loading="lazy" onError={onError} /> : fallback}
+      {showImage ? (
+        <img
+          {...pickDataAttrs(rest)}
+          ref={ref}
+          src={src}
+          alt={alt}
+          loading="lazy"
+          onError={(event) => {
+            setFailed(true);
+            onError?.(event);
+          }}
+        />
+      ) : (
+        fallbackNode
+      )}
     </div>
   );
 });
@@ -885,7 +958,11 @@ export const Step = forwardRef<HTMLDivElement, AnyUIReactProps>(function Step({ 
   const displaySteps = Array.isArray(steps) ? steps : new Array(steps).fill(null);
   return (
     <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-step', className)}>
-      <div className="a-step__line" />
+      <div className="a-step__lines">
+        {displaySteps.slice(0, -1).map((_: string | null, index: number) => (
+          <div key={index} className={cx('a-step__line', index + 1 < current && 'a-step__line--active')} />
+        ))}
+      </div>
       <div className="a-step__content">
         {displaySteps.map((item: string | null, index: number) => (
           <div key={index} className={cx('a-step-item', current === index + 1 && 'a-step-item--current')}>
@@ -1754,6 +1831,154 @@ export const DropdownMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function
     >
       {children}
     </Popper>
+  );
+});
+
+export const Tooltip = forwardRef<any, AnyUIReactProps>(function Tooltip(
+  {
+    children,
+    className,
+    content,
+    placement = 'top',
+    triggerType = 'hover',
+    offset = 8,
+    disabled = false,
+    maxWidth = 260,
+    openDelay = 0,
+    hideDelay = 100,
+    appendToBody = true,
+    zIndex = 3000,
+    popupClass,
+    onVisibleChange,
+    ...rest
+  },
+  ref,
+) {
+  const popperRef = useRef<any>(null);
+  const openTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const manualHover = !disabled && triggerType === 'hover' && openDelay > 0;
+  const clearTimers = () => {
+    if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+    if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+  };
+  useEffect(() => clearTimers, []);
+  useImperativeHandle(ref, () => ({ show: () => popperRef.current?.show?.(), hide: () => popperRef.current?.hide?.() }), []);
+  return (
+    <Popper
+      ref={popperRef}
+      className={className}
+      triggerType={disabled || manualHover ? 'manual' : triggerType}
+      placement={placement}
+      offset={offset}
+      hideDelay={hideDelay}
+      appendToBody={appendToBody}
+      zIndex={zIndex}
+      popupClass={popupClass}
+      onPopupStatusChanged={(visible: boolean) => onVisibleChange?.(visible)}
+      popup={
+        <div className="a-tooltip" style={{ maxWidth: formatStyleSize(maxWidth) }}>
+          {content}
+        </div>
+      }
+      {...rest}
+    >
+      {manualHover ? (
+        <span
+          className="a-tooltip__trigger"
+          onMouseEnter={() => {
+            clearTimers();
+            openTimeoutRef.current = setTimeout(() => popperRef.current?.show?.(), openDelay);
+          }}
+          onMouseLeave={() => {
+            clearTimers();
+            closeTimeoutRef.current = setTimeout(() => popperRef.current?.hide?.(), hideDelay);
+          }}
+        >
+          {children}
+        </span>
+      ) : (
+        children
+      )}
+    </Popper>
+  );
+});
+
+export const Item = forwardRef<HTMLElement, AnyUIReactProps>(function Item(
+  {
+    children,
+    className,
+    title,
+    description,
+    clickable = false,
+    href,
+    size = 'default',
+    disabled = false,
+    variant = 'default',
+    media,
+    actions,
+    onClick,
+    ...rest
+  },
+  ref,
+) {
+  const interactive = (clickable || Boolean(href)) && !disabled;
+  const Tag: any = href && !disabled ? 'a' : 'div';
+  return (
+    <Tag
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx(
+        'a-item',
+        size === 'small' && 'a-item--small',
+        variant === 'outline' && 'a-item--outline',
+        interactive && 'a-item--clickable',
+        disabled && 'a-item--disabled',
+        className,
+      )}
+      style={rest.style}
+      href={Tag === 'a' ? href : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      role={interactive && Tag !== 'a' ? 'button' : undefined}
+      aria-disabled={disabled || undefined}
+      onClick={(event: React.MouseEvent) => {
+        if (disabled) {
+          event.preventDefault();
+          return;
+        }
+        onClick?.(event);
+      }}
+      onKeyDown={(event: React.KeyboardEvent) => {
+        if (!interactive || Tag === 'a') return;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          (event.currentTarget as HTMLElement).click();
+        }
+      }}
+    >
+      {media ? <div className="a-item__media">{media}</div> : null}
+      <div className="a-item__content">
+        {renderContent(
+          children,
+          <>
+            {title ? <div className="a-item__title">{title}</div> : null}
+            {description ? <div className="a-item__description">{description}</div> : null}
+          </>,
+        )}
+      </div>
+      {actions ? <div className="a-item__actions">{actions}</div> : null}
+    </Tag>
+  );
+});
+
+export const Kbd = forwardRef<HTMLElement, AnyUIReactProps>(function Kbd(
+  { children, className, size = 'default', ...rest },
+  ref,
+) {
+  return (
+    <kbd {...pickDataAttrs(rest)} ref={ref} className={cx('a-kbd', size === 'small' && 'a-kbd--small', className)} style={rest.style}>
+      {children}
+    </kbd>
   );
 });
 
@@ -2634,6 +2859,422 @@ export const Table = forwardRef<HTMLDivElement, AnyUIReactProps>(function Table(
   );
 });
 
+export const Slider = forwardRef<HTMLDivElement, AnyUIReactProps>(function Slider(
+  {
+    className,
+    modelValue = 0,
+    min = 0,
+    max = 100,
+    step = 1,
+    disabled = false,
+    showTooltip = true,
+    width,
+    onUpdateModelValue,
+    onChange,
+    ...rest
+  },
+  ref,
+) {
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const clampToStep = (raw: number) => {
+    const stepStr = String(step);
+    const dotIndex = stepStr.indexOf('.');
+    const decimals = dotIndex === -1 ? 0 : stepStr.length - dotIndex - 1;
+    const stepped = min + Math.round((raw - min) / step) * step;
+    return Math.min(max, Math.max(min, Number(stepped.toFixed(decimals))));
+  };
+  const [value, setValue] = useState(clampToStep(Number(modelValue)));
+  const [dragging, setDragging] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const valueRef = useRef(value);
+  useEffect(() => {
+    const next = clampToStep(Number(modelValue));
+    valueRef.current = next;
+    setValue(next);
+  }, [modelValue, min, max, step]);
+  const commit = (raw: number) => {
+    const next = clampToStep(raw);
+    if (next === valueRef.current) return;
+    valueRef.current = next;
+    setValue(next);
+    onUpdateModelValue?.(next);
+  };
+  const valueFromPointer = (clientX: number) => {
+    const track = trackRef.current;
+    if (!track) return valueRef.current;
+    const rect = track.getBoundingClientRect();
+    if (!rect.width) return valueRef.current;
+    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    return min + ratio * (max - min);
+  };
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (disabled || e.button !== 0) return;
+    e.preventDefault();
+    const target = e.currentTarget;
+    target.focus({ preventScroll: true });
+    target.setPointerCapture(e.pointerId);
+    setDragging(true);
+    commit(valueFromPointer(e.clientX));
+    const handleMove = (moveEvent: PointerEvent) => commit(valueFromPointer(moveEvent.clientX));
+    const handleUp = (upEvent: PointerEvent) => {
+      target.removeEventListener('pointermove', handleMove);
+      target.removeEventListener('pointerup', handleUp);
+      target.removeEventListener('pointercancel', handleUp);
+      if (target.hasPointerCapture(upEvent.pointerId)) target.releasePointerCapture(upEvent.pointerId);
+      setDragging(false);
+      onChange?.(valueRef.current);
+    };
+    target.addEventListener('pointermove', handleMove);
+    target.addEventListener('pointerup', handleUp);
+    target.addEventListener('pointercancel', handleUp);
+  };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    let next: number | undefined;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = valueRef.current + step;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = valueRef.current - step;
+    else if (e.key === 'Home') next = min;
+    else if (e.key === 'End') next = max;
+    else return;
+    e.preventDefault();
+    commit(next);
+    onChange?.(valueRef.current);
+  };
+  const percent = max > min ? ((value - min) / (max - min)) * 100 : 0;
+  const tooltipVisible = showTooltip && !disabled && (dragging || hovering);
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      role="slider"
+      tabIndex={disabled ? -1 : 0}
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-valuenow={value}
+      aria-disabled={disabled}
+      className={cx('a-slider', disabled && 'a-slider--disabled', dragging && 'a-slider--dragging', className)}
+      style={{ width: formatStyleSize(width), ...rest.style }}
+      onPointerDown={handlePointerDown}
+      onKeyDown={handleKeyDown}
+    >
+      <div ref={trackRef} className="a-slider__track">
+        <div className="a-slider__fill" style={{ width: percent + '%' }} />
+        <div
+          className="a-slider__thumb"
+          style={{ left: percent + '%' }}
+          onPointerEnter={() => setHovering(true)}
+          onPointerLeave={() => setHovering(false)}
+        >
+          {tooltipVisible ? <div className="a-slider__tooltip">{value}</div> : null}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function OtpInput(
+  {
+    className,
+    modelValue = '',
+    length = 6,
+    disabled = false,
+    masked = false,
+    autoFocus = false,
+    onUpdateModelValue,
+    onComplete,
+    ...rest
+  },
+  ref,
+) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const normalize = (raw: string) => String(raw ?? '').replace(/\s/g, '').slice(0, length);
+  const [value, setValue] = useState(normalize(String(modelValue)));
+  const [activeIndex, setActiveIndex] = useState(Math.min(normalize(String(modelValue)).length, length - 1));
+  const [focused, setFocused] = useState(false);
+  useEffect(() => {
+    const next = normalize(String(modelValue));
+    setValue(next);
+    setActiveIndex((index) => Math.min(Math.max(index, 0), Math.min(next.length, length - 1)));
+  }, [modelValue, length]);
+  useEffect(() => {
+    if (autoFocus && !disabled) inputRef.current?.focus();
+  }, []);
+  const clampIndex = (index: number, nextValue: string) =>
+    Math.min(Math.max(index, 0), Math.min(nextValue.length, length - 1));
+  const update = (next: string) => {
+    const normalized = normalize(next);
+    if (normalized === value) return;
+    setValue(normalized);
+    onUpdateModelValue?.(normalized);
+    if (normalized.length === length) onComplete?.(normalized);
+  };
+  const focusAt = (index: number) => {
+    if (disabled) return;
+    setActiveIndex(clampIndex(index, value));
+    inputRef.current?.focus();
+  };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setActiveIndex((index) => clampIndex(index - 1, value));
+      return;
+    }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setActiveIndex((index) => clampIndex(index + 1, value));
+      return;
+    }
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      if (!value.length) return;
+      const next =
+        activeIndex < value.length
+          ? value.slice(0, activeIndex) + value.slice(activeIndex + 1)
+          : value.slice(0, -1);
+      update(next);
+      setActiveIndex(clampIndex(activeIndex - 1, next));
+      return;
+    }
+    if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      e.preventDefault();
+      let next = value;
+      if (activeIndex < value.length) next = value.slice(0, activeIndex) + e.key + value.slice(activeIndex + 1);
+      else if (value.length < length) next = value + e.key;
+      update(next);
+      setActiveIndex(clampIndex(activeIndex + 1, next));
+    }
+  };
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    if (disabled) return;
+    const pasted = normalize(e.clipboardData?.getData('text') || '');
+    if (!pasted) return;
+    update(pasted);
+    setActiveIndex(clampIndex(pasted.length, pasted));
+  };
+  const cells: string[] = [];
+  for (let i = 0; i < length; i += 1) cells.push(value[i] || '');
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-otp-input', disabled && 'a-otp-input--disabled', className)}
+      style={rest.style}
+      onPointerDown={(e) => {
+        e.preventDefault();
+        focusAt(value.length);
+      }}
+    >
+      <input
+        ref={inputRef}
+        className="a-otp-input__hidden-input"
+        type="text"
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        disabled={disabled}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+      />
+      {cells.map((char, index) => (
+        <div
+          key={index}
+          className={cx(
+            'a-otp-input__cell',
+            char && 'a-otp-input__cell--filled',
+            focused && index === activeIndex && 'a-otp-input__cell--active',
+          )}
+          onPointerDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            focusAt(index);
+          }}
+        >
+          {char ? <span className="a-otp-input__char">{masked ? '•' : char}</span> : null}
+        </div>
+      ))}
+    </div>
+  );
+});
+
+export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function ScrollArea(
+  { children, className, height, maxHeight, fill = false, horizontal = false, ...rest },
+  ref,
+) {
+  // the bars are inset 2px from each edge (see the shared styles)
+  const BAR_INSET = 2;
+  const MIN_THUMB_SIZE = 20;
+  const AUTO_HIDE_DELAY = 800;
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
+  const hoveringBarRef = useRef(false);
+  const draggingRef = useRef<string | undefined>(undefined);
+  const hideTimerRef = useRef<number | undefined>(undefined);
+  const [metrics, setMetrics] = useState({
+    scrollTop: 0,
+    scrollLeft: 0,
+    scrollHeight: 0,
+    scrollWidth: 0,
+    clientHeight: 0,
+    clientWidth: 0,
+  });
+  const [barsVisible, setBarsVisible] = useState(false);
+  const [draggingAxis, setDraggingAxis] = useState<string | undefined>(undefined);
+  const updateMetrics = () => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    setMetrics({
+      scrollTop: viewport.scrollTop,
+      scrollLeft: viewport.scrollLeft,
+      scrollHeight: viewport.scrollHeight,
+      scrollWidth: viewport.scrollWidth,
+      clientHeight: viewport.clientHeight,
+      clientWidth: viewport.clientWidth,
+    });
+  };
+  const showBars = () => {
+    setBarsVisible(true);
+    if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = window.setTimeout(() => {
+      if (!draggingRef.current && !hoveringBarRef.current) setBarsVisible(false);
+    }, AUTO_HIDE_DELAY);
+  };
+  useEffect(() => {
+    updateMetrics();
+    const observer = new ResizeObserver(() => updateMetrics());
+    if (viewportRef.current) observer.observe(viewportRef.current);
+    if (contentRef.current) observer.observe(contentRef.current);
+    return () => {
+      observer.disconnect();
+      if (hideTimerRef.current) window.clearTimeout(hideTimerRef.current);
+    };
+  }, []);
+  const computeThumb = (clientSize: number, scrollSize: number, scrollOffset: number) => {
+    const trackSize = Math.max(0, clientSize - BAR_INSET * 2);
+    const size = Math.min(trackSize, Math.max(MIN_THUMB_SIZE, (clientSize / scrollSize) * trackSize));
+    const maxScroll = scrollSize - clientSize;
+    const offset = maxScroll > 0 ? (scrollOffset / maxScroll) * (trackSize - size) : 0;
+    return { size, offset, trackSize };
+  };
+  const vScrollable = metrics.scrollHeight > metrics.clientHeight + 1;
+  const hScrollable = metrics.scrollWidth > metrics.clientWidth + 1;
+  const vThumb = computeThumb(metrics.clientHeight, metrics.scrollHeight, metrics.scrollTop);
+  const hThumb = computeThumb(metrics.clientWidth, metrics.scrollWidth, metrics.scrollLeft);
+  const handleThumbPointerDown = (e: React.PointerEvent<HTMLDivElement>, axis: string) => {
+    const viewport = viewportRef.current;
+    if (!viewport || e.button !== 0) return;
+    e.preventDefault();
+    const thumb = e.currentTarget;
+    thumb.setPointerCapture(e.pointerId);
+    draggingRef.current = axis;
+    setDraggingAxis(axis);
+    const vertical = axis === 'vertical';
+    const startPointer = vertical ? e.clientY : e.clientX;
+    const startScroll = vertical ? viewport.scrollTop : viewport.scrollLeft;
+    const thumbInfo = vertical ? vThumb : hThumb;
+    const maxScroll = vertical
+      ? metrics.scrollHeight - metrics.clientHeight
+      : metrics.scrollWidth - metrics.clientWidth;
+    const draggable = thumbInfo.trackSize - thumbInfo.size;
+    const handleMove = (moveEvent: PointerEvent) => {
+      if (draggable <= 0) return;
+      const delta = (vertical ? moveEvent.clientY : moveEvent.clientX) - startPointer;
+      const next = startScroll + (delta / draggable) * maxScroll;
+      if (vertical) viewport.scrollTop = next;
+      else viewport.scrollLeft = next;
+    };
+    const handleUp = (upEvent: PointerEvent) => {
+      thumb.removeEventListener('pointermove', handleMove);
+      thumb.removeEventListener('pointerup', handleUp);
+      thumb.removeEventListener('pointercancel', handleUp);
+      if (thumb.hasPointerCapture(upEvent.pointerId)) thumb.releasePointerCapture(upEvent.pointerId);
+      draggingRef.current = undefined;
+      setDraggingAxis(undefined);
+      showBars();
+    };
+    thumb.addEventListener('pointermove', handleMove);
+    thumb.addEventListener('pointerup', handleUp);
+    thumb.addEventListener('pointercancel', handleUp);
+  };
+  // clicking the track pages the viewport towards the click position
+  const handleTrackPointerDown = (e: React.PointerEvent<HTMLDivElement>, axis: string) => {
+    const viewport = viewportRef.current;
+    if (!viewport || e.button !== 0 || e.target !== e.currentTarget) return;
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const vertical = axis === 'vertical';
+    const clickOffset = vertical ? e.clientY - rect.top : e.clientX - rect.left;
+    const thumbInfo = vertical ? vThumb : hThumb;
+    const page = vertical ? metrics.clientHeight : metrics.clientWidth;
+    const direction = clickOffset < thumbInfo.offset ? -1 : 1;
+    viewport.scrollBy({
+      top: vertical ? direction * page : 0,
+      left: vertical ? 0 : direction * page,
+      behavior: 'smooth',
+    });
+  };
+  const handleBarLeave = () => {
+    hoveringBarRef.current = false;
+    showBars();
+  };
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-scroll-area', fill && 'a-scroll-area--fill', horizontal && 'a-scroll-area--horizontal', className)}
+      style={rest.style}
+    >
+      <div
+        ref={viewportRef}
+        className="a-scroll-area__viewport"
+        style={{ height: formatStyleSize(height), maxHeight: formatStyleSize(maxHeight) }}
+        onScroll={() => {
+          updateMetrics();
+          showBars();
+        }}
+      >
+        <div ref={contentRef} className="a-scroll-area__content">
+          {children}
+        </div>
+      </div>
+      {vScrollable ? (
+        <div
+          className={cx('a-scroll-area__bar', 'a-scroll-area__bar--vertical', barsVisible && 'a-scroll-area__bar--visible')}
+          onPointerEnter={() => {
+            hoveringBarRef.current = true;
+          }}
+          onPointerLeave={handleBarLeave}
+          onPointerDown={(e) => handleTrackPointerDown(e, 'vertical')}
+        >
+          <div
+            className={cx('a-scroll-area__thumb', draggingAxis === 'vertical' && 'a-scroll-area__thumb--dragging')}
+            style={{ height: vThumb.size + 'px', transform: 'translateY(' + vThumb.offset + 'px)' }}
+            onPointerDown={(e) => handleThumbPointerDown(e, 'vertical')}
+          />
+        </div>
+      ) : null}
+      {horizontal && hScrollable ? (
+        <div
+          className={cx('a-scroll-area__bar', 'a-scroll-area__bar--horizontal', barsVisible && 'a-scroll-area__bar--visible')}
+          onPointerEnter={() => {
+            hoveringBarRef.current = true;
+          }}
+          onPointerLeave={handleBarLeave}
+          onPointerDown={(e) => handleTrackPointerDown(e, 'horizontal')}
+        >
+          <div
+            className={cx('a-scroll-area__thumb', draggingAxis === 'horizontal' && 'a-scroll-area__thumb--dragging')}
+            style={{ width: hThumb.size + 'px', transform: 'translateX(' + hThumb.offset + 'px)' }}
+            onPointerDown={(e) => handleThumbPointerDown(e, 'horizontal')}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+});
+
 export const buildInstaller = (componentList: React.ComponentType<any>[]) => componentList;
 
 const defaultComponentList = [
@@ -2660,6 +3301,8 @@ const defaultComponentList = [
   Header,
   Image,
   Input,
+  Item,
+  Kbd,
   Layout,
   ListMenu,
   ListView,
@@ -2668,6 +3311,7 @@ const defaultComponentList = [
   LoadingMask,
   Masonry,
   Message,
+  OtpInput,
   Pagination,
   Popper,
   Popup,
@@ -2676,8 +3320,10 @@ const defaultComponentList = [
   RadioButton,
   RadioButtonGroup,
   RadioGroup,
+  ScrollArea,
   Select,
   Side,
+  Slider,
   Spinner,
   Split,
   Step,
@@ -2686,6 +3332,7 @@ const defaultComponentList = [
   Tag,
   Textarea,
   Toast,
+  Tooltip,
   Upload,
   VirtualList,
   VirtualListItem,
