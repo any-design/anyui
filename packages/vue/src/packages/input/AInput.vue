@@ -349,8 +349,6 @@ export default defineComponent({
     border-radius: var(--a-radius-sm, 10px);
     box-sizing: border-box;
     background: var(--a-surface-input, var(--bg-semi-light));
-    -webkit-backdrop-filter: var(--a-surface-backdrop, none);
-    backdrop-filter: var(--a-surface-backdrop, none);
     font-size: 14px;
     letter-spacing: 0.02rem;
     color: var(--text);
