@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import BrandLogo from '../components/BrandLogo.astro';
 
 import '../styles/site.scss';
@@ -24,6 +25,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <ClientRouter />
     <link rel="preconnect" to="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!--
@@ -41,12 +43,20 @@ const {
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
     />
     <script is:inline>
-      // apply persisted theme before paint to avoid flashes
-      try {
-        const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
-        if (prefs.dark) document.documentElement.setAttribute('theme', 'dark');
-        if (prefs.glass) document.documentElement.setAttribute('data-anyui-style', 'glass');
-      } catch {}
+      // apply persisted theme before paint to avoid flashes.
+      // Runs on first load (inline) AND after every client-side navigation
+      // (astro:after-swap), so the theme attribute survives SPA routing.
+      const applyTheme = () => {
+        try {
+          const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
+          if (prefs.dark) document.documentElement.setAttribute('theme', 'dark');
+          else document.documentElement.setAttribute('theme', 'light');
+          if (prefs.glass) document.documentElement.setAttribute('data-anyui-style', 'glass');
+          else document.documentElement.removeAttribute('data-anyui-style');
+        } catch {}
+      };
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
     </script>
     <!--
       Critical inline styles: set the background + base text color from the theme
@@ -95,8 +105,11 @@ const {
       </div>
     </footer>
 
-    <script is:inline>
-      (() => {
+    <script>
+      // Re-bind interactive UI on every page load (incl. client-side navigations
+      // via <ClientRouter />). Listening to astro:page-load covers both the
+      // initial load and every subsequent SPA navigation.
+      const initPage = () => {
         const KEY = 'anyui-site-prefs';
         const read = () => {
           try {
@@ -108,62 +121,69 @@ const {
         const html = document.documentElement;
         const darkBtn = document.getElementById('toggle-dark');
         const glassBtn = document.getElementById('toggle-glass');
-        const sync = () => {
-          darkBtn.dataset.on = String(html.getAttribute('theme') === 'dark');
-          glassBtn.dataset.on = String(html.getAttribute('data-anyui-style') === 'glass');
-        };
-        darkBtn.addEventListener('click', () => {
-          const dark = html.getAttribute('theme') !== 'dark';
-          html.setAttribute('theme', dark ? 'dark' : 'light');
-          localStorage.setItem(KEY, JSON.stringify({ ...read(), dark }));
-          sync();
-        });
-        glassBtn.addEventListener('click', () => {
-          const glass = html.getAttribute('data-anyui-style') !== 'glass';
-          if (glass) {
-            html.setAttribute('data-anyui-style', 'glass');
-          } else {
-            html.removeAttribute('data-anyui-style');
-          }
-          localStorage.setItem(KEY, JSON.stringify({ ...read(), glass }));
-          sync();
-        });
-        sync();
-      })();
 
-      // professional code blocks: language badge + copy button on every shiki block
-      document.querySelectorAll('pre.astro-code').forEach((pre) => {
-        const frame = document.createElement('div');
-        frame.className = 'code-frame';
-        pre.parentNode.insertBefore(frame, pre);
-        frame.appendChild(pre);
-        const lang = pre.dataset.language;
-        if (lang && lang !== 'plaintext') {
-          const badge = document.createElement('span');
-          badge.className = 'code-frame__lang';
-          badge.textContent = lang;
-          frame.appendChild(badge);
+        if (darkBtn && glassBtn) {
+          const sync = () => {
+            darkBtn.dataset.on = String(html.getAttribute('theme') === 'dark');
+            glassBtn.dataset.on = String(html.getAttribute('data-anyui-style') === 'glass');
+          };
+          darkBtn.addEventListener('click', () => {
+            const dark = html.getAttribute('theme') !== 'dark';
+            html.setAttribute('theme', dark ? 'dark' : 'light');
+            localStorage.setItem(KEY, JSON.stringify({ ...read(), dark }));
+            sync();
+          });
+          glassBtn.addEventListener('click', () => {
+            const glass = html.getAttribute('data-anyui-style') !== 'glass';
+            if (glass) {
+              html.setAttribute('data-anyui-style', 'glass');
+            } else {
+              html.removeAttribute('data-anyui-style');
+            }
+            localStorage.setItem(KEY, JSON.stringify({ ...read(), glass }));
+            sync();
+          });
+          sync();
         }
-        const copy = document.createElement('button');
-        copy.className = 'code-frame__copy';
-        copy.type = 'button';
-        copy.textContent = 'Copy';
-        copy.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(pre.innerText);
-          } catch {
-            const helper = document.createElement('textarea');
-            helper.value = pre.innerText;
-            document.body.appendChild(helper);
-            helper.select();
-            document.execCommand('copy');
-            helper.remove();
+
+        // professional code blocks: language badge + copy button on every shiki block
+        document.querySelectorAll('pre.astro-code').forEach((pre) => {
+          // skip if already wrapped (e.g. persisted across a no-op swap)
+          if (pre.parentElement && pre.parentElement.classList.contains('code-frame')) return;
+          const frame = document.createElement('div');
+          frame.className = 'code-frame';
+          pre.parentNode.insertBefore(frame, pre);
+          frame.appendChild(pre);
+          const lang = pre.dataset.language;
+          if (lang && lang !== 'plaintext') {
+            const badge = document.createElement('span');
+            badge.className = 'code-frame__lang';
+            badge.textContent = lang;
+            frame.appendChild(badge);
           }
-          copy.textContent = 'Copied!';
-          setTimeout(() => (copy.textContent = 'Copy'), 1400);
+          const copy = document.createElement('button');
+          copy.className = 'code-frame__copy';
+          copy.type = 'button';
+          copy.textContent = 'Copy';
+          copy.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(pre.innerText);
+            } catch {
+              const helper = document.createElement('textarea');
+              helper.value = pre.innerText;
+              document.body.appendChild(helper);
+              helper.select();
+              document.execCommand('copy');
+              helper.remove();
+            }
+            copy.textContent = 'Copied!';
+            setTimeout(() => (copy.textContent = 'Copy'), 1400);
+          });
+          frame.appendChild(copy);
         });
-        frame.appendChild(copy);
-      });
+      };
+
+      document.addEventListener('astro:page-load', initPage);
     </script>
   </body>
 </html>

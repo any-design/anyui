@@ -34,24 +34,28 @@ const Zh = (zh as { Content: any }).Content;
 </style>
 
 <script is:inline>
-  (() => {
-    const KEY = 'anyui-site-prefs';
-    const read = () => {
-      try {
-        return JSON.parse(localStorage.getItem(KEY) || '{}');
-      } catch {
-        return {};
-      }
-    };
-    const apply = (lang) => {
-      const target = lang === 'zh' ? 'zh' : 'en';
-      document.querySelectorAll('.localized-doc').forEach((el) => {
-        el.setAttribute('data-lang', target);
-      });
-    };
-    // initial paint from storage
-    apply(read().lang);
-    // react to the language pill in the layout
-    window.addEventListener('anyui:lang-change', (e) => apply(e.detail));
-  })();
+  // Apply the persisted language to every .localized-doc on the page.
+  // The global listeners are registered once (guarded by a window flag)
+  // so re-injecting this script on each page doesn't pile up handlers.
+  const applyDocLang = (lang) => {
+    const target = lang === 'zh' ? 'zh' : 'en';
+    document.querySelectorAll('.localized-doc').forEach((el) => {
+      el.setAttribute('data-lang', target);
+    });
+  };
+  const readDocLang = () => {
+    try {
+      return JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}').lang;
+    } catch {
+      return undefined;
+    }
+  };
+  // apply now + on every client-side navigation
+  applyDocLang(readDocLang());
+  // react to the language pill + page loads (bound once per window)
+  if (!window.__anyuiLangBound) {
+    window.__anyuiLangBound = true;
+    document.addEventListener('astro:page-load', () => applyDocLang(readDocLang()));
+    window.addEventListener('anyui:lang-change', (e) => applyDocLang(e.detail));
+  }
 </script>

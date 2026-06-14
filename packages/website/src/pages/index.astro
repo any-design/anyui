@@ -124,12 +124,16 @@ import '@any-design/anyui/styles/index.css';
     </div>
   </section>
 
-  <script is:inline>
-    document.getElementById('copy-install')?.addEventListener('click', async (event) => {
-      const button = event.currentTarget;
-      await navigator.clipboard.writeText('pnpm add @any-design/anyui');
-      button.textContent = 'Copied!';
-      setTimeout(() => (button.textContent = 'Copy'), 1500);
-    });
+  <script>
+    // Re-bind on every navigation (astro:page-load covers initial + SPA).
+    const initCopyInstall = () => {
+      document.getElementById('copy-install')?.addEventListener('click', async (event) => {
+        const button = event.currentTarget;
+        await navigator.clipboard.writeText('pnpm add @any-design/anyui');
+        button.textContent = 'Copied!';
+        setTimeout(() => (button.textContent = 'Copy'), 1500);
+      });
+    };
+    document.addEventListener('astro:page-load', initCopyInstall);
   </script>
 </BaseLayout>
