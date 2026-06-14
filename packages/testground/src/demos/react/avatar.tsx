@@ -29,6 +29,16 @@ export default function AvatarDemo() {
           <Avatar size="large" fallback={<span style={{ fontSize: 12 }}>N/A</span>} />
         </div>
       </div>
+      <div className="demo-block">
+        <div className="demo-block__label">Name initials fallback</div>
+        <div className="demo-row">
+          <Avatar src="" name="Ada Lovelace" size="large" round />
+          <Avatar src="" name="Turing" size="large" />
+          <Avatar src="" name="宮崎駿" size="large" round />
+          <Avatar src="https://broken.example/missing.png" name="Grace Hopper" width={40} round />
+          <Avatar src="" name="Linus Torvalds" size="small" round />
+        </div>
+      </div>
     </div>
   );
 }
