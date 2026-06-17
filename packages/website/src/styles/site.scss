@@ -58,6 +58,34 @@ kbd,
   overflow: hidden;
   z-index: -1;
 
+  // A faint, repeating cute texture (tiny dots + sparkles) layered over the
+  // pastel blobs. Pure CSS — no extra requests, scales with the viewport, low
+  // opacity so it stays subtle and never competes with content.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      // scattered four-point sparkles (✦) drawn as two crossed gradients
+      radial-gradient(
+        var(--secondary-24, rgba(255, 120, 180, 0.18)) 1px,
+        transparent 1.6px
+      ),
+      radial-gradient(
+        var(--primary-16, rgba(85, 181, 255, 0.14)) 1.5px,
+        transparent 1.5px
+      );
+    background-size:
+      84px 84px,
+      28px 28px;
+    background-position:
+      0 0,
+      0 0;
+    opacity: 0.6;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 80%);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 80%);
+  }
+
   span {
     position: absolute;
     border-radius: var(--a-radius-full, 999px);
@@ -478,9 +506,20 @@ html[theme='dark'] .site-header__nav {
     }
   }
 
+  // The runtime code-frame wrapper (language badge + copy button) sits between
+  // the card and the <pre>, so it must stretch to fill the card and the <pre>
+  // inside it must fill the frame — otherwise the three framework cards render
+  // unequal code-block heights.
+  .code-frame {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
   .astro-code {
     flex: 1;
     margin: 0;
+    height: 100%;
   }
 }
 
@@ -640,6 +679,32 @@ html[theme='dark'] {
     color: var(--text-placeholder);
     padding: 0 14px;
     margin: 14px 0 6px 0;
+  }
+
+  // The components section has ~50 entries, so the sidebar is taller than the
+  // viewport. Cap its height to the viewport (minus the header offset) and let
+  // it scroll internally while staying pinned, so the active item is always
+  // reachable and the nav never scrolls off-screen.
+  &--components &__nav {
+    max-height: calc(100vh - 142px);
+    overflow-y: auto;
+    padding-right: 6px;
+    // thin, unobtrusive scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 999px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
   }
 }
 
