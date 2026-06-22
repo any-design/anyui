@@ -53,6 +53,28 @@ const size = ref('m');
 </script>
 ```
 
+### 尺寸
+
+使用 `size`（`small`、`default`、`large`）适配紧凑工具栏或更醒目的控件。
+
+```vue
+<template>
+  <ARadioButtonGroup v-model="density" :items="items" size="small" />
+  <ARadioButtonGroup v-model="density" :items="items" />
+  <ARadioButtonGroup v-model="density" :items="items" size="large" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'A', value: 'a' },
+  { label: 'B', value: 'b' },
+  { label: 'C', value: 'c' },
+];
+const density = ref('a');
+</script>
+```
+
 ### 监听变化
 
 使用 `change` 事件响应用户切换分段。
@@ -81,6 +103,7 @@ const onChange = (val) => console.log('范围：', val);
 | `modelValue` | String \| Number | undefined | 已选值（`v-model`）。 |
 | `items` | Array<{ label, value }> | undefined | 选项。 |
 | `round` | Boolean | false | 胶囊形圆角组。 |
+| `size` | `'small' \| 'default' \| 'large'` | `'default'` | 分段组尺寸。 |
 
 ## 事件
 

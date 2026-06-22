@@ -5,6 +5,7 @@
     items = [] as ARadioGroupItems,
     modelValue = $bindable(undefined),
     round = false,
+    size = 'default',
     class: className = '',
     children,
     onUpdateModelValue,
@@ -12,7 +13,9 @@
   } = $props();
   let containerEl = $state<HTMLDivElement>();
   let bgBlockPosition = $state<{ width: number; left: number } | undefined>(undefined);
-  const paddingValue = $derived(round ? 6 : 4);
+  const paddingValue = $derived(
+    size === 'small' ? (round ? 4 : 3) : size === 'large' ? (round ? 7 : 5) : round ? 6 : 4,
+  );
   const bgBlockStyle = $derived(bgBlockPosition
     ? 'opacity: 1; transform: translateX(' + bgBlockPosition.left + 'px) scale(1); width: ' + bgBlockPosition.width + 'px;'
     : 'opacity: 0; transform: scale(0.4);');
@@ -43,7 +46,10 @@
   };
 </script>
 
-<div bind:this={containerEl} class="a-radio-button-group {round ? 'a-radio-button-group--round' : ''} {bgBlockPosition ? 'a-radio-button-group--animated' : ''} {className}">
+<div
+  bind:this={containerEl}
+  class="a-radio-button-group {round ? 'a-radio-button-group--round' : ''} {size !== 'default' ? 'a-radio-button-group--' + size : ''} {bgBlockPosition ? 'a-radio-button-group--animated' : ''} {className}"
+>
   <div class="a-radio-button-group__bg" style={bgBlockStyle}></div>
   <div class="a-radio-button-group__buttons">
     {#each items as item}

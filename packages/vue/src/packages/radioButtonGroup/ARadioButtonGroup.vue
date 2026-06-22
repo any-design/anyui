@@ -4,6 +4,7 @@
     :class="{
       'a-radio-button-group': true,
       'a-radio-button-group--round': round,
+      [`a-radio-button-group--${size}`]: size !== 'default',
       'a-radio-button-group--animated': showBgBlock,
     }"
   >
@@ -39,7 +40,7 @@ import type { ARadioGroupItems } from '../radioGroup/types';
 
 import ARadioButton from './ARadioButton.vue';
 import { GET_PARENT_CONTAINER_RECT, GET_PADDING_VALUE } from './constants';
-import type { ARadioButtonPosition } from './types';
+import type { ARadioButtonGroupSize, ARadioButtonPosition } from './types';
 
 import { getCertainParent } from '@/utils';
 
@@ -62,6 +63,12 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    // density of the segmented control.
+    size: {
+      type: String as PropType<ARadioButtonGroupSize>,
+      default: 'default',
+      validator: (value: string) => ['small', 'default', 'large'].includes(value),
+    },
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
@@ -78,8 +85,17 @@ export default defineComponent({
       formItemEventEmitter = formItemParent.exposed?.emitter as FormItemEventEmitter;
     }
 
-    // horizontal padding
-    const paddingValue = computed(() => (props.round ? 6 : 4));
+    // horizontal padding must match the group CSS, otherwise the animated
+    // background block is offset from the selected button.
+    const paddingValue = computed(() => {
+      if (props.size === 'small') {
+        return props.round ? 4 : 3;
+      }
+      if (props.size === 'large') {
+        return props.round ? 7 : 5;
+      }
+      return props.round ? 6 : 4;
+    });
 
     const getPaddingValue = () => paddingValue.value;
     provide(GET_PADDING_VALUE, getPaddingValue);
@@ -148,6 +164,10 @@ export default defineComponent({
         return;
       }
       const selectedIdx = props.items.findIndex((item) => item.value === value);
+      if (selectedIdx < 0) {
+        handleClear();
+        return;
+      }
 
       const containerRect = getContainerRect();
       const buttonRect = buttonContainer.value.children[selectedIdx].getBoundingClientRect();
@@ -177,6 +197,9 @@ export default defineComponent({
         updateButtonPosition(selected.value);
       },
     );
+    watch([() => props.size, () => props.round, () => props.items], () => {
+      updateButtonPosition(selected.value);
+    });
 
     onBeforeMount(() => {
       selected.value = props.modelValue;
@@ -238,6 +261,55 @@ export default defineComponent({
 
   .a-radio-button-group__bg {
     border-radius: var(--a-radius-lg, 18px);
+  }
+}
+
+.a-radio-button-group--small {
+  padding: 4px 3px;
+  border-radius: var(--a-radius-xs, 8px);
+
+  .a-radio-button {
+    padding: 0 12px;
+    font-size: 12px;
+    line-height: 24px;
+  }
+
+  .a-radio-button-group__bg {
+    height: 24px;
+    top: 4px;
+  }
+
+  &.a-radio-button-group--round {
+    padding: 4px;
+    border-radius: var(--a-radius, 14px);
+
+    .a-radio-button-group__bg {
+      border-radius: var(--a-radius-sm, 10px);
+    }
+  }
+}
+
+.a-radio-button-group--large {
+  padding: 5px;
+
+  .a-radio-button {
+    padding: 0 22px;
+    font-size: 16px;
+    line-height: 42px;
+  }
+
+  .a-radio-button-group__bg {
+    height: 42px;
+    top: 5px;
+  }
+
+  &.a-radio-button-group--round {
+    padding: 5px 7px;
+    border-radius: var(--a-radius-xxl, 28px);
+
+    .a-radio-button-group__bg {
+      border-radius: var(--a-radius-xl, 22px);
+    }
   }
 }
 

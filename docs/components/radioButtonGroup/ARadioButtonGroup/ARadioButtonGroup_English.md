@@ -53,6 +53,28 @@ const size = ref('m');
 </script>
 ```
 
+### Sizes
+
+Use `size` (`small`, `default`, `large`) to match dense toolbars or larger controls.
+
+```vue
+<template>
+  <ARadioButtonGroup v-model="density" :items="items" size="small" />
+  <ARadioButtonGroup v-model="density" :items="items" />
+  <ARadioButtonGroup v-model="density" :items="items" size="large" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const items = [
+  { label: 'A', value: 'a' },
+  { label: 'B', value: 'b' },
+  { label: 'C', value: 'c' },
+];
+const density = ref('a');
+</script>
+```
+
 ### Reacting to change
 
 Use `change` to react when the user switches segments.
@@ -81,6 +103,7 @@ const onChange = (val) => console.log('range:', val);
 | `modelValue` | String \| Number | undefined | Selected value (`v-model`). |
 | `items` | Array<{ label, value }> | undefined | Options. |
 | `round` | Boolean | false | Pill-shaped group. |
+| `size` | `'small' \| 'default' \| 'large'` | `'default'` | Group density. |
 
 ## Events
 
