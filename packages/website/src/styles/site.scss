@@ -1179,35 +1179,6 @@ html[theme='dark'] {
   margin-bottom: 8px;
 }
 
-.lang-pill {
-  display: inline-flex;
-  padding: 3px;
-  gap: 2px;
-  border-radius: var(--a-radius-full, 999px);
-  background: var(--bg-hover);
-  border: 1px solid var(--line);
-
-  button {
-    appearance: none;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 4px 12px;
-    border-radius: var(--a-radius-full, 999px);
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    transition:
-      background-color var(--anim-duration-quick, 120ms) ease,
-      color var(--anim-duration-quick, 120ms) ease;
-  }
-
-  button[aria-pressed='true'] {
-    background: var(--primary);
-    color: #fff;
-  }
-}
-
 .components-index {
   &__hero {
     margin-bottom: 8px;

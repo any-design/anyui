@@ -24,6 +24,14 @@ export default function RadioButtonGroupDemo() {
           <RadioButtonGroup items={items} round />
         </div>
       </div>
+      <div className="demo-block">
+        <div className="demo-block__label">Sizes</div>
+        <div className="demo-row">
+          <RadioButtonGroup items={items} size="small" />
+          <RadioButtonGroup items={items} />
+          <RadioButtonGroup items={items} size="large" />
+        </div>
+      </div>
     </div>
   );
 }

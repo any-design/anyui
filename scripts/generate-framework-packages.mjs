@@ -564,13 +564,14 @@ export const RadioButton = forwardRef<HTMLDivElement, AnyUIReactProps>(function 
 });
 
 export const RadioButtonGroup = forwardRef<HTMLDivElement, AnyUIReactProps>(function RadioButtonGroup(
-  { className, items = [], modelValue, onUpdateModelValue, onChange, ...rest },
+  { className, items = [], modelValue, size = 'default', onUpdateModelValue, onChange, ...rest },
   ref,
 ) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = useState(modelValue);
   const [bgBlockPosition, setBgBlockPosition] = useState<{ width: number; left: number } | undefined>();
-  const paddingValue = rest.round ? 6 : 4;
+  const paddingValue =
+    size === 'small' ? (rest.round ? 4 : 3) : size === 'large' ? (rest.round ? 7 : 5) : rest.round ? 6 : 4;
   const setContainerRef = (node: HTMLDivElement | null) => {
     containerRef.current = node;
     if (typeof ref === 'function') ref(node);
@@ -590,7 +591,7 @@ export const RadioButtonGroup = forwardRef<HTMLDivElement, AnyUIReactProps>(func
     setBgBlockPosition({ width: buttonRect.width, left: buttonRect.left - containerRect.left - paddingValue });
   };
   useEffect(() => setSelected(modelValue), [modelValue]);
-  useEffect(() => updatePositionForValue(selected), [selected, items, rest.round]);
+  useEffect(() => updatePositionForValue(selected), [selected, items, rest.round, size]);
   const update = (value: string | number, event?: React.MouseEvent<HTMLDivElement>) => {
     setSelected(value);
     if (event && containerRef.current) {
@@ -608,7 +609,13 @@ export const RadioButtonGroup = forwardRef<HTMLDivElement, AnyUIReactProps>(func
     <div
       {...pickDataAttrs(rest)}
       ref={setContainerRef}
-      className={cx('a-radio-button-group', rest.round && 'a-radio-button-group--round', bgBlockPosition && 'a-radio-button-group--animated', className)}
+      className={cx(
+        'a-radio-button-group',
+        rest.round && 'a-radio-button-group--round',
+        size !== 'default' && \`a-radio-button-group--\${size}\`,
+        bgBlockPosition && 'a-radio-button-group--animated',
+        className,
+      )}
     >
       <div className="a-radio-button-group__bg" style={bgBlockStyle} />
       <div className="a-radio-button-group__buttons">
@@ -5697,6 +5704,7 @@ Object.assign(svelteTemplates, {
     items = [] as ARadioGroupItems,
     modelValue = $bindable(undefined),
     round = false,
+    size = 'default',
     class: className = '',
     children,
     onUpdateModelValue,
@@ -5704,7 +5712,9 @@ Object.assign(svelteTemplates, {
   } = $props();
   let containerEl = $state<HTMLDivElement>();
   let bgBlockPosition = $state<{ width: number; left: number } | undefined>(undefined);
-  const paddingValue = $derived(round ? 6 : 4);
+  const paddingValue = $derived(
+    size === 'small' ? (round ? 4 : 3) : size === 'large' ? (round ? 7 : 5) : round ? 6 : 4,
+  );
   const bgBlockStyle = $derived(bgBlockPosition
     ? 'opacity: 1; transform: translateX(' + bgBlockPosition.left + 'px) scale(1); width: ' + bgBlockPosition.width + 'px;'
     : 'opacity: 0; transform: scale(0.4);');
@@ -5735,7 +5745,10 @@ Object.assign(svelteTemplates, {
   };
 </script>
 
-<div bind:this={containerEl} class="a-radio-button-group {round ? 'a-radio-button-group--round' : ''} {bgBlockPosition ? 'a-radio-button-group--animated' : ''} {className}">
+<div
+  bind:this={containerEl}
+  class="a-radio-button-group {round ? 'a-radio-button-group--round' : ''} {size !== 'default' ? 'a-radio-button-group--' + size : ''} {bgBlockPosition ? 'a-radio-button-group--animated' : ''} {className}"
+>
   <div class="a-radio-button-group__bg" style={bgBlockStyle}></div>
   <div class="a-radio-button-group__buttons">
     {#each items as item}

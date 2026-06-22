@@ -27,4 +27,12 @@
       <span>Selected: {roundValue ?? 'none'}</span>
     </div>
   </div>
+  <div class="demo-block">
+    <div class="demo-block__label">Sizes</div>
+    <div class="demo-row">
+      <RadioButtonGroup {items} size="small" />
+      <RadioButtonGroup {items} />
+      <RadioButtonGroup {items} size="large" />
+    </div>
+  </div>
 </div>
