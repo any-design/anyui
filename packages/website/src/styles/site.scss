@@ -765,14 +765,16 @@ html[theme='dark'] {
     border: 1px solid var(--primary-20, var(--primary-18));
   }
 
-  // Sidebar nav: default links read secondary; current link uses the lifted
-  // primary and gets bolder so the active item stands out on dark.
-  .docs-menu .a-list-menu__item {
+  // Sidebar nav: keep selected items as quiet tinted rows, not the default
+  // gradient menu treatment.
+  .docs-menu .a-list-menu__item,
+  .components-sidebar .a-list-menu__item {
     color: var(--text-secondary);
   }
 
-  .docs-menu .a-list-menu__item--selected {
-    color: var(--primary-l-6, var(--primary));
+  .docs-menu .a-list-menu__item--selected,
+  .components-sidebar .a-list-menu__item--selected {
+    color: var(--text);
     font-weight: 700;
   }
 
@@ -792,6 +794,7 @@ html[theme='dark'] {
   // lighter neutral so they're not lost on dark.
   .components-index__group-title,
   .docs-menu .a-list-menu__split span,
+  .components-sidebar .a-list-menu__split span,
   .code-frame__lang {
     color: var(--text-secondary);
   }
@@ -865,6 +868,13 @@ html[theme='dark'] {
   position: sticky;
   top: 118px;
   align-self: start;
+  --a-item-selected-bg: color-mix(in srgb, var(--primary) 10%, transparent);
+  --a-item-selected-gradient: none;
+  --a-item-selected-color: var(--text);
+  --a-item-selected-text-shadow: none;
+  --a-item-selected-highlight: none;
+  --a-item-selected-shadow: none;
+  --a-item-hover-bg: color-mix(in srgb, var(--primary) 7%, transparent);
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
 
@@ -886,6 +896,9 @@ html[theme='dark'] {
     font-size: 13.5px;
     margin: 4px 8px;
     padding: 6px 10px;
+    cursor: pointer;
+    text-shadow: none;
+    box-shadow: none;
   }
 
   .a-list-menu__item:hover {
@@ -893,13 +906,15 @@ html[theme='dark'] {
   }
 
   .a-list-menu__item--selected {
-    color: var(--primary);
-    font-weight: 600;
+    color: var(--text);
+    font-weight: 700;
   }
 
   .a-list-menu__split {
-    margin: 8px 10px 4px 10px;
+    margin: 12px 10px 4px 10px;
     padding: 4px 2px;
+    border-top: none;
+    border-bottom-color: var(--line);
 
     span {
       font-size: 11px;

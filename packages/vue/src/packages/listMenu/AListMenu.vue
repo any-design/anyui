@@ -20,14 +20,14 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import { computed, onBeforeMount, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import AListMenuItem from './AListMenuItem.vue';
 import type { AListMenuConfig, AListMenuDisplayItem, AListMenuItemConfig } from './types';
 
 const props = defineProps({
   modelValue: {
-    type: String,
+    type: [String, Number],
   },
   menu: {
     type: [Array, Object] as PropType<AListMenuConfig>,
@@ -36,13 +36,14 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const currentSelected = ref<string | undefined>('');
+const currentSelected = ref<string | number | undefined>(props.modelValue);
 
 watch(
   () => props.modelValue,
-  () => {
-    currentSelected.value = props.modelValue;
+  (value) => {
+    currentSelected.value = value;
   },
+  { immediate: true },
 );
 
 const generateDisplayItems = (list: AListMenuItemConfig[]): AListMenuDisplayItem[] => {
@@ -91,9 +92,6 @@ const handleItemClicked = (_: Event, item: AListMenuDisplayItem) => {
   emit('update:modelValue', item.value);
 };
 
-onBeforeMount(() => {
-  currentSelected.value = props.modelValue;
-});
 </script>
 
 <style lang="scss">

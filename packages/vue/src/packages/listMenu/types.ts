@@ -1,6 +1,6 @@
 export interface AListMenuItemConfigObject {
   label: string;
-  value?: string;
+  value?: string | number;
 }
 
 export type AListMenuItemConfig = AListMenuItemConfigObject | string;
