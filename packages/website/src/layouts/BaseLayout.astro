@@ -58,6 +58,56 @@ const {
       applyTheme();
       document.addEventListener('astro:after-swap', applyTheme);
     </script>
+    <script is:inline>
+      // Per-URL scroll restoration for SPA navigations.
+      //
+      // Astro's ClientRouter sets `history.scrollRestoration = "manual"` and only
+      // restores scroll on back/forward (traverse) navigations via history.state.
+      // A normal forward link navigation (e.g. clicking the Overview link in the
+      // components sidebar after browsing a component detail page) is a "push",
+      // so Astro always scrolls to the top — even when the destination was
+      // visited before. That makes the /components Overview grid snap back to the
+      // top every time you return to it via the sidebar, which feels broken.
+      //
+      // We keep a session-scoped map of URL → {x, y}, snapshot the scroll
+      // position of the page we're leaving on astro:before-preparation, and
+      // restore the saved position on astro:page-load for non-traverse
+      // navigations. Traverse is left to Astro (it already restores from
+      // history.state), and brand-new URLs have no saved entry so they still
+      // scroll to the top as expected.
+      (function () {
+        if (window.__anyuiScrollRestoration) return;
+        window.__anyuiScrollRestoration = true;
+        const positions = new Map();
+        const urlKey = (loc) => loc.pathname + loc.search + loc.hash;
+        let pendingNavType = null;
+
+        // Snapshot the outgoing page's scroll before we navigate away.
+        // e.from / e.to are URL objects (pathname/search/hash/href).
+        document.addEventListener('astro:before-preparation', (e) => {
+          try {
+            positions.set(urlKey(e.from), { x: window.scrollX, y: window.scrollY });
+          } catch {}
+          pendingNavType = e.navigationType;
+        });
+
+        // After the new page is in place, restore scroll if this was a forward
+        // (push/replace) navigation to a URL we've visited before.
+        document.addEventListener('astro:page-load', () => {
+          const wasTraverse = pendingNavType === 'traverse';
+          pendingNavType = null;
+          if (wasTraverse) return; // Astro already restored from history.state
+          const key = urlKey(window.location);
+          const saved = positions.get(key);
+          if (saved) {
+            // Wait a frame so layout/images have settled before scrolling.
+            requestAnimationFrame(() =>
+              window.scrollTo({ left: saved.x, top: saved.y, behavior: 'instant' }),
+            );
+          }
+        });
+      })();
+    </script>
     <!--
       Critical inline styles: set the background + base text color from the theme
       attribute BEFORE the main stylesheet loads, so MPA navigations don't flash a
@@ -65,7 +115,7 @@ const {
     -->
     <style is:inline>
       html { background: #f8f8fa; color: #202426; }
-      html[theme='dark'] { background: #0f0f0f; color: #d7d9db; }
+      html[theme='dark'] { background: #1a1a1d; color: #ebeef1; }
       body { background: inherit; }
     </style>
   </head>

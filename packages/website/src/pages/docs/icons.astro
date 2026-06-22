@@ -2,8 +2,10 @@
 import * as iconsDoc from '../../../../../docs/theme/icons.md';
 
 import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const headings = (iconsDoc as any).getHeadings?.() || [];
 ---
 
-<DocsLayout title="Icons" active="icons">
+<DocsLayout title="Icons" active="icons" headings={headings}>
   <iconsDoc.Content />
 </DocsLayout>

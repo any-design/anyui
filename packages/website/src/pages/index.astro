@@ -1,6 +1,7 @@
 ---
 import CodeBlock from '../components/CodeBlock.astro';
 import HeroShowcase from '../components/vue/HeroShowcase.vue';
+import FeatureGrid from '../components/vue/FeatureGrid.vue';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const features = [
@@ -70,17 +71,7 @@ const features = [
       One coherent visual language — cute, fresh and modern — delivered to every major framework
       through a single token system.
     </p>
-    <div class="features__grid">
-      {
-        features.map((feature) => (
-          <div class="feature-card">
-            <div class="feature-card__icon">{feature.emoji}</div>
-            <div class="feature-card__title">{feature.title}</div>
-            <div class="feature-card__desc">{feature.desc}</div>
-          </div>
-        ))
-      }
-    </div>
+    <FeatureGrid client:visible features={features} />
   </section>
 
   <section class="features">

@@ -1,12 +1,25 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import Toc from '../components/Toc.astro';
+import DocsSidebar from '../components/vue/DocsSidebar.vue';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
 
 interface Props {
   title: string;
   active: string;
+  // Pass markdown headings to build the TOC from them. Pass an empty array
+  // (or set tocAuto) to render a TOC that scans the rendered DOM for h2/h3.
+  headings?: Heading[];
+  tocAuto?: boolean;
 }
 
-const { title, active } = Astro.props;
+const { title, active, headings, tocAuto = false } = Astro.props;
+const showToc = tocAuto || (headings && headings.length > 0);
 
 const nav = [
   { label: 'Guide', items: [{ id: 'getting-started', label: 'Getting Started', href: '/docs/getting-started' }] },
@@ -22,23 +35,11 @@ const nav = [
 ---
 
 <BaseLayout title={`${title} · AnyUI`} active="docs">
-  <div class="docs">
-    <nav class="docs__nav">
-      {
-        nav.map((group) => (
-          <>
-            <span class="docs__label">{group.label}</span>
-            {group.items.map((item) => (
-              <a href={item.href} aria-current={active === item.id ? 'true' : undefined}>
-                {item.label}
-              </a>
-            ))}
-          </>
-        ))
-      }
-    </nav>
+  <div class="docs" class:list={[showToc ? 'docs--has-toc' : '']}>
+    <DocsSidebar client:load active={active} groups={nav} />
     <article class="prose">
       <slot />
     </article>
+    {showToc && (headings && headings.length > 0 ? <Toc headings={headings} /> : <Toc />)}
   </div>
 </BaseLayout>
