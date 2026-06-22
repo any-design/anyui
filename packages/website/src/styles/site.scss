@@ -194,9 +194,10 @@ html[theme='dark'] {
     pointer-events: auto;
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     height: 54px;
     padding: 0 10px 0 20px;
+    max-width: calc(100vw - 28px);
     border-radius: var(--a-radius-full, 999px);
     background: color-mix(in srgb, var(--bg-bright) 58%, transparent);
     -webkit-backdrop-filter: blur(26px) saturate(2) brightness(1.04);
@@ -210,6 +211,7 @@ html[theme='dark'] {
   }
 
   &__brand {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
 
@@ -220,41 +222,23 @@ html[theme='dark'] {
     }
   }
 
+  &__nav-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
   &__nav {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 3px;
+  }
 
-    a {
-      padding: 7px 15px;
-      border-radius: var(--a-radius-full, 999px);
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 600;
-      transition:
-        background-color var(--anim-duration-quick, 120ms) ease,
-        color var(--anim-duration-quick, 120ms) ease,
-        transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
-    }
-
-    a:hover {
-      background: color-mix(in srgb, #fff 30%, transparent);
-      box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
-      color: var(--text);
-    }
-
-    a:active {
-      transform: scale(0.95);
-    }
-
-    a[aria-current='true'] {
-      background: color-mix(in srgb, #fff 44%, transparent);
-      box-shadow:
-        inset 0 1px 0 color-mix(in srgb, #fff 70%, transparent),
-        inset 0 0 0 1px color-mix(in srgb, #fff 25%, transparent),
-        0 2px 8px var(--shadow-8);
-      color: var(--primary);
-    }
+  &__nav-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
   }
 
   &__actions {
@@ -262,24 +246,66 @@ html[theme='dark'] {
     align-items: center;
     gap: 6px;
   }
+
+  .a-button {
+    letter-spacing: 0;
+  }
+
+  &__nav-button.a-button,
+  &__action-button.a-button {
+    height: 32px;
+    padding: 3px 13px;
+    border-color: transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    box-shadow: none;
+    font-size: 13px;
+  }
+
+  &__nav-button.a-button:hover,
+  &__action-button.a-button:hover {
+    filter: none;
+    transform: translateY(-1px);
+    background: color-mix(in srgb, #fff 30%, transparent);
+    color: var(--text);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+  }
+
+  &__nav-button.a-button:active,
+  &__action-button.a-button:active {
+    filter: none;
+    transform: scale(0.96);
+  }
+
+  &__nav-button--active.a-button,
+  &__action-button--active.a-button {
+    background: color-mix(in srgb, #fff 44%, transparent);
+    color: var(--primary);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, #fff 70%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #fff 25%, transparent),
+      0 2px 8px var(--shadow-8);
+  }
 }
 
-html[theme='dark'] .site-header__inner {
-  background: color-mix(in srgb, var(--bg-bright) 52%, transparent);
-  border-color: color-mix(in srgb, #fff 14%, transparent);
-  box-shadow:
-    inset 0 1px 1px color-mix(in srgb, #fff 20%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, #fff 6%, transparent),
-    0 8px 28px -8px var(--shadow-30, var(--shadow-18));
-}
+html[theme='dark'] .site-header {
+  &__inner {
+    background: color-mix(in srgb, var(--bg-bright) 52%, transparent);
+    border-color: color-mix(in srgb, #fff 14%, transparent);
+    box-shadow:
+      inset 0 1px 1px color-mix(in srgb, #fff 20%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #fff 6%, transparent),
+      0 8px 28px -8px var(--shadow-30, var(--shadow-18));
+  }
 
-html[theme='dark'] .site-header__nav {
-  a:hover {
+  &__nav-button.a-button:hover,
+  &__action-button.a-button:hover {
     background: color-mix(in srgb, #fff 9%, transparent);
     box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent);
   }
 
-  a[aria-current='true'] {
+  &__nav-button--active.a-button,
+  &__action-button--active.a-button {
     background: color-mix(in srgb, #fff 14%, transparent);
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, #fff 26%, transparent),
@@ -288,38 +314,35 @@ html[theme='dark'] .site-header__nav {
   }
 }
 
-.site-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 30px;
-  padding: 0 12px;
-  border-radius: var(--a-radius-full, 999px);
-  border: 1px solid var(--border-light, var(--border));
-  background: var(--a-surface, var(--bg-bright));
-  color: var(--text-secondary);
-  font-size: 12.5px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  user-select: none;
-  transition:
-    all var(--anim-duration-quick, 120ms) ease,
-    transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+@media (max-width: 760px) {
+  .site-header {
+    justify-content: flex-start;
+    padding: 0 12px;
+    overflow: hidden;
 
-  &:hover {
-    border-color: var(--primary-60);
-    color: var(--text);
-  }
+    &__inner {
+      gap: 10px;
+      height: 50px;
+      padding: 0 8px 0 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
 
-  &:active {
-    transform: scale(0.94);
-  }
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
 
-  &[data-on='true'] {
-    border-color: var(--primary-70);
-    background: var(--primary-12);
-    color: var(--primary);
+    &__nav-wrap,
+    &__nav,
+    &__actions {
+      flex: 0 0 auto;
+    }
+
+    &__nav-button.a-button,
+    &__action-button.a-button {
+      padding: 3px 10px;
+      font-size: 12px;
+    }
   }
 }
 
@@ -407,6 +430,15 @@ html[theme='dark'] .site-header__nav {
     gap: 14px;
     margin-top: 30px;
     flex-wrap: wrap;
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .a-button {
+      letter-spacing: 0;
+    }
   }
 
   &__install {
@@ -429,14 +461,10 @@ html[theme='dark'] .site-header__nav {
       color: var(--text);
     }
 
-    button {
-      border: none;
-      background: none;
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 12px;
-      font-family: inherit;
-      cursor: pointer;
+    .a-button {
+      height: 30px;
+      padding: 3px 12px;
+      letter-spacing: 0;
     }
   }
 }
@@ -838,7 +866,7 @@ html[theme='dark'] {
   // viewport. Cap its height to the viewport (minus the header offset) and let
   // it scroll internally while staying pinned, so the active item is always
   // reachable and the nav never scrolls off-screen.
-  &--components .docs-menu {
+  &--components .components-sidebar {
     max-height: calc(100vh - 142px);
     overflow-y: auto;
     padding-right: 6px;
@@ -869,11 +897,7 @@ html[theme='dark'] {
   top: 118px;
   align-self: start;
   --a-item-selected-bg: color-mix(in srgb, var(--primary) 10%, transparent);
-  --a-item-selected-gradient: none;
   --a-item-selected-color: var(--text);
-  --a-item-selected-text-shadow: none;
-  --a-item-selected-highlight: none;
-  --a-item-selected-shadow: none;
   --a-item-hover-bg: color-mix(in srgb, var(--primary) 7%, transparent);
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
@@ -956,39 +980,28 @@ html[theme='dark'] {
     margin-bottom: 10px;
   }
 
-  &__nav {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  &__link {
-    display: block;
+  .a-list-menu__item {
+    width: 100%;
+    margin: 2px 0;
     padding: 4px 10px;
-    border-radius: var(--a-radius-sm, 10px);
-    color: var(--text-secondary);
     font-size: 13px;
     font-weight: 500;
+    color: var(--text-secondary);
     line-height: 1.4;
-    text-decoration: none;
-    transition:
-      color var(--anim-duration-quick, 120ms) ease,
-      background-color var(--anim-duration-quick, 120ms) ease;
-
-    &:hover {
-      color: var(--text);
-      background: var(--bg-hover);
-    }
-
-    &[aria-current='true'] {
-      color: var(--primary);
-      font-weight: 600;
-      background: var(--primary-12);
-    }
+    text-shadow: none;
+    box-shadow: none;
   }
 
-  // indent h3 entries under their h2
-  &__link--depth-3 {
+  .a-list-menu__item:hover {
+    color: var(--text);
+  }
+
+  .a-list-menu__item--selected {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  &__item--depth-3 {
     padding-left: 22px;
     font-size: 12.5px;
   }
@@ -1021,11 +1034,13 @@ html[theme='dark'] {
   h2 {
     font-size: 22px;
     margin: 36px 0 12px 0;
+    scroll-margin-top: 112px;
   }
 
   h3 {
     font-size: 17px;
     margin: 26px 0 10px 0;
+    scroll-margin-top: 112px;
   }
 
   p {
@@ -1221,9 +1236,7 @@ html[theme='dark'] {
   }
 
   &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 14px;
+    width: 100%;
   }
 
   &__card {

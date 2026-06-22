@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import BrandLogo from '../components/BrandLogo.astro';
+import SiteNav from '../components/vue/SiteNav.vue';
 
 import '../styles/site.scss';
 
@@ -131,18 +132,12 @@ const {
         <a class="site-header__brand" href="/" aria-label="AnyUI home">
           <BrandLogo />
         </a>
-        <nav class="site-header__nav">
-          <a href="/docs/getting-started" aria-current={active === 'docs' ? 'true' : undefined}
-            >Docs</a
-          >
-          <a href="/components" aria-current={active === 'components' ? 'true' : undefined}>Components</a>
-          <a href="https://anyui-testground.pwp.sh" target="_blank">Testground</a>
-          <a href="https://github.com/any-design/anyui" target="_blank">GitHub</a>
-        </nav>
-        <div class="site-header__actions">
-          <button class="site-toggle" id="toggle-dark" type="button">🌙 Dark</button>
-          <button class="site-toggle" id="toggle-glass" type="button">🧊 Glass</button>
-        </div>
+        <SiteNav
+          client:load
+          transition:persist="site-nav"
+          transition:persist-props
+          active={active}
+        />
       </div>
     </header>
 
@@ -160,42 +155,6 @@ const {
       // via <ClientRouter />). Listening to astro:page-load covers both the
       // initial load and every subsequent SPA navigation.
       const initPage = () => {
-        const KEY = 'anyui-site-prefs';
-        const read = () => {
-          try {
-            return JSON.parse(localStorage.getItem(KEY) || '{}');
-          } catch {
-            return {};
-          }
-        };
-        const html = document.documentElement;
-        const darkBtn = document.getElementById('toggle-dark');
-        const glassBtn = document.getElementById('toggle-glass');
-
-        if (darkBtn && glassBtn) {
-          const sync = () => {
-            darkBtn.dataset.on = String(html.getAttribute('theme') === 'dark');
-            glassBtn.dataset.on = String(html.getAttribute('data-anyui-style') === 'glass');
-          };
-          darkBtn.addEventListener('click', () => {
-            const dark = html.getAttribute('theme') !== 'dark';
-            html.setAttribute('theme', dark ? 'dark' : 'light');
-            localStorage.setItem(KEY, JSON.stringify({ ...read(), dark }));
-            sync();
-          });
-          glassBtn.addEventListener('click', () => {
-            const glass = html.getAttribute('data-anyui-style') !== 'glass';
-            if (glass) {
-              html.setAttribute('data-anyui-style', 'glass');
-            } else {
-              html.removeAttribute('data-anyui-style');
-            }
-            localStorage.setItem(KEY, JSON.stringify({ ...read(), glass }));
-            sync();
-          });
-          sync();
-        }
-
         // professional code blocks: language badge + copy button on every shiki block
         document.querySelectorAll('pre.astro-code').forEach((pre) => {
           // skip if already wrapped (e.g. persisted across a no-op swap)

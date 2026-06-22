@@ -321,6 +321,16 @@ export const COMPONENTS: ComponentEntry[] = [
     },
   },
   {
+    slug: 'grid',
+    name: 'Grid',
+    folder: 'grid',
+    category: 'display',
+    blurb: {
+      en: 'Responsive 24-column grid with equal-height columns.',
+      zh: '响应式 24 栅格布局，支持列内容等高。',
+    },
+  },
+  {
     slug: 'clickable-text',
     name: 'ClickableText',
     folder: 'clickableText',
