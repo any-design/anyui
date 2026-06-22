@@ -5,6 +5,7 @@
     maxHeight = undefined,
     fill = false,
     horizontal = false,
+    scrollBehavior = 'smooth',
     class: className = '',
     children,
   } = $props();
@@ -105,7 +106,7 @@
     viewportEl.scrollBy({
       top: vertical ? direction * page : 0,
       left: vertical ? 0 : direction * page,
-      behavior: 'smooth',
+      behavior: scrollBehavior,
     });
   };
   const handleBarLeave = () => {
@@ -130,6 +131,7 @@
     class="a-scroll-area__viewport"
     style:height={formatSize(height)}
     style:max-height={formatSize(maxHeight)}
+    style:scroll-behavior={scrollBehavior}
     onscroll={() => {
       updateMetrics();
       showBars();

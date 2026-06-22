@@ -36,6 +36,8 @@ export { default as Pagination } from './components/Pagination.svelte';
 export { default as Popper } from './components/Popper.svelte';
 export { default as Popup } from './components/Popup.svelte';
 export { default as PopupMenu } from './components/PopupMenu.svelte';
+export { default as Progress } from './components/Progress.svelte';
+export { default as ProgressButton } from './components/ProgressButton.svelte';
 export { default as Radio } from './components/Radio.svelte';
 export { default as RadioButton } from './components/RadioButton.svelte';
 export { default as RadioButtonGroup } from './components/RadioButtonGroup.svelte';
@@ -101,6 +103,8 @@ import Pagination from './components/Pagination.svelte';
 import Popper from './components/Popper.svelte';
 import Popup from './components/Popup.svelte';
 import PopupMenu from './components/PopupMenu.svelte';
+import Progress from './components/Progress.svelte';
+import ProgressButton from './components/ProgressButton.svelte';
 import Radio from './components/Radio.svelte';
 import RadioButton from './components/RadioButton.svelte';
 import RadioButtonGroup from './components/RadioButtonGroup.svelte';
@@ -163,6 +167,8 @@ const defaultComponentList = [
   Popper,
   Popup,
   PopupMenu,
+  Progress,
+  ProgressButton,
   Radio,
   RadioButton,
   RadioButtonGroup,

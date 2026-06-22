@@ -975,16 +975,38 @@ export const Step = forwardRef<HTMLDivElement, AnyUIReactProps>(function Step({ 
   );
 });
 
-export const Switch = forwardRef<HTMLSpanElement, AnyUIReactProps>(function Switch({ className, modelValue = false, onUpdateModelValue, onChange, ...rest }, ref) {
+export const Switch = forwardRef<HTMLSpanElement, AnyUIReactProps>(function Switch(
+  { className, modelValue = false, disabled = false, onUpdateModelValue, onChange, ...rest },
+  ref,
+) {
   const [checked, setChecked] = useState(Boolean(modelValue));
   useEffect(() => setChecked(Boolean(modelValue)), [modelValue]);
   const update = () => {
+    if (disabled) return;
     const next = !checked;
     setChecked(next);
     onUpdateModelValue?.(next);
     onChange?.(next);
   };
-  return <span {...pickDataAttrs(rest)} ref={ref} className={cx('a-switch', checked && 'a-switch--checked', className)} onClick={update} />;
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      update();
+    }
+  };
+  return (
+    <span
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      role="switch"
+      tabIndex={disabled ? -1 : 0}
+      aria-checked={checked}
+      aria-disabled={disabled}
+      className={cx('a-switch', checked && 'a-switch--checked', disabled && 'a-switch--disabled', className)}
+      onClick={update}
+      onKeyDown={handleKeyDown}
+    />
+  );
 });
 
 type FormContextValue = {
@@ -2937,7 +2959,7 @@ export const Slider = forwardRef<HTMLDivElement, AnyUIReactProps>(function Slide
     else if (e.key === 'End') next = max;
     else return;
     e.preventDefault();
-    commit(next);
+    commit(next as number);
     onChange?.(valueRef.current);
   };
   const percent = max > min ? ((value - min) / (max - min)) * 100 : 0;
@@ -2968,6 +2990,120 @@ export const Slider = forwardRef<HTMLDivElement, AnyUIReactProps>(function Slide
           {tooltipVisible ? <div className="a-slider__tooltip">{value}</div> : null}
         </div>
       </div>
+    </div>
+  );
+});
+
+export const Progress = forwardRef<HTMLDivElement, AnyUIReactProps>(function Progress(
+  {
+    className,
+    value = 0,
+    status = 'primary',
+    height,
+    width,
+    striped = false,
+    active = false,
+    showLabel = false,
+    indeterminate = false,
+    size = 'default',
+    format,
+    ...rest
+  },
+  ref,
+) {
+  const percent = Math.min(100, Math.max(0, Number(value)));
+  const label = format ? format(percent) : Math.round(percent) + '%';
+  const wrapperStyle: React.CSSProperties = {
+    width: formatStyleSize(width),
+    height: formatStyleSize(height),
+    ...rest.style,
+  };
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={indeterminate ? undefined : percent}
+      className={cx(
+        'a-progress',
+        `a-progress--${status}`,
+        size !== 'default' && `a-progress--${size}`,
+        striped && 'a-progress--striped',
+        active && 'a-progress--active',
+        indeterminate && 'a-progress--indeterminate',
+        className,
+      )}
+      style={wrapperStyle}
+    >
+      <div className="a-progress__track">
+        <div className="a-progress__fill" style={{ width: percent + '%' }}>
+          {striped ? <span className="a-progress__stripes" /> : null}
+        </div>
+      </div>
+      {showLabel && !indeterminate ? <span className="a-progress__label">{label}</span> : null}
+    </div>
+  );
+});
+
+export const ProgressButton = forwardRef<HTMLDivElement, AnyUIReactProps>(function ProgressButton(
+  {
+    children,
+    className,
+    value = 0,
+    status = 'primary',
+    round = false,
+    fill = false,
+    disabled = false,
+    striped = false,
+    active = false,
+    indeterminate = false,
+    size = 'default',
+    onClick,
+    ...rest
+  },
+  ref,
+) {
+  const percent = Math.min(100, Math.max(0, Number(value)));
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    onClick?.(event);
+  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick?.(event);
+    }
+  };
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      role="button"
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
+      className={cx(
+        'a-progress-button',
+        `a-progress-button--${status}`,
+        size !== 'default' && `a-progress-button--${size}`,
+        round && 'a-progress-button--round',
+        fill && 'a-progress-button--fill',
+        disabled && 'a-progress-button--disabled',
+        striped && 'a-progress-button--striped',
+        active && 'a-progress-button--active',
+        indeterminate && 'a-progress-button--indeterminate',
+        className,
+      )}
+      style={rest.style}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+    >
+      <div className="a-progress-button__bar" style={{ width: percent + '%' }}>
+        {striped ? <span className="a-progress-button__stripes" /> : null}
+      </div>
+      <span className="a-progress-button__inner">{children}</span>
     </div>
   );
 });
@@ -3100,7 +3236,7 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
 });
 
 export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function ScrollArea(
-  { children, className, height, maxHeight, fill = false, horizontal = false, ...rest },
+  { children, className, height, maxHeight, fill = false, horizontal = false, scrollBehavior = 'smooth', ...rest },
   ref,
 ) {
   // the bars are inset 2px from each edge (see the shared styles)
@@ -3212,7 +3348,7 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
     viewport.scrollBy({
       top: vertical ? direction * page : 0,
       left: vertical ? 0 : direction * page,
-      behavior: 'smooth',
+      behavior: scrollBehavior,
     });
   };
   const handleBarLeave = () => {
@@ -3229,7 +3365,7 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
       <div
         ref={viewportRef}
         className="a-scroll-area__viewport"
-        style={{ height: formatStyleSize(height), maxHeight: formatStyleSize(maxHeight) }}
+        style={{ height: formatStyleSize(height), maxHeight: formatStyleSize(maxHeight), scrollBehavior }}
         onScroll={() => {
           updateMetrics();
           showBars();
@@ -3316,6 +3452,8 @@ const defaultComponentList = [
   Popper,
   Popup,
   PopupMenu,
+  Progress,
+  ProgressButton,
   Radio,
   RadioButton,
   RadioButtonGroup,

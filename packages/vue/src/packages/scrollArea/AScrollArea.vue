@@ -54,7 +54,7 @@
 import type { PropType } from 'vue';
 import { computed, defineComponent, onMounted, onUnmounted, reactive, ref } from 'vue';
 
-import type { AScrollAreaDirection } from './types';
+import type { AScrollAreaDirection, AScrollAreaScrollBehavior } from './types';
 
 import { formatStyleSize } from '@/utils';
 
@@ -82,6 +82,12 @@ export default defineComponent({
     horizontal: {
       type: Boolean,
       default: false,
+    },
+    // controls programmatic and track-click scroll motion.
+    scrollBehavior: {
+      type: String as PropType<AScrollAreaScrollBehavior>,
+      default: 'smooth',
+      validator: (value: string) => ['auto', 'smooth'].includes(value),
     },
   },
   setup(props) {
@@ -224,7 +230,7 @@ export default defineComponent({
       viewport.scrollBy({
         top: vertical ? direction * page : 0,
         left: vertical ? 0 : direction * page,
-        behavior: 'smooth',
+        behavior: props.scrollBehavior,
       });
     };
 
@@ -232,6 +238,7 @@ export default defineComponent({
       height: typeof props.height === 'undefined' ? undefined : formatStyleSize(props.height),
       maxHeight:
         typeof props.maxHeight === 'undefined' ? undefined : formatStyleSize(props.maxHeight),
+      scrollBehavior: props.scrollBehavior,
     }));
 
     let resizeObserver: ResizeObserver | undefined;

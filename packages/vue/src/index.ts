@@ -34,6 +34,8 @@ import Pagination from './packages/pagination';
 import Popper from './packages/popper';
 import Popup from './packages/popup';
 import PopupMenu from './packages/popupMenu';
+import Progress from './packages/progress';
+import ProgressButton from './packages/progressButton';
 import Radio from './packages/radio';
 import RadioButtonGroup, { RadioButton } from './packages/radioButtonGroup';
 import RadioGroup from './packages/radioGroup';
@@ -87,6 +89,8 @@ const defaultComponentList = [
   Popper,
   Popup,
   PopupMenu,
+  Progress,
+  ProgressButton,
   Radio,
   RadioButton,
   RadioGroup,
@@ -192,6 +196,10 @@ export {
   Popup as APopup,
   PopupMenu,
   PopupMenu as APopupMenu,
+  Progress,
+  Progress as AProgress,
+  ProgressButton,
+  ProgressButton as AProgressButton,
   Radio,
   Radio as ARadio,
   RadioButton,

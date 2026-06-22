@@ -46,6 +46,18 @@ import { ScrollArea } from '@any-design/anyui/vue';
 </template>
 ```
 
+### 滚动行为
+
+`scrollBehavior` 控制轨道点击翻页和程序化滚动时的滚动行为。默认使用 `smooth`，也可以设置为 `auto` 以关闭平滑滚动。
+
+```vue
+<template>
+  <AScrollArea height="240" scroll-behavior="auto">
+    <p v-for="i in 50" :key="i">第 {{ i }} 行</p>
+  </AScrollArea>
+</template>
+```
+
 ## 属性
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -54,6 +66,7 @@ import { ScrollArea } from '@any-design/anyui/vue';
 | `maxHeight` | String \| Number | undefined | 最大高度。 |
 | `fill` | Boolean | false | 撑满父容器高度。 |
 | `horizontal` | Boolean | false | 允许横向滚动。 |
+| `scrollBehavior` | `'auto' \| 'smooth'` | `'smooth'` | 轨道点击翻页和程序化滚动时的滚动行为。 |
 
 ## 插槽
 

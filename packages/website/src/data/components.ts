@@ -148,6 +148,13 @@ export const COMPONENTS: ComponentEntry[] = [
     category: 'form',
     blurb: { en: 'Numeric range slider with tooltip.', zh: '带提示的数值滑块。' },
   },
+  {
+    slug: 'switch',
+    name: 'Switch',
+    folder: 'switch',
+    category: 'form',
+    blurb: { en: 'Boolean on/off toggle.', zh: '布尔开关控件。' },
+  },
 
   // ---- Feedback ----
   {
@@ -234,6 +241,16 @@ export const COMPONENTS: ComponentEntry[] = [
       zh: '从边缘滑入的侧边抽屉。',
     },
   },
+  {
+    slug: 'progress',
+    name: 'Progress',
+    folder: 'progress',
+    category: 'feedback',
+    blurb: {
+      en: 'Horizontal progress bar with indeterminate mode.',
+      zh: '横向进度条，支持不确定状态。',
+    },
+  },
 
   // ---- Display ----
   {
@@ -244,6 +261,16 @@ export const COMPONENTS: ComponentEntry[] = [
     blurb: {
       en: 'The core button — types, sizes, icons, loading.',
       zh: '核心按钮 — 类型、尺寸、图标与加载态。',
+    },
+  },
+  {
+    slug: 'progress-button',
+    name: 'ProgressButton',
+    folder: 'progressButton',
+    category: 'display',
+    blurb: {
+      en: 'Button with a progress bar as its background.',
+      zh: '背景为进度条的按钮。',
     },
   },
   {
