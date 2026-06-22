@@ -12,10 +12,13 @@
     typeof item === 'string' ? { type: 'item', label: item, value: item } : { type: 'item', ...item };
   const normalizeMenu = (input: AListMenuConfig): AListMenuDisplayItem[] => {
     if (Array.isArray(input)) return input.map(toItem);
-    return Object.entries(input).flatMap(([label, list]) => [{ type: 'split' as const, label }, ...list.map(toItem)]);
+    return Object.entries(input).flatMap(([label, list]) => [
+      ...(label ? [{ type: 'split' as const, label }] : []),
+      ...list.map(toItem),
+    ]);
   };
   const displayItems = $derived(normalizeMenu(menu));
-  const update = (value: string | undefined) => {
+  const update = (value: string | number | undefined) => {
     modelValue = value;
     onUpdateModelValue?.(value);
     onChange?.(value);
@@ -24,11 +27,11 @@
 
 <div class="a-list-menu {className}">
   {#each displayItems as item, index}
-    {#if item.type === 'split'}
+    {#if item.type === 'split' && item.label}
       <div class="a-list-menu__split"><span>{item.label}</span></div>
     {:else}
       <div
-        class="a-list-menu__item {modelValue === item.value ? 'a-list-menu__item--selected' : ''}"
+        class="a-list-menu__item {item.className || ''} {modelValue === item.value ? 'a-list-menu__item--selected' : ''}"
         role="button"
         tabindex="0"
         onclick={() => update(item.value)}

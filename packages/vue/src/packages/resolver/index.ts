@@ -22,6 +22,8 @@ const STYLE_LINKED_COMPONENT_MAP = {
   confirmModal: ['dialog', 'popup', 'button'],
   dialog: ['popup', 'button'],
   dropdownMenu: ['popper', 'popupMenu'],
+  grid: ['gridRow', 'gridCol'],
+  gridRow: 'gridCol',
   loadingMask: 'spinner',
   radioGroup: 'radio',
   radioButtonGroup: 'radioButton',
