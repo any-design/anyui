@@ -46,6 +46,18 @@ Set `horizontal` to allow horizontal scrolling for wide content.
 </template>
 ```
 
+### Scroll behavior
+
+`scrollBehavior` controls track-click paging and programmatic scroll behavior. It defaults to `smooth`; set it to `auto` to disable smooth scrolling.
+
+```vue
+<template>
+  <AScrollArea height="240" scroll-behavior="auto">
+    <p v-for="i in 50" :key="i">Line {{ i }}</p>
+  </AScrollArea>
+</template>
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -54,6 +66,7 @@ Set `horizontal` to allow horizontal scrolling for wide content.
 | `maxHeight` | String \| Number | undefined | Max height. |
 | `fill` | Boolean | false | Fill the parent height. |
 | `horizontal` | Boolean | false | Enable horizontal scrolling. |
+| `scrollBehavior` | `'auto' \| 'smooth'` | `'smooth'` | Track-click paging and programmatic scroll behavior. |
 
 ## Slots
 

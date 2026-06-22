@@ -1,6 +1,9 @@
 <template>
   <div class="a-list-menu">
-    <template v-for="item in displayItems" :key="item.value">
+    <template
+      v-for="item in displayItems"
+      :key="item.type === 'split' ? `split-${item.label}` : (item.value ?? item.label)"
+    >
       <AListMenuItem
         v-if="item.type === 'item'"
         :text="item.label"
@@ -8,7 +11,7 @@
         :selected="currentSelected"
         @click="(e: Event) => handleItemClicked(e, item)"
       />
-      <div v-else class="a-list-menu__split">
+      <div v-else-if="item.label" class="a-list-menu__split">
         <span>{{ item.label }}</span>
       </div>
     </template>
@@ -67,10 +70,12 @@ const displayItems = computed<AListMenuDisplayItem[]>(() => {
       return [];
     }
     Object.keys(props.menu).forEach((item: string) => {
-      ret.push({
-        type: 'split',
-        label: item,
-      });
+      if (item) {
+        ret.push({
+          type: 'split',
+          label: item,
+        });
+      }
       const list = (props.menu as Record<string, AListMenuItemConfig[]>)[item];
       if (!list) {
         return;
