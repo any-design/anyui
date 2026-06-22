@@ -16,6 +16,9 @@ const {
   description = 'AnyUI is a cute, fresh and modern design system and UI component library for Vue, React, and Svelte — with an optional liquid glass style.',
   active = '',
 } = Astro.props;
+
+const criticalThemeCss =
+  "html { background: #f8f8fa; color: #202426; } html[theme='dark'] { background: #1a1a1d; color: #ebeef1; } body { background: inherit; }";
 ---
 
 <!doctype html>
@@ -109,16 +112,7 @@ const {
         });
       })();
     </script>
-    <!--
-      Critical inline styles: set the background + base text color from the theme
-      attribute BEFORE the main stylesheet loads, so MPA navigations don't flash a
-      white background while the SCSS bundle parses. Mirrors the theme tokens.
-    -->
-    <style is:inline>
-      html { background: #f8f8fa; color: #202426; }
-      html[theme='dark'] { background: #1a1a1d; color: #ebeef1; }
-      body { background: inherit; }
-    </style>
+    <style is:inline set:html={criticalThemeCss}></style>
   </head>
   <body>
     <div class="site-backdrop">
