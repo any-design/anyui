@@ -2,8 +2,10 @@
 import * as customizationDoc from '../../../../../docs/theme/customization.md';
 
 import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const headings = (customizationDoc as any).getHeadings?.() || [];
 ---
 
-<DocsLayout title="Theme Customization" active="theming">
+<DocsLayout title="Theme Customization" active="theming" headings={headings}>
   <customizationDoc.Content />
 </DocsLayout>

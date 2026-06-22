@@ -1,34 +1,11 @@
 ---
 import ComponentsLayout from '../../layouts/ComponentsLayout.astro';
+import OverviewGrid from '../../components/vue/OverviewGrid.vue';
 import { componentsByCategory } from '../../data/components';
 
 const groups = componentsByCategory();
 ---
 
 <ComponentsLayout title="Components" active="overview">
-  <div class="components-index">
-    <div class="components-index__hero">
-      <h1>Components</h1>
-      <p class="components-index__intro">
-        Every component in AnyUI, available across Vue, React and Svelte with one shared API.
-        Browse by category below, or pick a component from the sidebar.
-      </p>
-    </div>
-
-    {
-      groups.map(({ category, items }) => (
-        <section class="components-index__group">
-          <h2 class="components-index__group-title">{category.label.en}</h2>
-          <div class="components-index__grid">
-            {items.map((item) => (
-              <a class="components-index__card" href={`/components/${item.slug}`}>
-                <div class="components-index__card-name">{item.name}</div>
-                <div class="components-index__card-blurb">{item.blurb.en}</div>
-              </a>
-            ))}
-          </div>
-        </section>
-      ))
-    }
-  </div>
+  <OverviewGrid client:visible groups={groups} />
 </ComponentsLayout>

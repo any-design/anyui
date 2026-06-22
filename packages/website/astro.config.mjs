@@ -6,6 +6,8 @@ import svelte from '@astrojs/svelte';
 import vue from '@astrojs/vue';
 import { defineConfig } from 'astro/config';
 
+import { previewPlugin } from './src/vite/preview-plugin.ts';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const vueSrc = path.resolve(__dirname, '../vue/src');
 const reactSrc = path.resolve(__dirname, '../react/src');
@@ -31,6 +33,7 @@ export default defineConfig({
     svelte(),
   ],
   vite: {
+    plugins: [previewPlugin()],
     resolve: {
       alias: {
         // the vue package sources use '@' internally

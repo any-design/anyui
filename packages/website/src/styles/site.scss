@@ -50,7 +50,8 @@ kbd,
   font-family: var(--font-mono) !important;
 }
 
-// pastel blobs behind everything — also feeds the liquid glass blur
+// pastel candy backdrop — dots, waves and tiny sweet motifs in the theme
+// palette, kept very low-key (no glow). Pure CSS, no requests.
 .site-backdrop {
   position: fixed;
   inset: 0;
@@ -58,39 +59,80 @@ kbd,
   overflow: hidden;
   z-index: -1;
 
-  // A faint, repeating cute texture (tiny dots + sparkles) layered over the
-  // pastel blobs. Pure CSS — no extra requests, scales with the viewport, low
-  // opacity so it stays subtle and never competes with content.
+  // Three layered repeating patterns, all derived from --primary/--secondary so
+  // the texture follows the theme. Concentrated toward the top via a vertical
+  // mask so it never competes with content lower on the page.
   &::before {
     content: '';
     position: absolute;
     inset: 0;
     background-image:
-      // scattered four-point sparkles (✦) drawn as two crossed gradients
+      // candy dots — a grid of small pastel dots
       radial-gradient(
-        var(--secondary-24, rgba(255, 120, 180, 0.18)) 1px,
+        color-mix(in srgb, var(--primary) 16%, transparent) 1.3px,
         transparent 1.6px
       ),
+      // tiny secondary-color dots, offset grid for a confetti feel
       radial-gradient(
-        var(--primary-16, rgba(85, 181, 255, 0.14)) 1.5px,
-        transparent 1.5px
+        color-mix(in srgb, var(--secondary) 14%, transparent) 1.6px,
+        transparent 1.8px
+      ),
+      // wavy woven lines — two crossed repeating diagonal stripes
+      repeating-linear-gradient(
+        42deg,
+        color-mix(in srgb, var(--primary) 6%, transparent) 0 1px,
+        transparent 1px 14px
+      ),
+      repeating-linear-gradient(
+        -42deg,
+        color-mix(in srgb, var(--secondary) 6%, transparent) 0 1px,
+        transparent 1px 14px
+      ),
+      // scattered sweet motifs — a few small rings drawn as radial gradients
+      // placed at fixed coordinates (a heart-ish dot cluster), very faint
+      radial-gradient(
+        circle at 12% 22%,
+        color-mix(in srgb, var(--secondary) 12%, transparent) 0 6px,
+        transparent 6px
+      ),
+      radial-gradient(
+        circle at 82% 16%,
+        color-mix(in srgb, var(--primary) 12%, transparent) 0 5px,
+        transparent 5px
+      ),
+      radial-gradient(
+        circle at 68% 40%,
+        color-mix(in srgb, var(--secondary) 10%, transparent) 0 4px,
+        transparent 4px
       );
     background-size:
-      84px 84px,
-      28px 28px;
+      26px 26px,
+      38px 38px,
+      80px 80px,
+      80px 80px,
+      100% 100%,
+      100% 100%,
+      100% 100%;
     background-position:
       0 0,
+      13px 13px,
+      0 0,
+      0 0,
+      0 0,
+      0 0,
       0 0;
-    opacity: 0.6;
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 80%);
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 80%);
+    opacity: 0.55;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 78%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 78%);
   }
 
+  // Soft ambient color washes (not glows): low opacity, modest blur, just enough
+  // to give the dark/light page a hint of theme color in the upper region.
   span {
     position: absolute;
     border-radius: var(--a-radius-full, 999px);
-    filter: blur(110px);
-    opacity: 0.5;
+    filter: blur(70px);
+    opacity: 0.18;
   }
 
   span:nth-child(1) {
@@ -98,21 +140,40 @@ kbd,
     height: 520px;
     left: -160px;
     top: -180px;
-    background: var(--primary-20);
+    background: var(--primary);
   }
   span:nth-child(2) {
     width: 460px;
     height: 460px;
     right: -140px;
     top: 60px;
-    background: var(--secondary-20);
+    background: var(--secondary);
   }
   span:nth-child(3) {
     width: 560px;
     height: 560px;
     left: 32%;
     top: 60%;
-    background: var(--primary-12);
+    background: var(--primary);
+    opacity: 0.1;
+  }
+}
+
+// Dark mode: keep the candy texture but make it noticeably quieter so it never
+// competes with the lifted card surfaces or muddies the dark palette.
+html[theme='dark'] {
+  .site-backdrop::before {
+    opacity: 0.35;
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 28%, transparent 60%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 28%, transparent 60%);
+  }
+
+  .site-backdrop span {
+    opacity: 0.12;
+  }
+
+  .site-backdrop span:nth-child(3) {
+    opacity: 0.08;
   }
 }
 
@@ -412,28 +473,17 @@ html[theme='dark'] .site-header__nav {
   }
 }
 
+// ACard-backed feature card. ACard provides the surface, radius, border,
+// shadow and hover lift; the inner wrapper carries the padding + layout.
 .feature-card {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  border-radius: var(--a-radius-xl, 22px);
-  background: var(--a-surface, var(--bg-bright));
-  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
-  backdrop-filter: var(--a-surface-backdrop, none);
-  border: 1px solid var(--a-surface-border-color, transparent);
-  box-shadow:
-    var(--a-surface-highlight, 0 0 #0000),
-    var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
-  padding: 26px;
-  transition:
-    transform var(--anim-duration, 200ms) var(--a-ease-spring, ease),
-    box-shadow var(--anim-duration, 200ms) ease;
+  text-decoration: none;
+  color: inherit;
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow:
-      var(--a-surface-highlight, 0 0 #0000),
-      var(--a-shadow-md, 0 12px 28px var(--shadow-8));
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 26px;
   }
 
   &__icon {
@@ -467,7 +517,14 @@ html[theme='dark'] .site-header__nav {
 .code-card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
+  // The grid column is minmax(0, 1fr), so the card itself can shrink — but its
+  // flex children (the code frame + <pre>) default to min-width: auto and will
+  // push past the card's padding when the highlighted code is wider than the
+  // column. Clamp the card so its contents scroll inside instead of overflowing
+  // the surface, and let the rounded corners clip the code block.
+  min-width: 0;
+  overflow: hidden;
   box-sizing: border-box;
   border-radius: var(--a-radius-xl, 22px);
   background: var(--a-surface, var(--bg-bright));
@@ -477,12 +534,14 @@ html[theme='dark'] .site-header__nav {
   box-shadow:
     var(--a-surface-highlight, 0 0 #0000),
     var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
-  padding: 20px;
+  // no card-level padding: the header and code block carry their own, so the
+  // code block's border/radius sit flush with the card edge and don't double up
 
   &__header {
     display: flex;
     align-items: center;
     gap: 8px;
+    padding: 16px 20px 10px 20px;
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.04rem;
@@ -509,17 +568,29 @@ html[theme='dark'] .site-header__nav {
   // The runtime code-frame wrapper (language badge + copy button) sits between
   // the card and the <pre>, so it must stretch to fill the card and the <pre>
   // inside it must fill the frame — otherwise the three framework cards render
-  // unequal code-block heights.
+  // unequal code-block heights. min-width: 0 lets the frame shrink within the
+  // flex column so the <pre>'s min-width: max-content scrolls horizontally
+  // instead of bursting out of the card.
   .code-frame {
     display: flex;
     flex: 1;
+    min-width: 0;
     min-height: 0;
   }
 
   .astro-code {
     flex: 1;
+    min-width: 0;
     margin: 0;
     height: 100%;
+    // flatten the code block against the card: no rounded corners / border /
+    // shadow / outer padding — just enough inner padding for the code lines
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid var(--a-surface-border-color, var(--line));
+    box-shadow: none;
+    padding: 14px 20px 16px 20px;
+    font-size: 12.5px;
   }
 }
 
@@ -537,6 +608,60 @@ html[theme='dark'] .site-header__nav {
   margin: 0 auto 28px auto;
   max-width: 560px;
   line-height: 1.65;
+}
+
+// ------------------------------------------------------------------ dark-mode palette
+// The shared design-system dark tokens target near-black surfaces, which hurts
+// the docs site in two ways:
+//   1. the page bg was too harsh/black — feels oppressive rather than "cute dark",
+//      and the recessed card lift is hard to perceive
+//   2. --text-secondary / --text-placeholder / --line were darker than the card
+//      surface, so secondary copy, labels, dividers, and component text vanished
+// We override only the website's surface/text/line tokens here — not the
+// library's component-facing tokens — so component demos keep their look while
+// the docs chrome and the shared text tokens they inherit become legible.
+//
+// Contrast targets (WCAG AA on the relevant surface):
+//   --text            on --bg-bright #2a2a2d  → ~13:1
+//   --text-secondary  on --bg-bright          → ~6.5:1 (AA for normal text)
+//   --text-placeholder on --bg-semi-light     → ~5.5:1 (AA for placeholder)
+//   --line            on --bg-bright          → visible hairline, not a shadow
+// Page bg #1a1a1d is a soft charcoal — clearly not black, still darker than
+// cards so the floating glass panels read as a distinct elevated layer.
+
+html[theme='dark'] {
+  // surface stack — soft charcoal page (not black) with a clear lift to cards,
+  // so floating glass panels read as a distinct layer. Inputs sit between the
+  // page and the card for a subtle recess.
+  --bg: #1a1a1d;
+  --bg-bright: #2a2a2d;
+  --bg-light: #252528;
+  --bg-semi-light: #1f1f22;
+  --bg-alter: #1c1c1f;
+  --bg-semi-dark: #151517;
+  --bg-darker: #111113;
+  --bg-hover: #202024;
+  --bg-active: #232327;
+  --bg-readonly: #1e1e21;
+  --bg-disabled: #272729;
+
+  // text — lift the whole neutral text ramp so secondary/placeholder/disabled
+  // copy and component text stay legible on the lifted card surfaces. Main text
+  // gets a small bump for parity across the ramp.
+  --text: #ebeef1;
+  --text-80: rgba(235, 238, 241, 0.82);
+  --text-secondary: #a4a7ab;
+  --text-disabled: #73767b;
+  --text-placeholder: #8d9095;
+
+  // hairlines & borders — lighter than the card bg so dividers read as
+  // separators instead of disappearing into the surface.
+  --line: #34343a;
+  --border: #42424a;
+
+  // icon fill + scrollbar — match the lifted neutral ramp
+  --icon-fill: #93969a;
+  --scrollbar: #42424a;
 }
 
 // ------------------------------------------------------------------ code blocks
@@ -626,6 +751,52 @@ html[theme='dark'] {
   }
 }
 
+// ------------------------------------------------------------------ dark-mode readability
+// Targeted dark-only overrides for elements that read secondary/placeholder
+// tokens and still look washed-out on the lifted card surfaces, plus the prose
+// inline-code chip which was nearly invisible with a 8%-alpha primary fill.
+
+html[theme='dark'] {
+  // Inline code chip: bump the fill alpha, lighten the text to the lifted
+  // primary, and add a 1px primary border so the chip is crisp on dark cards.
+  .prose :not(pre) > code {
+    background: var(--primary-14, var(--primary-12));
+    color: var(--primary-l-6, var(--primary));
+    border: 1px solid var(--primary-20, var(--primary-18));
+  }
+
+  // Sidebar nav: default links read secondary; current link uses the lifted
+  // primary and gets bolder so the active item stands out on dark.
+  .docs-menu .a-list-menu__item {
+    color: var(--text-secondary);
+  }
+
+  .docs-menu .a-list-menu__item--selected {
+    color: var(--primary-l-6, var(--primary));
+    font-weight: 700;
+  }
+
+  // Card / hero descriptions that read --text-secondary: swap to --text-80 on
+  // dark so muted copy clears ~7:1 against the card bg. Light mode keeps its
+  // original --text-secondary look.
+  .hero__desc,
+  .section-desc,
+  .feature-card__desc,
+  .code-card__header,
+  .components-index__intro,
+  .components-index__card-blurb {
+    color: var(--text-80);
+  }
+
+  // Group titles / labels that read --text-placeholder: bump to a slightly
+  // lighter neutral so they're not lost on dark.
+  .components-index__group-title,
+  .docs-menu .a-list-menu__split span,
+  .code-frame__lang {
+    color: var(--text-secondary);
+  }
+}
+
 // ------------------------------------------------------------------ docs
 
 .docs {
@@ -636,56 +807,35 @@ html[theme='dark'] {
   grid-template-columns: 220px minmax(0, 1fr);
   gap: 40px;
 
+  // when a right-side TOC is present, expand to a 3-column grid
+  &--has-toc {
+    grid-template-columns: 220px minmax(0, 1fr) 200px;
+    max-width: 1280px;
+  }
+
+  @media (max-width: 1100px) {
+    // collapse the TOC column first on mid-width screens
+    &--has-toc {
+      grid-template-columns: 220px minmax(0, 1fr);
+    }
+    .toc {
+      display: none;
+    }
+  }
+
   @media (max-width: 840px) {
     grid-template-columns: 1fr;
-  }
 
-  &__nav {
-    position: sticky;
-    top: 118px;
-    align-self: start;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-
-    a {
-      padding: 7px 14px;
-      border-radius: var(--a-radius-sm, 10px);
-      color: var(--text-secondary);
-      font-size: 13.5px;
-      font-weight: 500;
-      transition:
-        background-color var(--anim-duration-quick, 120ms) ease,
-        color var(--anim-duration-quick, 120ms) ease;
+    &--has-toc {
+      grid-template-columns: 1fr;
     }
-
-    a:hover {
-      background: var(--bg-hover);
-      color: var(--text);
-    }
-
-    a[aria-current='true'] {
-      background: var(--primary-12);
-      color: var(--primary);
-      font-weight: 600;
-    }
-  }
-
-  &__label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06rem;
-    text-transform: uppercase;
-    color: var(--text-placeholder);
-    padding: 0 14px;
-    margin: 14px 0 6px 0;
   }
 
   // The components section has ~50 entries, so the sidebar is taller than the
   // viewport. Cap its height to the viewport (minus the header offset) and let
   // it scroll internally while staying pinned, so the active item is always
   // reachable and the nav never scrolls off-screen.
-  &--components &__nav {
+  &--components .docs-menu {
     max-height: calc(100vh - 142px);
     overflow-y: auto;
     padding-right: 6px;
@@ -705,6 +855,140 @@ html[theme='dark'] {
     &::-webkit-scrollbar-track {
       background: transparent;
     }
+  }
+}
+
+// AListMenu-backed docs sidebars. The wrappers provide sticky pinning and
+// internal scroll; AListMenu itself renders the items.
+.docs-menu,
+.components-sidebar {
+  position: sticky;
+  top: 118px;
+  align-self: start;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .a-list-menu__item {
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    margin: 4px 8px;
+    padding: 6px 10px;
+  }
+
+  .a-list-menu__item:hover {
+    color: var(--text);
+  }
+
+  .a-list-menu__item--selected {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .a-list-menu__split {
+    margin: 8px 10px 4px 10px;
+    padding: 4px 2px;
+
+    span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06rem;
+      text-transform: uppercase;
+      color: var(--text-placeholder);
+    }
+  }
+}
+
+.components-sidebar {
+  max-height: calc(100vh - 142px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+// ------------------------------------------------------------------ table of contents
+// Right-side docs TOC with scrollspy. Pinned to the viewport top, collapses
+// away on narrow screens (handled in .docs media queries).
+
+.toc {
+  position: sticky;
+  top: 118px;
+  align-self: start;
+  max-height: calc(100vh - 142px);
+  overflow-y: auto;
+  padding: 0 0 0 16px;
+  border-left: 1px solid var(--line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+
+  &__title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06rem;
+    text-transform: uppercase;
+    color: var(--text-placeholder);
+    margin-bottom: 10px;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__link {
+    display: block;
+    padding: 4px 10px;
+    border-radius: var(--a-radius-sm, 10px);
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-decoration: none;
+    transition:
+      color var(--anim-duration-quick, 120ms) ease,
+      background-color var(--anim-duration-quick, 120ms) ease;
+
+    &:hover {
+      color: var(--text);
+      background: var(--bg-hover);
+    }
+
+    &[aria-current='true'] {
+      color: var(--primary);
+      font-weight: 600;
+      background: var(--primary-12);
+    }
+  }
+
+  // indent h3 entries under their h2
+  &__link--depth-3 {
+    padding-left: 22px;
+    font-size: 12.5px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
@@ -799,6 +1083,92 @@ html[theme='dark'] {
   }
 }
 
+// live previews rendered above the markdown docs
+.component-previews {
+  margin: 32px 0 0 0;
+
+  &__title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 14px 0;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+}
+
+.preview-frame {
+  border-radius: var(--a-radius-lg, 18px);
+  border: 1px solid var(--a-surface-border-color, var(--line));
+  background: var(--a-surface, var(--bg-bright));
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
+  overflow: hidden;
+
+  &__render {
+    padding: 24px;
+    // contain wide demo content + allow horizontal scroll instead of bursting
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  &__toolbar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 14px 8px 14px;
+  }
+
+  &__toggle {
+    appearance: none;
+    width: auto;
+    border: 1px solid var(--border-light, var(--border));
+    background: var(--a-surface, var(--bg-bright));
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: var(--a-radius-full, 999px);
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      color var(--anim-duration-quick, 120ms) ease,
+      border-color var(--anim-duration-quick, 120ms) ease;
+
+    &:hover {
+      color: var(--primary);
+      border-color: var(--primary-60);
+    }
+  }
+
+  &__code {
+    margin: 0;
+    padding: 14px 18px;
+    border-top: 1px solid var(--line);
+    background: var(--bg-semi-dark);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-x: auto;
+
+    code {
+      font-family: inherit;
+      color: var(--text);
+    }
+  }
+
+  &__fallback {
+    padding: 16px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-style: italic;
+  }
+}
+
 // ------------------------------------------------------------------ components
 
 .doc-toolbar {
@@ -871,23 +1241,12 @@ html[theme='dark'] {
   }
 
   &__card {
-    display: block;
-    padding: 16px 18px;
-    border-radius: var(--a-radius-lg, 18px);
-    background: var(--a-surface, var(--bg-bright));
-    border: 1px solid var(--line);
     text-decoration: none;
     color: inherit;
-    transition:
-      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease),
-      border-color var(--anim-duration-quick, 120ms) ease,
-      box-shadow var(--anim-duration-quick, 120ms) ease;
   }
 
-  &__card:hover {
-    transform: translateY(-2px);
-    border-color: var(--primary-60);
-    box-shadow: 0 6px 20px -10px var(--primary-40);
+  &__card-inner {
+    padding: 16px 18px;
   }
 
   &__card-name {
@@ -900,5 +1259,18 @@ html[theme='dark'] {
     font-size: 13px;
     line-height: 1.5;
     color: var(--text-secondary);
+  }
+}
+
+// Overview cards: the ACard surface-border + top sheen read as an extra edge
+// on the index grid. Strip both so the cards rely on bg + shadow only, and
+// restore a clean hover lift instead of the surface highlight.
+.components-index__card.a-card {
+  border-color: transparent;
+  box-shadow: var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
+
+  &:hover {
+    border-color: var(--primary-60);
+    box-shadow: 0 8px 22px -10px var(--primary-40);
   }
 }

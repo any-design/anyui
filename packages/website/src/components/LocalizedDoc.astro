@@ -5,9 +5,16 @@
 // Both docs are imported at build time; the inline script reads the persisted
 // language from localStorage (shared key with the language pill) and adds a
 // `lang` attribute on the wrapper. CSS shows only the matching block.
+//
+// On top of the EN docs we also render live previews for each ```vue code
+// block found in the EN markdown. The previews are Vue islands hydrated
+// lazily (client:visible); each one resolves a virtual SFC module produced by
+// the preview Vite plugin, so there is no runtime template compiler.
+
+import PreviewFrame from './vue/PreviewFrame.vue';
 
 interface Props {
-  en: unknown; // markdown module: { Content }
+  en: unknown; // markdown module: { Content, rawContent, file, ... }
   zh: unknown;
 }
 
@@ -15,6 +22,37 @@ const { en, zh } = Astro.props;
 
 const En = (en as { Content: any }).Content;
 const Zh = (zh as { Content: any }).Content;
+
+// Derive the component slug + subfolder from the EN markdown file path:
+//   .../docs/components/<slug>/<subfolder>/<subfolder>_English.md
+// The preview registry key is `<slug>__<subfolder>-<index>`.
+const enFile = (en as { file?: string }).file || '';
+const pathMatch = enFile.match(/docs\/components\/([^/]+)\/([^/]+)\//);
+const slug = pathMatch ? pathMatch[1] : '';
+const subfolder = pathMatch ? pathMatch[2] : '';
+
+// Extract every ```vue fenced code block from the raw EN markdown so we can
+// render a live preview for each. Blocks without a <template> are skipped
+// (they aren't renderable — e.g. pure `import` snippets).
+const rawEn = typeof (en as { rawContent?: () => string }).rawContent === 'function'
+  ? (en as { rawContent: () => string }).rawContent()
+  : '';
+const vueBlocks: { index: number; code: string }[] = [];
+if (rawEn) {
+  const re = /```vue\s*\n([\s\S]*?)```/g;
+  let m: RegExpExecArray | null;
+  let count = 0;
+  while ((m = re.exec(rawEn)) !== null) {
+    const code = m[1];
+    if (/<template[\s>]/i.test(code)) {
+      vueBlocks.push({ index: count, code });
+    }
+    count++;
+  }
+}
+
+// Build the preview registry key for each block: <slug>__<subfolder>-<index>
+const previewKey = (index: number) => `${slug}__${subfolder}-${index}`;
 ---
 
 <div class="localized-doc" data-lang="en">
@@ -24,6 +62,18 @@ const Zh = (zh as { Content: any }).Content;
   <div class="localized-doc__pane" data-lang="zh">
     <Zh />
   </div>
+  {
+    vueBlocks.length > 0 && (
+      <div class="component-previews">
+        <h2 class="component-previews__title">Live previews</h2>
+        <div class="component-previews__list">
+          {vueBlocks.map((b) => (
+            <PreviewFrame client:only="vue" previewKey={previewKey(b.index)} code={b.code} />
+          ))}
+        </div>
+      </div>
+    )
+  }
 </div>
 
 <style is:global>

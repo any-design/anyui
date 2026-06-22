@@ -11,3 +11,5 @@ dist-ssr
 dist-testground
 lib
 /styles
+# generated live-preview SFCs (built by vite/preview-plugin.ts)
+**/.anyui-previews
