@@ -36,7 +36,13 @@ const nav = [
 
 <BaseLayout title={`${title} · AnyUI`} active="docs">
   <div class="docs" class:list={[showToc ? 'docs--has-toc' : '']}>
-    <DocsSidebar client:load active={active} groups={nav} />
+    <DocsSidebar
+      client:load
+      transition:persist="docs-sidebar"
+      transition:persist-props
+      active={active}
+      groups={nav}
+    />
     <article class="prose">
       <slot />
     </article>

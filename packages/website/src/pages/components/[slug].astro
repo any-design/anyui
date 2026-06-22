@@ -1,0 +1,37 @@
+---
+import LocalizedDoc from '../../components/LocalizedDoc.astro';
+import { COMPONENTS, type ComponentEntry } from '../../data/components';
+import ComponentsLayout from '../../layouts/ComponentsLayout.astro';
+
+type MarkdownModule = {
+  Content: unknown;
+  file?: string;
+  rawContent?: () => string;
+};
+
+interface Props {
+  component: ComponentEntry;
+}
+
+const docs = import.meta.glob<MarkdownModule>('../../../../../docs/components/**/*.md', { eager: true });
+
+export function getStaticPaths() {
+  return COMPONENTS.map((component) => ({
+    params: { slug: component.slug },
+    props: { component },
+  }));
+}
+
+const { component } = Astro.props;
+const docName = `A${component.name}`;
+const enDoc = docs[`../../../../../docs/components/${component.folder}/${docName}/${docName}_English.md`];
+const zhDoc = docs[`../../../../../docs/components/${component.folder}/${docName}/${docName}_Chinese.md`];
+
+if (!enDoc || !zhDoc) {
+  throw new Error(`Missing component docs for ${component.slug}: ${component.folder}/${docName}`);
+}
+---
+
+<ComponentsLayout title={docName} active={component.slug}>
+  <LocalizedDoc en={enDoc} zh={zhDoc} />
+</ComponentsLayout>

@@ -1,6 +1,7 @@
 ---
-// Right-side table of contents with scrollspy. Renders links for h2/h3
-// headings and highlights the one currently in view via an IntersectionObserver.
+// Right-side table of contents with scrollspy. The menu itself is rendered with
+// AnyUI's AListMenu so docs navigation has the same selected-state behavior as
+// the left sidebars.
 //
 // Headings can be passed explicitly (from markdown getHeadings()); if omitted,
 // the script scans the .prose article for h2/h3 elements and builds the TOC
@@ -16,99 +17,12 @@ interface Props {
   headings?: Heading[];
 }
 
+import DocsToc from './vue/DocsToc.vue';
+
 const { headings } = Astro.props;
 const items = (headings || [])
   .filter((h) => h.depth >= 2 && h.depth <= 3)
   .map((h) => ({ depth: h.depth, slug: h.slug, text: h.text }));
 ---
 
-{
-  items.length > 0 ? (
-    <aside class="toc" data-toc>
-      <div class="toc__title">On this page</div>
-      <nav class="toc__nav">
-        {items.map((h) => (
-          <a
-            class={`toc__link toc__link--depth-${h.depth}`}
-            href={`#${h.slug}`}
-            data-toc-slug={h.slug}
-          >
-            {h.text}
-          </a>
-        ))}
-      </nav>
-    </aside>
-  ) : (
-    <aside class="toc toc--auto" data-toc-auto>
-      <div class="toc__title">On this page</div>
-      <nav class="toc__nav" data-toc-nav />
-    </aside>
-  )
-}
-
-<script is:inline>
-  // Scrollspy for the docs TOC. Re-binds on every astro:page-load so SPA
-  // navigations re-attach the observer to the new page's headings.
-  (function () {
-    const buildToc = () => {
-      const auto = document.querySelector('[data-toc-auto]');
-      const nav = auto ? auto.querySelector('[data-toc-nav]') : null;
-
-      // For the auto-build case, scan the prose for h2/h3 and synthesize ids
-      // (slugged from text) so anchors work, then render the links.
-      if (auto && nav) {
-        const headings = Array.from(document.querySelectorAll('.prose h2, .prose h3'));
-        const slugify = (s) =>
-          s.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
-        nav.innerHTML = '';
-        headings.forEach((h) => {
-          if (!h.id) h.id = slugify(h.textContent || '');
-          const a = document.createElement('a');
-          a.className = `toc__link toc__link--depth-${h.tagName.toLowerCase() === 'h2' ? 2 : 3}`;
-          a.href = `#${h.id}`;
-          a.dataset.tocSlug = h.id;
-          a.textContent = h.textContent || '';
-          nav.appendChild(a);
-        });
-      }
-
-      const links = Array.from(document.querySelectorAll('[data-toc-slug]'));
-      if (links.length === 0) return;
-
-      const targets = links
-        .map((l) => document.getElementById(l.dataset.tocSlug))
-        .filter(Boolean);
-
-      if (targets.length === 0) return;
-
-      const setActive = (slug) => {
-        links.forEach((l) => {
-          if (l.dataset.tocSlug === slug) l.setAttribute('aria-current', 'true');
-          else l.removeAttribute('aria-current');
-        });
-      };
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          // pick the topmost intersecting heading
-          const visible = entries
-            .filter((e) => e.isIntersecting)
-            .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-          if (visible[0]) setActive(visible[0].target.id);
-        },
-        {
-          // trigger when a heading is in the upper third of the viewport
-          rootMargin: '-80px 0px -70% 0px',
-          threshold: 0,
-        },
-      );
-
-      targets.forEach((t) => observer.observe(t));
-      // initial state: highlight the first heading
-      setActive(targets[0].id);
-    };
-
-    buildToc();
-    document.addEventListener('astro:page-load', buildToc);
-  })();
-</script>
+<DocsToc client:load headings={items} auto={items.length === 0} />

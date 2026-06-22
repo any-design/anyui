@@ -15,12 +15,23 @@ const groups = componentsByCategory();
 
 <BaseLayout title={`${title} · AnyUI`} active="components">
   <div class="docs docs--components">
-    <ComponentsSidebar client:load active={active} groups={groups} />
+    <ComponentsSidebar
+      client:load
+      transition:persist="components-sidebar"
+      transition:persist-props
+      active={active}
+      groups={groups}
+    />
 
     <article class="prose">
       <div class="doc-toolbar">
         <slot name="toolbar" />
-        <LangToggle client:load model-value="en" />
+        <LangToggle
+          client:load
+          transition:persist="components-lang-toggle"
+          transition:persist-props
+          model-value="en"
+        />
       </div>
       <slot />
     </article>

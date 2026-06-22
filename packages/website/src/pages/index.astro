@@ -2,6 +2,7 @@
 import CodeBlock from '../components/CodeBlock.astro';
 import HeroShowcase from '../components/vue/HeroShowcase.vue';
 import FeatureGrid from '../components/vue/FeatureGrid.vue';
+import HomeHeroActions from '../components/vue/HomeHeroActions.vue';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const features = [
@@ -49,16 +50,7 @@ const features = [
         AnyUI brings one fresh, modern, adorable visual language to all three frameworks — same
         tokens, same classes, same API. Toggle 🌙 and 🧊 in the header to see it adapt live.
       </p>
-      <div class="hero__actions">
-        <a href="/docs/getting-started"><button class="site-toggle" data-on="true" type="button">Get Started →</button></a>
-        <a href="https://anyui-testground.pwp.sh" target="_blank"
-          ><button class="site-toggle" type="button">Open Testground</button></a
-        >
-      </div>
-      <div class="hero__install">
-        <code id="install-cmd">pnpm add @any-design/anyui</code>
-        <button id="copy-install" type="button">Copy</button>
-      </div>
+      <HomeHeroActions client:load />
     </div>
     <div class="hero-card">
       <HeroShowcase client:load />
@@ -114,17 +106,4 @@ import '@any-design/anyui/styles/index.css';
       </div>
     </div>
   </section>
-
-  <script>
-    // Re-bind on every navigation (astro:page-load covers initial + SPA).
-    const initCopyInstall = () => {
-      document.getElementById('copy-install')?.addEventListener('click', async (event) => {
-        const button = event.currentTarget;
-        await navigator.clipboard.writeText('pnpm add @any-design/anyui');
-        button.textContent = 'Copied!';
-        setTimeout(() => (button.textContent = 'Copy'), 1500);
-      });
-    };
-    document.addEventListener('astro:page-load', initCopyInstall);
-  </script>
 </BaseLayout>
