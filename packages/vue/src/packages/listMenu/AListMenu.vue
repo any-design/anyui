@@ -6,6 +6,7 @@
     >
       <AListMenuItem
         v-if="item.type === 'item'"
+        :class="item.className"
         :text="item.label"
         :value="item.value"
         :selected="currentSelected"

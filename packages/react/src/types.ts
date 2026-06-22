@@ -9,6 +9,9 @@ export type UploadStatus = 'default' | 'uploading' | 'error' | 'success';
 export type APopperTriggerType = 'hover' | 'click' | 'contextmenu' | 'manual';
 export type AChatMessageRole = 'self' | 'target';
 export type IconLike = string | Record<string, unknown>;
+export type GridAlign = 'start' | 'center' | 'end' | 'stretch';
+export type GridJustify = 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
+export type GridColSpan = number | `${number}` | 'auto';
 
 export enum AvatarSize {
   XLarge = 'xlarge',
@@ -89,7 +92,8 @@ export type RawVirtualListItem<T> = T & {
 
 export interface AListMenuItemConfigObject {
   label: string;
-  value?: string;
+  value?: string | number;
+  className?: string;
 }
 
 export type AListMenuItemConfig = AListMenuItemConfigObject | string;

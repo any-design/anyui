@@ -30,6 +30,9 @@ const components = [
   'Form',
   'FormItem',
   'GradientText',
+  'Grid',
+  'GridRow',
+  'GridCol',
   'Header',
   'Image',
   'Input',
@@ -100,6 +103,9 @@ export type UploadStatus = 'default' | 'uploading' | 'error' | 'success';
 export type APopperTriggerType = 'hover' | 'click' | 'contextmenu' | 'manual';
 export type AChatMessageRole = 'self' | 'target';
 export type IconLike = string | Record<string, unknown>;
+export type GridAlign = 'start' | 'center' | 'end' | 'stretch';
+export type GridJustify = 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
+export type GridColSpan = number | \`\${number}\` | 'auto';
 
 export enum AvatarSize {
   XLarge = 'xlarge',
@@ -180,7 +186,8 @@ export type RawVirtualListItem<T> = T & {
 
 export interface AListMenuItemConfigObject {
   label: string;
-  value?: string;
+  value?: string | number;
+  className?: string;
 }
 
 export type AListMenuItemConfig = AListMenuItemConfigObject | string;
@@ -336,6 +343,25 @@ const formatStyleSize = (value: string | number | undefined) => {
   if (typeof value === 'number') return \`\${value}px\`;
   if (typeof value === 'string' && /^\\d+$/.test(value)) return \`\${value}px\`;
   return value;
+};
+
+
+const formatGridSize = (value: string | number | undefined) =>
+  typeof value === 'undefined' ? undefined : formatStyleSize(value);
+
+const formatGridSpan = (value: number | string | undefined) => {
+  if (value === 'auto') return 'auto';
+  if (typeof value === 'string' && /^\\d+$/.test(value) && Number(value) > 0) return \`span \${value}\`;
+  return typeof value === 'number' && value > 0 ? \`span \${value}\` : undefined;
+};
+
+const gridJustifyMap: Record<string, string> = {
+  start: 'start',
+  center: 'center',
+  end: 'end',
+  between: 'space-between',
+  around: 'space-around',
+  evenly: 'space-evenly',
 };
 
 const pickDataAttrs = (props: Record<string, unknown>) =>
@@ -1498,6 +1524,105 @@ export const Side = forwardRef<HTMLElement, AnyUIReactProps>(function Side({ chi
   );
 });
 
+
+export const Grid = forwardRef<HTMLDivElement, AnyUIReactProps>(function Grid(
+  {
+    children,
+    className,
+    columns = 24,
+    gap = 16,
+    rowGap,
+    columnGap,
+    align = 'stretch',
+    justify = 'start',
+    minColWidth = 0,
+    stretch = true,
+    ...rest
+  },
+  ref,
+) {
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-grid', stretch && 'a-grid--stretch', className)}
+      style={{
+        '--a-grid-columns': columns,
+        '--a-grid-gap': formatGridSize(gap),
+        '--a-grid-row-gap': formatGridSize(rowGap ?? gap),
+        '--a-grid-column-gap': formatGridSize(columnGap ?? gap),
+        '--a-grid-align': align,
+        '--a-grid-justify': gridJustifyMap[justify] ?? justify,
+        '--a-grid-min-col-width': formatGridSize(minColWidth),
+        ...rest.style,
+      } as React.CSSProperties}
+    >
+      {children}
+    </div>
+  );
+});
+
+export const GridRow = forwardRef<HTMLDivElement, AnyUIReactProps>(function GridRow(
+  {
+    children,
+    className,
+    columns = 24,
+    gap = 16,
+    rowGap,
+    columnGap,
+    align = 'stretch',
+    justify = 'start',
+    minColWidth = 0,
+    stretch = true,
+    ...rest
+  },
+  ref,
+) {
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-grid-row', stretch && 'a-grid-row--stretch', className)}
+      style={{
+        '--a-grid-columns': columns,
+        '--a-grid-gap': formatGridSize(gap),
+        '--a-grid-row-gap': formatGridSize(rowGap ?? gap),
+        '--a-grid-column-gap': formatGridSize(columnGap ?? gap),
+        '--a-grid-align': align,
+        '--a-grid-justify': gridJustifyMap[justify] ?? justify,
+        '--a-grid-min-col-width': formatGridSize(minColWidth),
+        ...rest.style,
+      } as React.CSSProperties}
+    >
+      {children}
+    </div>
+  );
+});
+
+export const GridCol = forwardRef<HTMLDivElement, AnyUIReactProps>(function GridCol(
+  { children, className, span = 24, xs, sm, md, lg, xl, ...rest },
+  ref,
+) {
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-grid-col', className)}
+      style={{
+        '--a-grid-col-span': formatGridSpan(span),
+        '--a-grid-col-xs': formatGridSpan(xs),
+        '--a-grid-col-sm': formatGridSpan(sm),
+        '--a-grid-col-md': formatGridSpan(md),
+        '--a-grid-col-lg': formatGridSpan(lg),
+        '--a-grid-col-xl': formatGridSpan(xl),
+        ...rest.style,
+      } as React.CSSProperties}
+    >
+      {children}
+    </div>
+  );
+});
+
 const normalizeMenu = (menu?: AListMenuConfig): AListMenuDisplayItem[] => {
   const toItem = (item: AListMenuItemConfig): AListMenuDisplayItem =>
     typeof item === 'string' ? { type: 'item', label: item, value: item } : { type: 'item', ...item };
@@ -1512,7 +1637,7 @@ const normalizeMenu = (menu?: AListMenuConfig): AListMenuDisplayItem[] => {
 export const ListMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function ListMenu({ className, menu, modelValue, onUpdateModelValue, ...rest }, ref) {
   const [selected, setSelected] = useState(modelValue);
   useEffect(() => setSelected(modelValue), [modelValue]);
-  const update = (value?: string) => {
+  const update = (value?: string | number) => {
     setSelected(value);
     onUpdateModelValue?.(value);
   };
@@ -1526,7 +1651,11 @@ export const ListMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function Lis
         ) : (
           <div
             key={item.value ?? item.label}
-            className={cx('a-list-menu__item', selected === item.value && 'a-list-menu__item--selected')}
+            className={cx(
+              'a-list-menu__item',
+              item.className,
+              selected === item.value && 'a-list-menu__item--selected',
+            )}
             onClick={() => update(item.value)}
           >
             {item.label}
@@ -5092,6 +5221,129 @@ Object.assign(svelteTemplates, {
   {@render children?.()}
 </span>
 `,
+  Grid: `
+<script lang="ts">
+  import type { GridAlign, GridJustify } from '../types';
+  let {
+    columns = 24,
+    gap = 16,
+    rowGap = undefined,
+    columnGap = undefined,
+    align = 'stretch' as GridAlign,
+    justify = 'start' as GridJustify,
+    minColWidth = 0,
+    stretch = true,
+    class: className = '',
+    children,
+  } = $props();
+  const formatStyleSize = (value: string | number | undefined) => {
+    if (typeof value === 'number') return value + 'px';
+    if (typeof value === 'string' && /^\\d+$/.test(value)) return value + 'px';
+    return value;
+  };
+  const justifyMap: Record<GridJustify, string> = {
+    start: 'start',
+    center: 'center',
+    end: 'end',
+    between: 'space-between',
+    around: 'space-around',
+    evenly: 'space-evenly',
+  };
+  const gridStyle = $derived(
+    '--a-grid-columns: ' + columns + '; ' +
+    '--a-grid-gap: ' + formatStyleSize(gap) + '; ' +
+    '--a-grid-row-gap: ' + formatStyleSize(rowGap ?? gap) + '; ' +
+    '--a-grid-column-gap: ' + formatStyleSize(columnGap ?? gap) + '; ' +
+    '--a-grid-align: ' + align + '; ' +
+    '--a-grid-justify: ' + (justifyMap[justify] ?? justify) + '; ' +
+    '--a-grid-min-col-width: ' + formatStyleSize(minColWidth) + ';',
+  );
+</script>
+
+<div class="a-grid {stretch ? 'a-grid--stretch' : ''} {className}" style={gridStyle}>
+  {@render children?.()}
+</div>
+`,
+  GridRow: `
+<script lang="ts">
+  import type { GridAlign, GridJustify } from '../types';
+  let {
+    columns = 24,
+    gap = 16,
+    rowGap = undefined,
+    columnGap = undefined,
+    align = 'stretch' as GridAlign,
+    justify = 'start' as GridJustify,
+    minColWidth = 0,
+    stretch = true,
+    class: className = '',
+    children,
+  } = $props();
+  const formatStyleSize = (value: string | number | undefined) => {
+    if (typeof value === 'number') return value + 'px';
+    if (typeof value === 'string' && /^\\d+$/.test(value)) return value + 'px';
+    return value;
+  };
+  const justifyMap: Record<GridJustify, string> = {
+    start: 'start',
+    center: 'center',
+    end: 'end',
+    between: 'space-between',
+    around: 'space-around',
+    evenly: 'space-evenly',
+  };
+  const rowStyle = $derived(
+    '--a-grid-columns: ' + columns + '; ' +
+    '--a-grid-gap: ' + formatStyleSize(gap) + '; ' +
+    '--a-grid-row-gap: ' + formatStyleSize(rowGap ?? gap) + '; ' +
+    '--a-grid-column-gap: ' + formatStyleSize(columnGap ?? gap) + '; ' +
+    '--a-grid-align: ' + align + '; ' +
+    '--a-grid-justify: ' + (justifyMap[justify] ?? justify) + '; ' +
+    '--a-grid-min-col-width: ' + formatStyleSize(minColWidth) + ';',
+  );
+</script>
+
+<div class="a-grid-row {stretch ? 'a-grid-row--stretch' : ''} {className}" style={rowStyle}>
+  {@render children?.()}
+</div>
+`,
+  GridCol: `
+<script lang="ts">
+  import type { GridColSpan } from '../types';
+  let {
+    span = 24 as GridColSpan,
+    xs = undefined,
+    sm = undefined,
+    md = undefined,
+    lg = undefined,
+    xl = undefined,
+    class: className = '',
+    children,
+  } = $props();
+  const normalizeSpan = (value: GridColSpan | undefined) => {
+    if (value === 'auto') return 'auto';
+    if (typeof value === 'string' && /^\\d+$/.test(value) && Number(value) > 0) return 'span ' + value;
+    return typeof value === 'number' && value > 0 ? 'span ' + value : undefined;
+  };
+  const colStyle = $derived(
+    [
+      ['--a-grid-col-span', normalizeSpan(span)],
+      ['--a-grid-col-xs', normalizeSpan(xs)],
+      ['--a-grid-col-sm', normalizeSpan(sm)],
+      ['--a-grid-col-md', normalizeSpan(md)],
+      ['--a-grid-col-lg', normalizeSpan(lg)],
+      ['--a-grid-col-xl', normalizeSpan(xl)],
+    ]
+      .filter((item) => item[1])
+      .map((item) => item[0] + ': ' + item[1])
+      .join('; '),
+  );
+</script>
+
+<div class="a-grid-col {className}" style={colStyle}>
+  {@render children?.()}
+</div>
+`,
   Header: `
 <script lang="ts">
   let {
@@ -5169,7 +5421,7 @@ Object.assign(svelteTemplates, {
     ]);
   };
   const displayItems = $derived(normalizeMenu(menu));
-  const update = (value: string | undefined) => {
+  const update = (value: string | number | undefined) => {
     modelValue = value;
     onUpdateModelValue?.(value);
     onChange?.(value);
@@ -5182,7 +5434,7 @@ Object.assign(svelteTemplates, {
       <div class="a-list-menu__split"><span>{item.label}</span></div>
     {:else}
       <div
-        class="a-list-menu__item {modelValue === item.value ? 'a-list-menu__item--selected' : ''}"
+        class="a-list-menu__item {item.className || ''} {modelValue === item.value ? 'a-list-menu__item--selected' : ''}"
         role="button"
         tabindex="0"
         onclick={() => update(item.value)}

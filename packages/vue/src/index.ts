@@ -18,6 +18,7 @@ import Float from './packages/float';
 import Form from './packages/form';
 import FormItem from './packages/formItem';
 import GradientText from './packages/gradientText';
+import Grid, { GridRow, GridCol } from './packages/grid';
 import Image from './packages/image';
 import Input from './packages/input';
 import Item from './packages/item';
@@ -73,6 +74,7 @@ const defaultComponentList = [
   Form,
   FormItem,
   GradientText,
+  Grid,
   Input,
   Image,
   Item,
@@ -168,6 +170,12 @@ export {
   Footer as AFooter,
   GradientText,
   GradientText as AGradientText,
+  Grid,
+  Grid as AGrid,
+  GridRow,
+  GridRow as AGridRow,
+  GridCol,
+  GridCol as AGridCol,
   Header,
   Header as AHeader,
   Layout,

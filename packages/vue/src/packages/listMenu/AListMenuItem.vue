@@ -39,28 +39,29 @@ const isSelected = computed(() => props.selected === props.value);
   font-size: 15px;
   border-radius: var(--a-radius-sm, 10px);
   font-weight: 600;
+  color: var(--a-item-color, var(--text-secondary));
   transition:
     background-color var(--anim-duration-quick, 120ms) ease,
-    background-image var(--anim-duration-quick, 120ms) ease,
+    color var(--anim-duration-quick, 120ms) ease,
+    box-shadow var(--anim-duration-quick, 120ms) ease,
     transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+  cursor: pointer;
   user-select: none;
 }
 
 .a-list-menu__item--selected {
-  background-color: var(--a-item-selected-bg, transparent);
-  background-image: var(
-    --a-item-selected-gradient,
-    linear-gradient(112deg, var(--primary-80), var(--primary-70) 50%, var(--secondary-70) 90%)
-  );
-  color: var(--a-item-selected-color, var(--text-btn));
-  text-shadow: var(--a-item-selected-text-shadow, 1px 1px 3px var(--shadow-4));
+  background-color: var(--a-item-selected-bg, var(--primary-12));
+  background-image: var(--a-item-selected-gradient, none);
+  color: var(--a-item-selected-color, var(--text));
+  text-shadow: var(--a-item-selected-text-shadow, none);
   box-shadow:
     var(--a-item-selected-highlight, 0 0 #0000),
-    var(--a-item-selected-shadow, var(--a-shadow-xs, 1px 2px 6px var(--shadow-6)));
+    var(--a-item-selected-shadow, none);
 }
 
 .a-list-menu__item:hover {
   background-color: var(--a-item-hover-bg, var(--overlay));
+  color: var(--a-item-hover-color, var(--text));
 }
 
 .a-list-menu__item:active {

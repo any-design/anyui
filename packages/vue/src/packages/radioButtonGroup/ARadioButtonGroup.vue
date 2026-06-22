@@ -27,7 +27,6 @@ import {
   computed,
   defineComponent,
   getCurrentInstance,
-  onBeforeMount,
   onMounted,
   onUnmounted,
   provide,
@@ -75,7 +74,7 @@ export default defineComponent({
     const container = ref<HTMLElement | undefined>();
     const buttonContainer = ref<HTMLElement | undefined>();
 
-    const selected = ref<string | number | undefined>(undefined);
+    const selected = ref<string | number | undefined>(props.modelValue);
     const showBgBlock = ref<boolean>(false);
     const bgBlockPosition = ref<ARadioButtonPosition | undefined>();
 
@@ -199,10 +198,6 @@ export default defineComponent({
     );
     watch([() => props.size, () => props.round, () => props.items], () => {
       updateButtonPosition(selected.value);
-    });
-
-    onBeforeMount(() => {
-      selected.value = props.modelValue;
     });
 
     onMounted(() => {

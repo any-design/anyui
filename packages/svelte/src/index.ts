@@ -18,6 +18,9 @@ export { default as Footer } from './components/Footer.svelte';
 export { default as Form } from './components/Form.svelte';
 export { default as FormItem } from './components/FormItem.svelte';
 export { default as GradientText } from './components/GradientText.svelte';
+export { default as Grid } from './components/Grid.svelte';
+export { default as GridRow } from './components/GridRow.svelte';
+export { default as GridCol } from './components/GridCol.svelte';
 export { default as Header } from './components/Header.svelte';
 export { default as Image } from './components/Image.svelte';
 export { default as Input } from './components/Input.svelte';
@@ -85,6 +88,9 @@ import Footer from './components/Footer.svelte';
 import Form from './components/Form.svelte';
 import FormItem from './components/FormItem.svelte';
 import GradientText from './components/GradientText.svelte';
+import Grid from './components/Grid.svelte';
+import GridRow from './components/GridRow.svelte';
+import GridCol from './components/GridCol.svelte';
 import Header from './components/Header.svelte';
 import Image from './components/Image.svelte';
 import Input from './components/Input.svelte';
@@ -149,6 +155,9 @@ const defaultComponentList = [
   Form,
   FormItem,
   GradientText,
+  Grid,
+  GridRow,
+  GridCol,
   Header,
   Image,
   Input,
