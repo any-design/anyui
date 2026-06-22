@@ -12,3 +12,8 @@ allowBuilds:
   workerd: true
 minimumReleaseAgeExclude:
   - prettier@3.8.4
+  - '@astrojs/markdown-satteri@0.3.1'
+  - '@astrojs/react@6.0.0'
+  - '@astrojs/svelte@9.0.0'
+  - '@astrojs/vue@7.0.0'
+  - astro@7.0.0
