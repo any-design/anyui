@@ -1,11 +1,11 @@
 <template>
   <nav class="docs-menu">
-    <a-list-menu :menu="menu" :model-value="active" @update:model-value="handleSelect" />
+    <a-list-menu :menu="menu" :model-value="currentActive" @update:model-value="handleSelect" />
   </nav>
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { navigate } from 'astro:transitions/client';
 
 interface DocsMenuItem {
@@ -32,6 +32,26 @@ const props = defineProps<{
   groups?: DocsMenuGroup[];
 }>();
 
+const activeFromPath = (groups: DocsMenuGroup[], path: string) => {
+  const normalized = path.replace(/\/$/, '');
+  for (const group of groups) {
+    const match = group.items.find((item) => item.href.replace(/\/$/, '') === normalized);
+    if (match) {
+      return match.id;
+    }
+  }
+  return props.active;
+};
+
+const currentActive = ref(props.active);
+
+watch(
+  () => props.active,
+  (value) => {
+    currentActive.value = value;
+  },
+);
+
 const menu = computed(() =>
   Object.fromEntries((props.groups ?? []).map((group) => [
     group.label,
@@ -41,10 +61,24 @@ const menu = computed(() =>
 
 const hrefs = computed(() => hrefById(props.groups ?? []));
 
+const syncActiveFromLocation = () => {
+  currentActive.value = activeFromPath(props.groups ?? [], window.location.pathname);
+};
+
+onMounted(() => {
+  syncActiveFromLocation();
+  document.addEventListener('astro:page-load', syncActiveFromLocation);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('astro:page-load', syncActiveFromLocation);
+});
+
 const handleSelect = (value: string | number | undefined) => {
   if (typeof value !== 'string') {
     return;
   }
+  currentActive.value = value;
   const href = hrefs.value[value];
   if (href) {
     navigate(href);
