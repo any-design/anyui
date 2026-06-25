@@ -34,9 +34,12 @@
       </nav>
       <div class="tg-sidebar__footer">
         <span>Any Design</span>
-        <a href="https://github.com/any-design/anyui" target="_blank" aria-label="GitHub">
-          <Icon icon="mdi:github" />
-        </a>
+        <div class="tg-sidebar__links">
+          <a href="/docs/getting-started">Docs</a>
+          <a href="https://github.com/any-design/anyui" target="_blank" aria-label="GitHub">
+            <Icon icon="mdi:github" />
+          </a>
+        </div>
       </div>
     </aside>
 
@@ -107,7 +110,8 @@ import { computed, defineAsyncComponent, onMounted, reactive, ref, watch } from 
 
 import { version } from '../../../package.json';
 
-import ReactIsland from './islands/ReactIsland.vue';import SvelteIsland from './islands/SvelteIsland.vue';
+import ReactIsland from './islands/ReactIsland.vue';
+import SvelteIsland from './islands/SvelteIsland.vue';
 import { FRAMEWORKS, registry, type DemoEntry, type Framework } from './registry';
 
 const FRAMEWORK_LABELS: Record<Framework, string> = {

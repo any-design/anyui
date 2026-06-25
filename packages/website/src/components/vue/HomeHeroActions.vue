@@ -5,8 +5,8 @@
         Get Started
       </a-button>
     </a>
-    <a href="https://anyui-testground.pwp.sh" target="_blank" rel="noreferrer">
-      <a-button round icon="ri:external-link-line" icon-position="trailing">
+    <a href="/testground/" data-astro-reload>
+      <a-button round icon="ri:flask-line" icon-position="trailing">
         Open Testground
       </a-button>
     </a>

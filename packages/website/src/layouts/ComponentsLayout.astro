@@ -3,17 +3,29 @@ import BaseLayout from './BaseLayout.astro';
 import { componentsByCategory } from '../data/components';
 import ComponentsSidebar from '../components/vue/ComponentsSidebar.vue';
 import LangToggle from '../components/vue/LangToggle.vue';
+import type { BreadcrumbItem, SchemaType } from '../data/seo';
 
 interface Props {
   title: string;
+  description?: string;
+  canonicalPath?: string;
   active: string;
+  schemaType?: SchemaType;
+  breadcrumbs?: BreadcrumbItem[];
 }
 
-const { title, active } = Astro.props;
+const { title, description, canonicalPath, active, schemaType, breadcrumbs } = Astro.props;
 const groups = componentsByCategory();
 ---
 
-<BaseLayout title={`${title} · AnyUI`} active="components">
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  active="components"
+  schemaType={schemaType}
+  breadcrumbs={breadcrumbs}
+>
   <div class="docs docs--components">
     <ComponentsSidebar
       client:load

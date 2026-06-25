@@ -7,15 +7,18 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { navigate } from 'astro:transitions/client';
+import { useSiteLang } from './useSiteLang';
+
+type LocalizedLabel = string | { en: string; zh?: string };
 
 interface DocsMenuItem {
   id: string;
-  label: string;
+  label: LocalizedLabel;
   href: string;
 }
 
 interface DocsMenuGroup {
-  label: string;
+  label: LocalizedLabel;
   items: DocsMenuItem[];
 }
 
@@ -44,6 +47,7 @@ const activeFromPath = (groups: DocsMenuGroup[], path: string) => {
 };
 
 const currentActive = ref(props.active);
+const { currentLang } = useSiteLang();
 
 watch(
   () => props.active,
@@ -52,10 +56,17 @@ watch(
   },
 );
 
+const labelText = (label: LocalizedLabel) => {
+  if (typeof label === 'string') {
+    return label;
+  }
+  return label[currentLang.value] ?? label.en;
+};
+
 const menu = computed(() =>
   Object.fromEntries((props.groups ?? []).map((group) => [
-    group.label,
-    group.items.map((item) => ({ label: item.label, value: item.id })),
+    labelText(group.label),
+    group.items.map((item) => ({ label: labelText(item.label), value: item.id })),
   ])),
 );
 

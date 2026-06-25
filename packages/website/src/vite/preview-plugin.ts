@@ -54,10 +54,14 @@ function rewriteImports(code: string): string {
 }
 
 // Slugs whose examples render overlays (dialogs, drawers, popups, masks…).
-// Some of their doc snippets use `ref(true)` to demonstrate the open state,
-// which would auto-pop the overlay the moment the preview island mounts.
-// We force those to start closed and, when the template has no click handler
-// that opens them, inject a trigger button so the preview is still usable.
+// Two issues make their doc snippets unusable as live previews:
+//   1. Some use `const x = ref(true)` to demonstrate the open state, which
+//      would auto-pop the overlay the moment the preview island mounts.
+//   2. Some never declare the bound variable at all (no <script setup>) and
+//      have no trigger, so the overlay can't open and the preview is blank.
+// We force overlays to start closed, inject a missing `ref(false)` + script
+// block, and add an <AButton> trigger when the template has no handler that
+// opens the overlay.
 const OVERLAY_SLUGS = new Set([
   'dialog',
   'drawer',
@@ -66,6 +70,35 @@ const OVERLAY_SLUGS = new Set([
   'confirmModal',
   'loadingMask',
 ]);
+
+// Collect every identifier bound via `v-model="x"` in the template so we can
+// spot overlay bindings that were never declared in a <script> block.
+function collectVModelVars(code: string): string[] {
+  const re = /v-model(?::[\w-]+)?\s*=\s*"([A-Za-z_$][\w$]*)"/g;
+  const vars = new Set<string>();
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(code)) !== null) vars.add(m[1]);
+  return [...vars];
+}
+
+function injectScriptSetup(code: string, scriptSrc: string): string {
+  // If a <script> block already exists, append to it; otherwise create one.
+  const scriptBlockRe = /<script\b[^>]*>([\s\S]*?)<\/script>/;
+  if (scriptBlockRe.test(code)) {
+    return code.replace(scriptBlockRe, (full, inner) => {
+      return full.replace(inner, `${inner}\n${scriptSrc}`);
+    });
+  }
+  // No script block — append one after the closing </template>.
+  const templateClose = /<\/template>/;
+  if (templateClose.test(code)) {
+    return code.replace(
+      templateClose,
+      `</template>\n\n<script setup>\nimport { ref } from 'vue';\n${scriptSrc}</script>`,
+    );
+  }
+  return `${code}\n\n<script setup>\nimport { ref } from 'vue';\n${scriptSrc}</script>`;
+}
 
 function rewriteOverlayAutoOpen(slug: string, code: string): string {
   if (!OVERLAY_SLUGS.has(slug)) return code;
@@ -77,7 +110,25 @@ function rewriteOverlayAutoOpen(slug: string, code: string): string {
     openedVars.push(name);
     return `const ${name} = ref(false)`;
   });
-  if (openedVars.length === 0) return code;
+
+  // Now handle overlay bindings that were never declared at all (no script).
+  // For each v-model var, if there's no `const <var> = ref(...)` anywhere,
+  // synthesize one starting closed.
+  const declaredRe = (v: string) =>
+    new RegExp(`const\\s+${v}\\s*=\\s*ref\\(`);
+  const missingVars: string[] = [];
+  for (const v of collectVModelVars(transformed)) {
+    if (!declaredRe(v).test(transformed)) missingVars.push(v);
+  }
+  if (missingVars.length > 0) {
+    const scriptSrc = missingVars
+      .map((v) => `const ${v} = ref(false);`)
+      .join('\n');
+    transformed = injectScriptSetup(transformed, scriptSrc);
+    openedVars.push(...missingVars);
+  }
+
+  if (openedVars.length === 0) return transformed;
 
   // for each flipped var, check the template for a handler that sets it true.
   // if none, inject an <AButton> trigger at the top of the <template>.

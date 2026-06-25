@@ -1,0 +1,51 @@
+---
+// Generic localized wrapper for hand-written docs pages.
+// Component API docs use LocalizedDoc because they also extract live previews;
+// this component only swaps authored English / Chinese content panes.
+---
+
+<div class="localized-doc localized-page" data-lang="en">
+  <div class="localized-doc__pane" data-lang="en">
+    <slot name="en" />
+  </div>
+  <div class="localized-doc__pane" data-lang="zh">
+    <slot name="zh" />
+  </div>
+</div>
+
+<style is:global>
+  .localized-doc[data-lang='en'] > .localized-doc__pane[data-lang='zh'],
+  .localized-doc[data-lang='zh'] > .localized-doc__pane[data-lang='en'] {
+    display: none;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const applyLocalizedPageLang = (lang) => {
+      const target = lang === 'zh' ? 'zh' : 'en';
+      document.querySelectorAll('.localized-doc').forEach((el) => {
+        el.setAttribute('data-lang', target);
+      });
+      document.documentElement.setAttribute('lang', target === 'zh' ? 'zh-CN' : 'en');
+      document.documentElement.setAttribute('data-lang', target);
+      window.dispatchEvent(new CustomEvent('anyui:lang-applied', { detail: target }));
+    };
+    const readLocalizedPageLang = () => {
+      try {
+        return JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}').lang;
+      } catch {
+        return undefined;
+      }
+    };
+
+    window.__anyuiApplyLang = applyLocalizedPageLang;
+    applyLocalizedPageLang(readLocalizedPageLang());
+
+    if (!window.__anyuiLangBound) {
+      window.__anyuiLangBound = true;
+      document.addEventListener('astro:page-load', () => window.__anyuiApplyLang?.(readLocalizedPageLang()));
+      window.addEventListener('anyui:lang-change', (event) => window.__anyuiApplyLang?.(event.detail));
+    }
+  })();
+</script>

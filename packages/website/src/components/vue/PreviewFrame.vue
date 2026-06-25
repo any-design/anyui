@@ -3,22 +3,35 @@
     <div class="preview-frame__render">
       <component :is="comp" v-if="comp" />
       <div v-else class="preview-frame__fallback">
-        <span>Preview unavailable for this example.</span>
+        <span>{{ t(currentLang, 'preview.unavailable') }}</span>
       </div>
     </div>
     <div class="preview-frame__toolbar">
-      <button type="button" class="preview-frame__toggle" @click="showCode = !showCode">
-        {{ showCode ? 'Hide code' : 'Show code' }}
-      </button>
+      <a-button
+        class="preview-frame__toggle"
+        size="small"
+        round
+        :icon="showCode ? 'ph:caret-up-bold' : 'ph:code-bold'"
+        @click="showCode = !showCode"
+      >
+        {{ t(currentLang, showCode ? 'preview.hideCode' : 'preview.showCode') }}
+      </a-button>
     </div>
-    <pre v-if="showCode" class="preview-frame__code"><code>{{ code }}</code></pre>
+    <a-collapse class="preview-frame__code-collapse" :visible="showCode" always-render :render-wait-time="0">
+      <div class="preview-frame__code-shell">
+        <div v-if="codeHtml" class="preview-frame__code" v-html="codeHtml"></div>
+        <pre v-else class="preview-frame__code preview-frame__code--plain"><code>{{ code }}</code></pre>
+      </div>
+    </a-collapse>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { defineAsyncComponent, shallowRef } from 'vue';
+import { defineAsyncComponent, h, ref, shallowRef } from 'vue';
 
 import registry from '../../.anyui-previews/registry';
+import { t } from '../../i18n/lang';
+import { useSiteLang } from './useSiteLang';
 
 const props = defineProps({
   previewKey: {
@@ -29,9 +42,26 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  codeHtml: {
+    type: String,
+    default: '',
+  },
 });
 
 const comp = shallowRef<any>(null);
+const showCode = ref(false);
+const { currentLang } = useSiteLang();
+
+const PreviewError = {
+  name: 'PreviewError',
+  setup() {
+    const { currentLang: errorLang } = useSiteLang();
+    return () =>
+      h('div', { class: 'preview-frame__fallback' }, [
+        h('span', t(errorLang.value, 'preview.unavailable')),
+      ]);
+  },
+};
 
 const importer = (registry as Record<string, () => Promise<any>>)[props.previewKey];
 
@@ -41,9 +71,7 @@ if (importer) {
   // component resolves.
   comp.value = defineAsyncComponent({
     loader: importer,
-    errorComponent: {
-      template: '<div class="preview-frame__fallback"><span>Preview unavailable for this example.</span></div>',
-    },
+    errorComponent: PreviewError,
   });
 }
 </script>

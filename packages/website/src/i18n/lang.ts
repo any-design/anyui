@@ -22,8 +22,13 @@ type StringKey =
   | 'nav.testground'
   | 'nav.github'
   | 'lang.label'
+  | 'components.overview'
+  | 'components.previews'
   | 'components.title'
-  | 'components.intro';
+  | 'components.intro'
+  | 'preview.hideCode'
+  | 'preview.showCode'
+  | 'preview.unavailable';
 
 export const STRINGS: Record<Lang, Record<StringKey, string>> = {
   en: {
@@ -32,9 +37,14 @@ export const STRINGS: Record<Lang, Record<StringKey, string>> = {
     'nav.testground': 'Testground',
     'nav.github': 'GitHub',
     'lang.label': 'Language',
+    'components.overview': 'Overview',
+    'components.previews': 'Live previews',
     'components.title': 'Components',
     'components.intro':
       'Every component in AnyUI, in all three frameworks. Pick one from the sidebar to see its props, events, slots and usage.',
+    'preview.hideCode': 'Hide code',
+    'preview.showCode': 'Show code',
+    'preview.unavailable': 'Preview unavailable for this example.',
   },
   zh: {
     'nav.docs': '文档',
@@ -42,9 +52,14 @@ export const STRINGS: Record<Lang, Record<StringKey, string>> = {
     'nav.testground': '试验场',
     'nav.github': 'GitHub',
     'lang.label': '语言',
+    'components.overview': '概览',
+    'components.previews': '实时预览',
     'components.title': '组件',
     'components.intro':
       'AnyUI 的全部组件，覆盖三大框架。在左侧选择组件查看其属性、事件、插槽与用法。',
+    'preview.hideCode': '隐藏代码',
+    'preview.showCode': '显示代码',
+    'preview.unavailable': '此示例暂无可用预览。',
   },
 };
 

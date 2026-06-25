@@ -1,48 +1,65 @@
 ---
 import CodeBlock from '../../components/CodeBlock.astro';
+import LocalizedPage from '../../components/LocalizedPage.astro';
 
+import { docSeo } from '../../data/seo';
 import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const seo = docSeo('getting-started');
 ---
 
-<DocsLayout title="Getting Started" active="getting-started" tocAuto>
-  <h1>Getting Started</h1>
-  <p>
-    AnyUI ships a single package with framework-scoped entrypoints for Vue, React and Svelte, plus
-    a shared stylesheet that carries the design tokens, themes and the optional liquid glass
-    style.
-  </p>
+<DocsLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  active="getting-started"
+  schemaType={seo.schemaType}
+  breadcrumbs={seo.breadcrumbs}
+  tocAuto
+>
+  <LocalizedPage>
+    <Fragment slot="en">
+      <h1>Getting Started</h1>
+      <p>
+        AnyUI ships a single package with framework-scoped entrypoints for Vue, React and Svelte,
+        plus a shared stylesheet that carries the design tokens, themes and the optional liquid
+        glass style.
+      </p>
 
-  <h2>Install</h2>
-  <CodeBlock lang="bash" code={`pnpm add @any-design/anyui`} />
+      <h2>Install</h2>
+      <CodeBlock lang="bash" code={`pnpm add @any-design/anyui`} />
 
-  <p>Or install headlessly through the shadcn-compatible registry:</p>
-  <CodeBlock
-    lang="bash"
-    code={`pnpm dlx shadcn@latest add any-design/anyui/vue --yes --silent
+      <p>
+        Or install headlessly through the shadcn-compatible registry. For the full adapter workflow,
+        see the <a href="/docs/shadcn-registry">shadcn Registry guide</a>.
+      </p>
+      <CodeBlock
+        lang="bash"
+        code={`pnpm dlx shadcn@latest add any-design/anyui/vue --yes --silent
 pnpm dlx shadcn@latest add any-design/anyui/react --yes --silent
 pnpm dlx shadcn@latest add any-design/anyui/svelte --yes --silent`}
-  />
+      />
 
-  <h2>Vue</h2>
-  <CodeBlock
-    lang="ts"
-    code={`import { createApp } from 'vue';
+      <h2>Vue</h2>
+      <CodeBlock
+        lang="ts"
+        code={`import { createApp } from 'vue';
 import AnyUI from '@any-design/anyui/vue';
 import '@any-design/anyui/styles/index.css';
 
 const app = createApp(App);
 app.use(AnyUI);
 app.mount('#app');`}
-  />
-  <p>
-    For on-demand imports, use the bundled resolver with <code>unplugin-vue-components</code> —
-    see the README for the full Vite setup.
-  </p>
+      />
+      <p>
+        For on-demand imports, use the bundled resolver with <code>unplugin-vue-components</code> —
+        see the README for the full Vite setup.
+      </p>
 
-  <h2>React</h2>
-  <CodeBlock
-    lang="tsx"
-    code={`import { Button, Card, Input, message } from '@any-design/anyui/react';
+      <h2>React</h2>
+      <CodeBlock
+        lang="tsx"
+        code={`import { Button, Card, Input, message } from '@any-design/anyui/react';
 import '@any-design/anyui/styles/index.css';
 
 export default function App() {
@@ -55,12 +72,12 @@ export default function App() {
     </Card>
   );
 }`}
-  />
+      />
 
-  <h2>Svelte</h2>
-  <CodeBlock
-    lang="svelte"
-    code={`<script lang="ts">
+      <h2>Svelte</h2>
+      <CodeBlock
+        lang="svelte"
+        code={`<script lang="ts">
   import { Button, Card, Input, message } from '@any-design/anyui/svelte';
   import '@any-design/anyui/styles/index.css';
 </script>
@@ -69,31 +86,126 @@ export default function App() {
   <Input placeholder="Type something cute..." round />
   <Button type="primary" round onClick={() => message.success('Hi! 🎉')}>Greet</Button>
 </Card>`}
-  />
+      />
 
-  <h2>Enable liquid glass</h2>
-  <p>Add one attribute on <code>&lt;html&gt;</code> (or scope it with <code>.a-glass</code>):</p>
-  <CodeBlock lang="html" code={`<html data-anyui-style="glass">`} />
-  <p>
-    Every surface component turns translucent with a backdrop blur and specular highlight, in both
-    light and dark themes. Try the 🧊 toggle in this site's header.
-  </p>
+      <h2>Enable liquid glass</h2>
+      <p>Add one attribute on <code>&lt;html&gt;</code> (or scope it with <code>.a-glass</code>):</p>
+      <CodeBlock lang="html" code={`<html data-anyui-style="glass">`} />
+      <p>
+        Every surface component turns translucent with a backdrop blur and specular highlight, in
+        both light and dark themes. Try the Glass toggle in this site's header.
+      </p>
 
-  <h2>Dark theme</h2>
-  <p>
-    The dark palette is derived automatically from your theme colors. Activate it manually with
-    <code>&lt;html theme="dark"&gt;</code>, or let the user's system preference apply it via the
-    built-in <code>prefers-color-scheme</code> media query.
-  </p>
+      <h2>Dark theme</h2>
+      <p>
+        The dark palette is derived automatically from your theme colors. Activate it manually with
+        <code>&lt;html theme="dark"&gt;</code>, or let the user's system preference apply it via the
+        built-in <code>prefers-color-scheme</code> media query.
+      </p>
 
-  <h2>Next steps</h2>
-  <ul>
-    <li><a href="/components">Components</a> — browse every component, with props, events and slots.</li>
-    <li><a href="/docs/tokens">Design Tokens</a> — radii, motion, elevation and surfaces.</li>
-    <li><a href="/docs/theming">Theme Customization</a> — re-color the system via SCSS.</li>
-    <li>
-      <a href="https://anyui-testground.pwp.sh" target="_blank">Testground</a> — every component,
-      all three frameworks, side by side.
-    </li>
-  </ul>
+      <h2>Next steps</h2>
+      <ul>
+        <li><a href="/components">Components</a> — browse every component, with props, events and slots.</li>
+        <li><a href="/docs/shadcn-registry">shadcn Registry</a> — install with an app-local adapter.</li>
+        <li><a href="/docs/tokens">Design Tokens</a> — radii, motion, elevation and surfaces.</li>
+        <li><a href="/docs/theming">Theme Customization</a> — re-color the system via SCSS.</li>
+        <li>
+          <a href="/testground/" data-astro-reload>Testground</a> — every component, all three
+          frameworks, side by side.
+        </li>
+      </ul>
+    </Fragment>
+
+    <Fragment slot="zh">
+      <h1>快速开始</h1>
+      <p>
+        AnyUI 通过一个包提供 Vue、React 和 Svelte 的框架入口，并附带一份共享样式表。设计令牌、主题、暗色模式和可选的 liquid glass 风格都由这份样式承载。
+      </p>
+
+      <h2>安装</h2>
+      <CodeBlock lang="bash" code={`pnpm add @any-design/anyui`} />
+
+      <p>
+        也可以通过兼容 shadcn 的 registry 以无头方式安装。完整 adapter 流程见
+        <a href="/docs/shadcn-registry">shadcn Registry 安装指南</a>。
+      </p>
+      <CodeBlock
+        lang="bash"
+        code={`pnpm dlx shadcn@latest add any-design/anyui/vue --yes --silent
+pnpm dlx shadcn@latest add any-design/anyui/react --yes --silent
+pnpm dlx shadcn@latest add any-design/anyui/svelte --yes --silent`}
+      />
+
+      <h2>Vue</h2>
+      <CodeBlock
+        lang="ts"
+        code={`import { createApp } from 'vue';
+import AnyUI from '@any-design/anyui/vue';
+import '@any-design/anyui/styles/index.css';
+
+const app = createApp(App);
+app.use(AnyUI);
+app.mount('#app');`}
+      />
+      <p>
+        如果需要按需导入，可以配合内置 resolver 和 <code>unplugin-vue-components</code> 使用；完整 Vite 配置见 README。
+      </p>
+
+      <h2>React</h2>
+      <CodeBlock
+        lang="tsx"
+        code={`import { Button, Card, Input, message } from '@any-design/anyui/react';
+import '@any-design/anyui/styles/index.css';
+
+export default function App() {
+  return (
+    <Card title="Hello">
+      <Input placeholder="Type something cute..." round />
+      <Button type="primary" round onClick={() => message.success('Hi! 🎉')}>
+        Greet
+      </Button>
+    </Card>
+  );
+}`}
+      />
+
+      <h2>Svelte</h2>
+      <CodeBlock
+        lang="svelte"
+        code={`<script lang="ts">
+  import { Button, Card, Input, message } from '@any-design/anyui/svelte';
+  import '@any-design/anyui/styles/index.css';
+</script>
+
+<Card title="Hello">
+  <Input placeholder="Type something cute..." round />
+  <Button type="primary" round onClick={() => message.success('Hi! 🎉')}>Greet</Button>
+</Card>`}
+      />
+
+      <h2>启用 liquid glass</h2>
+      <p>在 <code>&lt;html&gt;</code> 上添加一个属性即可全局启用，也可以用 <code>.a-glass</code> 局部启用：</p>
+      <CodeBlock lang="html" code={`<html data-anyui-style="glass">`} />
+      <p>
+        启用后，表面组件会变成带 backdrop blur 与内侧高光的半透明形态，并同时适配浅色和暗色主题。你可以直接试用站点导航里的 Glass 开关。
+      </p>
+
+      <h2>暗色主题</h2>
+      <p>
+        暗色调色盘会从主题色自动推导。你可以通过 <code>&lt;html theme="dark"&gt;</code> 手动启用，也可以让内置的
+        <code>prefers-color-scheme</code> 媒体查询跟随系统偏好。
+      </p>
+
+      <h2>下一步</h2>
+      <ul>
+        <li><a href="/components">组件</a>：浏览所有组件以及 props、events、slots。</li>
+        <li><a href="/docs/shadcn-registry">shadcn Registry</a>：通过应用内 adapter 安装。</li>
+        <li><a href="/docs/tokens">设计令牌</a>：了解圆角、动效、阴影和表面抽象层。</li>
+        <li><a href="/docs/theming">主题定制</a>：通过 SCSS 重新定义系统颜色。</li>
+        <li>
+          <a href="/testground/" data-astro-reload>Testground</a>：并排查看三个框架里的所有组件。
+        </li>
+      </ul>
+    </Fragment>
+  </LocalizedPage>
 </DocsLayout>

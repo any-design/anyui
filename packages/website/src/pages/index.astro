@@ -3,43 +3,51 @@ import CodeBlock from '../components/CodeBlock.astro';
 import HeroShowcase from '../components/vue/HeroShowcase.vue';
 import FeatureGrid from '../components/vue/FeatureGrid.vue';
 import HomeHeroActions from '../components/vue/HomeHeroActions.vue';
+import { homeSeo } from '../data/seo';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const features = [
   {
-    emoji: '🧁',
+    icon: '/emoji/cupcake.svg',
     title: 'Cute by default',
     desc: 'Generous radii, springy press feedback and soft tinted shadows — a friendly visual language baked into every component through design tokens.',
   },
   {
-    emoji: '🔱',
+    icon: '/emoji/trident.svg',
     title: 'One design system, three frameworks',
     desc: 'Vue, React and Svelte packages share the same styles, class names and component API, generated from a single source of truth.',
   },
   {
-    emoji: '🧊',
+    icon: '/emoji/ice.svg',
     title: 'Liquid glass, opt-in',
     desc: 'Flip one attribute and every surface becomes translucent with backdrop blur and a specular highlight — light and dark, no per-component work.',
   },
   {
-    emoji: '🎨',
+    icon: '/emoji/palette.svg',
     title: 'HCT-powered theming',
     desc: 'Change a couple of brand colors and the whole palette — including an auto-derived dark theme — recomputes through HCT color science.',
   },
   {
-    emoji: '🪄',
+    icon: '/emoji/wand.svg',
     title: 'shadcn-style registry',
     desc: 'Install headlessly via the shadcn CLI with one command per framework, stylesheet wiring included.',
   },
   {
-    emoji: '📦',
+    icon: '/emoji/package.svg',
     title: 'Import on demand',
     desc: 'Tree-shakable entrypoints and an unplugin resolver keep your bundle as small as your component usage.',
   },
 ];
+
+const seo = homeSeo();
 ---
 
-<BaseLayout>
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  schemaType={seo.schemaType}
+>
   <section class="hero">
     <div>
       <span class="hero__eyebrow">🌸 v0.4 — now with liquid glass</span>

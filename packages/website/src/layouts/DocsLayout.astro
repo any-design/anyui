@@ -2,6 +2,8 @@
 import BaseLayout from './BaseLayout.astro';
 import Toc from '../components/Toc.astro';
 import DocsSidebar from '../components/vue/DocsSidebar.vue';
+import LangToggle from '../components/vue/LangToggle.vue';
+import type { BreadcrumbItem, SchemaType } from '../data/seo';
 
 interface Heading {
   depth: number;
@@ -11,30 +13,59 @@ interface Heading {
 
 interface Props {
   title: string;
+  description?: string;
+  canonicalPath?: string;
   active: string;
+  schemaType?: SchemaType;
+  breadcrumbs?: BreadcrumbItem[];
   // Pass markdown headings to build the TOC from them. Pass an empty array
   // (or set tocAuto) to render a TOC that scans the rendered DOM for h2/h3.
   headings?: Heading[];
   tocAuto?: boolean;
 }
 
-const { title, active, headings, tocAuto = false } = Astro.props;
+const { title, description, canonicalPath, active, schemaType, breadcrumbs, headings, tocAuto = false } = Astro.props;
 const showToc = tocAuto || (headings && headings.length > 0);
 
 const nav = [
-  { label: 'Guide', items: [{ id: 'getting-started', label: 'Getting Started', href: '/docs/getting-started' }] },
   {
-    label: 'Design',
+    label: { en: 'Guide', zh: '指南' },
     items: [
-      { id: 'tokens', label: 'Design Tokens', href: '/docs/tokens' },
-      { id: 'theming', label: 'Theme Customization', href: '/docs/theming' },
-      { id: 'icons', label: 'Icons', href: '/docs/icons' },
+      {
+        id: 'getting-started',
+        label: { en: 'Getting Started', zh: '快速开始' },
+        href: '/docs/getting-started',
+      },
+      {
+        id: 'shadcn-registry',
+        label: { en: 'shadcn Registry', zh: 'shadcn 安装' },
+        href: '/docs/shadcn-registry',
+      },
+    ],
+  },
+  {
+    label: { en: 'Design', zh: '设计' },
+    items: [
+      { id: 'tokens', label: { en: 'Design Tokens', zh: '设计令牌' }, href: '/docs/tokens' },
+      {
+        id: 'theming',
+        label: { en: 'Theme Customization', zh: '主题定制' },
+        href: '/docs/theming',
+      },
+      { id: 'icons', label: { en: 'Icons', zh: '图标' }, href: '/docs/icons' },
     ],
   },
 ];
 ---
 
-<BaseLayout title={`${title} · AnyUI`} active="docs">
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  active="docs"
+  schemaType={schemaType}
+  breadcrumbs={breadcrumbs}
+>
   <div class="docs" class:list={[showToc ? 'docs--has-toc' : '']}>
     <DocsSidebar
       client:load
@@ -44,6 +75,14 @@ const nav = [
       groups={nav}
     />
     <article class="prose">
+      <div class="doc-toolbar">
+        <LangToggle
+          client:load
+          transition:persist="docs-lang-toggle"
+          transition:persist-props
+          model-value="en"
+        />
+      </div>
       <slot />
     </article>
     {showToc && (headings && headings.length > 0 ? <Toc headings={headings} /> : <Toc />)}

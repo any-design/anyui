@@ -6,6 +6,8 @@ A multi-framework playground that previews every AnyUI component rendered by **V
 pnpm dev          # from the repo root
 ```
 
+The repo root dev server mounts this app at `http://localhost:4321/testground/`.
+
 ## How it works
 
 - The shell is a small Vue app; React and Svelte demos are mounted as runtime **islands** (`src/islands/`) inside the same page, importing the framework packages' sources directly via aliases.

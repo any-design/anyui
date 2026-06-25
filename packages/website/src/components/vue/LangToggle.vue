@@ -33,11 +33,17 @@ const items = [
 // without a flash once hydrated.
 const current = ref<Lang>(props.modelValue);
 
+const applyRootLang = (lang: Lang) => {
+  document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
+  document.documentElement.setAttribute('data-lang', lang);
+};
+
 onMounted(() => {
   try {
     const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
     if (prefs.lang === 'zh' || prefs.lang === 'en') {
       current.value = prefs.lang;
+      applyRootLang(prefs.lang);
       emit('update:modelValue', prefs.lang);
     }
   } catch {
@@ -48,6 +54,7 @@ onMounted(() => {
 const handleChange = (value: string | number | undefined) => {
   const lang = (value === 'zh' ? 'zh' : 'en') as Lang;
   current.value = lang;
+  applyRootLang(lang);
   try {
     const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
     prefs.lang = lang;

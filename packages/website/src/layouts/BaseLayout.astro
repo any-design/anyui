@@ -2,35 +2,97 @@
 import { ClientRouter } from 'astro:transitions';
 import BrandLogo from '../components/BrandLogo.astro';
 import SiteNav from '../components/vue/SiteNav.vue';
+import {
+  SITE,
+  breadcrumbJsonLd,
+  organizationJsonLd,
+  pageSeo,
+  webPageJsonLd,
+  websiteJsonLd,
+  type BreadcrumbItem,
+  type SchemaType,
+} from '../data/seo';
 
 import '../styles/site.scss';
 
 interface Props {
   title?: string;
   description?: string;
+  canonicalPath?: string;
   active?: string;
+  ogType?: 'website' | 'article';
+  schemaType?: SchemaType;
+  breadcrumbs?: BreadcrumbItem[];
+  structuredData?: Array<Record<string, unknown>>;
+  robots?: string;
 }
 
 const {
-  title = 'AnyUI — a cute multi-framework design system',
-  description = 'AnyUI is a cute, fresh and modern design system and UI component library for Vue, React, and Svelte — with an optional liquid glass style.',
+  title,
+  description,
+  canonicalPath = Astro.url.pathname,
   active = '',
+  ogType,
+  schemaType = 'WebPage',
+  breadcrumbs = [],
+  structuredData = [],
+  robots = 'index, follow, max-image-preview:large',
 } = Astro.props;
 
+const seo = pageSeo({ title, description, path: canonicalPath });
+const resolvedOgType = ogType ?? (schemaType === 'TechArticle' ? 'article' : 'website');
+const jsonLd = [
+  organizationJsonLd(),
+  websiteJsonLd(),
+  webPageJsonLd({
+    schemaType,
+    title: seo.title,
+    description: seo.description,
+    canonicalUrl: seo.canonicalUrl,
+  }),
+  ...(breadcrumbs.length > 0 ? [breadcrumbJsonLd(breadcrumbs)] : []),
+  ...structuredData,
+];
 const criticalThemeCss =
-  "html { background: #f8f8fa; color: #202426; } html[theme='dark'] { background: #1a1a1d; color: #ebeef1; } body { background: inherit; }";
+  "html { background: #f8f8fa; color: #202426; } html[theme='dark'] { background: #1a1a1d; color: #ebeef1; } body { background: transparent; }";
 ---
 
 <!doctype html>
-<html lang="en" theme="light">
+<html lang="en" theme="light" data-lang="en" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" /><link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <meta name="robots" content={robots} />
+    <meta name="author" content={SITE.author} />
+    <meta name="application-name" content={SITE.name} />
+    <meta name="theme-color" content={SITE.themeColor} />
+    <link rel="canonical" href={seo.canonicalUrl} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <meta property="og:type" content={resolvedOgType} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:url" content={seo.canonicalUrl} />
+    <meta property="og:image" content={new URL(SITE.image.path, SITE.url).toString()} />
+    <meta property="og:image:secure_url" content={new URL(SITE.image.path, SITE.url).toString()} />
+    <meta property="og:image:type" content={SITE.image.type} />
+    <meta property="og:image:width" content={SITE.image.width} />
+    <meta property="og:image:height" content={SITE.image.height} />
+    <meta property="og:image:alt" content={SITE.image.alt} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seo.title} />
+    <meta name="twitter:description" content={seo.description} />
+    <meta name="twitter:image" content={new URL(SITE.image.path, SITE.url).toString()} />
+    <meta name="twitter:image:alt" content={SITE.image.alt} />
+    {jsonLd.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
     <ClientRouter />
-    <link rel="preconnect" to="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!--
       Load the code font as early as possible: preload the CSS so the fetch starts
@@ -47,20 +109,23 @@ const criticalThemeCss =
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
     />
     <script is:inline>
-      // apply persisted theme before paint to avoid flashes.
+      // apply persisted site preferences before paint to avoid flashes.
       // Runs on first load (inline) AND after every client-side navigation
       // (astro:after-swap), so the theme attribute survives SPA routing.
-      const applyTheme = () => {
+      const applySitePrefs = () => {
         try {
           const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
           if (prefs.dark) document.documentElement.setAttribute('theme', 'dark');
           else document.documentElement.setAttribute('theme', 'light');
           if (prefs.glass) document.documentElement.setAttribute('data-anyui-style', 'glass');
           else document.documentElement.removeAttribute('data-anyui-style');
+          const lang = prefs.lang === 'zh' ? 'zh' : 'en';
+          document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
+          document.documentElement.setAttribute('data-lang', lang);
         } catch {}
       };
-      applyTheme();
-      document.addEventListener('astro:after-swap', applyTheme);
+      applySitePrefs();
+      document.addEventListener('astro:after-swap', applySitePrefs);
     </script>
     <script is:inline>
       // Per-URL scroll restoration for SPA navigations.

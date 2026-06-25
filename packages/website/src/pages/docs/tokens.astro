@@ -1,11 +1,29 @@
 ---
 import * as tokensDoc from '../../../../../docs/theme/tokens.md';
+import * as tokensZhDoc from '../../../../../docs/theme/tokens.zh.md';
 
+import LocalizedPage from '../../components/LocalizedPage.astro';
+import { docSeo } from '../../data/seo';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const headings = (tokensDoc as any).getHeadings?.() || [];
+const seo = docSeo('tokens');
 ---
 
-<DocsLayout title="Design Tokens" active="tokens" headings={headings}>
-  <tokensDoc.Content />
+<DocsLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  active="tokens"
+  schemaType={seo.schemaType}
+  breadcrumbs={seo.breadcrumbs}
+  tocAuto
+>
+  <LocalizedPage>
+    <Fragment slot="en">
+      <tokensDoc.Content />
+    </Fragment>
+    <Fragment slot="zh">
+      <tokensZhDoc.Content />
+    </Fragment>
+  </LocalizedPage>
 </DocsLayout>
