@@ -32,13 +32,13 @@ const picked = ref(['apple']);
 
 ## Examples
 
-### Pre-selected values
+### Pre-selected values and spacing
 
-Seed `modelValue` with the values that should start checked.
+Seed `modelValue` with the values that should start checked, and adjust the spacing with `gap` when the group needs more room.
 
 ```vue
 <template>
-  <ACheckboxGroup v-model="roles" :items="items" />
+  <ACheckboxGroup v-model="roles" :items="items" :gap="32" />
   <p>Selected: {{ roles }}</p>
 </template>
 
@@ -50,26 +50,6 @@ const items = [
   { label: 'Admin', value: 'admin' },
 ];
 const roles = ref(['read', 'write']);
-</script>
-```
-
-### Custom gap
-
-Tighten or loosen spacing between options with `gap` (pixels).
-
-```vue
-<template>
-  <ACheckboxGroup v-model="tags" :items="items" :gap="32" />
-</template>
-
-<script setup>
-import { ref } from 'vue';
-const items = [
-  { label: 'Vue', value: 'vue' },
-  { label: 'React', value: 'react' },
-  { label: 'Svelte', value: 'svelte' },
-];
-const tags = ref([]);
 </script>
 ```
 

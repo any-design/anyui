@@ -16,6 +16,11 @@ import { Switch } from '@any-design/anyui/vue';
 <template>
   <ASwitch v-model="enabled" />
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const enabled = ref(true);
+</script>
 ```
 
 ## 示例
@@ -28,6 +33,11 @@ import { Switch } from '@any-design/anyui/vue';
 <template>
   <ASwitch v-model="enabled" disabled />
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const enabled = ref(true);
+</script>
 ```
 
 ## Props

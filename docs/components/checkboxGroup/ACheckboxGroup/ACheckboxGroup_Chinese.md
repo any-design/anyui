@@ -32,13 +32,13 @@ const picked = ref(['apple']);
 
 ## 示例
 
-### 预选值
+### 预选值与间距
 
-在 `modelValue` 中放入初始需要选中的值即可。
+在 `modelValue` 中放入初始需要选中的值，并在需要更宽松布局时用 `gap` 调整间距。
 
 ```vue
 <template>
-  <ACheckboxGroup v-model="roles" :items="items" />
+  <ACheckboxGroup v-model="roles" :items="items" :gap="32" />
   <p>已选：{{ roles }}</p>
 </template>
 
@@ -50,26 +50,6 @@ const items = [
   { label: '管理员', value: 'admin' },
 ];
 const roles = ref(['read', 'write']);
-</script>
-```
-
-### 自定义间距
-
-通过 `gap`（像素）调整选项之间的间距。
-
-```vue
-<template>
-  <ACheckboxGroup v-model="tags" :items="items" :gap="32" />
-</template>
-
-<script setup>
-import { ref } from 'vue';
-const items = [
-  { label: 'Vue', value: 'vue' },
-  { label: 'React', value: 'react' },
-  { label: 'Svelte', value: 'svelte' },
-];
-const tags = ref([]);
 </script>
 ```
 

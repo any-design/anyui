@@ -12,10 +12,16 @@ import { Drawer } from '@any-design/anyui/vue';
 
 ## Basic usage
 
+Toggle with `v-model`; the slot renders the drawer body. Since the component has no built-in header, drop in your own title + close affordance inside the slot.
+
 ```vue
 <template>
   <AButton @click="open = true">Open drawer</AButton>
-  <ADrawer v-model="open" title="Filters">
+  <ADrawer v-model="open">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong>Filters</strong>
+      <AButton size="small" type="secondary" @click="open = false">Close</AButton>
+    </div>
     <p>Refine your results here.</p>
   </ADrawer>
 </template>
@@ -34,15 +40,22 @@ const open = ref(false);
 
 ```vue
 <template>
+  <AButton type="primary" @click="open = true">Account settings</AButton>
   <ADrawer v-model="open" position="right" width="420px">
-    <h3>Account settings</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong>Account settings</strong>
+      <AButton size="small" type="secondary" @click="open = false">Close</AButton>
+    </div>
     <AInput placeholder="Display name" />
+    <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+      <AButton type="primary">Save</AButton>
+    </div>
   </ADrawer>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const open = ref(true);
+const open = ref(false);
 </script>
 ```
 
@@ -52,10 +65,20 @@ Set `with-mask="false"` to keep the page interactive while the drawer is open.
 
 ```vue
 <template>
+  <AButton @click="open = true">Open without mask</AButton>
   <ADrawer v-model="open" :with-mask="false">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong>Unmasked</strong>
+      <AButton size="small" type="secondary" @click="open = false">Close</AButton>
+    </div>
     <p>The page behind stays usable.</p>
   </ADrawer>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const open = ref(false);
+</script>
 ```
 
 ## Props

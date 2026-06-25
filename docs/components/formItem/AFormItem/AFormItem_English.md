@@ -16,9 +16,11 @@ Wrap a control, give it a `label`, and set `prop` to the matching model key.
 
 ```vue
 <template>
-  <AFormItem label="Email" prop="email">
-    <AInput v-model="model.email" placeholder="you@example.com" />
-  </AFormItem>
+  <AForm :model-value="model">
+    <AFormItem label="Email" prop="email">
+      <AInput v-model="model.email" placeholder="you@example.com" />
+    </AFormItem>
+  </AForm>
 </template>
 
 <script setup>
@@ -35,7 +37,7 @@ Place several `AFormItem`s inside an `AForm` and pass the shared `model`; `prop`
 
 ```vue
 <template>
-  <AForm :model="model">
+  <AForm :model-value="model">
     <AFormItem label="Username" prop="username">
       <AInput v-model="model.username" />
     </AFormItem>
@@ -57,9 +59,11 @@ The default slot accepts any input control — selects, textareas, or sliders.
 
 ```vue
 <template>
-  <AFormItem label="Country" prop="country">
-    <AInput v-model="model.country" placeholder="Select country" />
-  </AFormItem>
+  <AForm :model-value="model">
+    <AFormItem label="Country" prop="country">
+      <AInput v-model="model.country" placeholder="Select country" />
+    </AFormItem>
+  </AForm>
 </template>
 
 <script setup>

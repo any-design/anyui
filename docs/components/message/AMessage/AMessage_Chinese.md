@@ -29,7 +29,7 @@ const save = () => message.success('已保存！');
 
 ### 带配置项的命令式调用
 
-传入 options 对象来设置 `content`、`duration` 等。
+传入 options 对象来设置 `content`、`duration` 以及动画开关等。
 
 ```vue
 <template>
@@ -50,10 +50,12 @@ const notify = () => {
 
 ```vue
 <template>
-  <AButton @click="message.info('信息')">信息</AButton>
-  <AButton @click="message.success('完成')">成功</AButton>
-  <AButton @click="message.warning('注意')">警告</AButton>
-  <AButton @click="message.error('失败')">错误</AButton>
+  <div class="demo-row">
+    <AButton @click="message.info('信息')">信息</AButton>
+    <AButton @click="message.success('完成')">成功</AButton>
+    <AButton @click="message.warning('注意')">警告</AButton>
+    <AButton @click="message.error('失败')">错误</AButton>
+  </div>
 </template>
 
 <script setup>
@@ -79,14 +81,16 @@ import { message } from '@any-design/anyui/vue';
 | `content` | String | undefined | 消息文本。 |
 | `icon` | String \| IconifyIcon | '' | 自定义图标。 |
 | `showIcon` | Boolean | true | 显示类型图标。 |
+| `enterAnim` | Boolean | true | 是否启用进场动画。 |
+| `leaveAnim` | Boolean | true | 是否启用退场动画。 |
 | `round` | Boolean | false | 圆角。 |
 
 ## 方法
 
 | 方法 | 签名 | 说明 |
 | --- | --- | --- |
-| `message.info / .success / .warning / .error` | (content \| options) => void | 命令式调用；options 还支持 `duration` 与 `zIndex`。 |
+| `message.info / .success / .warning / .error` | (content \| options) => void | 命令式调用；options 还支持 `duration`、`zIndex` 以及动画开关。 |
 
 ## 说明
 
-全局安装后还会在 Vue 实例上挂载 `$message`。`duration` 与 `zIndex` 仅在命令式 API 中可用，不是组件 props。
+全局安装后还会在 Vue 实例上挂载 `$message`。`duration`、`zIndex` 和动画开关仅在命令式 API 中可用，不是组件 props。

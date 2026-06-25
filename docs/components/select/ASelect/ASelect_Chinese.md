@@ -35,11 +35,23 @@ const cities = [
 ```vue
 <template>
   <div class="demo-col">
-    <ASelect size="small" :items="items" placeholder="Small" />
-    <ASelect :items="items" placeholder="Default" />
-    <ASelect round :items="items" placeholder="Round" />
+    <ASelect v-model="small" size="small" :items="items" placeholder="Small" />
+    <ASelect v-model="regular" :items="items" placeholder="Default" />
+    <ASelect v-model="rounded" round :items="items" placeholder="Round" />
   </div>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const small = ref('');
+const regular = ref('');
+const rounded = ref('');
+const items = [
+  { text: '设计', value: 'design' },
+  { text: '开发', value: 'build' },
+  { text: '发布', value: 'ship' },
+];
+</script>
 ```
 
 ### 多选
@@ -67,8 +79,19 @@ const items = [
 
 ```vue
 <template>
-  <ASelect :items="items" disabled placeholder="禁用" />
+  <div class="demo-col">
+    <ASelect :items="items" disabled placeholder="禁用" />
+    <ASelect model-value="design" :items="items" disabled />
+  </div>
 </template>
+
+<script setup>
+const items = [
+  { text: '设计', value: 'design' },
+  { text: '开发', value: 'build' },
+  { text: '发布', value: 'ship' },
+];
+</script>
 ```
 
 ## 属性

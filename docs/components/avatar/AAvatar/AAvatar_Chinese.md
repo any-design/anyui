@@ -14,7 +14,7 @@ import { Avatar } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AAvatar src="/users/ada.png" size="medium" />
+  <AAvatar src="/users/ada.png" name="Ada Lovelace" size="medium" />
 </template>
 ```
 
@@ -27,11 +27,11 @@ import { Avatar } from '@any-design/anyui/vue';
 ```vue
 <template>
   <div class="demo-row">
-    <AAvatar src="/users/ada.png" size="xsmall" />
-    <AAvatar src="/users/ada.png" size="small" />
-    <AAvatar src="/users/ada.png" size="medium" />
-    <AAvatar src="/users/ada.png" size="large" />
-    <AAvatar src="/users/ada.png" size="xlarge" />
+    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="xsmall" />
+    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="small" />
+    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="medium" />
+    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="large" />
+    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="xlarge" />
   </div>
 </template>
 ```
@@ -42,7 +42,7 @@ import { Avatar } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AAvatar src="/users/ada.png" round :width="72" />
+  <AAvatar src="/users/ada.png" name="Ada Lovelace" round :width="72" />
 </template>
 ```
 

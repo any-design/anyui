@@ -60,6 +60,22 @@ const meta = ref({ current: 1, pageSize: 20, total: 100 });
 </script>
 ```
 
+### Selected indicator shape
+
+The selected-page background can be a rounded rectangle (`rounded`, default), a squircle (`squircle`, a continuous superellipse close to iOS' rounded corners), or a full circle (`circle`). The indicator slides between pages with a spring transition.
+
+```vue
+<template>
+  <APagination v-model:pagination="meta" shape="squircle" />
+  <APagination v-model:pagination="meta" shape="circle" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const meta = ref({ current: 3, pageSize: 10, total: 200 });
+</script>
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -69,6 +85,7 @@ const meta = ref({ current: 1, pageSize: 20, total: 100 });
 | `boundaryCount` | Number | 1 | Pages shown at the start and end. |
 | `prevIcon` | String \| IconifyIcon | 'uil:angle-left' | Previous button icon. |
 | `nextIcon` | String \| IconifyIcon | 'uil:angle-right' | Next button icon. |
+| `shape` | 'rounded' \| 'squircle' \| 'circle' | 'rounded' | Shape of the selected-page indicator background. |
 
 ## Events
 

@@ -71,14 +71,18 @@ Use the exposed methods to validate a single field, clear validation, or clear v
 
 ```vue
 <template>
-  <AForm ref="formRef" :model-value="model" :rules="rules">
-    <AFormItem prop="name" label="Name">
-      <AInput v-model="model.name" />
-    </AFormItem>
-  </AForm>
-  <AButton @click="formRef.validateField('name')">Check name</AButton>
-  <AButton @click="formRef.clearValidation()">Reset errors</AButton>
-  <AButton @click="formRef.clearFields()">Clear values</AButton>
+  <div class="demo-col">
+    <AForm ref="formRef" :model-value="model" :rules="rules">
+      <AFormItem prop="name" label="Name">
+        <AInput v-model="model.name" />
+      </AFormItem>
+    </AForm>
+    <div class="demo-row">
+      <AButton @click="formRef.validateField('name')">Check name</AButton>
+      <AButton @click="formRef.clearValidation()">Reset errors</AButton>
+      <AButton @click="formRef.clearFields()">Clear values</AButton>
+    </div>
+  </div>
 </template>
 
 <script setup>

@@ -29,7 +29,7 @@ const save = () => message.success('Saved!');
 
 ### Imperative with options
 
-Pass an options object to set `content`, `duration`, and more.
+Pass an options object to set `content`, `duration`, and animation behavior.
 
 ```vue
 <template>
@@ -50,10 +50,12 @@ Use the matching helper for each severity.
 
 ```vue
 <template>
-  <AButton @click="message.info('Info')">Info</AButton>
-  <AButton @click="message.success('Done')">Success</AButton>
-  <AButton @click="message.warning('Careful')">Warning</AButton>
-  <AButton @click="message.error('Failed')">Error</AButton>
+  <div class="demo-row">
+    <AButton @click="message.info('Info')">Info</AButton>
+    <AButton @click="message.success('Done')">Success</AButton>
+    <AButton @click="message.warning('Careful')">Warning</AButton>
+    <AButton @click="message.error('Failed')">Error</AButton>
+  </div>
 </template>
 
 <script setup>
@@ -79,14 +81,16 @@ For static, in-flow banners use the component directly.
 | `content` | String | undefined | Message text. |
 | `icon` | String \| IconifyIcon | '' | Custom icon. |
 | `showIcon` | Boolean | true | Show the type icon. |
+| `enterAnim` | Boolean | true | Enable the enter animation. |
+| `leaveAnim` | Boolean | true | Enable the leave animation. |
 | `round` | Boolean | false | Rounded corners. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `message.info / .success / .warning / .error` | (content \| options) => void | Imperative helpers; options also accept `duration` and `zIndex`. |
+| `message.info / .success / .warning / .error` | (content \| options) => void | Imperative helpers; options also accept `duration`, `zIndex`, and animation toggles. |
 
 ## Notes
 
-Install globally to also expose `$message` on Vue app instance. `duration` and `zIndex` are only available on the imperative API, not as component props.
+Install globally to also expose `$message` on Vue app instance. `duration`, `zIndex`, and animation toggles are only available on the imperative API, not as component props.

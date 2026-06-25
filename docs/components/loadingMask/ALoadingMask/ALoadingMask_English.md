@@ -16,16 +16,21 @@ Wrap any content; flip `loading` to overlay the mask.
 
 ```vue
 <template>
-  <ALoadingMask :loading="loading" text="Saving…">
-    <ACard title="Settings">
-      <AInput placeholder="Display name" />
-    </ACard>
-  </ALoadingMask>
+  <div class="demo-col">
+    <AButton type="primary" @click="loading = !loading">
+      {{ loading ? 'Stop loading' : 'Start loading' }}
+    </AButton>
+    <ALoadingMask :loading="loading" text="Saving…">
+      <ACard title="Settings">
+        <AInput placeholder="Display name" />
+      </ACard>
+    </ALoadingMask>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const loading = ref(true);
+const loading = ref(false);
 </script>
 ```
 
@@ -37,12 +42,19 @@ Set `fullscreen` to cover the entire viewport — useful for initial app load or
 
 ```vue
 <template>
+  <AButton @click="showFullscreen">Show fullscreen for 1.5s</AButton>
   <ALoadingMask :loading="loading" fullscreen text="Loading app…" />
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const loading = ref(true);
+const loading = ref(false);
+const showFullscreen = () => {
+  loading.value = true;
+  setTimeout(() => {
+    loading.value = false;
+  }, 1500);
+};
 </script>
 ```
 
@@ -50,10 +62,12 @@ const loading = ref(true);
 
 ```vue
 <template>
-  <AButton @click="run">Fetch data</AButton>
-  <ALoadingMask :loading="loading">
-    <div class="content">{{ result || 'No data yet' }}</div>
-  </ALoadingMask>
+  <div class="demo-col">
+    <AButton @click="run">Fetch data</AButton>
+    <ALoadingMask :loading="loading">
+      <div class="content">{{ result || 'No data yet' }}</div>
+    </ALoadingMask>
+  </div>
 </template>
 
 <script setup>
@@ -62,7 +76,8 @@ const loading = ref(false);
 const result = ref('');
 const run = async () => {
   loading.value = true;
-  result.value = await fetch('/api/data').then((r) => r.text());
+  await new Promise((resolve) => setTimeout(resolve, 900));
+  result.value = 'Fetched 24 records';
   loading.value = false;
 };
 </script>

@@ -14,19 +14,39 @@ import { VirtualList } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AVirtualList :items="items" :estimated-item-height="40">
-    <template #default="{ item }">
-      <div class="row">{{ item.label }}</div>
-    </template>
-  </AVirtualList>
+  <div class="virtual-list-preview">
+    <AVirtualList :items="items" :estimated-item-height="44">
+      <template #default="scope">
+        <div class="virtual-list-row">{{ scope?.item?.label }}</div>
+      </template>
+    </AVirtualList>
+  </div>
 </template>
 
 <script setup>
+import { VirtualList as AVirtualList } from '@any-design/anyui/vue';
+
 const items = Array.from({ length: 5000 }, (_, i) => ({
-  id: i,
+  id: String(i),
   label: `项目 ${i}`,
 }));
 </script>
+
+<style scoped>
+.virtual-list-preview {
+  height: 320px;
+}
+
+.virtual-list-row {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  box-sizing: border-box;
+}
+</style>
 ```
 
 ## 示例
@@ -37,22 +57,48 @@ const items = Array.from({ length: 5000 }, (_, i) => ({
 
 ```vue
 <template>
-  <AVirtualList ref="listRef" :items="items" :estimated-item-height="40">
-    <template #default="{ item }">
-      <div class="row">{{ item.label }}</div>
-    </template>
-  </AVirtualList>
-  <AButton @click="listRef.scrollToBottom()">跳到底部</AButton>
+  <div class="virtual-list-preview">
+    <AVirtualList ref="listRef" :items="items" :estimated-item-height="44">
+      <template #default="scope">
+        <div class="virtual-list-row">{{ scope?.item?.label }}</div>
+      </template>
+    </AVirtualList>
+  </div>
+  <div class="virtual-list-actions">
+    <AButton @click="listRef.scrollToBottom()">跳到底部</AButton>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { VirtualList as AVirtualList } from '@any-design/anyui/vue';
+
 const listRef = ref();
 const items = Array.from({ length: 2000 }, (_, i) => ({
-  id: i,
+  id: String(i),
   label: `第 ${i} 行`,
 }));
 </script>
+
+<style scoped>
+.virtual-list-preview {
+  height: 320px;
+}
+
+.virtual-list-actions {
+  margin-top: 12px;
+}
+
+.virtual-list-row {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  box-sizing: border-box;
+}
+</style>
 ```
 
 ### 自定义高度与缓冲
@@ -61,19 +107,51 @@ const items = Array.from({ length: 2000 }, (_, i) => ({
 
 ```vue
 <template>
-  <AVirtualList :items="items" :estimated-item-height="80" :buffer="2000">
-    <template #default="{ item }">
-      <ACard :title="item.label">行内容</ACard>
-    </template>
-  </AVirtualList>
+  <div class="virtual-list-preview">
+    <AVirtualList :items="items" :estimated-item-height="84" :buffer="2000">
+      <template #default="scope">
+        <div class="virtual-list-card">
+          <strong>{{ scope?.item?.label }}</strong>
+          <span>带自定义高度的行内容。</span>
+        </div>
+      </template>
+    </AVirtualList>
+  </div>
 </template>
 
 <script setup>
+import { VirtualList as AVirtualList } from '@any-design/anyui/vue';
+
 const items = Array.from({ length: 1000 }, (_, i) => ({
-  id: i,
+  id: String(i),
   label: `卡片 ${i}`,
 }));
 </script>
+
+<style scoped>
+.virtual-list-preview {
+  height: 360px;
+}
+
+.virtual-list-card {
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 0 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--a-radius-md, 12px);
+  background: var(--surface);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+.virtual-list-card span {
+  color: var(--text-secondary);
+}
+</style>
 ```
 
 ## 属性
