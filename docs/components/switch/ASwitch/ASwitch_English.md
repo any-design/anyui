@@ -16,6 +16,11 @@ import { Switch } from '@any-design/anyui/vue';
 <template>
   <ASwitch v-model="enabled" />
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const enabled = ref(true);
+</script>
 ```
 
 ## Examples
@@ -28,6 +33,11 @@ Use `disabled` to show a read-only switch that cannot be toggled.
 <template>
   <ASwitch v-model="enabled" disabled />
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const enabled = ref(true);
+</script>
 ```
 
 ## Props

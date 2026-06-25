@@ -119,7 +119,7 @@ pnpm run typecheck
 
 Workspace packages live under `packages/vue`, `packages/react`, and `packages/svelte`. React and Svelte sources are generated from the shared component manifest in `scripts/generate-framework-packages.mjs`, so regenerate them after changing the manifest or shared component API.
 
-`pnpm run dev` starts the multi-framework testground (`packages/testground`), which renders every component with Vue, React, and Svelte side by side against the library sources — see [its README](./packages/testground/README.md).
+`pnpm run dev` starts the website and mounts the multi-framework testground at `/testground/`, so docs and component previews run as one local site. The testground renders every component with Vue, React, and Svelte side by side against the library sources — see [its README](./packages/testground/README.md).
 
 ## Custom Theme
 
@@ -149,7 +149,7 @@ Note: floating elements teleported to `<body>` (popper, message, select dropdown
 
 We've deployed a testground where you can explore the UI components:
 
-[https://anyui-testground.pwp.sh](https://anyui-testground.pwp.sh)
+[https://anyui.pwp.sh/testground/](https://anyui.pwp.sh/testground/)
 
 ## License
 

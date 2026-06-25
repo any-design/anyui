@@ -14,7 +14,7 @@ import { Image } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AImage src="/photos/cover.jpg" width="320" height="200" />
+  <AImage src="/og-image.png" width="320" height="200" />
 </template>
 ```
 
@@ -26,7 +26,7 @@ import { Image } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AImage src="/photos/cover.jpg" width="400" height="240" size="cover" />
+  <AImage src="/og-image.png" width="400" height="240" size="cover" />
 </template>
 ```
 
@@ -36,7 +36,7 @@ import { Image } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AImage src="/photos/heavy.jpg" width="320" height="200">
+  <AImage src="/og-image.png" width="320" height="200">
     <template #loading>
       <div style="display:flex;justify-content:center;padding:80px">
         <ASpinner />
@@ -52,7 +52,7 @@ import { Image } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AImage src="/broken.jpg" width="320" height="200">
+  <AImage src="/this-image-does-not-exist.jpg" width="320" height="200">
     <template #error>
       <AEmpty text="图片未找到" />
     </template>

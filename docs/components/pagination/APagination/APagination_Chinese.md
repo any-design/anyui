@@ -60,6 +60,22 @@ const meta = ref({ current: 1, pageSize: 20, total: 100 });
 </script>
 ```
 
+### 选中态指示器形状
+
+选中页背景支持圆角矩形（`rounded`，默认）、squircle 超椭圆（`squircle`，近似 iOS 连续圆角）与正圆（`circle`）三种形状。指示器在页码间以弹簧过渡动画滑动切换。
+
+```vue
+<template>
+  <APagination v-model:pagination="meta" shape="squircle" />
+  <APagination v-model:pagination="meta" shape="circle" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const meta = ref({ current: 3, pageSize: 10, total: 200 });
+</script>
+```
+
 ## 属性
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -69,6 +85,7 @@ const meta = ref({ current: 1, pageSize: 20, total: 100 });
 | `boundaryCount` | Number | 1 | 首尾显示的页数。 |
 | `prevIcon` | String \| IconifyIcon | 'uil:angle-left' | 上一页图标。 |
 | `nextIcon` | String \| IconifyIcon | 'uil:angle-right' | 下一页图标。 |
+| `shape` | 'rounded' \| 'squircle' \| 'circle' | 'rounded' | 选中态指示器背景的形状。 |
 
 ## 事件
 

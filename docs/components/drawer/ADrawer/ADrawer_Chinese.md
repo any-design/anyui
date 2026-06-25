@@ -12,10 +12,16 @@ import { Drawer } from '@any-design/anyui/vue';
 
 ## 基础用法
 
+通过 `v-model` 控制显隐，插槽即为抽屉主体。由于组件本身不内置头部，可在插槽内自行放标题与关闭按钮。
+
 ```vue
 <template>
   <AButton @click="open = true">打开抽屉</AButton>
-  <ADrawer v-model="open" title="筛选">
+  <ADrawer v-model="open">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong>筛选</strong>
+      <AButton size="small" type="secondary" @click="open = false">关闭</AButton>
+    </div>
     <p>在这里精炼你的结果。</p>
   </ADrawer>
 </template>
@@ -34,15 +40,22 @@ const open = ref(false);
 
 ```vue
 <template>
+  <AButton type="primary" @click="open = true">账户设置</AButton>
   <ADrawer v-model="open" position="right" width="420px">
-    <h3>账户设置</h3>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong>账户设置</strong>
+      <AButton size="small" type="secondary" @click="open = false">关闭</AButton>
+    </div>
     <AInput placeholder="显示名" />
+    <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+      <AButton type="primary">保存</AButton>
+    </div>
   </ADrawer>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const open = ref(true);
+const open = ref(false);
 </script>
 ```
 
@@ -52,10 +65,20 @@ const open = ref(true);
 
 ```vue
 <template>
+  <AButton @click="open = true">无遮罩打开</AButton>
   <ADrawer v-model="open" :with-mask="false">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <strong>无遮罩</strong>
+      <AButton size="small" type="secondary" @click="open = false">关闭</AButton>
+    </div>
     <p>背后的页面仍可操作。</p>
   </ADrawer>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const open = ref(false);
+</script>
 ```
 
 ## 属性

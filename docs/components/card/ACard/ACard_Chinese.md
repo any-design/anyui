@@ -63,7 +63,9 @@ import { Card } from '@any-design/anyui/vue';
 ```vue
 <template>
   <ACard title="图库" clean>
-    <img src="/photos/cover.jpg" alt="cover" />
+    <div
+      style="height:120px;background:linear-gradient(135deg,var(--primary),var(--info));"
+    ></div>
   </ACard>
 </template>
 ```

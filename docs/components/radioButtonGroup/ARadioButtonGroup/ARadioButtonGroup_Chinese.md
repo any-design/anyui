@@ -32,13 +32,17 @@ const view = ref('list');
 
 ## 示例
 
-### 圆角变体
+### 变体与尺寸
 
-添加 `round` 即可获得胶囊形分段控件。
+添加 `round` 可获得胶囊形分段控件，并使用 `size`（`small`、`default`、`large`）适配紧凑工具栏或更醒目的控件。
 
 ```vue
 <template>
-  <ARadioButtonGroup v-model="size" :items="items" round />
+  <div class="demo-row">
+    <ARadioButtonGroup v-model="density" :items="items" size="small" />
+    <ARadioButtonGroup v-model="density" :items="items" round />
+    <ARadioButtonGroup v-model="density" :items="items" size="large" round />
+  </div>
 </template>
 
 <script setup>
@@ -49,29 +53,7 @@ const items = [
   { label: 'L', value: 'l' },
   { label: 'XL', value: 'xl' },
 ];
-const size = ref('m');
-</script>
-```
-
-### 尺寸
-
-使用 `size`（`small`、`default`、`large`）适配紧凑工具栏或更醒目的控件。
-
-```vue
-<template>
-  <ARadioButtonGroup v-model="density" :items="items" size="small" />
-  <ARadioButtonGroup v-model="density" :items="items" />
-  <ARadioButtonGroup v-model="density" :items="items" size="large" />
-</template>
-
-<script setup>
-import { ref } from 'vue';
-const items = [
-  { label: 'A', value: 'a' },
-  { label: 'B', value: 'b' },
-  { label: 'C', value: 'c' },
-];
-const density = ref('a');
+const density = ref('m');
 </script>
 ```
 

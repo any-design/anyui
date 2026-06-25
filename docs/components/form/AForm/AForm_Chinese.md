@@ -71,14 +71,18 @@ const rules = { keyword: [{ required: true, message: '必填' }] };
 
 ```vue
 <template>
-  <AForm ref="formRef" :model-value="model" :rules="rules">
-    <AFormItem prop="name" label="姓名">
-      <AInput v-model="model.name" />
-    </AFormItem>
-  </AForm>
-  <AButton @click="formRef.validateField('name')">校验姓名</AButton>
-  <AButton @click="formRef.clearValidation()">清除错误</AButton>
-  <AButton @click="formRef.clearFields()">清空值</AButton>
+  <div class="demo-col">
+    <AForm ref="formRef" :model-value="model" :rules="rules">
+      <AFormItem prop="name" label="姓名">
+        <AInput v-model="model.name" />
+      </AFormItem>
+    </AForm>
+    <div class="demo-row">
+      <AButton @click="formRef.validateField('name')">校验姓名</AButton>
+      <AButton @click="formRef.clearValidation()">清除错误</AButton>
+      <AButton @click="formRef.clearFields()">清空值</AButton>
+    </div>
+  </div>
 </template>
 
 <script setup>

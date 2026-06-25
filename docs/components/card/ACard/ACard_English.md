@@ -63,7 +63,9 @@ Pass `clean` to drop the default body padding — useful when the body is itself
 ```vue
 <template>
   <ACard title="Gallery" clean>
-    <img src="/photos/cover.jpg" alt="cover" />
+    <div
+      style="height:120px;background:linear-gradient(135deg,var(--primary),var(--info));"
+    ></div>
   </ACard>
 </template>
 ```

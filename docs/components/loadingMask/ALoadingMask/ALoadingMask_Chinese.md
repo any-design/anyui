@@ -16,16 +16,21 @@ import { LoadingMask } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <ALoadingMask :loading="loading" text="保存中…">
-    <ACard title="设置">
-      <AInput placeholder="显示名" />
-    </ACard>
-  </ALoadingMask>
+  <div class="demo-col">
+    <AButton type="primary" @click="loading = !loading">
+      {{ loading ? '停止加载' : '开始加载' }}
+    </AButton>
+    <ALoadingMask :loading="loading" text="保存中…">
+      <ACard title="设置">
+        <AInput placeholder="显示名" />
+      </ACard>
+    </ALoadingMask>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const loading = ref(true);
+const loading = ref(false);
 </script>
 ```
 
@@ -37,12 +42,19 @@ const loading = ref(true);
 
 ```vue
 <template>
+  <AButton @click="showFullscreen">显示全屏加载 1.5 秒</AButton>
   <ALoadingMask :loading="loading" fullscreen text="正在加载应用…" />
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const loading = ref(true);
+const loading = ref(false);
+const showFullscreen = () => {
+  loading.value = true;
+  setTimeout(() => {
+    loading.value = false;
+  }, 1500);
+};
 </script>
 ```
 
@@ -50,10 +62,12 @@ const loading = ref(true);
 
 ```vue
 <template>
-  <AButton @click="run">拉取数据</AButton>
-  <ALoadingMask :loading="loading">
-    <div class="content">{{ result || '暂无数据' }}</div>
-  </ALoadingMask>
+  <div class="demo-col">
+    <AButton @click="run">拉取数据</AButton>
+    <ALoadingMask :loading="loading">
+      <div class="content">{{ result || '暂无数据' }}</div>
+    </ALoadingMask>
+  </div>
 </template>
 
 <script setup>
@@ -62,7 +76,8 @@ const loading = ref(false);
 const result = ref('');
 const run = async () => {
   loading.value = true;
-  result.value = await fetch('/api/data').then((r) => r.text());
+  await new Promise((resolve) => setTimeout(resolve, 900));
+  result.value = '已拉取 24 条记录';
   loading.value = false;
 };
 </script>

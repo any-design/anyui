@@ -32,13 +32,17 @@ const view = ref('list');
 
 ## Examples
 
-### Rounded variant
+### Variants and sizes
 
-Add `round` for a pill-shaped segmented control.
+Use `round` for a pill-shaped segmented control, and set `size` (`small`, `default`, `large`) to match dense toolbars or larger controls.
 
 ```vue
 <template>
-  <ARadioButtonGroup v-model="size" :items="items" round />
+  <div class="demo-row">
+    <ARadioButtonGroup v-model="density" :items="items" size="small" />
+    <ARadioButtonGroup v-model="density" :items="items" round />
+    <ARadioButtonGroup v-model="density" :items="items" size="large" round />
+  </div>
 </template>
 
 <script setup>
@@ -49,29 +53,7 @@ const items = [
   { label: 'L', value: 'l' },
   { label: 'XL', value: 'xl' },
 ];
-const size = ref('m');
-</script>
-```
-
-### Sizes
-
-Use `size` (`small`, `default`, `large`) to match dense toolbars or larger controls.
-
-```vue
-<template>
-  <ARadioButtonGroup v-model="density" :items="items" size="small" />
-  <ARadioButtonGroup v-model="density" :items="items" />
-  <ARadioButtonGroup v-model="density" :items="items" size="large" />
-</template>
-
-<script setup>
-import { ref } from 'vue';
-const items = [
-  { label: 'A', value: 'a' },
-  { label: 'B', value: 'b' },
-  { label: 'C', value: 'c' },
-];
-const density = ref('a');
+const density = ref('m');
 </script>
 ```
 

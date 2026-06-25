@@ -16,9 +16,11 @@ import { FormItem } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AFormItem label="邮箱" prop="email">
-    <AInput v-model="model.email" placeholder="you@example.com" />
-  </AFormItem>
+  <AForm :model-value="model">
+    <AFormItem label="邮箱" prop="email">
+      <AInput v-model="model.email" placeholder="you@example.com" />
+    </AFormItem>
+  </AForm>
 </template>
 
 <script setup>
@@ -35,7 +37,7 @@ const model = reactive({ email: '' });
 
 ```vue
 <template>
-  <AForm :model="model">
+  <AForm :model-value="model">
     <AFormItem label="用户名" prop="username">
       <AInput v-model="model.username" />
     </AFormItem>
@@ -57,9 +59,11 @@ const model = reactive({ username: '', password: '' });
 
 ```vue
 <template>
-  <AFormItem label="国家" prop="country">
-    <AInput v-model="model.country" placeholder="选择国家" />
-  </AFormItem>
+  <AForm :model-value="model">
+    <AFormItem label="国家" prop="country">
+      <AInput v-model="model.country" placeholder="选择国家" />
+    </AFormItem>
+  </AForm>
 </template>
 
 <script setup>
