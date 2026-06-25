@@ -6,9 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:testground": "rimraf ./dist-testground && vite build",
     "serve": "vite preview",
-    "clean": "rimraf dist-testground"
+    "clean": "rimraf ../website/dist/testground"
   },
   "peerDependencies": {
     "@iconify/react": "^6.0.2",

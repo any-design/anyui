@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import react from '@astrojs/react';
 import svelte from '@astrojs/svelte';
 import vue from '@astrojs/vue';
 import { defineConfig } from 'astro/config';
@@ -12,6 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const vueSrc = path.resolve(__dirname, '../vue/src');
 const reactSrc = path.resolve(__dirname, '../react/src');
 const svelteSrc = path.resolve(__dirname, '../svelte/src');
+const testgroundDevOrigin = process.env.ANYUI_TESTGROUND_DEV_ORIGIN ?? 'http://127.0.0.1:5174';
 
 export default defineConfig({
   site: 'https://anyui.pwp.sh',
@@ -28,12 +28,19 @@ export default defineConfig({
   },
   integrations: [
     vue({ appEntrypoint: '/src/vue-app' }),
-    // scope react to its island folder so it never touches vue/svelte sources
-    react({ include: ['**/components/react/**'] }),
     svelte(),
   ],
   vite: {
     plugins: [previewPlugin()],
+    server: {
+      proxy: {
+        '/testground': {
+          target: testgroundDevOrigin,
+          changeOrigin: true,
+          ws: true,
+        },
+      },
+    },
     resolve: {
       alias: {
         // the vue package sources use '@' internally
