@@ -47,7 +47,13 @@ export default defineComponent({
 }
 
 .a-spinner {
-  display: inline-block;
+  width: 1em;
+  height: 1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  vertical-align: middle;
 
   &__inner {
     width: 1em;

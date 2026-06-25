@@ -62,14 +62,14 @@ export default defineComponent({
     if (!formEventEmitter) {
       console.warn('[AnyUI][FormItem] Cannot get emitter from parent node.');
     }
-    const formattedLabelWidth = formParent?.exposed?.formattedLabelWidth as ComputedRef<
-      string | number
-    >;
-    if (!formattedLabelWidth.value) {
+    const formattedLabelWidth = formParent?.exposed?.formattedLabelWidth as
+      | ComputedRef<string | number>
+      | undefined;
+    if (!formattedLabelWidth?.value) {
       console.warn('[AnyUI][FormItem] Cannot get label width from parent node.');
     }
     const labelStyle = computed(() => ({
-      width: formattedLabelWidth.value,
+      width: formattedLabelWidth?.value ?? '20%',
     }));
 
     const isValid = ref(true);

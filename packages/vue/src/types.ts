@@ -2,6 +2,7 @@
 export * from './packages/avatar/types';
 export * from './packages/button/types';
 export * from './packages/chat/types';
+export * from './packages/checkboxGroup/types';
 export * from './packages/drawer/types';
 export * from './packages/dropdownMenu/types';
 export * from './packages/grid/types';
@@ -14,6 +15,7 @@ export * from './packages/otpInput/types';
 export * from './packages/pagination/types';
 export * from './packages/popper/types';
 export * from './packages/popupMenu/types';
+export * from './packages/qrCode/types';
 export * from './packages/radioButtonGroup/types';
 export * from './packages/radioGroup/types';
 export * from './packages/scrollArea/types';

@@ -67,6 +67,14 @@ export interface ARadioGroupItem {
 
 export type ARadioGroupItems = ARadioGroupItem[];
 
+export interface ACheckboxGroupItem {
+  label: string | number;
+  value: string | number;
+}
+
+export type ACheckboxGroupItemConfig = ACheckboxGroupItem | string | number;
+export type ACheckboxGroupItems = ACheckboxGroupItemConfig[];
+
 export interface ARadioButtonPosition {
   width: number;
   left: number;
@@ -140,6 +148,8 @@ export type AlertType = 'info' | 'success' | 'warn' | 'danger';
 export type ToastType = 'info' | 'success' | 'warning' | 'error';
 
 export type ToastPlacement = 'top-right' | 'bottom-right';
+
+export type QrCodeErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H';
 
 export interface ToastOptions {
   title?: string;

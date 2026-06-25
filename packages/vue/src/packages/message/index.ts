@@ -1,20 +1,16 @@
 import { loadIcons } from '@iconify/vue';
 import type { App } from 'vue';
 
+import type { SFCWithInstall } from '@/utils/types';
+
+import AMessage from './AMessage.vue';
 import { DefaultIcon } from './constants';
 import { popupMessage } from './helper';
 import type { MessageOptions, MessageType } from './types';
 
 export type AMessageTypedOptions =
   | string
-  | {
-      content: string;
-      duration: number;
-      icon?: string;
-      showIcon?: boolean;
-      zIndex?: number;
-      round?: boolean;
-    };
+  | Omit<MessageOptions, 'type'>;
 
 const message = (options: MessageOptions) => {
   popupMessage(options);
@@ -45,16 +41,17 @@ export { message };
 
 export * from './types';
 
-export default {
-  install(app: App) {
-    app.config.globalProperties.$message = message;
-    // preload icons
-    loadIcons(
-      Object.keys(DefaultIcon)
-        .map((key) => {
-          return DefaultIcon[key as keyof typeof DefaultIcon];
-        })
-        .filter((icon) => !!icon),
-    );
-  },
+AMessage.install = (app: App) => {
+  app.component('AMessage', AMessage);
+  app.config.globalProperties.$message = message;
+  // preload icons
+  loadIcons(
+    Object.keys(DefaultIcon)
+      .map((key) => {
+        return DefaultIcon[key as keyof typeof DefaultIcon];
+      })
+      .filter((icon) => !!icon),
+  );
 };
+
+export default AMessage as SFCWithInstall<typeof AMessage>;

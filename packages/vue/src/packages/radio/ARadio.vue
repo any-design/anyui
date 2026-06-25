@@ -18,6 +18,7 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -25,7 +26,7 @@ export default defineComponent({
   props: {
     // the label of the radio
     label: {
-      type: String,
+      type: [String, Number] as PropType<string | number>,
       default: '',
     },
     // the value of the radio

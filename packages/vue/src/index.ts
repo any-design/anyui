@@ -37,6 +37,7 @@ import Popup from './packages/popup';
 import PopupMenu from './packages/popupMenu';
 import Progress from './packages/progress';
 import ProgressButton from './packages/progressButton';
+import QrCode from './packages/qrCode';
 import Radio from './packages/radio';
 import RadioButtonGroup, { RadioButton } from './packages/radioButtonGroup';
 import RadioGroup from './packages/radioGroup';
@@ -56,61 +57,34 @@ import Upload from './packages/upload';
 import VirtualList, { VirtualListItem } from './packages/virtualList';
 
 const defaultComponentList = [
-  Alert,
-  Avatar,
   Button,
   Card,
-  Chat,
   Checkbox,
   CheckboxGroup,
   ClickableText,
   Collapse,
-  ConfirmModal,
-  Dialog,
   Drawer,
-  DropdownMenu,
-  Empty,
   Float,
   Form,
   FormItem,
   GradientText,
-  Grid,
   Input,
   Image,
-  Item,
-  Kbd,
-  Layout,
-  ListMenu,
-  ListView,
-  Loading,
-  LoadingMask,
-  Masonry,
   Message,
-  OtpInput,
-  Pagination,
+  Layout,
+  Loading,
   Popper,
-  Popup,
   PopupMenu,
-  Progress,
-  ProgressButton,
   Radio,
-  RadioButton,
   RadioGroup,
   RadioButtonGroup,
-  ScrollArea,
-  Select,
-  Slider,
-  Spinner,
   Split,
+  Select,
   Step,
-  Switch,
-  Table,
+  Spinner,
   Tag,
   Textarea,
-  Toast,
-  Tooltip,
   Upload,
-  VirtualList,
 ];
 
 const buildInstaller = (components: any[]) => {
@@ -208,6 +182,8 @@ export {
   Progress as AProgress,
   ProgressButton,
   ProgressButton as AProgressButton,
+  QrCode,
+  QrCode as AQrCode,
   Radio,
   Radio as ARadio,
   RadioButton,

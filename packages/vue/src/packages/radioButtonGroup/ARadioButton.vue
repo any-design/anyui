@@ -7,13 +7,13 @@
     }"
     @click="handleClicked"
   >
-    {{ item?.label || '-' }}
+    {{ labelText }}
   </div>
 </template>
 
 <script lang="ts">
 import type { PropType} from 'vue';
-import { defineComponent, inject, ref } from 'vue';
+import { computed, defineComponent, inject, ref } from 'vue';
 
 import type { ARadioGroupItem } from '../radioGroup/types';
 
@@ -39,6 +39,14 @@ export default defineComponent({
       inject<typeof document.body.getBoundingClientRect>(GET_PARENT_CONTAINER_RECT);
 
     const getPaddingValue = inject<() => number>(GET_PADDING_VALUE);
+
+    const labelText = computed(() => {
+      const label = props.item?.label;
+      if (typeof label === 'string' || typeof label === 'number') {
+        return label;
+      }
+      return props.item?.value ?? '-';
+    });
 
     const getPosition = () => {
       if (!button.value || !getParentContainerRect) {
@@ -69,6 +77,7 @@ export default defineComponent({
     return {
       handleClicked,
       button,
+      labelText,
     };
   },
 });
@@ -76,11 +85,19 @@ export default defineComponent({
 
 <style lang="scss">
 .a-radio-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 36px;
   padding: 0px 18px;
   box-sizing: border-box;
+  color: var(--text-secondary);
   font-weight: 600;
+  line-height: 1;
   z-index: 5;
   cursor: pointer;
+  white-space: nowrap;
   transition: color 200ms ease,
     transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
 }

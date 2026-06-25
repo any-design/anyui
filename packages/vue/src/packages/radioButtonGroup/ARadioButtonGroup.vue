@@ -11,7 +11,7 @@
     <div class="a-radio-button-group__bg" :style="bgBlockStyles"></div>
     <div ref="buttonContainer" class="a-radio-button-group__buttons">
       <a-radio-button
-        v-for="item in items"
+        v-for="item in normalizedItems"
         :key="item.value"
         :item="item"
         :selected="selected === item.value"
@@ -27,6 +27,7 @@ import {
   computed,
   defineComponent,
   getCurrentInstance,
+  nextTick,
   onMounted,
   onUnmounted,
   provide,
@@ -83,6 +84,31 @@ export default defineComponent({
     if (formItemParent) {
       formItemEventEmitter = formItemParent.exposed?.emitter as FormItemEventEmitter;
     }
+
+    const normalizeLabel = (label: unknown, fallback: string | number) => {
+      if (typeof label === 'string' || typeof label === 'number') {
+        return label;
+      }
+      if (label && typeof label === 'object') {
+        const record = label as Record<string, unknown>;
+        const lang =
+          typeof document !== 'undefined' && document.documentElement.dataset.lang === 'zh'
+            ? 'zh'
+            : 'en';
+        const candidate = record[lang] ?? record.en ?? record.zh ?? record.text ?? record.name ?? fallback;
+        if (typeof candidate === 'string' || typeof candidate === 'number') {
+          return candidate;
+        }
+      }
+      return fallback;
+    };
+
+    const normalizedItems = computed(() =>
+      (props.items ?? []).map((item) => ({
+        ...item,
+        label: normalizeLabel(item.label, item.value),
+      })),
+    );
 
     // horizontal padding must match the group CSS, otherwise the animated
     // background block is offset from the selected button.
@@ -159,10 +185,10 @@ export default defineComponent({
         handleClear();
         return;
       }
-      if (!buttonContainer.value || !props.items) {
+      if (!buttonContainer.value || normalizedItems.value.length === 0) {
         return;
       }
-      const selectedIdx = props.items.findIndex((item) => item.value === value);
+      const selectedIdx = normalizedItems.value.findIndex((item) => item.value === value);
       if (selectedIdx < 0) {
         handleClear();
         return;
@@ -196,12 +222,13 @@ export default defineComponent({
         updateButtonPosition(selected.value);
       },
     );
-    watch([() => props.size, () => props.round, () => props.items], () => {
+    watch([() => props.size, () => props.round, normalizedItems], () => {
       updateButtonPosition(selected.value);
     });
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);
+      nextTick(() => updateButtonPosition(selected.value));
     });
 
     onUnmounted(() => {
@@ -215,6 +242,7 @@ export default defineComponent({
       bgBlockStyles,
       showBgBlock,
       selected,
+      normalizedItems,
       container,
       buttonContainer,
     };
@@ -226,7 +254,7 @@ export default defineComponent({
 .a-radio-button-group {
   position: relative;
   width: max-content;
-  padding: 12px 4px;
+  padding: 4px;
   box-sizing: border-box;
   border-radius: var(--a-radius-sm, 10px);
   background-color: var(--bg-bright);
@@ -244,17 +272,19 @@ export default defineComponent({
   }
 
   &__buttons {
+    position: relative;
     display: flex;
     align-items: center;
-    z-index: 5;
+    z-index: 2;
   }
 }
 
 .a-radio-button-group--round {
-  padding: 12px 6px;
+  padding: 6px;
   border-radius: var(--a-radius-xl, 22px);
 
   .a-radio-button-group__bg {
+    top: 6px;
     border-radius: var(--a-radius-lg, 18px);
   }
 }
@@ -264,6 +294,7 @@ export default defineComponent({
   border-radius: var(--a-radius-xs, 8px);
 
   .a-radio-button {
+    height: 24px;
     padding: 0 12px;
     font-size: 12px;
     line-height: 24px;
@@ -288,6 +319,7 @@ export default defineComponent({
   padding: 5px;
 
   .a-radio-button {
+    height: 42px;
     padding: 0 22px;
     font-size: 16px;
     line-height: 42px;
