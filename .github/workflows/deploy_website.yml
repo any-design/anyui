@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build website
+      - name: Build website and testground
         run: pnpm run build:website
 
       - name: Deploy to Cloudflare

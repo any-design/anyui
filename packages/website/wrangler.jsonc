@@ -1,5 +1,5 @@
 {
-  // Cloudflare Workers static-assets deployment for the AnyUI website.
+  // Cloudflare Workers static-assets deployment for the AnyUI website and /testground.
   // Deploy manually with: pnpm run build:website && npx wrangler deploy
   // (requires CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID)
   "$schema": "node_modules/wrangler/config-schema.json",

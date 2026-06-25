@@ -6,15 +6,15 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build:website": "astro build",
+    "build:website": "astro build && pnpm --filter @any-design/anyui-testground exec vite build",
     "serve": "astro preview",
     "clean": "rimraf dist"
   },
   "devDependencies": {
-    "@astrojs/react": "^6.0.0",
     "@astrojs/svelte": "^9.0.0",
     "@astrojs/vue": "^7.0.0",
     "astro": "^7.0.0",
+    "shiki": "4.2.0",
     "wrangler": "^4.99.0"
   }
 }

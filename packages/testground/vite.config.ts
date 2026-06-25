@@ -11,8 +11,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const vueSrc = path.resolve(__dirname, '../vue/src');
 const reactSrc = path.resolve(__dirname, '../react/src');
 const svelteSrc = path.resolve(__dirname, '../svelte/src');
+const websiteTestgroundDist = path.resolve(__dirname, '../website/dist/testground');
 
 export default defineConfig({
+  base: '/testground/',
   plugins: [
     vue(),
     // scope the react plugin to react demos so it never touches vue/svelte sources
@@ -45,7 +47,8 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist-testground',
+    outDir: websiteTestgroundDist,
+    emptyOutDir: true,
     sourcemap: false,
     minify: true,
   },
