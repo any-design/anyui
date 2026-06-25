@@ -1,7 +1,8 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
+  import type { ACheckboxGroupItemConfig, ACheckboxGroupItems } from '../types';
   let {
-    items = [] as Array<string | number>,
+    items = [] as ACheckboxGroupItems,
     modelValue = $bindable([] as Array<string | number>),
     gap = 16,
     checkIcon = 'si-glyph:checked',
@@ -11,11 +12,14 @@
     onChange,
   } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
+  const normalizeItem = (item: ACheckboxGroupItemConfig) =>
+    typeof item === 'object' && item !== null ? item : { label: item, value: item };
+  const normalizedItems = $derived(items.map(normalizeItem));
   const values = $derived(new Set(modelValue));
   const formattedGap = $derived(formatStyleSize(gap));
-  const update = (item: string | number) => {
+  const update = (value: string | number) => {
     const next = new Set(values);
-    next.has(item) ? next.delete(item) : next.add(item);
+    next.has(value) ? next.delete(value) : next.add(value);
     const nextValue = Array.from(next);
     modelValue = nextValue;
     onUpdateModelValue?.(nextValue);
@@ -24,23 +28,23 @@
 </script>
 
 <div class="a-checkbox-group {className}">
-  {#each items as item, index}
+  {#each normalizedItems as item, index (item.value)}
     <div
-      class="a-checkbox {values.has(item) ? 'a-checkbox--checked' : ''}"
-      style:margin-right={index === items.length - 1 ? undefined : formattedGap}
+      class="a-checkbox {values.has(item.value) ? 'a-checkbox--checked' : ''}"
+      style:margin-right={index === normalizedItems.length - 1 ? undefined : formattedGap}
       role="checkbox"
       tabindex="0"
-      aria-checked={values.has(item)}
-      onclick={() => update(item)}
+      aria-checked={values.has(item.value)}
+      onclick={() => update(item.value)}
       onkeydown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
-          update(item);
+          update(item.value);
         }
       }}
     >
-      <div class="a-checkbox-checker">{#if values.has(item)}<Icon class="a-checkbox-checker__icon" aria-hidden="true" icon={checkIcon} />{/if}</div>
-      <div class="a-checkbox-label">{item}</div>
+      <div class="a-checkbox-checker">{#if values.has(item.value)}<Icon class="a-checkbox-checker__icon" aria-hidden="true" icon={checkIcon} />{/if}</div>
+      <div class="a-checkbox-label">{item.label}</div>
     </div>
   {/each}
   {@render children?.()}

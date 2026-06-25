@@ -80,20 +80,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@keyframes message-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-60%) scale(0.92);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(6%) scale(1.02);
-  }
-  100% {
-    transform: translateY(0) scale(1);
-  }
-}
-
 .a-message {
   min-width: 300px;
   max-width: 90vw;
@@ -112,26 +98,63 @@ export default defineComponent({
   backdrop-filter: var(--a-surface-backdrop, none);
   border: 1px solid var(--a-surface-border-color, transparent);
   user-select: none;
-  animation: message-in var(--anim-duration-slow, 320ms) var(--a-ease-spring, ease-out) 0s 1 forwards;
+  transition:
+    transform var(--anim-duration-slow, 320ms) var(--a-ease-spring, ease-out),
+    opacity var(--anim-duration, 200ms) ease;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
 
-  &__icon {
-    width: 18px;
-    height: 18px;
-    position: relative;
-    margin-right: 8px;
-    svg {
-      width: 100%;
-      height: 100%;
-    }
-  }
+.a-message--anim-enter-active {
+  transition:
+    transform var(--anim-duration-slow, 320ms) var(--a-ease-spring, ease-out),
+    opacity var(--anim-duration, 200ms) ease;
+}
 
-  &__text {
-    font-size: 15px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    flex: 1;
-  }
+.a-message--anim-enter-from {
+  opacity: 0;
+  transform: translateY(-60%) scale(0.92);
+}
+
+.a-message--anim-enter-to {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.a-message--anim-leave-active {
+  transition:
+    transform var(--anim-duration, 200ms) var(--a-ease-soft, ease),
+    opacity var(--anim-duration, 200ms) ease;
+}
+
+.a-message--anim-leave-from {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.a-message--anim-leave-to {
+  opacity: 0;
+  transform: translateY(-24px) scale(0.96);
+}
+
+.a-message__icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  margin-right: 8px;
+}
+
+.a-message__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.a-message__text {
+  font-size: 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex: 1;
 }
 
 @mixin white-content {

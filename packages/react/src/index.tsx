@@ -19,6 +19,7 @@ import type { Rules } from 'async-validator';
 
 import type {
   AChatMessage,
+  ACheckboxGroupItemConfig,
   AListMenuConfig,
   AListMenuDisplayItem,
   AListMenuItemConfig,
@@ -30,6 +31,7 @@ import type {
   MessageOptions,
   PaginationMeta,
   PopMenuItem,
+  QrCodeErrorCorrectionLevel,
   RawVirtualListItem,
   TableColumn,
   TableRow,
@@ -74,6 +76,23 @@ const gridJustifyMap: Record<string, string> = {
   around: 'space-around',
   evenly: 'space-evenly',
 };
+
+const normalizeQrCodeColor = (value: string) => {
+  if (!value.startsWith('#')) {
+    return value;
+  }
+  if (value.length === 4) {
+    const [, r, g, b] = value;
+    return '#' + r + r + g + g + b + b + 'ff';
+  }
+  if (value.length === 7) {
+    return value + 'ff';
+  }
+  return value;
+};
+
+const resolveQrCodeModule = (qrcodeModule: any) =>
+  'toString' in qrcodeModule ? qrcodeModule : qrcodeModule.default;
 
 const pickDataAttrs = (props: Record<string, unknown>) =>
   Object.fromEntries(Object.entries(props).filter(([key]) => key.startsWith('data-') || key.startsWith('aria-')));
@@ -223,24 +242,29 @@ export const Checkbox = forwardRef<HTMLDivElement, AnyUIReactProps>(function Che
 });
 
 export const CheckboxGroup = forwardRef<HTMLDivElement, AnyUIReactProps>(function CheckboxGroup(
-  { className, items = [], modelValue = [], gap = 16, onUpdateModelValue, ...rest },
+  { className, items = [], modelValue = [], gap = 16, onUpdateModelValue, onChange, ...rest },
   ref,
 ) {
   const values = new Set(modelValue);
-  const toggle = (item: string | number, checked: boolean) => {
+  const normalizedItems = items.map((item: ACheckboxGroupItemConfig) =>
+    typeof item === 'object' && item !== null ? item : { label: item, value: item },
+  );
+  const toggle = (value: string | number, checked: boolean) => {
     const next = new Set(values);
-    checked ? next.add(item) : next.delete(item);
-    onUpdateModelValue?.(Array.from(next));
+    checked ? next.add(value) : next.delete(value);
+    const nextValue = Array.from(next);
+    onUpdateModelValue?.(nextValue);
+    onChange?.(nextValue);
   };
   return (
     <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-checkbox-group', className)}>
-      {items.map((item: string | number, index: number) => (
+      {normalizedItems.map((item, index: number) => (
         <Checkbox
-          key={String(item)}
-          label={item}
-          modelValue={values.has(item)}
-          style={index !== items.length - 1 ? { marginRight: formatStyleSize(gap) } : undefined}
-          onChange={(checked: boolean) => toggle(item, checked)}
+          key={String(item.value)}
+          label={item.label}
+          modelValue={values.has(item.value)}
+          style={index !== normalizedItems.length - 1 ? { marginRight: formatStyleSize(gap) } : undefined}
+          onChange={(checked: boolean) => toggle(item.value, checked)}
         />
       ))}
     </div>
@@ -980,10 +1004,15 @@ export const Split = forwardRef<HTMLDivElement, AnyUIReactProps>(function Split(
   );
 });
 
-export const Step = forwardRef<HTMLDivElement, AnyUIReactProps>(function Step({ className, steps = 2, current = 1, ...rest }, ref) {
+export const Step = forwardRef<HTMLDivElement, AnyUIReactProps>(function Step({ className, steps = 2, current = 1, finishColor, ...rest }, ref) {
   const displaySteps = Array.isArray(steps) ? steps : new Array(steps).fill(null);
   return (
-    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-step', className)}>
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-step', className)}
+      style={{ ...(finishColor ? ({ ['--a-step-finish' as any]: finishColor } as Record<string, string>) : null), ...rest.style }}
+    >
       <div className="a-step__lines">
         {displaySteps.slice(0, -1).map((_: string | null, index: number) => (
           <div key={index} className={cx('a-step__line', index + 1 < current && 'a-step__line--active')} />
@@ -991,7 +1020,7 @@ export const Step = forwardRef<HTMLDivElement, AnyUIReactProps>(function Step({ 
       </div>
       <div className="a-step__content">
         {displaySteps.map((item: string | null, index: number) => (
-          <div key={index} className={cx('a-step-item', current === index + 1 && 'a-step-item--current')}>
+          <div key={index} className={cx('a-step-item', current === index + 1 && 'a-step-item--current', index + 1 < current && 'a-step-item--completed')}>
             <div className="a-step-item__circle">{index + 1}</div>
             {item ? <div className="a-step-item__name">{item}</div> : null}
           </div>
@@ -2133,6 +2162,96 @@ export const Kbd = forwardRef<HTMLElement, AnyUIReactProps>(function Kbd(
     <kbd {...pickDataAttrs(rest)} ref={ref} className={cx('a-kbd', size === 'small' && 'a-kbd--small', className)} style={rest.style}>
       {children}
     </kbd>
+  );
+});
+
+export const QrCode = forwardRef<HTMLDivElement, AnyUIReactProps>(function QrCode(
+  {
+    className,
+    value = '',
+    size = 160,
+    margin = 2,
+    errorCorrectionLevel = 'M' as QrCodeErrorCorrectionLevel,
+    dark = '#202426',
+    light = '#ffffff',
+    bordered = true,
+    placeholder = 'No QR code',
+    ariaLabel = '',
+    onError,
+    ...rest
+  },
+  ref,
+) {
+  const [svg, setSvg] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const requestRef = useRef(0);
+  const numericSize =
+    typeof size === 'number' ? size : typeof size === 'string' && /^\d+$/.test(size) ? Number(size) : undefined;
+  const resolvedAriaLabel = ariaLabel || (value ? 'QR code for ' + value : placeholder);
+
+  useEffect(() => {
+    const current = ++requestRef.current;
+    setSvg('');
+    setErrorMessage('');
+
+    if (!value) {
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    import('qrcode')
+      .then((qrcodeModule) =>
+        resolveQrCodeModule(qrcodeModule).toString(value, {
+          type: 'svg',
+          width: numericSize,
+          margin,
+          errorCorrectionLevel,
+          color: {
+            dark: normalizeQrCodeColor(dark),
+            light: normalizeQrCodeColor(light),
+          },
+        }),
+      )
+      .then((nextSvg) => {
+        if (!cancelled && current === requestRef.current) {
+          setSvg(nextSvg);
+        }
+      })
+      .catch((error) => {
+        if (cancelled || current !== requestRef.current) {
+          return;
+        }
+        setErrorMessage(error instanceof Error ? error.message : 'Failed to render QR code');
+        onError?.(error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [value, numericSize, margin, errorCorrectionLevel, dark, light, onError]);
+
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx(
+        'a-qr-code',
+        bordered && 'a-qr-code--bordered',
+        !value && 'a-qr-code--empty',
+        errorMessage && 'a-qr-code--error',
+        className,
+      )}
+      style={{ width: formatStyleSize(size), height: formatStyleSize(size), ...rest.style }}
+      role="img"
+      aria-label={resolvedAriaLabel}
+    >
+      {svg && value && !errorMessage ? (
+        <div className="a-qr-code__svg" dangerouslySetInnerHTML={{ __html: svg }} />
+      ) : (
+        <span className="a-qr-code__placeholder">{errorMessage || placeholder}</span>
+      )}
+    </div>
   );
 });
 
@@ -3546,69 +3665,34 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
 export const buildInstaller = (componentList: React.ComponentType<any>[]) => componentList;
 
 const defaultComponentList = [
-  Alert,
-  Avatar,
   Button,
   Card,
-  Chat,
   Checkbox,
   CheckboxGroup,
   ClickableText,
   Collapse,
-  ConfirmModal,
-  Content,
-  Dialog,
   Drawer,
-  DropdownMenu,
-  Empty,
   Float,
-  Footer,
   Form,
   FormItem,
   GradientText,
-  Grid,
-  GridRow,
-  GridCol,
-  Header,
-  Image,
   Input,
-  Item,
-  Kbd,
-  Layout,
-  ListMenu,
-  ListView,
-  ListViewItem,
-  Loading,
-  LoadingMask,
-  Masonry,
+  Image,
   Message,
-  OtpInput,
-  Pagination,
+  Layout,
+  Loading,
   Popper,
-  Popup,
   PopupMenu,
-  Progress,
-  ProgressButton,
   Radio,
-  RadioButton,
-  RadioButtonGroup,
   RadioGroup,
-  ScrollArea,
-  Select,
-  Side,
-  Slider,
-  Spinner,
+  RadioButtonGroup,
   Split,
+  Select,
   Step,
-  Switch,
-  Table,
+  Spinner,
   Tag,
   Textarea,
-  Toast,
-  Tooltip,
   Upload,
-  VirtualList,
-  VirtualListItem,
 ];
 
 export default {

@@ -10,6 +10,8 @@ export interface MessageOptions {
   showIcon?: boolean;
   zIndex?: number;
   duration?: number;
+  enterAnim?: boolean;
+  leaveAnim?: boolean;
   round?: boolean;
 }
 

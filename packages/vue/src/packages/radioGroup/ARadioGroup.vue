@@ -1,7 +1,7 @@
 <template>
   <div class="a-radio-group">
     <a-radio
-      v-for="item in items"
+      v-for="item in normalizedItems"
       :key="item.value"
       :label="item.label"
       :checked="selected === item.value"
@@ -13,6 +13,7 @@
 <script lang="ts">
 import type { PropType } from 'vue';
 import {
+  computed,
   defineComponent,
   getCurrentInstance,
   onMounted,
@@ -53,6 +54,31 @@ export default defineComponent({
       formItemEventEmitter = formItemParent.exposed?.emitter as FormItemEventEmitter;
     }
 
+    const normalizeLabel = (label: unknown, fallback: string | number) => {
+      if (typeof label === 'string' || typeof label === 'number') {
+        return label;
+      }
+      if (label && typeof label === 'object') {
+        const record = label as Record<string, unknown>;
+        const lang =
+          typeof document !== 'undefined' && document.documentElement.dataset.lang === 'zh'
+            ? 'zh'
+            : 'en';
+        const candidate = record[lang] ?? record.en ?? record.zh ?? record.text ?? record.name ?? fallback;
+        if (typeof candidate === 'string' || typeof candidate === 'number') {
+          return candidate;
+        }
+      }
+      return fallback;
+    };
+
+    const normalizedItems = computed(() =>
+      (props.items ?? []).map((item) => ({
+        ...item,
+        label: normalizeLabel(item.label, item.value),
+      })),
+    );
+
     watch(
       () => props.modelValue,
       () => {
@@ -88,6 +114,7 @@ export default defineComponent({
 
     return {
       selected,
+      normalizedItems,
       handleItemChange,
     };
   },

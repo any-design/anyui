@@ -158,6 +158,10 @@ export default defineComponent({
     filter var(--anim-duration-quick, 120ms) ease;
 
   &__inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     color: inherit;
   }
 

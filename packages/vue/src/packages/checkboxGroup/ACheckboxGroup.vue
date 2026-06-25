@@ -1,21 +1,27 @@
 <template>
   <div class="a-checkbox-group">
     <a-checkbox
-      v-for="(item, index) in items"
-      :key="item"
-      v-model="storedValues[item]"
-      :label="item"
-      :style="index !== items.length - 1 ? checkboxItemStyles : undefined"
-      @change="changeMethodFactory(item)"
+      v-for="(item, index) in normalizedItems"
+      :key="String(item.value)"
+      :model-value="selectedValues.has(item.value)"
+      :label="item.label"
+      :style="index !== normalizedItems.length - 1 ? checkboxItemStyles : undefined"
+      @change="(checked) => handleItemChange(item.value, checked)"
     ></a-checkbox>
   </div>
 </template>
 
 <script lang="ts">
 import type { PropType } from 'vue';
-import { defineComponent, ref, watch, computed, onBeforeMount } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 import ACheckbox from '../checkbox';
+
+import type {
+  ACheckboxGroupItem,
+  ACheckboxGroupItemConfig,
+  ACheckboxGroupItems,
+} from './types';
 
 export default defineComponent({
   components: {
@@ -24,11 +30,11 @@ export default defineComponent({
   props: {
     // the values which will be bound to this component.
     modelValue: {
-      type: Object as PropType<(string | number)[]>,
+      type: Array as PropType<(string | number)[]>,
     },
     // the pairing labels to the values.
     items: {
-      type: Array as PropType<(string | number)[]>,
+      type: Array as PropType<ACheckboxGroupItems>,
       required: true,
     },
     // gap between the checkboxes, the unit is px.
@@ -39,18 +45,53 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const storedValues = ref<Record<string, boolean>>({});
+    const selectedValues = ref<Set<string | number>>(new Set());
 
-    const changeMethodFactory = (item: string | number) => {
-      return (checked: boolean) => handleItemChange(checked, item);
+    const normalizeLabel = (label: unknown, fallback: string | number) => {
+      if (typeof label === 'string' || typeof label === 'number') {
+        return label;
+      }
+      if (label && typeof label === 'object') {
+        const record = label as Record<string, unknown>;
+        const lang =
+          typeof document !== 'undefined' && document.documentElement.dataset.lang === 'zh'
+            ? 'zh'
+            : 'en';
+        const candidate = record[lang] ?? record.en ?? record.zh ?? record.text ?? record.name ?? fallback;
+        if (typeof candidate === 'string' || typeof candidate === 'number') {
+          return candidate;
+        }
+      }
+      return fallback;
     };
 
-    const handleItemChange = (checked: boolean, item: string | number) => {
-      storedValues.value[item] = checked;
+    const normalizeItem = (item: ACheckboxGroupItemConfig): ACheckboxGroupItem => {
+      if (typeof item === 'object' && item !== null) {
+        return {
+          ...item,
+          label: normalizeLabel(item.label, item.value),
+        };
+      }
+      return {
+        label: item,
+        value: item,
+      };
+    };
+
+    const normalizedItems = computed(() => props.items.map(normalizeItem));
+
+    const handleItemChange = (item: string | number, checked: boolean) => {
+      const next = new Set(selectedValues.value);
+      if (checked) {
+        next.add(item);
+      } else {
+        next.delete(item);
+      }
+      selectedValues.value = next;
       // will be emitted when some item was checked or unchecked, to update new values to parent
       emit(
         'update:modelValue',
-        props.items.filter((item) => storedValues.value[item]),
+        normalizedItems.value.filter((item) => next.has(item.value)).map((item) => item.value),
       );
     };
 
@@ -63,44 +104,19 @@ export default defineComponent({
       };
     });
 
-    watch([() => props.modelValue, () => props.items], () => {
-      props.modelValue?.forEach((item) => {
-        storedValues.value[item] = true;
-      });
-      // set other non-checked to false
-      props.items
-        .filter((item) => !props.modelValue?.includes(item))
-        .forEach((item) => {
-          storedValues.value[item] = false;
-        });
-    });
-
     watch(
-      () => props.items,
+      [() => props.modelValue, normalizedItems],
       () => {
-        props.items.forEach((item) => {
-          if (typeof storedValues.value[item] === 'undefined') {
-            storedValues.value[item] = props.modelValue?.includes(item) ? true : false;
-          }
-        });
+        const validValues = new Set(normalizedItems.value.map((item) => item.value));
+        selectedValues.value = new Set((props.modelValue ?? []).filter((value) => validValues.has(value)));
       },
+      { immediate: true },
     );
 
-    onBeforeMount(() => {
-      // init values from modelValue if set
-      props.items.forEach((item: string | number) => {
-        if (props.modelValue?.includes(item)) {
-          storedValues.value[item] = true;
-          return;
-        }
-        storedValues.value[item] = false;
-      });
-    });
-
     return {
-      storedValues,
+      selectedValues,
+      normalizedItems,
       checkboxItemStyles,
-      changeMethodFactory,
       handleItemChange,
     };
   },

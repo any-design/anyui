@@ -3,3 +3,5 @@ export interface PaginationMeta {
   pageSize: number;
   total: number;
 }
+
+export type PaginationShape = 'rounded' | 'squircle' | 'circle';

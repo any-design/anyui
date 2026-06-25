@@ -29,7 +29,7 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['svelte'],
+      external: ['svelte', 'qrcode'],
     },
   },
 });

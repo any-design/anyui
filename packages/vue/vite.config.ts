@@ -39,6 +39,7 @@ const BUILD_CONFIGS = {
           'vue',
           '@iconify/vue',
           '@popperjs/core',
+          'qrcode',
         ],
       },
       cssCodeSplit: false,

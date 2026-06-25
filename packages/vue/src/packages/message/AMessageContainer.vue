@@ -8,6 +8,7 @@
     :icon="message.icon"
     :showIcon="message.showIcon"
     :round="message.round"
+    :class="message.anim"
   />
 </template>
 
@@ -17,6 +18,9 @@ import { defineComponent, ref } from 'vue';
 
 import AMessage from './AMessage.vue';
 import type { Message, MessageEventEmitter } from './types';
+
+const MESSAGE_ENTER_DURATION = 320;
+const MESSAGE_LEAVE_DURATION = 240;
 
 export default defineComponent({
   components: {
@@ -29,7 +33,9 @@ export default defineComponent({
     },
   },
   setup(_, { expose }) {
-    const messageQueue = ref<Message[]>([]);
+    type QueueItem = Message & { anim: string };
+
+    const messageQueue = ref<QueueItem[]>([]);
     const emitter: MessageEventEmitter = mitt();
 
     const addMessage = (message: Message) => {
@@ -37,19 +43,59 @@ export default defineComponent({
       messageQueue.value.unshift({
         ...message,
         key,
+        anim: message.enterAnim === false ? '' : 'a-message--anim-enter-active a-message--anim-enter-from',
       });
+      if (message.enterAnim !== false) {
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            messageQueue.value = messageQueue.value.map((item) =>
+              item.key === key && !item.anim.includes('leave')
+                ? { ...item, anim: 'a-message--anim-enter-active a-message--anim-enter-to' }
+                : item,
+            );
+          }),
+        );
+        setTimeout(() => {
+          messageQueue.value = messageQueue.value.map((item) =>
+            item.key === key && !item.anim.includes('leave') ? { ...item, anim: '' } : item,
+          );
+        }, MESSAGE_ENTER_DURATION);
+      }
       if (message.duration) {
         setTimeout(() => {
-          const idx = messageQueue.value.findIndex((item) => item.key === key);
-          if (idx < 0) {
-            return;
-          }
-          messageQueue.value.splice(idx, 1);
-          if (messageQueue.value.length < 1) {
-            emitter.emit('cleared');
-          }
+          removeMessage(key);
         }, message.duration);
       }
+    };
+
+    const removeMessage = (key: string) => {
+      const target = messageQueue.value.find((item) => item.key === key);
+      if (!target || target.anim.includes('leave')) {
+        return;
+      }
+      if (target.leaveAnim === false) {
+        messageQueue.value = messageQueue.value.filter((item) => item.key !== key);
+        if (messageQueue.value.length < 1) {
+          emitter.emit('cleared');
+        }
+        return;
+      }
+      messageQueue.value = messageQueue.value.map((item) =>
+        item.key === key ? { ...item, anim: 'a-message--anim-leave-active a-message--anim-leave-from' } : item,
+      );
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          messageQueue.value = messageQueue.value.map((item) =>
+            item.key === key ? { ...item, anim: 'a-message--anim-leave-active a-message--anim-leave-to' } : item,
+          );
+        }),
+      );
+      setTimeout(() => {
+        messageQueue.value = messageQueue.value.filter((item) => item.key !== key);
+        if (messageQueue.value.length < 1) {
+          emitter.emit('cleared');
+        }
+      }, MESSAGE_LEAVE_DURATION);
     };
 
     expose({

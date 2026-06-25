@@ -41,6 +41,7 @@ export { default as Popup } from './components/Popup.svelte';
 export { default as PopupMenu } from './components/PopupMenu.svelte';
 export { default as Progress } from './components/Progress.svelte';
 export { default as ProgressButton } from './components/ProgressButton.svelte';
+export { default as QrCode } from './components/QrCode.svelte';
 export { default as Radio } from './components/Radio.svelte';
 export { default as RadioButton } from './components/RadioButton.svelte';
 export { default as RadioButtonGroup } from './components/RadioButtonGroup.svelte';
@@ -111,6 +112,7 @@ import Popup from './components/Popup.svelte';
 import PopupMenu from './components/PopupMenu.svelte';
 import Progress from './components/Progress.svelte';
 import ProgressButton from './components/ProgressButton.svelte';
+import QrCode from './components/QrCode.svelte';
 import Radio from './components/Radio.svelte';
 import RadioButton from './components/RadioButton.svelte';
 import RadioButtonGroup from './components/RadioButtonGroup.svelte';
@@ -135,69 +137,34 @@ import VirtualListItem from './components/VirtualListItem.svelte';
 export const buildInstaller = (componentList: unknown[]) => componentList;
 
 const defaultComponentList = [
-  Alert,
-  Avatar,
   Button,
   Card,
-  Chat,
   Checkbox,
   CheckboxGroup,
   ClickableText,
   Collapse,
-  ConfirmModal,
-  Content,
-  Dialog,
   Drawer,
-  DropdownMenu,
-  Empty,
   Float,
-  Footer,
   Form,
   FormItem,
   GradientText,
-  Grid,
-  GridRow,
-  GridCol,
-  Header,
-  Image,
   Input,
-  Item,
-  Kbd,
-  Layout,
-  ListMenu,
-  ListView,
-  ListViewItem,
-  Loading,
-  LoadingMask,
-  Masonry,
+  Image,
   Message,
-  OtpInput,
-  Pagination,
+  Layout,
+  Loading,
   Popper,
-  Popup,
   PopupMenu,
-  Progress,
-  ProgressButton,
   Radio,
-  RadioButton,
-  RadioButtonGroup,
   RadioGroup,
-  ScrollArea,
-  Select,
-  Side,
-  Slider,
-  Spinner,
+  RadioButtonGroup,
   Split,
+  Select,
   Step,
-  Switch,
-  Table,
+  Spinner,
   Tag,
   Textarea,
-  Toast,
-  Tooltip,
   Upload,
-  VirtualList,
-  VirtualListItem,
 ];
 
 export default {

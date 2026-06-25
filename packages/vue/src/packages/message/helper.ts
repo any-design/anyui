@@ -7,6 +7,7 @@ import type { MessageEventEmitter, MessageOptions } from './types';
 let messageContainer: {
   vm?: VNode;
   mountNode?: HTMLDivElement;
+  clearedBound?: boolean;
 } | null = null;
 
 export const popupMessage = ({
@@ -16,6 +17,8 @@ export const popupMessage = ({
   icon = '',
   showIcon = true,
   duration = 5000,
+  enterAnim = true,
+  leaveAnim = true,
   round = false,
 }: MessageOptions) => {
   if (!messageContainer) {
@@ -33,15 +36,19 @@ export const popupMessage = ({
     document.body.appendChild(mountNode);
   }
   const emitter = messageContainer.vm?.component?.exposed?.emitter as MessageEventEmitter;
-  if (emitter) {
-    emitter.on('cleared', () => {
-      const mountNode = messageContainer?.mountNode;
+  if (emitter && messageContainer && !messageContainer.clearedBound) {
+    messageContainer.clearedBound = true;
+    const clearMessageContainer = () => {
+      const current = messageContainer;
+      const mountNode = current?.mountNode;
       if (mountNode) {
         render(null, mountNode);
         document.body.removeChild(mountNode);
-        messageContainer = null;
       }
-    });
+      messageContainer = null;
+      emitter.off('cleared', clearMessageContainer);
+    };
+    emitter.on('cleared', clearMessageContainer);
   }
   messageContainer.vm?.component?.exposed?.addMessage({
     type,
@@ -49,6 +56,8 @@ export const popupMessage = ({
     icon,
     showIcon,
     duration,
+    enterAnim,
+    leaveAnim,
     round,
   });
 };
