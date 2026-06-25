@@ -2,10 +2,19 @@
 import ComponentsLayout from '../../layouts/ComponentsLayout.astro';
 import OverviewGrid from '../../components/vue/OverviewGrid.vue';
 import { componentsByCategory } from '../../data/components';
+import { componentsOverviewSeo } from '../../data/seo';
 
 const groups = componentsByCategory();
+const seo = componentsOverviewSeo();
 ---
 
-<ComponentsLayout title="Components" active="overview">
+<ComponentsLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  active="overview"
+  schemaType={seo.schemaType}
+  breadcrumbs={seo.breadcrumbs}
+>
   <OverviewGrid client:visible groups={groups} />
 </ComponentsLayout>

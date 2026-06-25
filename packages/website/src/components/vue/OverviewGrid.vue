@@ -1,15 +1,14 @@
 <template>
   <div class="components-index">
     <div class="components-index__hero">
-      <h1>Components</h1>
+      <h1>{{ t(currentLang, 'components.title') }}</h1>
       <p class="components-index__intro">
-        Every component in AnyUI, available across Vue, React and Svelte with one shared API.
-        Browse by category below, or pick a component from the sidebar.
+        {{ t(currentLang, 'components.intro') }}
       </p>
     </div>
 
     <section v-for="group in groups" :key="group.category.id" class="components-index__group">
-      <h2 class="components-index__group-title">{{ group.category.label.en }}</h2>
+      <h2 class="components-index__group-title">{{ group.category.label[currentLang] }}</h2>
       <a-grid class="components-index__grid" :columns="24" :gap="14" stretch>
         <a-grid-col
           v-for="item in group.items"
@@ -27,7 +26,7 @@
           >
             <div class="components-index__card-inner">
               <div class="components-index__card-name">{{ item.name }}</div>
-              <div class="components-index__card-blurb">{{ item.blurb.en }}</div>
+              <div class="components-index__card-blurb">{{ item.blurb[currentLang] }}</div>
             </div>
           </a-card>
         </a-grid-col>
@@ -38,6 +37,8 @@
 
 <script lang="ts" setup>
 import type { PropType } from 'vue';
+import { t } from '../../i18n/lang';
+import { useSiteLang } from './useSiteLang';
 
 interface ComponentItem {
   slug: string;
@@ -55,4 +56,6 @@ defineProps({
     default: () => [],
   },
 });
+
+const { currentLang } = useSiteLang();
 </script>

@@ -1,11 +1,29 @@
 ---
 import * as customizationDoc from '../../../../../docs/theme/customization.md';
+import * as customizationZhDoc from '../../../../../docs/theme/customization.zh.md';
 
+import LocalizedPage from '../../components/LocalizedPage.astro';
+import { docSeo } from '../../data/seo';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const headings = (customizationDoc as any).getHeadings?.() || [];
+const seo = docSeo('theming');
 ---
 
-<DocsLayout title="Theme Customization" active="theming" headings={headings}>
-  <customizationDoc.Content />
+<DocsLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  active="theming"
+  schemaType={seo.schemaType}
+  breadcrumbs={seo.breadcrumbs}
+  tocAuto
+>
+  <LocalizedPage>
+    <Fragment slot="en">
+      <customizationDoc.Content />
+    </Fragment>
+    <Fragment slot="zh">
+      <customizationZhDoc.Content />
+    </Fragment>
+  </LocalizedPage>
 </DocsLayout>

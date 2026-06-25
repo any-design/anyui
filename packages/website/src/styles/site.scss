@@ -19,10 +19,22 @@ html {
 body {
   font-family: var(--font-normal);
   color: var(--text);
-  background: var(--bg);
+  background: transparent;
   min-height: 100vh;
   overflow-x: hidden;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+// AnyUI's bundled layout.scss sets `html, body { position: relative; background: var(--bg) }`.
+// That gives body a stacking context and an opaque background, which traps the
+// z-index:-1 `.site-backdrop` underneath body's own paint — the texture was
+// invisible. Override body only: no opaque background, no stacking context. The
+// backdrop then escapes into html's root context, sitting above html's fallback
+// background (set in BaseLayout critical CSS) and below page content. html keeps
+// its fallback background + position from the shared stylesheet for FOUC safety.
+html > body {
+  position: static;
+  background: transparent;
 }
 
 a {
@@ -50,8 +62,12 @@ kbd,
   font-family: var(--font-mono) !important;
 }
 
-// pastel candy backdrop — dots, waves and tiny sweet motifs in the theme
-// palette, kept very low-key (no glow). Pure CSS, no requests.
+// pastel candy backdrop — a dreamy, blurred field of soft dots and puffy
+// color blooms. The texture is a large dotted grid drawn with radial gradients
+// (no SVG tiling, no hard strokes), softened with a generous blur so it reads
+// as fluffy confetti floating behind the content instead of a crisp printed
+// pattern. Ambient color washes underneath add the brand-hued haze. Masked to
+// fade out toward the lower half so it never competes with page content.
 .site-backdrop {
   position: fixed;
   inset: 0;
@@ -59,126 +75,115 @@ kbd,
   overflow: hidden;
   z-index: -1;
 
-  // Three layered repeating patterns, all derived from --primary/--secondary so
-  // the texture follows the theme. Concentrated toward the top via a vertical
-  // mask so it never competes with content lower on the page.
+  // Dotted confetti field. Two offset layers of soft radial-gradient dots —
+  // primary-tinted and secondary-tinted — on a large 64px grid. The whole layer
+  // is blurred so each dot melts into a puffy pastel puff, like floating bubbles
+  // or candy dust. Masked to the upper region so it never competes with content.
   &::before {
     content: '';
     position: absolute;
-    inset: 0;
+    inset: -10%;
     background-image:
-      // candy dots — a grid of small pastel dots
       radial-gradient(
-        color-mix(in srgb, var(--primary) 16%, transparent) 1.3px,
-        transparent 1.6px
-      ),
-      // tiny secondary-color dots, offset grid for a confetti feel
-      radial-gradient(
-        color-mix(in srgb, var(--secondary) 14%, transparent) 1.6px,
-        transparent 1.8px
-      ),
-      // wavy woven lines — two crossed repeating diagonal stripes
-      repeating-linear-gradient(
-        42deg,
-        color-mix(in srgb, var(--primary) 6%, transparent) 0 1px,
-        transparent 1px 14px
-      ),
-      repeating-linear-gradient(
-        -42deg,
-        color-mix(in srgb, var(--secondary) 6%, transparent) 0 1px,
-        transparent 1px 14px
-      ),
-      // scattered sweet motifs — a few small rings drawn as radial gradients
-      // placed at fixed coordinates (a heart-ish dot cluster), very faint
-      radial-gradient(
-        circle at 12% 22%,
-        color-mix(in srgb, var(--secondary) 12%, transparent) 0 6px,
-        transparent 6px
-      ),
-      radial-gradient(
-        circle at 82% 16%,
-        color-mix(in srgb, var(--primary) 12%, transparent) 0 5px,
+        circle at center,
+        color-mix(in srgb, var(--primary) 22%, transparent) 0 4px,
         transparent 5px
       ),
       radial-gradient(
-        circle at 68% 40%,
-        color-mix(in srgb, var(--secondary) 10%, transparent) 0 4px,
+        circle at center,
+        color-mix(in srgb, var(--secondary) 18%, transparent) 0 3px,
         transparent 4px
+      ),
+      radial-gradient(
+        circle at center,
+        color-mix(in srgb, var(--primary) 12%, transparent) 0 2px,
+        transparent 3px
       );
-    background-size:
-      26px 26px,
-      38px 38px,
-      80px 80px,
-      80px 80px,
-      100% 100%,
-      100% 100%,
-      100% 100%;
+    background-size: 64px 64px, 64px 64px, 96px 96px;
+    // offset the layers so primary + secondary dots interleave and the third
+    // sparse layer floats on its own wider rhythm
     background-position:
       0 0,
-      13px 13px,
-      0 0,
-      0 0,
-      0 0,
-      0 0,
-      0 0;
-    opacity: 0.55;
+      32px 32px,
+      16px 48px;
+    filter: blur(8px);
+    opacity: 0.9;
     -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 78%);
     mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 78%);
   }
 
-  // Soft ambient color washes (not glows): low opacity, modest blur, just enough
-  // to give the dark/light page a hint of theme color in the upper region.
+  // Soft ambient color washes (not glows): heavier blur than the dots so they
+  // sit further back, just enough to give the page a dreamy brand-hued haze in
+  // the upper region. These are the puffy candy clouds behind the confetti.
   span {
     position: absolute;
     border-radius: var(--a-radius-full, 999px);
-    filter: blur(70px);
-    opacity: 0.18;
+    filter: blur(90px);
+    opacity: 0.22;
   }
 
   span:nth-child(1) {
-    width: 520px;
-    height: 520px;
-    left: -160px;
-    top: -180px;
+    width: 540px;
+    height: 540px;
+    left: -180px;
+    top: -200px;
     background: var(--primary);
   }
   span:nth-child(2) {
-    width: 460px;
-    height: 460px;
-    right: -140px;
-    top: 60px;
+    width: 480px;
+    height: 480px;
+    right: -160px;
+    top: 40px;
     background: var(--secondary);
   }
   span:nth-child(3) {
-    width: 560px;
-    height: 560px;
-    left: 32%;
-    top: 60%;
-    background: var(--primary);
-    opacity: 0.1;
+    width: 600px;
+    height: 600px;
+    left: 28%;
+    top: 55%;
+    background: var(--secondary);
+    opacity: 0.12;
   }
 }
 
-// Dark mode: keep the candy texture but make it noticeably quieter so it never
-// competes with the lifted card surfaces or muddies the dark palette.
+// Dark mode: the blur + low-alpha dots need a brighter tint to read against the
+// charcoal background, and the ambient washes are dimmed so they stay subtle.
 html[theme='dark'] {
   .site-backdrop::before {
-    opacity: 0.35;
+    background-image:
+      radial-gradient(
+        circle at center,
+        color-mix(in srgb, var(--primary) 30%, transparent) 0 4px,
+        transparent 5px
+      ),
+      radial-gradient(
+        circle at center,
+        color-mix(in srgb, var(--secondary) 26%, transparent) 0 3px,
+        transparent 4px
+      ),
+      radial-gradient(
+        circle at center,
+        color-mix(in srgb, var(--primary) 16%, transparent) 0 2px,
+        transparent 3px
+      );
+    filter: blur(10px);
+    opacity: 0.6;
     -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 28%, transparent 60%);
     mask-image: linear-gradient(180deg, #000 0%, #000 28%, transparent 60%);
   }
 
   .site-backdrop span {
-    opacity: 0.12;
+    opacity: 0.14;
   }
 
   .site-backdrop span:nth-child(3) {
-    opacity: 0.08;
+    opacity: 0.09;
   }
 }
 
 // ------------------------------------------------------------------ header
-// floating capsule nav — always glassy, independent of the glass toggle
+// floating capsule nav; it follows the same solid / glass surface toggle as the
+// component demos so the global preference is visible immediately.
 
 .site-header {
   position: fixed;
@@ -199,15 +204,18 @@ html[theme='dark'] {
     padding: 0 10px 0 20px;
     max-width: calc(100vw - 28px);
     border-radius: var(--a-radius-full, 999px);
-    background: color-mix(in srgb, var(--bg-bright) 58%, transparent);
-    -webkit-backdrop-filter: blur(26px) saturate(2) brightness(1.04);
-    backdrop-filter: blur(26px) saturate(2) brightness(1.04);
-    border: 1px solid color-mix(in srgb, #fff 42%, transparent);
+    background: color-mix(in srgb, var(--bg-bright) 96%, #fff 4%);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 1px solid var(--line);
     box-shadow:
-      inset 0 1px 1px color-mix(in srgb, #fff 60%, transparent),
-      inset 0 0 0 1px color-mix(in srgb, #fff 14%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #fff 64%, transparent),
       0 8px 28px -8px var(--shadow-18);
-    transition: box-shadow var(--anim-duration, 200ms) ease;
+    transition:
+      background-color var(--anim-duration, 200ms) ease,
+      border-color var(--anim-duration, 200ms) ease,
+      box-shadow var(--anim-duration, 200ms) ease,
+      backdrop-filter var(--anim-duration, 200ms) ease;
   }
 
   &__brand {
@@ -266,9 +274,9 @@ html[theme='dark'] {
   &__action-button.a-button:hover {
     filter: none;
     transform: translateY(-1px);
-    background: color-mix(in srgb, #fff 30%, transparent);
+    background: var(--bg-semi-light);
     color: var(--text);
-    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 48%, transparent);
   }
 
   &__nav-button.a-button:active,
@@ -279,8 +287,36 @@ html[theme='dark'] {
 
   &__nav-button--active.a-button,
   &__action-button--active.a-button {
+    background: var(--primary-10, var(--primary-8));
+    color: var(--text);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, #fff 60%, transparent),
+      inset 0 0 0 1px var(--primary-20, color-mix(in srgb, var(--primary) 20%, transparent)),
+      0 2px 8px var(--shadow-8);
+  }
+}
+
+html[data-anyui-style='glass'] .site-header {
+  &__inner {
+    background: color-mix(in srgb, var(--bg-bright) 58%, transparent);
+    -webkit-backdrop-filter: blur(26px) saturate(2) brightness(1.04);
+    backdrop-filter: blur(26px) saturate(2) brightness(1.04);
+    border-color: color-mix(in srgb, #fff 42%, transparent);
+    box-shadow:
+      inset 0 1px 1px color-mix(in srgb, #fff 60%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, #fff 14%, transparent),
+      0 8px 28px -8px var(--shadow-18);
+  }
+
+  &__nav-button.a-button:hover,
+  &__action-button.a-button:hover {
+    background: color-mix(in srgb, #fff 30%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+  }
+
+  &__nav-button--active.a-button,
+  &__action-button--active.a-button {
     background: color-mix(in srgb, #fff 44%, transparent);
-    color: var(--primary);
     box-shadow:
       inset 0 1px 0 color-mix(in srgb, #fff 70%, transparent),
       inset 0 0 0 1px color-mix(in srgb, #fff 25%, transparent),
@@ -289,6 +325,31 @@ html[theme='dark'] {
 }
 
 html[theme='dark'] .site-header {
+  &__inner {
+    background: color-mix(in srgb, var(--bg-bright) 96%, #fff 4%);
+    border-color: var(--line);
+    box-shadow:
+      inset 0 1px 1px color-mix(in srgb, #fff 20%, transparent),
+      0 8px 28px -8px var(--shadow-30, var(--shadow-18));
+  }
+
+  &__nav-button.a-button:hover,
+  &__action-button.a-button:hover {
+    background: var(--bg-semi-light);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent);
+  }
+
+  &__nav-button--active.a-button,
+  &__action-button--active.a-button {
+    background: var(--primary-18, color-mix(in srgb, var(--primary) 18%, transparent));
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, #fff 26%, transparent),
+      inset 0 0 0 1px var(--primary-20, color-mix(in srgb, var(--primary) 20%, transparent)),
+      0 2px 8px var(--shadow-20);
+  }
+}
+
+html[theme='dark'][data-anyui-style='glass'] .site-header {
   &__inner {
     background: color-mix(in srgb, var(--bg-bright) 52%, transparent);
     border-color: color-mix(in srgb, #fff 14%, transparent);
@@ -301,7 +362,6 @@ html[theme='dark'] .site-header {
   &__nav-button.a-button:hover,
   &__action-button.a-button:hover {
     background: color-mix(in srgb, #fff 9%, transparent);
-    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent);
   }
 
   &__nav-button--active.a-button,
@@ -520,10 +580,20 @@ html[theme='dark'] .site-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 23px;
     border-radius: var(--a-radius, 14px);
     background: linear-gradient(135deg, var(--primary-12), var(--secondary-20));
     box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent);
+
+    // Microsoft Fluent Emoji (3D/color) replaces the old text-glyph emoji.
+    // The SVGs ship at 32x32; scale them up to fill the rounded tile nicely.
+    img {
+      width: 30px;
+      height: 30px;
+      display: block;
+      object-fit: contain;
+      // drop-shadow keeps colored emoji legible against the tinted tile bg
+      filter: drop-shadow(0 1px 1px color-mix(in srgb, #000 18%, transparent));
+    }
   }
 
   &__title {
@@ -1113,6 +1183,43 @@ html[theme='dark'] {
   }
 }
 
+.demo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  min-width: min(100%, 280px);
+
+  & + & {
+    margin-top: 14px;
+  }
+
+  > .a-input,
+  > .a-select,
+  > .a-textarea {
+    width: min(100%, 280px);
+  }
+}
+
+.preview-frame__render {
+  > .a-button:not(.a-button--fill),
+  .demo-row > .a-button:not(.a-button--fill),
+  .demo-col > .a-button:not(.a-button--fill) {
+    flex: 0 1 auto;
+    width: fit-content;
+    max-width: min(100%, 168px);
+    padding-inline: 14px;
+  }
+
+  > .a-button:not(.a-button--fill) .a-button__inner,
+  .demo-row > .a-button:not(.a-button--fill) .a-button__inner,
+  .demo-col > .a-button:not(.a-button--fill) .a-button__inner {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 // live previews rendered above the markdown docs
 .component-previews {
   margin: 32px 0 0 0;
@@ -1149,45 +1256,67 @@ html[theme='dark'] {
   &__toolbar {
     display: flex;
     justify-content: flex-end;
-    padding: 0 14px 8px 14px;
+    padding: 0 16px 14px 16px;
   }
 
-  &__toggle {
-    appearance: none;
+  &__toggle.a-button {
+    height: 30px;
     width: auto;
-    border: 1px solid var(--border-light, var(--border));
+    border-color: var(--border-light, var(--border));
     background: var(--a-surface, var(--bg-bright));
     color: var(--text-secondary);
-    font-family: inherit;
-    font-size: 11px;
+    box-shadow: var(--a-shadow-xs, 0 2px 8px var(--shadow-4));
+    font-size: 12px;
     font-weight: 700;
-    padding: 4px 12px;
-    border-radius: var(--a-radius-full, 999px);
-    cursor: pointer;
-    white-space: nowrap;
-    transition:
-      color var(--anim-duration-quick, 120ms) ease,
-      border-color var(--anim-duration-quick, 120ms) ease;
 
     &:hover {
       color: var(--primary);
       border-color: var(--primary-60);
+      filter: none;
     }
+  }
+
+  &__code-collapse.a-collapse {
+    width: 100%;
+    height: auto;
+  }
+
+  &__code-shell {
+    padding: 0 16px 16px 16px;
   }
 
   &__code {
     margin: 0;
-    padding: 14px 18px;
-    border-top: 1px solid var(--line);
-    background: var(--bg-semi-dark);
     font-family: var(--font-mono);
     font-size: 13px;
     line-height: 1.6;
     overflow-x: auto;
 
-    code {
+    .shiki,
+    .shiki code,
+    .shiki span,
+    &--plain,
+    &--plain code {
+      font-family: var(--font-mono) !important;
+    }
+
+    .shiki,
+    &--plain {
+      margin: 0;
+      padding: 18px 20px;
+      border-radius: var(--a-radius, 14px);
+      border: 1px solid var(--line);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 58%, transparent);
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .shiki code,
+    &--plain code {
+      display: block;
+      min-width: max-content;
       font-family: inherit;
-      color: var(--text);
     }
   }
 
@@ -1196,6 +1325,25 @@ html[theme='dark'] {
     color: var(--text-secondary);
     font-size: 13px;
     font-style: italic;
+  }
+}
+
+html[theme='dark'] .preview-frame {
+  &__code {
+    .shiki,
+    .shiki span {
+      color: var(--shiki-dark) !important;
+      background-color: var(--shiki-dark-bg) !important;
+      font-style: var(--shiki-dark-font-style) !important;
+      font-weight: var(--shiki-dark-font-weight) !important;
+      text-decoration: var(--shiki-dark-text-decoration) !important;
+    }
+
+    .shiki,
+    &--plain {
+      border-color: color-mix(in srgb, #fff 8%, transparent);
+      box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 10%, transparent);
+    }
   }
 }
 

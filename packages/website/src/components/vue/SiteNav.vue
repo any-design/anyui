@@ -8,6 +8,7 @@
         :href="item.href"
         :target="item.external ? '_blank' : undefined"
         :rel="item.external ? 'noreferrer' : undefined"
+        :data-astro-reload="item.reload ? true : undefined"
         :aria-current="item.active && currentActive === item.active ? 'page' : undefined"
         @click="(event) => handleNavClick(event, item)"
       >
@@ -16,7 +17,6 @@
           :class="{ 'site-header__nav-button--active': item.active && currentActive === item.active }"
           size="small"
           round
-          :icon="item.icon"
         >
           {{ item.label }}
         </a-button>
@@ -30,6 +30,8 @@
         size="small"
         round
         :icon="dark ? 'ph:moon-bold' : 'ph:sun-bold'"
+        :title="dark ? 'Switch to light theme' : 'Switch to dark theme'"
+        :aria-label="dark ? 'Switch to light theme' : 'Switch to dark theme'"
         role="button"
         tabindex="0"
         :aria-pressed="dark"
@@ -44,7 +46,9 @@
         :class="{ 'site-header__action-button--active': glass }"
         size="small"
         round
-        icon="ph:drop-bold"
+        :icon="glass ? 'ph:drop-bold' : 'ph:square-half-bold'"
+        :title="glass ? 'Use solid surfaces' : 'Use glass surfaces'"
+        :aria-label="glass ? 'Use solid surfaces' : 'Use glass surfaces'"
         role="button"
         tabindex="0"
         :aria-pressed="glass"
@@ -52,7 +56,7 @@
         @keydown.enter.prevent="toggleGlass"
         @keydown.space.prevent="toggleGlass"
       >
-        Glass
+        {{ glass ? 'Glass' : 'Solid' }}
       </a-button>
     </div>
   </div>
@@ -67,7 +71,7 @@ interface NavItem {
   href: string;
   active?: string;
   external?: boolean;
-  icon?: string;
+  reload?: boolean;
 }
 
 const props = defineProps<{
@@ -75,10 +79,10 @@ const props = defineProps<{
 }>();
 
 const navItems: NavItem[] = [
-  { label: 'Docs', href: '/docs/getting-started', active: 'docs', icon: 'ri:book-open-line' },
-  { label: 'Components', href: '/components', active: 'components', icon: 'ri:shapes-line' },
-  { label: 'Testground', href: 'https://anyui-testground.pwp.sh', external: true, icon: 'ri:flask-line' },
-  { label: 'GitHub', href: 'https://github.com/any-design/anyui', external: true, icon: 'mdi:github' },
+  { label: 'Docs', href: '/docs/getting-started', active: 'docs' },
+  { label: 'Components', href: '/components', active: 'components' },
+  { label: 'Testground', href: '/testground/', active: 'testground', reload: true },
+  { label: 'GitHub', href: 'https://github.com/any-design/anyui', external: true },
 ];
 
 const STORAGE_KEY = 'anyui-site-prefs';
@@ -131,6 +135,9 @@ const activeFromPath = (path: string) => {
   if (path.startsWith('/components')) {
     return 'components';
   }
+  if (path.startsWith('/testground')) {
+    return 'testground';
+  }
   return '';
 };
 
@@ -142,7 +149,7 @@ const isPlainLeftClick = (event: MouseEvent) =>
   event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
 const handleNavClick = (event: MouseEvent, item: NavItem) => {
-  if (item.external || !isPlainLeftClick(event)) {
+  if (item.external || item.reload || !isPlainLeftClick(event)) {
     return;
   }
   event.preventDefault();

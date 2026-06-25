@@ -1,11 +1,29 @@
 ---
 import * as iconsDoc from '../../../../../docs/theme/icons.md';
+import * as iconsZhDoc from '../../../../../docs/theme/icons.zh.md';
 
+import LocalizedPage from '../../components/LocalizedPage.astro';
+import { docSeo } from '../../data/seo';
 import DocsLayout from '../../layouts/DocsLayout.astro';
 
-const headings = (iconsDoc as any).getHeadings?.() || [];
+const seo = docSeo('icons');
 ---
 
-<DocsLayout title="Icons" active="icons" headings={headings}>
-  <iconsDoc.Content />
+<DocsLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  active="icons"
+  schemaType={seo.schemaType}
+  breadcrumbs={seo.breadcrumbs}
+  tocAuto
+>
+  <LocalizedPage>
+    <Fragment slot="en">
+      <iconsDoc.Content />
+    </Fragment>
+    <Fragment slot="zh">
+      <iconsZhDoc.Content />
+    </Fragment>
+  </LocalizedPage>
 </DocsLayout>

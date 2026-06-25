@@ -48,25 +48,27 @@ const slugify = (value: string) =>
   value
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
     .replace(/\s+/g, '-');
 
 const scanHeadings = () => {
   if (!props.auto) {
     return;
   }
-  localHeadings.value = Array.from(document.querySelectorAll<HTMLElement>('.prose h2, .prose h3')).map(
-    (heading) => {
-      if (!heading.id) {
-        heading.id = slugify(heading.textContent || '');
-      }
+  const currentLang = document.documentElement.dataset.lang || 'en';
+  localHeadings.value = Array.from(document.querySelectorAll<HTMLElement>('.prose h2, .prose h3'))
+    .filter((heading) => {
+      const pane = heading.closest<HTMLElement>('.localized-doc__pane');
+      return !pane || pane.dataset.lang === currentLang;
+    })
+    .map((heading, index) => {
+      heading.id = slugify(heading.textContent || '') || `section-${index + 1}`;
       return {
         depth: heading.tagName.toLowerCase() === 'h2' ? 2 : 3,
         slug: heading.id,
         text: heading.textContent || '',
       };
-    },
-  );
+    });
 };
 
 const disconnectObserver = () => {
@@ -149,6 +151,11 @@ const handleHashChange = () => {
   setActiveFromHash();
 };
 
+const handleLanguageApplied = () => {
+  scanHeadings();
+  setupObserver();
+};
+
 watch(normalizedHeadings, setupObserver, { deep: true });
 
 onMounted(() => {
@@ -157,11 +164,13 @@ onMounted(() => {
     setupObserver();
   }
   window.addEventListener('hashchange', handleHashChange);
+  window.addEventListener('anyui:lang-applied', handleLanguageApplied);
 });
 
 onBeforeUnmount(() => {
   window.clearTimeout(scrollTimer);
   window.removeEventListener('hashchange', handleHashChange);
+  window.removeEventListener('anyui:lang-applied', handleLanguageApplied);
   disconnectObserver();
 });
 </script>

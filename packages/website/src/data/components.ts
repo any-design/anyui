@@ -331,6 +331,16 @@ export const COMPONENTS: ComponentEntry[] = [
     },
   },
   {
+    slug: 'qr-code',
+    name: 'QrCode',
+    folder: 'qrCode',
+    category: 'display',
+    blurb: {
+      en: 'Generate an SVG QR code from text content.',
+      zh: '将文本内容快速生成 SVG 二维码。',
+    },
+  },
+  {
     slug: 'clickable-text',
     name: 'ClickableText',
     folder: 'clickableText',

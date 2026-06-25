@@ -1,6 +1,7 @@
 ---
 import LocalizedDoc from '../../components/LocalizedDoc.astro';
 import { COMPONENTS, type ComponentEntry } from '../../data/components';
+import { componentSeo } from '../../data/seo';
 import ComponentsLayout from '../../layouts/ComponentsLayout.astro';
 
 type MarkdownModule = {
@@ -24,6 +25,7 @@ export function getStaticPaths() {
 
 const { component } = Astro.props;
 const docName = `A${component.name}`;
+const seo = componentSeo(component);
 const enDoc = docs[`../../../../../docs/components/${component.folder}/${docName}/${docName}_English.md`];
 const zhDoc = docs[`../../../../../docs/components/${component.folder}/${docName}/${docName}_Chinese.md`];
 
@@ -32,6 +34,13 @@ if (!enDoc || !zhDoc) {
 }
 ---
 
-<ComponentsLayout title={docName} active={component.slug}>
+<ComponentsLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  active={component.slug}
+  schemaType={seo.schemaType}
+  breadcrumbs={seo.breadcrumbs}
+>
   <LocalizedDoc en={enDoc} zh={zhDoc} />
 </ComponentsLayout>

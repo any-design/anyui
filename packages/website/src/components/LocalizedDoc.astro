@@ -12,6 +12,8 @@
 // the preview Vite plugin, so there is no runtime template compiler.
 
 import PreviewFrame from './vue/PreviewFrame.vue';
+import { codeToHtml } from 'shiki';
+import { t } from '../i18n/lang';
 
 interface Props {
   en: unknown; // markdown module: { Content, rawContent, file, ... }
@@ -51,6 +53,19 @@ if (rawEn) {
   }
 }
 
+const highlightedVueBlocks = await Promise.all(
+  vueBlocks.map(async (block) => ({
+    ...block,
+    codeHtml: await codeToHtml(block.code, {
+      lang: 'vue',
+      themes: {
+        light: 'one-light',
+        dark: 'one-dark-pro',
+      },
+    }),
+  })),
+);
+
 // Build the preview registry key for each block: <slug>__<subfolder>-<index>
 const previewKey = (index: number) => `${slug}__${subfolder}-${index}`;
 ---
@@ -65,10 +80,18 @@ const previewKey = (index: number) => `${slug}__${subfolder}-${index}`;
   {
     vueBlocks.length > 0 && (
       <div class="component-previews">
-        <h2 class="component-previews__title">Live previews</h2>
+        <h2 class="component-previews__title">
+          <span class="localized-doc__inline" data-lang="en">{t('en', 'components.previews')}</span>
+          <span class="localized-doc__inline" data-lang="zh">{t('zh', 'components.previews')}</span>
+        </h2>
         <div class="component-previews__list">
-          {vueBlocks.map((b) => (
-            <PreviewFrame client:only="vue" previewKey={previewKey(b.index)} code={b.code} />
+          {highlightedVueBlocks.map((b) => (
+            <PreviewFrame
+              client:only="vue"
+              previewKey={previewKey(b.index)}
+              code={b.code}
+              codeHtml={b.codeHtml}
+            />
           ))}
         </div>
       </div>
@@ -81,31 +104,42 @@ const previewKey = (index: number) => `${slug}__${subfolder}-${index}`;
   .localized-doc[data-lang='zh'] > .localized-doc__pane[data-lang='en'] {
     display: none;
   }
+
+  .localized-doc[data-lang='en'] .localized-doc__inline[data-lang='zh'],
+  .localized-doc[data-lang='zh'] .localized-doc__inline[data-lang='en'] {
+    display: none;
+  }
 </style>
 
 <script is:inline>
-  // Apply the persisted language to every .localized-doc on the page.
-  // The global listeners are registered once (guarded by a window flag)
-  // so re-injecting this script on each page doesn't pile up handlers.
-  const applyDocLang = (lang) => {
-    const target = lang === 'zh' ? 'zh' : 'en';
-    document.querySelectorAll('.localized-doc').forEach((el) => {
-      el.setAttribute('data-lang', target);
-    });
-  };
-  const readDocLang = () => {
-    try {
-      return JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}').lang;
-    } catch {
-      return undefined;
+  (() => {
+    // Apply the persisted language to every .localized-doc on the page.
+    // The global listeners are registered once (guarded by a window flag)
+    // so re-injecting this script on each page doesn't pile up handlers.
+    const applyDocLang = (lang) => {
+      const target = lang === 'zh' ? 'zh' : 'en';
+      document.querySelectorAll('.localized-doc').forEach((el) => {
+        el.setAttribute('data-lang', target);
+      });
+      document.documentElement.setAttribute('lang', target === 'zh' ? 'zh-CN' : 'en');
+      document.documentElement.setAttribute('data-lang', target);
+      window.dispatchEvent(new CustomEvent('anyui:lang-applied', { detail: target }));
+    };
+    const readDocLang = () => {
+      try {
+        return JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}').lang;
+      } catch {
+        return undefined;
+      }
+    };
+
+    window.__anyuiApplyLang = applyDocLang;
+    applyDocLang(readDocLang());
+
+    if (!window.__anyuiLangBound) {
+      window.__anyuiLangBound = true;
+      document.addEventListener('astro:page-load', () => window.__anyuiApplyLang?.(readDocLang()));
+      window.addEventListener('anyui:lang-change', (e) => window.__anyuiApplyLang?.(e.detail));
     }
-  };
-  // apply now + on every client-side navigation
-  applyDocLang(readDocLang());
-  // react to the language pill + page loads (bound once per window)
-  if (!window.__anyuiLangBound) {
-    window.__anyuiLangBound = true;
-    document.addEventListener('astro:page-load', () => applyDocLang(readDocLang()));
-    window.addEventListener('anyui:lang-change', (e) => applyDocLang(e.detail));
-  }
+  })();
 </script>
