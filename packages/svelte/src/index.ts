@@ -1,3 +1,5 @@
+export { default as Accordion } from './components/Accordion.svelte';
+export { default as AccordionItem } from './components/AccordionItem.svelte';
 export { default as Alert } from './components/Alert.svelte';
 export { default as Avatar } from './components/Avatar.svelte';
 export { default as Button } from './components/Button.svelte';
@@ -55,6 +57,9 @@ export { default as Split } from './components/Split.svelte';
 export { default as Step } from './components/Step.svelte';
 export { default as Switch } from './components/Switch.svelte';
 export { default as Table } from './components/Table.svelte';
+export { default as Tabs } from './components/Tabs.svelte';
+export { default as Tab } from './components/Tab.svelte';
+export { default as TabPanel } from './components/TabPanel.svelte';
 export { default as Tag } from './components/Tag.svelte';
 export { default as Textarea } from './components/Textarea.svelte';
 export { default as Toast } from './components/Toast.svelte';
@@ -69,6 +74,8 @@ export { confirmModal } from './confirmModal';
 export { loadingMask } from './loadingMask';
 
 import { message } from './message';
+import Accordion from './components/Accordion.svelte';
+import AccordionItem from './components/AccordionItem.svelte';
 import Alert from './components/Alert.svelte';
 import Avatar from './components/Avatar.svelte';
 import Button from './components/Button.svelte';
@@ -126,6 +133,9 @@ import Split from './components/Split.svelte';
 import Step from './components/Step.svelte';
 import Switch from './components/Switch.svelte';
 import Table from './components/Table.svelte';
+import Tabs from './components/Tabs.svelte';
+import Tab from './components/Tab.svelte';
+import TabPanel from './components/TabPanel.svelte';
 import Tag from './components/Tag.svelte';
 import Textarea from './components/Textarea.svelte';
 import Toast from './components/Toast.svelte';
@@ -143,6 +153,7 @@ const defaultComponentList = [
   CheckboxGroup,
   ClickableText,
   Collapse,
+  Accordion,
   Drawer,
   Float,
   Form,
@@ -162,6 +173,7 @@ const defaultComponentList = [
   Select,
   Step,
   Spinner,
+  Tabs,
   Tag,
   Textarea,
   Upload,

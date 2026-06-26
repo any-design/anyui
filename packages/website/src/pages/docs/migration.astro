@@ -1,0 +1,33 @@
+---
+import LocalizedDoc from '../../components/LocalizedDoc.astro';
+import { docSeo } from '../../data/seo';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+type MarkdownModule = {
+  Content: unknown;
+  file?: string;
+  rawContent?: () => string;
+};
+
+const docs = import.meta.glob<MarkdownModule>('../../../../../docs/migration/*.md', { eager: true });
+
+const seo = docSeo('migration');
+const enDoc = docs[`../../../../../docs/migration/v0.4.0-v0.5.0_English.md`];
+const zhDoc = docs[`../../../../../docs/migration/v0.4.0-v0.5.0_Chinese.md`];
+
+if (!enDoc || !zhDoc) {
+  throw new Error('Missing migration docs for v0.4.0-v0.5.0');
+}
+---
+
+<DocsLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  active="migration"
+  schemaType={seo.schemaType}
+  breadcrumbs={seo.breadcrumbs}
+  tocAuto
+>
+  <LocalizedDoc en={enDoc} zh={zhDoc} />
+</DocsLayout>

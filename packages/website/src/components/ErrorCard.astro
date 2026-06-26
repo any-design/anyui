@@ -1,0 +1,225 @@
+---
+export interface Props {
+  code: '404' | '500';
+}
+
+interface ErrorConfig {
+  emoji: string;
+  title: string;
+  titleZh: string;
+  desc: string;
+  descZh: string;
+  primary: { label: string; labelZh: string; href: string };
+  secondary: { label: string; labelZh: string; href: string };
+}
+
+const { code } = Astro.props as Props;
+
+const config: ErrorConfig =
+  code === '404'
+    ? {
+        emoji: '🌀',
+        title: 'Page not found',
+        titleZh: '页面走丢了',
+        desc: 'The page you are looking for drifted off into the clouds. Let us help you find your way back.',
+        descZh: '你寻找的页面飘进了云朵里。让我们帮你找到回去的路。',
+        primary: { label: 'Back to home', labelZh: '回到首页', href: '/' },
+        secondary: { label: 'Browse components', labelZh: '浏览组件', href: '/components' },
+      }
+    : {
+        emoji: '🧁',
+        title: 'Something went wrong',
+        titleZh: '出了点小状况',
+        desc: 'Our server tripped over a sprinkle while serving this page. Please try again in a moment.',
+        descZh: '我们的服务器在为你端上这页时不小心洒了点糖霜。请稍后再试。',
+        primary: { label: 'Try again', labelZh: '重试', href: '/' },
+        secondary: { label: 'Report on GitHub', labelZh: '在 GitHub 反馈', href: 'https://github.com/any-design/anyui/issues' },
+      };
+
+const secondaryAttrs = config.secondary.href.startsWith('http')
+  ? { target: '_blank', rel: 'noreferrer' }
+  : {};
+---
+
+<main class="error-page">
+  <div class="error-card">
+    <div class="error-card__emoji" aria-hidden="true">{config.emoji}</div>
+    <div class="error-card__code" aria-hidden="true">{code}</div>
+    <div class="error-card__body" data-lang="en">
+      <h1 class="error-card__title">{config.title}</h1>
+      <p class="error-card__desc">{config.desc}</p>
+      <div class="error-card__actions">
+        <a class="error-card__btn error-card__btn--primary" href={config.primary.href}>
+          {config.primary.label}
+        </a>
+        <a class="error-card__btn" href={config.secondary.href} {...secondaryAttrs}>
+          {config.secondary.label}
+        </a>
+      </div>
+    </div>
+    <div class="error-card__body" data-lang="zh">
+      <h1 class="error-card__title">{config.titleZh}</h1>
+      <p class="error-card__desc">{config.descZh}</p>
+      <div class="error-card__actions">
+        <a class="error-card__btn error-card__btn--primary" href={config.primary.href}>
+          {config.primary.labelZh}
+        </a>
+        <a class="error-card__btn" href={config.secondary.href} {...secondaryAttrs}>
+          {config.secondary.labelZh}
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<style is:global>
+  .error-page {
+    min-height: calc(100vh - 64px - 64px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    box-sizing: border-box;
+  }
+
+  .error-card {
+    text-align: center;
+    max-width: 460px;
+    padding: 48px 40px;
+    border-radius: var(--a-radius-xl, 22px);
+    background: var(--a-surface, var(--bg-bright));
+    border: 1px solid var(--a-surface-border-color, transparent);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      var(--a-shadow-lg, 0 8px 16px var(--shadow-6), 0 20px 44px -12px var(--shadow-12));
+    backdrop-filter: var(--a-surface-backdrop, none);
+    -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .error-card__emoji {
+    font-size: 72px;
+    line-height: 1;
+    margin-bottom: 8px;
+    animation: error-bob 2.4s var(--a-ease-soft, ease) infinite;
+  }
+
+  @keyframes error-bob {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+  }
+
+  .error-card__code {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 88px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    background: linear-gradient(42deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 16px;
+  }
+
+  .error-card__title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.04rem;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .error-card__desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+  }
+
+  .error-card__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .error-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 4px 20px;
+    border-radius: var(--a-radius, 14px);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05rem;
+    color: var(--primary);
+    background: var(--a-surface-control, var(--bg));
+    border: 1px solid var(--primary);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      var(--a-shadow-sm, 0 2px 6px var(--shadow-4), 0 6px 16px -4px var(--shadow-8));
+    text-decoration: none;
+    transition:
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease),
+      box-shadow var(--anim-duration-quick, 120ms) ease,
+      filter var(--anim-duration-quick, 120ms) ease;
+  }
+
+  .error-card__btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.06);
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      var(--a-shadow-md, 0 4px 10px var(--shadow-5), 0 12px 28px -8px var(--shadow-10));
+  }
+
+  .error-card__btn:active {
+    transform: translateY(0) scale(0.96);
+  }
+
+  .error-card__btn--primary {
+    background: linear-gradient(180deg, var(--primary-l-6, var(--primary)) 0%, var(--primary-d-4, var(--primary)) 100%);
+    color: var(--text-btn, #fff);
+    border: none;
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      0 6px 18px -6px color-mix(in srgb, var(--primary) 55%, transparent),
+      0 2px 6px var(--shadow-4);
+  }
+
+  .error-card__btn--primary:hover {
+    background: linear-gradient(180deg, var(--primary) 0%, var(--primary-85, var(--primary)) 100%);
+  }
+
+  .error-card__btn--primary:active {
+    background: var(--primary-75, var(--primary));
+  }
+
+  .error-card__body {
+    display: none;
+  }
+  .error-card__body[data-lang='en'] {
+    display: block;
+  }
+  html[data-lang='zh'] .error-card__body[data-lang='en'] {
+    display: none;
+  }
+  html[data-lang='zh'] .error-card__body[data-lang='zh'] {
+    display: block;
+  }
+
+  @media (max-width: 520px) {
+    .error-card {
+      padding: 36px 24px;
+    }
+    .error-card__code {
+      font-size: 64px;
+    }
+    .error-card__emoji {
+      font-size: 56px;
+    }
+  }
+</style>

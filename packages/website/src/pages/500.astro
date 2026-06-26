@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ErrorCard from '../components/ErrorCard.astro';
+import { pageSeo } from '../data/seo';
+
+const seo = pageSeo({
+  title: 'Something went wrong · 500',
+  description:
+    'An unexpected error occurred while serving this page. Please try again in a moment.',
+  path: '/500',
+});
+---
+
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  robots="noindex, nofollow"
+>
+  <ErrorCard code="500" />
+</BaseLayout>

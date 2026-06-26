@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui-website",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Official website and docs for AnyUI",
   "type": "module",
@@ -13,8 +13,8 @@
   "devDependencies": {
     "@astrojs/svelte": "^9.0.0",
     "@astrojs/vue": "^7.0.0",
-    "astro": "^7.0.0",
-    "shiki": "4.2.0",
-    "wrangler": "^4.99.0"
+    "astro": "^7.0.3",
+    "shiki": "4.3.0",
+    "wrangler": "^4.105.0"
   }
 }
