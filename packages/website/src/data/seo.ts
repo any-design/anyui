@@ -70,6 +70,12 @@ export const DOC_PAGES = {
       'Use Iconify with AnyUI, configure offline default icons, prefetch icon data, and initialize custom icon collections.',
     path: '/docs/icons',
   },
+  migration: {
+    title: 'Migration Guide',
+    description:
+      'Migrate AnyUI between versions — v0.4.0 to v0.5.0 covers the multi-framework split, new subpath imports, optional peer deps, and the new components.',
+    path: '/docs/migration',
+  },
 } as const;
 
 type DocPageId = keyof typeof DOC_PAGES;

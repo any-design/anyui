@@ -49,12 +49,14 @@ import Split from './packages/split';
 import Step from './packages/step';
 import Switch from './packages/switch';
 import Table from './packages/table';
+import Tabs, { Tab, TabPanel } from './packages/tabs';
 import Tag from './packages/tag';
 import Textarea from './packages/textarea';
 import Toast, { toast } from './packages/toast';
 import Tooltip from './packages/tooltip';
 import Upload from './packages/upload';
 import VirtualList, { VirtualListItem } from './packages/virtualList';
+import Accordion, { AccordionItem } from './packages/accordion';
 
 const defaultComponentList = [
   Button,
@@ -63,6 +65,7 @@ const defaultComponentList = [
   CheckboxGroup,
   ClickableText,
   Collapse,
+  Accordion,
   Drawer,
   Float,
   Form,
@@ -82,6 +85,7 @@ const defaultComponentList = [
   Select,
   Step,
   Spinner,
+  Tabs,
   Tag,
   Textarea,
   Upload,
@@ -100,6 +104,10 @@ export {
   Alert as AAlert,
   Avatar,
   Avatar as AAvatar,
+  Accordion,
+  Accordion as AAccordion,
+  AccordionItem,
+  AccordionItem as AAccordionItem,
   Button,
   Button as AButton,
   Chat,
@@ -210,6 +218,12 @@ export {
   Switch as ASwitch,
   Table,
   Table as ATable,
+  Tabs,
+  Tabs as ATabs,
+  Tab,
+  Tab as ATab,
+  TabPanel,
+  TabPanel as ATabPanel,
   Tag,
   Tag as ATag,
   Textarea,

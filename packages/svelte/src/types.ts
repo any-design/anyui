@@ -200,3 +200,16 @@ export interface TableColumn {
 }
 
 export type TableRow = Record<string, unknown>;
+
+export type ATabsType = 'line' | 'card';
+
+export type ATabsSize = 'small' | 'default' | 'large';
+
+export type ATabsPosition = 'top' | 'bottom';
+
+export interface ATabsIndicatorPosition {
+  width: number;
+  left: number;
+}
+
+export type AAccordionMode = 'single' | 'multiple';

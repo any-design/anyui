@@ -414,6 +414,16 @@ export const COMPONENTS: ComponentEntry[] = [
     blurb: { en: 'Horizontal step indicator.', zh: '横向步骤指示器。' },
   },
   {
+    slug: 'tabs',
+    name: 'Tabs',
+    folder: 'tabs',
+    category: 'navigation',
+    blurb: {
+      en: 'Tab navigation with line / card variants, plus Tab & TabPanel.',
+      zh: '标签页导航，含线条 / 卡片样式，附带 Tab 与 TabPanel。',
+    },
+  },
+  {
     slug: 'list-menu',
     name: 'ListMenu',
     folder: 'listMenu',
@@ -557,6 +567,16 @@ export const COMPONENTS: ComponentEntry[] = [
     blurb: {
       en: 'Expand / collapse transition wrapper.',
       zh: '展开 / 收起过渡包装器。',
+    },
+  },
+  {
+    slug: 'accordion',
+    name: 'Accordion',
+    folder: 'accordion',
+    category: 'overlay',
+    blurb: {
+      en: 'Stacked collapsible panels built on Collapse, with single / multiple modes.',
+      zh: '基于 Collapse 的可折叠面板组，支持手风琴 / 多开模式。',
     },
   },
 ];

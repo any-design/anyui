@@ -3662,6 +3662,359 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
   );
 });
 
+type TabsContextValue = {
+  selected: string | number | undefined;
+  select: (value: string | number) => void;
+  registerTab: (value: string | number | undefined, el: HTMLDivElement | null) => void;
+  unregisterTab: (value: string | number | undefined) => void;
+  barRef: React.RefObject<HTMLDivElement | null>;
+};
+
+const TabsContext = createContext<TabsContextValue | undefined>(undefined);
+
+const resolveTabValue = (value: string | number | undefined, index: number): string | number =>
+  typeof value === 'undefined' ? index : value;
+
+export const Tabs = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tabs(
+  {
+    children,
+    className,
+    modelValue,
+    type = 'line',
+    size = 'default',
+    position = 'top',
+    autoSelect = true,
+    onUpdateModelValue,
+    onChange,
+    ...rest
+  },
+  ref,
+) {
+  const barRef = useRef<HTMLDivElement | null>(null);
+  const [selected, setSelected] = useState<string | number | undefined>(modelValue);
+  const [indicator, setIndicator] = useState<{ width: number; left: number } | undefined>();
+  const [showIndicator, setShowIndicator] = useState(false);
+  const tabValuesRef = useRef<Array<string | number>>([]);
+  const tabElsRef = useRef<Map<string | number, HTMLDivElement>>(new Map());
+  const firstRun = useRef(true);
+
+  const setBarRef = (node: HTMLDivElement | null) => {
+    barRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as any).current = node;
+  };
+
+  const registerTab = (value: string | number | undefined, el: HTMLDivElement | null) => {
+    const index = tabElsRef.current.size;
+    const key = resolveTabValue(value, index);
+    if (el) {
+      tabElsRef.current.set(key, el);
+      if (!tabValuesRef.current.includes(key)) {
+        tabValuesRef.current.push(key);
+      }
+    } else {
+      tabElsRef.current.delete(key);
+      tabValuesRef.current = tabValuesRef.current.filter((v) => v !== key);
+    }
+  };
+  const unregisterTab = (value: string | number | undefined) => registerTab(value, null);
+
+  const refreshIndicator = (value: string | number | undefined) => {
+    if (typeof value === 'undefined') {
+      setIndicator(undefined);
+      setShowIndicator(false);
+      return;
+    }
+    const el = tabElsRef.current.get(value);
+    const container = barRef.current;
+    if (!el || !container) return;
+    const rect = el.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    setIndicator({ width: rect.width, left: rect.left - containerRect.left });
+    if (!showIndicator) {
+      requestAnimationFrame(() => setShowIndicator(true));
+    }
+  };
+
+  const select = (value: string | number) => {
+    setSelected(value);
+    onUpdateModelValue?.(value);
+    onChange?.(value);
+  };
+
+  useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      if (typeof modelValue !== 'undefined') {
+        setSelected(modelValue);
+      } else if (autoSelect && tabValuesRef.current.length) {
+        setSelected(tabValuesRef.current[0]);
+      }
+    } else {
+      setSelected(modelValue);
+    }
+  }, [modelValue, autoSelect]);
+
+  useEffect(() => {
+    refreshIndicator(selected);
+  }, [selected, type, size, position, children]);
+
+  const ctx: TabsContextValue = {
+    selected,
+    select,
+    registerTab,
+    unregisterTab,
+    barRef,
+  };
+
+  const indicatorStyle = indicator
+    ? {
+        opacity: showIndicator ? 1 : 0,
+        width: `${indicator.width}px`,
+        transform: `translateX(${indicator.left}px) scaleX(${showIndicator ? 1 : 0.4})`,
+      }
+    : { opacity: 0, transform: 'scaleX(0)' };
+
+  // Separate tab triggers from panels. In React we render them via the children
+  // directly, so Tabs just provides the bar + content wrapper; children place
+  // Tab/TabPanel in any order. We filter Tab vs TabPanel by reading a hidden
+  // marker (__anyuiRole) we attach to each component function.
+  const childArray = React.Children.toArray(children) as React.ReactElement[];
+  const tabs = childArray.filter((c) => (c.type as any)?.__anyuiRole === 'tab');
+  const panels = childArray.filter((c) => (c.type as any)?.__anyuiRole === 'panel');
+
+  return (
+    <TabsContext.Provider value={ctx}>
+      <div
+        {...pickDataAttrs(rest)}
+        ref={ref}
+        className={cx(
+          'a-tabs',
+          `a-tabs--${type}`,
+          size !== 'default' && `a-tabs--${size}`,
+          position !== 'top' && `a-tabs--${position}`,
+          className,
+        )}
+      >
+        <div ref={setBarRef} className="a-tabs__bar" role="tablist">
+          {tabs}
+          {type === 'line' ? <div className="a-tabs__indicator" style={indicatorStyle} /> : null}
+        </div>
+        <div className="a-tabs__content">{panels}</div>
+      </div>
+    </TabsContext.Provider>
+  );
+});
+
+export const Tab = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tab(
+  { children, className, value, disabled = false, icon, ...rest },
+  ref,
+) {
+  const ctx = useContext(TabsContext);
+  const elRef = useRef<HTMLDivElement | null>(null);
+  const indexRef = useRef<number>(ctx ? -1 : 0);
+  // assign a stable index per mount order for uncontrolled tabs
+  if (ctx && indexRef.current === -1) {
+    indexRef.current = (ctx as any).__counter ?? 0;
+    (ctx as any).__counter = indexRef.current + 1;
+  }
+  const resolvedValue = resolveTabValue(value, indexRef.current);
+  const active = ctx?.selected === resolvedValue;
+
+  const setElRef = (node: HTMLDivElement | null) => {
+    elRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as any).current = node;
+    ctx?.registerTab(value, node);
+  };
+
+  useEffect(() => {
+    return () => ctx?.unregisterTab(value);
+  }, [value]);
+
+  const handleClick = () => {
+    if (disabled) return;
+    ctx?.select(resolvedValue);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleClick();
+    }
+  };
+
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={setElRef}
+      className={cx('a-tab', active && 'a-tab--active', disabled && 'a-tab--disabled', className)}
+      role="tab"
+      aria-selected={active}
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : 0}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+    >
+      {icon ? <Icon className="a-tab__icon" icon={icon} /> : null}
+      <span className="a-tab__label">{children}</span>
+    </div>
+  );
+}) as any;
+
+// tag the Tab component so Tabs can filter it from children
+(Tab as any).__anyuiRole = 'tab';
+
+export const TabPanel = forwardRef<HTMLDivElement, AnyUIReactProps>(function TabPanel(
+  { children, className, value, keepAlive = false, lazy = false, ...rest },
+  ref,
+) {
+  const ctx = useContext(TabsContext);
+  const indexRef = useRef<number>(0);
+  // reuse the same counter scheme — panels are rendered in the same children array
+  // but we cannot share the tab counter, so resolve via the provided value or index
+  const resolvedValue = resolveTabValue(value, indexRef.current);
+  const active = ctx?.selected === resolvedValue;
+  const [rendered, setRendered] = useState(active);
+  useEffect(() => {
+    if (active) setRendered(true);
+    else if (!keepAlive) setRendered(false);
+  }, [active, keepAlive]);
+  if (!rendered && !keepAlive && !lazy) return null;
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-tab-panel', className)}
+      role="tabpanel"
+      hidden={!active}
+    >
+      {active || keepAlive ? children : null}
+    </div>
+  );
+}) as any;
+
+(TabPanel as any).__anyuiRole = 'panel';
+
+type AccordionContextValue = {
+  isExpanded: (value: string | number | undefined) => boolean;
+  toggle: (value: string | number | undefined) => void;
+  register: (value: string | number | undefined) => void;
+};
+
+const AccordionContext = createContext<AccordionContextValue | undefined>(undefined);
+
+const normalizeAccordionValue = (value: unknown): Array<string | number> => {
+  if (Array.isArray(value)) return value as Array<string | number>;
+  if (typeof value === 'undefined' || value === null) return [];
+  return [value as string | number];
+};
+
+export const Accordion = forwardRef<HTMLDivElement, AnyUIReactProps>(function Accordion(
+  { children, className, modelValue, mode = 'single', collapsible = true, border = true, round = false, onUpdateModelValue, onChange, ...rest },
+  ref,
+) {
+  const [internalValue, setInternalValue] = useState<string | number | Array<string | number> | undefined>(modelValue);
+  useEffect(() => setInternalValue(modelValue), [modelValue]);
+  const itemCounterRef = useRef(0);
+  const itemsRef = useRef<Array<string | number>>([]);
+
+  const register = (value: string | number | undefined) => {
+    const key = typeof value === 'undefined' ? itemCounterRef.current : value;
+    if (typeof value === 'undefined') itemCounterRef.current += 1;
+    if (!itemsRef.current.includes(key)) itemsRef.current.push(key);
+  };
+
+  const isExpanded = (value: string | number | undefined) => {
+    const key = typeof value === 'undefined' ? 0 : value;
+    return normalizeAccordionValue(internalValue).includes(key);
+  };
+
+  const toggle = (value: string | number | undefined) => {
+    const key = typeof value === 'undefined' ? 0 : value;
+    const active = normalizeAccordionValue(internalValue);
+    let next: string | number | Array<string | number> | undefined;
+    if (mode === 'single') {
+      if (active.includes(key)) {
+        next = collapsible ? undefined : key;
+      } else {
+        next = key;
+      }
+    } else {
+      next = active.includes(key) ? active.filter((v) => v !== key) : [...active, key];
+    }
+    setInternalValue(next);
+    onUpdateModelValue?.(next);
+    onChange?.(next);
+  };
+
+  const ctx: AccordionContextValue = { isExpanded, toggle, register };
+
+  return (
+    <AccordionContext.Provider value={ctx}>
+      <div
+        {...pickDataAttrs(rest)}
+        ref={ref}
+        className={cx('a-accordion', border && 'a-accordion--border', round && 'a-accordion--round', className)}
+      >
+        {children}
+      </div>
+    </AccordionContext.Provider>
+  );
+});
+
+export const AccordionItem = forwardRef<HTMLDivElement, AnyUIReactProps>(function AccordionItem(
+  { children, className, value, title = '', icon = '', expandIcon = 'ic:round-keyboard-arrow-down', disabled = false, header, ...rest },
+  ref,
+) {
+  const ctx = useContext(AccordionContext);
+  const indexRef = useRef<number>(ctx ? -1 : 0);
+  if (ctx && indexRef.current === -1) {
+    indexRef.current = (ctx as any).__counter ?? 0;
+    (ctx as any).__counter = indexRef.current + 1;
+    ctx.register(value);
+  }
+  const expanded = ctx ? ctx.isExpanded(value) : false;
+  const toggle = () => {
+    if (disabled) return;
+    ctx?.toggle(value);
+  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggle();
+    }
+  };
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-accordion-item', expanded && 'a-accordion-item--expanded', disabled && 'a-accordion-item--disabled', className)}
+    >
+      <div
+        className="a-accordion-item__header"
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-expanded={expanded}
+        aria-disabled={disabled}
+        onClick={toggle}
+        onKeyDown={handleKeyDown}
+      >
+        {icon ? <Icon className="a-accordion-item__icon" icon={icon} /> : null}
+        <span className="a-accordion-item__title">{header ?? title}</span>
+        <span className="a-accordion-item__arrow">
+          <Icon icon={expandIcon} />
+        </span>
+      </div>
+      <Collapse visible={expanded} alwaysRender>
+        <div className="a-accordion-item__content">{children}</div>
+      </Collapse>
+    </div>
+  );
+});
+
 export const buildInstaller = (componentList: React.ComponentType<any>[]) => componentList;
 
 const defaultComponentList = [
@@ -3671,6 +4024,7 @@ const defaultComponentList = [
   CheckboxGroup,
   ClickableText,
   Collapse,
+  Accordion,
   Drawer,
   Float,
   Form,
@@ -3690,6 +4044,7 @@ const defaultComponentList = [
   Select,
   Step,
   Spinner,
+  Tabs,
   Tag,
   Textarea,
   Upload,

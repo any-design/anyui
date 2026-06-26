@@ -10,6 +10,8 @@ const svelteSrcDir = path.resolve(rootDir, './packages/svelte/src');
 const svelteComponentsDir = path.resolve(svelteSrcDir, './components');
 
 const components = [
+  'Accordion',
+  'AccordionItem',
   'Alert',
   'Avatar',
   'Button',
@@ -67,6 +69,9 @@ const components = [
   'Step',
   'Switch',
   'Table',
+  'Tabs',
+  'Tab',
+  'TabPanel',
   'Tag',
   'Textarea',
   'Toast',
@@ -83,6 +88,7 @@ const defaultRegisteredComponents = [
   'CheckboxGroup',
   'ClickableText',
   'Collapse',
+  'Accordion',
   'Drawer',
   'Float',
   'Form',
@@ -102,6 +108,7 @@ const defaultRegisteredComponents = [
   'Select',
   'Step',
   'Spinner',
+  'Tabs',
   'Tag',
   'Textarea',
   'Upload',
@@ -326,6 +333,19 @@ export interface TableColumn {
 }
 
 export type TableRow = Record<string, unknown>;
+
+export type ATabsType = 'line' | 'card';
+
+export type ATabsSize = 'small' | 'default' | 'large';
+
+export type ATabsPosition = 'top' | 'bottom';
+
+export interface ATabsIndicatorPosition {
+  width: number;
+  left: number;
+}
+
+export type AAccordionMode = 'single' | 'multiple';
 `;
 
 const reactSource = `
@@ -3989,6 +4009,359 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
           />
         </div>
       ) : null}
+    </div>
+  );
+});
+
+type TabsContextValue = {
+  selected: string | number | undefined;
+  select: (value: string | number) => void;
+  registerTab: (value: string | number | undefined, el: HTMLDivElement | null) => void;
+  unregisterTab: (value: string | number | undefined) => void;
+  barRef: React.RefObject<HTMLDivElement | null>;
+};
+
+const TabsContext = createContext<TabsContextValue | undefined>(undefined);
+
+const resolveTabValue = (value: string | number | undefined, index: number): string | number =>
+  typeof value === 'undefined' ? index : value;
+
+export const Tabs = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tabs(
+  {
+    children,
+    className,
+    modelValue,
+    type = 'line',
+    size = 'default',
+    position = 'top',
+    autoSelect = true,
+    onUpdateModelValue,
+    onChange,
+    ...rest
+  },
+  ref,
+) {
+  const barRef = useRef<HTMLDivElement | null>(null);
+  const [selected, setSelected] = useState<string | number | undefined>(modelValue);
+  const [indicator, setIndicator] = useState<{ width: number; left: number } | undefined>();
+  const [showIndicator, setShowIndicator] = useState(false);
+  const tabValuesRef = useRef<Array<string | number>>([]);
+  const tabElsRef = useRef<Map<string | number, HTMLDivElement>>(new Map());
+  const firstRun = useRef(true);
+
+  const setBarRef = (node: HTMLDivElement | null) => {
+    barRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as any).current = node;
+  };
+
+  const registerTab = (value: string | number | undefined, el: HTMLDivElement | null) => {
+    const index = tabElsRef.current.size;
+    const key = resolveTabValue(value, index);
+    if (el) {
+      tabElsRef.current.set(key, el);
+      if (!tabValuesRef.current.includes(key)) {
+        tabValuesRef.current.push(key);
+      }
+    } else {
+      tabElsRef.current.delete(key);
+      tabValuesRef.current = tabValuesRef.current.filter((v) => v !== key);
+    }
+  };
+  const unregisterTab = (value: string | number | undefined) => registerTab(value, null);
+
+  const refreshIndicator = (value: string | number | undefined) => {
+    if (typeof value === 'undefined') {
+      setIndicator(undefined);
+      setShowIndicator(false);
+      return;
+    }
+    const el = tabElsRef.current.get(value);
+    const container = barRef.current;
+    if (!el || !container) return;
+    const rect = el.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    setIndicator({ width: rect.width, left: rect.left - containerRect.left });
+    if (!showIndicator) {
+      requestAnimationFrame(() => setShowIndicator(true));
+    }
+  };
+
+  const select = (value: string | number) => {
+    setSelected(value);
+    onUpdateModelValue?.(value);
+    onChange?.(value);
+  };
+
+  useEffect(() => {
+    if (firstRun.current) {
+      firstRun.current = false;
+      if (typeof modelValue !== 'undefined') {
+        setSelected(modelValue);
+      } else if (autoSelect && tabValuesRef.current.length) {
+        setSelected(tabValuesRef.current[0]);
+      }
+    } else {
+      setSelected(modelValue);
+    }
+  }, [modelValue, autoSelect]);
+
+  useEffect(() => {
+    refreshIndicator(selected);
+  }, [selected, type, size, position, children]);
+
+  const ctx: TabsContextValue = {
+    selected,
+    select,
+    registerTab,
+    unregisterTab,
+    barRef,
+  };
+
+  const indicatorStyle = indicator
+    ? {
+        opacity: showIndicator ? 1 : 0,
+        width: \`\${indicator.width}px\`,
+        transform: \`translateX(\${indicator.left}px) scaleX(\${showIndicator ? 1 : 0.4})\`,
+      }
+    : { opacity: 0, transform: 'scaleX(0)' };
+
+  // Separate tab triggers from panels. In React we render them via the children
+  // directly, so Tabs just provides the bar + content wrapper; children place
+  // Tab/TabPanel in any order. We filter Tab vs TabPanel by reading a hidden
+  // marker (\_\_anyuiRole) we attach to each component function.
+  const childArray = React.Children.toArray(children) as React.ReactElement[];
+  const tabs = childArray.filter((c) => (c.type as any)?.__anyuiRole === 'tab');
+  const panels = childArray.filter((c) => (c.type as any)?.__anyuiRole === 'panel');
+
+  return (
+    <TabsContext.Provider value={ctx}>
+      <div
+        {...pickDataAttrs(rest)}
+        ref={ref}
+        className={cx(
+          'a-tabs',
+          \`a-tabs--\${type}\`,
+          size !== 'default' && \`a-tabs--\${size}\`,
+          position !== 'top' && \`a-tabs--\${position}\`,
+          className,
+        )}
+      >
+        <div ref={setBarRef} className="a-tabs__bar" role="tablist">
+          {tabs}
+          {type === 'line' ? <div className="a-tabs__indicator" style={indicatorStyle} /> : null}
+        </div>
+        <div className="a-tabs__content">{panels}</div>
+      </div>
+    </TabsContext.Provider>
+  );
+});
+
+export const Tab = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tab(
+  { children, className, value, disabled = false, icon, ...rest },
+  ref,
+) {
+  const ctx = useContext(TabsContext);
+  const elRef = useRef<HTMLDivElement | null>(null);
+  const indexRef = useRef<number>(ctx ? -1 : 0);
+  // assign a stable index per mount order for uncontrolled tabs
+  if (ctx && indexRef.current === -1) {
+    indexRef.current = (ctx as any).__counter ?? 0;
+    (ctx as any).__counter = indexRef.current + 1;
+  }
+  const resolvedValue = resolveTabValue(value, indexRef.current);
+  const active = ctx?.selected === resolvedValue;
+
+  const setElRef = (node: HTMLDivElement | null) => {
+    elRef.current = node;
+    if (typeof ref === 'function') ref(node);
+    else if (ref) (ref as any).current = node;
+    ctx?.registerTab(value, node);
+  };
+
+  useEffect(() => {
+    return () => ctx?.unregisterTab(value);
+  }, [value]);
+
+  const handleClick = () => {
+    if (disabled) return;
+    ctx?.select(resolvedValue);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleClick();
+    }
+  };
+
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={setElRef}
+      className={cx('a-tab', active && 'a-tab--active', disabled && 'a-tab--disabled', className)}
+      role="tab"
+      aria-selected={active}
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : 0}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+    >
+      {icon ? <Icon className="a-tab__icon" icon={icon} /> : null}
+      <span className="a-tab__label">{children}</span>
+    </div>
+  );
+}) as any;
+
+// tag the Tab component so Tabs can filter it from children
+(Tab as any).__anyuiRole = 'tab';
+
+export const TabPanel = forwardRef<HTMLDivElement, AnyUIReactProps>(function TabPanel(
+  { children, className, value, keepAlive = false, lazy = false, ...rest },
+  ref,
+) {
+  const ctx = useContext(TabsContext);
+  const indexRef = useRef<number>(0);
+  // reuse the same counter scheme — panels are rendered in the same children array
+  // but we cannot share the tab counter, so resolve via the provided value or index
+  const resolvedValue = resolveTabValue(value, indexRef.current);
+  const active = ctx?.selected === resolvedValue;
+  const [rendered, setRendered] = useState(active);
+  useEffect(() => {
+    if (active) setRendered(true);
+    else if (!keepAlive) setRendered(false);
+  }, [active, keepAlive]);
+  if (!rendered && !keepAlive && !lazy) return null;
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-tab-panel', className)}
+      role="tabpanel"
+      hidden={!active}
+    >
+      {active || keepAlive ? children : null}
+    </div>
+  );
+}) as any;
+
+(TabPanel as any).__anyuiRole = 'panel';
+
+type AccordionContextValue = {
+  isExpanded: (value: string | number | undefined) => boolean;
+  toggle: (value: string | number | undefined) => void;
+  register: (value: string | number | undefined) => void;
+};
+
+const AccordionContext = createContext<AccordionContextValue | undefined>(undefined);
+
+const normalizeAccordionValue = (value: unknown): Array<string | number> => {
+  if (Array.isArray(value)) return value as Array<string | number>;
+  if (typeof value === 'undefined' || value === null) return [];
+  return [value as string | number];
+};
+
+export const Accordion = forwardRef<HTMLDivElement, AnyUIReactProps>(function Accordion(
+  { children, className, modelValue, mode = 'single', collapsible = true, border = true, round = false, onUpdateModelValue, onChange, ...rest },
+  ref,
+) {
+  const [internalValue, setInternalValue] = useState<string | number | Array<string | number> | undefined>(modelValue);
+  useEffect(() => setInternalValue(modelValue), [modelValue]);
+  const itemCounterRef = useRef(0);
+  const itemsRef = useRef<Array<string | number>>([]);
+
+  const register = (value: string | number | undefined) => {
+    const key = typeof value === 'undefined' ? itemCounterRef.current : value;
+    if (typeof value === 'undefined') itemCounterRef.current += 1;
+    if (!itemsRef.current.includes(key)) itemsRef.current.push(key);
+  };
+
+  const isExpanded = (value: string | number | undefined) => {
+    const key = typeof value === 'undefined' ? 0 : value;
+    return normalizeAccordionValue(internalValue).includes(key);
+  };
+
+  const toggle = (value: string | number | undefined) => {
+    const key = typeof value === 'undefined' ? 0 : value;
+    const active = normalizeAccordionValue(internalValue);
+    let next: string | number | Array<string | number> | undefined;
+    if (mode === 'single') {
+      if (active.includes(key)) {
+        next = collapsible ? undefined : key;
+      } else {
+        next = key;
+      }
+    } else {
+      next = active.includes(key) ? active.filter((v) => v !== key) : [...active, key];
+    }
+    setInternalValue(next);
+    onUpdateModelValue?.(next);
+    onChange?.(next);
+  };
+
+  const ctx: AccordionContextValue = { isExpanded, toggle, register };
+
+  return (
+    <AccordionContext.Provider value={ctx}>
+      <div
+        {...pickDataAttrs(rest)}
+        ref={ref}
+        className={cx('a-accordion', border && 'a-accordion--border', round && 'a-accordion--round', className)}
+      >
+        {children}
+      </div>
+    </AccordionContext.Provider>
+  );
+});
+
+export const AccordionItem = forwardRef<HTMLDivElement, AnyUIReactProps>(function AccordionItem(
+  { children, className, value, title = '', icon = '', expandIcon = 'ic:round-keyboard-arrow-down', disabled = false, header, ...rest },
+  ref,
+) {
+  const ctx = useContext(AccordionContext);
+  const indexRef = useRef<number>(ctx ? -1 : 0);
+  if (ctx && indexRef.current === -1) {
+    indexRef.current = (ctx as any).__counter ?? 0;
+    (ctx as any).__counter = indexRef.current + 1;
+    ctx.register(value);
+  }
+  const expanded = ctx ? ctx.isExpanded(value) : false;
+  const toggle = () => {
+    if (disabled) return;
+    ctx?.toggle(value);
+  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggle();
+    }
+  };
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx('a-accordion-item', expanded && 'a-accordion-item--expanded', disabled && 'a-accordion-item--disabled', className)}
+    >
+      <div
+        className="a-accordion-item__header"
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-expanded={expanded}
+        aria-disabled={disabled}
+        onClick={toggle}
+        onKeyDown={handleKeyDown}
+      >
+        {icon ? <Icon className="a-accordion-item__icon" icon={icon} /> : null}
+        <span className="a-accordion-item__title">{header ?? title}</span>
+        <span className="a-accordion-item__arrow">
+          <Icon icon={expandIcon} />
+        </span>
+      </div>
+      <Collapse visible={expanded} alwaysRender>
+        <div className="a-accordion-item__content">{children}</div>
+      </Collapse>
     </div>
   );
 });
@@ -8027,6 +8400,307 @@ Object.assign(svelteTemplates, {
       ></div>
     </div>
   {/if}
+</div>
+`,
+  Tabs: `
+<script lang="ts">
+  import { setContext, tick } from 'svelte';
+  import type { ATabsIndicatorPosition, ATabsSize, ATabsPosition, ATabsType } from '../types';
+
+  let {
+    modelValue = $bindable(undefined),
+    type = 'line' as ATabsType,
+    size = 'default' as ATabsSize,
+    position = 'top' as ATabsPosition,
+    autoSelect = true,
+    class: className = '',
+    children,
+    onUpdateModelValue,
+    onChange,
+  } = $props();
+
+  let barEl = $state<HTMLDivElement>();
+  let indicator = $state<ATabsIndicatorPosition | undefined>(undefined);
+  let showIndicator = $state(false);
+  let tabValues: Array<string | number> = $state([]);
+  let tabEls: Map<string | number, HTMLElement> = new Map();
+  let tabCounter = 0;
+
+  const resolveValue = (value: string | number | undefined) =>
+    typeof value === 'undefined' ? tabCounter - 1 : value;
+
+  const registerTab = (value: string | number | undefined, el: HTMLElement | null) => {
+    const key = resolveValue(value);
+    if (el) {
+      tabEls.set(key, el);
+      if (!tabValues.includes(key)) {
+        tabValues = [...tabValues, key];
+      }
+    } else {
+      tabEls.delete(key);
+      tabValues = tabValues.filter((v) => v !== key);
+    }
+  };
+
+  const refreshIndicator = (value: string | number | undefined) => {
+    if (typeof value === 'undefined') {
+      indicator = undefined;
+      showIndicator = false;
+      return;
+    }
+    const el = tabEls.get(value);
+    const container = barEl;
+    if (!el || !container) return;
+    const rect = el.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    indicator = { width: rect.width, left: rect.left - containerRect.left };
+    if (!showIndicator) {
+      requestAnimationFrame(() => (showIndicator = true));
+    }
+  };
+
+  const select = (value: string | number | undefined) => {
+    modelValue = value;
+    onUpdateModelValue?.(value);
+    onChange?.(value);
+    void tick().then(() => refreshIndicator(value));
+  };
+
+  // auto-select the first tab when uncontrolled
+  $effect(() => {
+    if (typeof modelValue === 'undefined' && autoSelect && tabValues.length) {
+      modelValue = tabValues[0];
+    }
+  });
+
+  $effect(() => {
+    refreshIndicator(modelValue);
+  });
+
+  setContext('anyui:tabs', {
+    getSelected: () => modelValue,
+    select,
+    registerTab,
+    nextTabValue: () => {
+      tabCounter += 1;
+      return undefined;
+    },
+  });
+
+  const indicatorStyle = $derived(
+    indicator
+      ? 'opacity:' + (showIndicator ? 1 : 0) + ';width:' + indicator.width + 'px;transform:translateX(' + indicator.left + 'px) scaleX(' + (showIndicator ? 1 : 0.4) + ');'
+      : 'opacity:0;transform:scaleX(0);',
+  );
+  const rootClass = $derived(
+    'a-tabs a-tabs--' + type + (size !== 'default' ? ' a-tabs--' + size : '') + (position !== 'top' ? ' a-tabs--' + position : '') + ' ' + className,
+  );
+</script>
+
+<div class={rootClass}>
+  <div bind:this={barEl} class="a-tabs__bar" role="tablist">
+    {@render children?.()}
+    {#if type === 'line'}<div class="a-tabs__indicator" style={indicatorStyle}></div>{/if}
+  </div>
+</div>
+`,
+  Tab: `
+<script lang="ts">
+  import Icon from '@iconify/svelte';
+  import { getContext } from 'svelte';
+
+  let {
+    value = undefined as string | number | undefined,
+    disabled = false,
+    icon = '',
+    class: className = '',
+    children,
+  } = $props();
+
+  const ctx = getContext<any>('anyui:tabs');
+  let el = $state<HTMLElement>();
+  const resolvedValue = $derived(ctx ? (typeof value === 'undefined' ? ctx.nextTabValue() : value) : value);
+  const active = $derived(ctx ? ctx.getSelected() === resolvedValue : false);
+
+  $effect(() => {
+    ctx?.registerTab(value, el);
+    return () => ctx?.registerTab(value, null);
+  });
+
+  const handleClick = () => {
+    if (disabled || !ctx) return;
+    ctx.select(value);
+  };
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (disabled) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+</script>
+
+<div
+  bind:this={el}
+  class="a-tab {active ? 'a-tab--active' : ''} {disabled ? 'a-tab--disabled' : ''} {className}"
+  role="tab"
+  aria-selected={active}
+  aria-disabled={disabled}
+  tabindex={disabled ? -1 : 0}
+  onclick={handleClick}
+  onkeydown={handleKeyDown}
+>
+  {#if icon}<span class="a-tab__icon"><Icon icon={icon} /></span>{/if}
+  <span class="a-tab__label">{@render children?.()}</span>
+</div>
+`,
+  TabPanel: `
+<script lang="ts">
+  import { getContext } from 'svelte';
+
+  let {
+    value = undefined as string | number | undefined,
+    keepAlive = false,
+    lazy = false,
+    class: className = '',
+    children,
+  } = $props();
+
+  const ctx = getContext<any>('anyui:tabs');
+  const resolvedValue = $derived(ctx ? (typeof value === 'undefined' ? ctx.nextTabValue() : value) : value);
+  const active = $derived(ctx ? ctx.getSelected() === resolvedValue : false);
+  let rendered = $state(false);
+
+  $effect(() => {
+    if (active) {
+      rendered = true;
+    } else if (!keepAlive) {
+      rendered = false;
+    }
+  });
+</script>
+
+{#if rendered || keepAlive || lazy}
+  <div class="a-tab-panel {className}" role="tabpanel" aria-hidden={!active}>
+    {#if active || keepAlive}{@render children?.()}{/if}
+  </div>
+{/if}
+`,
+  Accordion: `
+<script lang="ts">
+  import { setContext } from 'svelte';
+  import type { AAccordionMode } from '../types';
+
+  let {
+    modelValue = $bindable(undefined) as string | number | Array<string | number> | undefined,
+    mode = 'single' as AAccordionMode,
+    collapsible = true,
+    border = true,
+    round = false,
+    class: className = '',
+    children,
+    onUpdateModelValue,
+    onChange,
+  } = $props();
+
+  let itemCounter = 0;
+
+  const normalize = (v: unknown): Array<string | number> => {
+    if (Array.isArray(v)) return v as Array<string | number>;
+    if (v === undefined || v === null) return [];
+    return [v as string | number];
+  };
+
+  const isExpanded = (value: string | number | undefined) => {
+    const key = typeof value === 'undefined' ? 0 : value;
+    return normalize(modelValue).includes(key);
+  };
+
+  const toggle = (value: string | number | undefined) => {
+    const key = typeof value === 'undefined' ? 0 : value;
+    const active = normalize(modelValue);
+    let next: string | number | Array<string | number> | undefined;
+    if (mode === 'single') {
+      next = active.includes(key) ? (collapsible ? undefined : key) : key;
+    } else {
+      next = active.includes(key) ? active.filter((v) => v !== key) : [...active, key];
+    }
+    modelValue = next;
+    onUpdateModelValue?.(next);
+    onChange?.(next);
+  };
+
+  setContext('anyui:accordion', {
+    isExpanded,
+    toggle,
+    nextValue: () => {
+      itemCounter += 1;
+      return undefined;
+    },
+  });
+
+  const rootClass = $derived(
+    'a-accordion ' + (border ? 'a-accordion--border ' : '') + (round ? 'a-accordion--round ' : '') + className,
+  );
+</script>
+
+<div class={rootClass}>
+  {@render children?.()}
+</div>
+`,
+  AccordionItem: `
+<script lang="ts">
+  import Icon from '@iconify/svelte';
+  import { getContext } from 'svelte';
+  import Collapse from './Collapse.svelte';
+
+  let {
+    value = undefined as string | number | undefined,
+    title = '',
+    icon = '',
+    expandIcon = 'ic:round-keyboard-arrow-down',
+    disabled = false,
+    class: className = '',
+    children,
+    header,
+  } = $props();
+
+  const ctx = getContext<any>('anyui:accordion');
+  const resolvedValue = $derived(ctx ? (typeof value === 'undefined' ? ctx.nextValue() : value) : value);
+  const expanded = $derived(ctx ? ctx.isExpanded(resolvedValue) : false);
+
+  const toggle = () => {
+    if (disabled || !ctx) return;
+    ctx.toggle(resolvedValue);
+  };
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (disabled) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggle();
+    }
+  };
+</script>
+
+<div class="a-accordion-item {expanded ? 'a-accordion-item--expanded' : ''} {disabled ? 'a-accordion-item--disabled' : ''} {className}">
+  <div
+    class="a-accordion-item__header"
+    role="button"
+    tabindex={disabled ? -1 : 0}
+    aria-expanded={expanded}
+    aria-disabled={disabled}
+    onclick={toggle}
+    onkeydown={handleKeyDown}
+  >
+    {#if icon}<span class="a-accordion-item__icon"><Icon icon={icon} /></span>{/if}
+    <span class="a-accordion-item__title">{#if header}{@render header?.()}{:else}{title}{/if}</span>
+    <span class="a-accordion-item__arrow"><Icon icon={expandIcon} /></span>
+  </div>
+  <Collapse visible={expanded} alwaysRender>
+    <div class="a-accordion-item__content">
+      {@render children?.()}
+    </div>
+  </Collapse>
 </div>
 `,
 });

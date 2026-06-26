@@ -1,11 +1,27 @@
 {
   // Cloudflare Workers static-assets deployment for the AnyUI website and /testground.
-  // Deploy manually with: pnpm run build:website && npx wrangler deploy
+  // Deploy: pnpm run build:website && npx wrangler deploy
   // (requires CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID)
+  // The custom_domain route makes Cloudflare auto-manage the DNS record + TLS
+  // certificate for anyui.pwp.sh — ensure the pwp.sh zone is active in the
+  // deploying Cloudflare account before the first deploy.
+  // A small Worker script (./worker/index.ts) wraps asset serving so both the
+  // 404 (page not found) and 500 (server error) cases fall back to the cute
+  // anyui-styled error pages instead of Cloudflare's default screens.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "anyui-website",
-  "compatibility_date": "2026-06-01",
+  "compatibility_date": "2026-06-26",
+  "main": "./worker/index.ts",
   "assets": {
-    "directory": "./dist"
-  }
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [
+    {
+      "pattern": "anyui.pwp.sh",
+      "custom_domain": true
+    }
+  ]
 }
