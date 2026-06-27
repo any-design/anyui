@@ -1,0 +1,4 @@
+interface:
+  display_name: "AnyUI Author Component"
+  short_description: "Create and update AnyUI components"
+  default_prompt: "Use $anyui-author-component to add or change an AnyUI component."

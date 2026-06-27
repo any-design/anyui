@@ -1,0 +1,4 @@
+interface:
+  display_name: "AnyUI Design Language"
+  short_description: "Apply AnyUI visual direction"
+  default_prompt: "Use $anyui-design-language to design an AnyUI interface or component."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "AnyUI Use Library"
+  short_description: "Use AnyUI correctly in apps"
+  default_prompt: "Use $anyui-use-library to add AnyUI to this app."
