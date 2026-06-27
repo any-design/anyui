@@ -1,0 +1,4 @@
+interface:
+  display_name: "AnyUI Docs Website"
+  short_description: "Update AnyUI docs and website"
+  default_prompt: "Use $anyui-docs-website to document an AnyUI component or site page."
