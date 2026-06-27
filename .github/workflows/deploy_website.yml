@@ -2,15 +2,15 @@ name: Deploy website
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "**"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main
+      - name: Checkout ref
         uses: actions/checkout@v7
 
       - name: Setup pnpm
