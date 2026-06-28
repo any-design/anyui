@@ -6,7 +6,13 @@
       'a-scroll-area--horizontal': horizontal,
     }"
   >
-    <div ref="viewportRef" class="a-scroll-area__viewport" :style="viewportStyle" @scroll="handleScroll">
+    <div
+      ref="viewportRef"
+      class="a-scroll-area__viewport"
+      :class="scrollFadeClass"
+      :style="[viewportStyle, scrollFadeStyle]"
+      @scroll="handleScroll"
+    >
       <div ref="contentRef" class="a-scroll-area__content">
         <slot></slot>
       </div>
@@ -54,7 +60,12 @@
 import type { PropType } from 'vue';
 import { computed, defineComponent, onMounted, onUnmounted, reactive, ref } from 'vue';
 
-import type { AScrollAreaDirection, AScrollAreaScrollBehavior } from './types';
+import type {
+  AScrollAreaDirection,
+  AScrollAreaScrollBehavior,
+  AScrollFadeConfig,
+  AScrollFadeOptions,
+} from './types';
 
 import { formatStyleSize } from '@/utils';
 
@@ -88,6 +99,11 @@ export default defineComponent({
       type: String as PropType<AScrollAreaScrollBehavior>,
       default: 'smooth',
       validator: (value: string) => ['auto', 'smooth'].includes(value),
+    },
+    // adds scroll-position-aware fade masks to the content edges.
+    scrollFade: {
+      type: [Boolean, Object] as PropType<AScrollFadeConfig>,
+      default: false,
     },
   },
   setup(props) {
@@ -241,6 +257,60 @@ export default defineComponent({
       scrollBehavior: props.scrollBehavior,
     }));
 
+    const normalizedScrollFade = computed<AScrollFadeOptions | undefined>(() => {
+      if (!props.scrollFade) {
+        return;
+      }
+      if (props.scrollFade === true) {
+        return {
+          axis: props.horizontal ? 'both' : 'vertical',
+        };
+      }
+      return {
+        axis: props.scrollFade.axis ?? (props.horizontal ? 'both' : 'vertical'),
+        size: props.scrollFade.size,
+        topSize: props.scrollFade.topSize,
+        bottomSize: props.scrollFade.bottomSize,
+        startSize: props.scrollFade.startSize,
+        endSize: props.scrollFade.endSize,
+        reveal: props.scrollFade.reveal,
+      };
+    });
+
+    const scrollFadeClass = computed(() => {
+      const options = normalizedScrollFade.value;
+      if (!options) {
+        return undefined;
+      }
+      const axis = options.axis ?? 'vertical';
+      return {
+        'a-scroll-fade': true,
+        'a-scroll-fade--vertical': axis === 'vertical',
+        'a-scroll-fade--horizontal': axis === 'horizontal',
+        'a-scroll-fade--both': axis === 'both',
+      };
+    });
+
+    const scrollFadeStyle = computed(() => {
+      const options = normalizedScrollFade.value;
+      if (!options) {
+        return undefined;
+      }
+      const style: Record<string, string | undefined> = {};
+      const setVar = (key: string, value: string | number | undefined) => {
+        if (typeof value !== 'undefined') {
+          style[key] = formatStyleSize(value);
+        }
+      };
+      setVar('--a-scroll-fade-size', options.size);
+      setVar('--a-scroll-fade-top-size', options.topSize);
+      setVar('--a-scroll-fade-bottom-size', options.bottomSize);
+      setVar('--a-scroll-fade-start-size', options.startSize);
+      setVar('--a-scroll-fade-end-size', options.endSize);
+      setVar('--a-scroll-fade-reveal', options.reveal);
+      return style;
+    });
+
     let resizeObserver: ResizeObserver | undefined;
 
     onMounted(() => {
@@ -274,6 +344,8 @@ export default defineComponent({
       vThumbStyle,
       hThumbStyle,
       viewportStyle,
+      scrollFadeClass,
+      scrollFadeStyle,
       handleScroll,
       handleBarLeave,
       handleThumbPointerDown,

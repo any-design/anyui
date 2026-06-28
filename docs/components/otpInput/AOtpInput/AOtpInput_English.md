@@ -28,6 +28,25 @@ const code = ref('');
 
 ## Examples
 
+### Sizes
+
+Use `size` to match compact forms, default verification flows, or larger touch-first layouts.
+
+```vue
+<template>
+  <AOtpInput v-model="smallCode" :length="4" size="small" />
+  <AOtpInput v-model="code" :length="4" />
+  <AOtpInput v-model="largeCode" :length="4" size="large" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const smallCode = ref('');
+const code = ref('');
+const largeCode = ref('');
+</script>
+```
+
 ### Masked code
 
 Set `masked` to hide typed digits as dots, useful for PIN entry.
@@ -68,6 +87,7 @@ const onComplete = (val) => {
 | --- | --- | --- | --- |
 | `modelValue` | String | '' | Current code (`v-model`). |
 | `length` | Number | 6 | Number of cells. |
+| `size` | 'small' \| 'default' \| 'large' | 'default' | Cell size. |
 | `disabled` | Boolean | false | Disabled. |
 | `masked` | Boolean | false | Mask digits as dots. |
 | `autoFocus` | Boolean | false | Focus the first cell on mount. |

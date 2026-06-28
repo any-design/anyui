@@ -61,6 +61,7 @@ const components = [
   'RadioButtonGroup',
   'RadioGroup',
   'ScrollArea',
+  'ScrollFade',
   'Select',
   'Side',
   'Slider',
@@ -346,6 +347,21 @@ export interface ATabsIndicatorPosition {
 }
 
 export type AAccordionMode = 'single' | 'multiple';
+export type AScrollAreaDirection = 'vertical' | 'horizontal';
+export type AScrollAreaScrollBehavior = 'auto' | 'smooth';
+export type AScrollFadeAxis = 'vertical' | 'horizontal' | 'both';
+
+export interface AScrollFadeOptions {
+  axis?: AScrollFadeAxis;
+  size?: string | number;
+  topSize?: string | number;
+  bottomSize?: string | number;
+  startSize?: string | number;
+  endSize?: string | number;
+  reveal?: string | number;
+}
+
+export type AScrollFadeConfig = boolean | AScrollFadeOptions;
 `;
 
 const reactSource = `
@@ -3715,6 +3731,7 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
     className,
     modelValue = '',
     length = 6,
+    size = 'default',
     disabled = false,
     masked = false,
     autoFocus = false,
@@ -3735,7 +3752,7 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
     setActiveIndex((index) => Math.min(Math.max(index, 0), Math.min(next.length, length - 1)));
   }, [modelValue, length]);
   useEffect(() => {
-    if (autoFocus && !disabled) inputRef.current?.focus();
+    if (autoFocus && !disabled) inputRef.current?.focus({ preventScroll: true });
   }, []);
   const clampIndex = (index: number, nextValue: string) =>
     Math.min(Math.max(index, 0), Math.min(nextValue.length, length - 1));
@@ -3797,8 +3814,15 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
     <div
       {...pickDataAttrs(rest)}
       ref={ref}
-      className={cx('a-otp-input', disabled && 'a-otp-input--disabled', className)}
+      className={cx(
+        'a-otp-input',
+        size !== 'default' && \`a-otp-input--\${size}\`,
+        disabled && 'a-otp-input--disabled',
+        className,
+      )}
       style={rest.style}
+      role="group"
+      aria-disabled={disabled}
       onPointerDown={(e) => {
         e.preventDefault();
         focusAt(value.length);
@@ -3824,6 +3848,7 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
             char && 'a-otp-input__cell--filled',
             focused && index === activeIndex && 'a-otp-input__cell--active',
           )}
+          role="presentation"
           onPointerDown={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -3837,8 +3862,81 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
   );
 });
 
+const buildScrollFadeStyle = (options?: Record<string, any>): React.CSSProperties | undefined => {
+  if (!options) return undefined;
+  const style: React.CSSProperties = {};
+  const setVar = (key: string, value: string | number | undefined) => {
+    if (typeof value !== 'undefined') {
+      (style as Record<string, string | undefined>)[key] = formatStyleSize(value);
+    }
+  };
+  setVar('--a-scroll-fade-size', options.size);
+  setVar('--a-scroll-fade-top-size', options.topSize);
+  setVar('--a-scroll-fade-bottom-size', options.bottomSize);
+  setVar('--a-scroll-fade-start-size', options.startSize);
+  setVar('--a-scroll-fade-end-size', options.endSize);
+  setVar('--a-scroll-fade-reveal', options.reveal);
+  return style;
+};
+
+const getScrollFadeAxis = (options: boolean | Record<string, any> | undefined, fallback: string) => {
+  if (!options) return undefined;
+  return options === true ? fallback : options.axis ?? fallback;
+};
+
+const getScrollFadeClass = (axis?: string) =>
+  axis
+    ? cx(
+        'a-scroll-fade',
+        axis === 'vertical' && 'a-scroll-fade--vertical',
+        axis === 'horizontal' && 'a-scroll-fade--horizontal',
+        axis === 'both' && 'a-scroll-fade--both',
+      )
+    : undefined;
+
+export const ScrollFade = forwardRef<HTMLDivElement, AnyUIReactProps>(function ScrollFade(
+  {
+    children,
+    className,
+    axis = 'vertical',
+    size,
+    topSize,
+    bottomSize,
+    startSize,
+    endSize,
+    reveal,
+    height,
+    maxHeight,
+    fill = false,
+    scrollBehavior = 'smooth',
+    ...rest
+  },
+  ref,
+) {
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx(
+        getScrollFadeClass(axis),
+        fill && 'a-scroll-fade--fill',
+        className,
+      )}
+      style={{
+        ...buildScrollFadeStyle({ size, topSize, bottomSize, startSize, endSize, reveal }),
+        height: formatStyleSize(height),
+        maxHeight: formatStyleSize(maxHeight),
+        scrollBehavior,
+        ...rest.style,
+      }}
+    >
+      {children}
+    </div>
+  );
+});
+
 export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function ScrollArea(
-  { children, className, height, maxHeight, fill = false, horizontal = false, scrollBehavior = 'smooth', ...rest },
+  { children, className, height, maxHeight, fill = false, horizontal = false, scrollBehavior = 'smooth', scrollFade = false, ...rest },
   ref,
 ) {
   // the bars are inset 2px from each edge (see the shared styles)
@@ -3957,6 +4055,8 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
     hoveringBarRef.current = false;
     showBars();
   };
+  const scrollFadeAxis = getScrollFadeAxis(scrollFade, horizontal ? 'both' : 'vertical');
+  const scrollFadeOptions = scrollFade && scrollFade !== true ? scrollFade : undefined;
   return (
     <div
       {...pickDataAttrs(rest)}
@@ -3966,8 +4066,13 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
     >
       <div
         ref={viewportRef}
-        className="a-scroll-area__viewport"
-        style={{ height: formatStyleSize(height), maxHeight: formatStyleSize(maxHeight), scrollBehavior }}
+        className={cx('a-scroll-area__viewport', getScrollFadeClass(scrollFadeAxis))}
+        style={{
+          height: formatStyleSize(height),
+          maxHeight: formatStyleSize(maxHeight),
+          scrollBehavior,
+          ...buildScrollFadeStyle(scrollFadeOptions),
+        }}
         onScroll={() => {
           updateMetrics();
           showBars();
@@ -8121,6 +8226,7 @@ Object.assign(svelteTemplates, {
   let {
     modelValue = $bindable(''),
     length = 6,
+    size = 'default',
     disabled = false,
     masked = false,
     autoFocus = false,
@@ -8189,12 +8295,14 @@ Object.assign(svelteTemplates, {
     activeIndex = clampIndex(pasted.length, pasted);
   };
   $effect(() => {
-    if (autoFocus && !disabled) inputEl?.focus();
+    if (autoFocus && !disabled) inputEl?.focus({ preventScroll: true });
   });
 </script>
 
 <div
-  class="a-otp-input {disabled ? 'a-otp-input--disabled' : ''} {className}"
+  class="a-otp-input {size !== 'default' ? \`a-otp-input--\${size}\` : ''} {disabled ? 'a-otp-input--disabled' : ''} {className}"
+  role="group"
+  aria-disabled={disabled}
   onpointerdown={(e) => {
     e.preventDefault();
     focusAt(value.length);
@@ -8215,6 +8323,7 @@ Object.assign(svelteTemplates, {
   {#each cells as char, index (index)}
     <div
       class="a-otp-input__cell {char ? 'a-otp-input__cell--filled' : ''} {focused && index === activeIndex ? 'a-otp-input__cell--active' : ''}"
+      role="presentation"
       onpointerdown={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -8226,15 +8335,66 @@ Object.assign(svelteTemplates, {
   {/each}
 </div>
 `,
+  ScrollFade: `
+<script lang="ts">
+  import type { AScrollFadeAxis } from '../types';
+
+  let {
+    axis = 'vertical' as AScrollFadeAxis,
+    size = undefined,
+    topSize = undefined,
+    bottomSize = undefined,
+    startSize = undefined,
+    endSize = undefined,
+    reveal = undefined,
+    height = undefined,
+    maxHeight = undefined,
+    fill = false,
+    scrollBehavior = 'smooth',
+    class: className = '',
+    children,
+  } = $props();
+
+  const formatSize = (value: number | string | undefined) => {
+    if (typeof value === 'number') return value + 'px';
+    if (typeof value === 'string' && /^\\d+$/.test(value)) return value + 'px';
+    return value;
+  };
+
+  const styleText = $derived(
+    [
+      size !== undefined ? '--a-scroll-fade-size: ' + formatSize(size) : '',
+      topSize !== undefined ? '--a-scroll-fade-top-size: ' + formatSize(topSize) : '',
+      bottomSize !== undefined ? '--a-scroll-fade-bottom-size: ' + formatSize(bottomSize) : '',
+      startSize !== undefined ? '--a-scroll-fade-start-size: ' + formatSize(startSize) : '',
+      endSize !== undefined ? '--a-scroll-fade-end-size: ' + formatSize(endSize) : '',
+      reveal !== undefined ? '--a-scroll-fade-reveal: ' + formatSize(reveal) : '',
+      height !== undefined ? 'height: ' + formatSize(height) : '',
+      maxHeight !== undefined ? 'max-height: ' + formatSize(maxHeight) : '',
+      'scroll-behavior: ' + scrollBehavior,
+    ].filter(Boolean).join('; '),
+  );
+</script>
+
+<div
+  class="a-scroll-fade a-scroll-fade--{axis} {fill ? 'a-scroll-fade--fill' : ''} {className}"
+  style={styleText}
+>
+  {@render children?.()}
+</div>
+`,
   ScrollArea: `
 <script lang="ts">
   import { onMount } from 'svelte';
+  import type { AScrollFadeConfig, AScrollFadeOptions } from '../types';
+
   let {
     height = undefined,
     maxHeight = undefined,
     fill = false,
     horizontal = false,
     scrollBehavior = 'smooth',
+    scrollFade = false as AScrollFadeConfig,
     class: className = '',
     children,
   } = $props();
@@ -8256,8 +8416,40 @@ Object.assign(svelteTemplates, {
   let draggingAxis = $state<string | undefined>(undefined);
   let hoveringBar = false;
   let hideTimer: ReturnType<typeof setTimeout> | undefined;
-  const formatSize = (size: number | string | undefined) =>
-    typeof size === 'number' ? size + 'px' : size;
+  const formatSize = (size: number | string | undefined) => {
+    if (typeof size === 'number') return size + 'px';
+    if (typeof size === 'string' && /^\\d+$/.test(size)) return size + 'px';
+    return size;
+  };
+  const scrollFadeOptions = $derived<AScrollFadeOptions | undefined>(
+    scrollFade ? (scrollFade === true ? { axis: horizontal ? 'both' : 'vertical' } : {
+      axis: scrollFade.axis ?? (horizontal ? 'both' : 'vertical'),
+      size: scrollFade.size,
+      topSize: scrollFade.topSize,
+      bottomSize: scrollFade.bottomSize,
+      startSize: scrollFade.startSize,
+      endSize: scrollFade.endSize,
+      reveal: scrollFade.reveal,
+    }) : undefined,
+  );
+  const scrollFadeClass = $derived(
+    scrollFadeOptions
+      ? 'a-scroll-fade a-scroll-fade--' + (scrollFadeOptions.axis ?? 'vertical')
+      : '',
+  );
+  const viewportStyle = $derived(
+    [
+      height !== undefined ? 'height: ' + formatSize(height) : '',
+      maxHeight !== undefined ? 'max-height: ' + formatSize(maxHeight) : '',
+      'scroll-behavior: ' + scrollBehavior,
+      scrollFadeOptions?.size !== undefined ? '--a-scroll-fade-size: ' + formatSize(scrollFadeOptions.size) : '',
+      scrollFadeOptions?.topSize !== undefined ? '--a-scroll-fade-top-size: ' + formatSize(scrollFadeOptions.topSize) : '',
+      scrollFadeOptions?.bottomSize !== undefined ? '--a-scroll-fade-bottom-size: ' + formatSize(scrollFadeOptions.bottomSize) : '',
+      scrollFadeOptions?.startSize !== undefined ? '--a-scroll-fade-start-size: ' + formatSize(scrollFadeOptions.startSize) : '',
+      scrollFadeOptions?.endSize !== undefined ? '--a-scroll-fade-end-size: ' + formatSize(scrollFadeOptions.endSize) : '',
+      scrollFadeOptions?.reveal !== undefined ? '--a-scroll-fade-reveal: ' + formatSize(scrollFadeOptions.reveal) : '',
+    ].filter(Boolean).join('; '),
+  );
   const updateMetrics = () => {
     if (!viewportEl) return;
     metrics = {
@@ -8357,10 +8549,8 @@ Object.assign(svelteTemplates, {
 <div class="a-scroll-area {fill ? 'a-scroll-area--fill' : ''} {horizontal ? 'a-scroll-area--horizontal' : ''} {className}">
   <div
     bind:this={viewportEl}
-    class="a-scroll-area__viewport"
-    style:height={formatSize(height)}
-    style:max-height={formatSize(maxHeight)}
-    style:scroll-behavior={scrollBehavior}
+    class="a-scroll-area__viewport {scrollFadeClass}"
+    style={viewportStyle}
     onscroll={() => {
       updateMetrics();
       showBars();
@@ -8373,12 +8563,14 @@ Object.assign(svelteTemplates, {
   {#if vScrollable}
     <div
       class="a-scroll-area__bar a-scroll-area__bar--vertical {barsVisible ? 'a-scroll-area__bar--visible' : ''}"
+      role="presentation"
       onpointerenter={() => (hoveringBar = true)}
       onpointerleave={handleBarLeave}
       onpointerdown={(e) => handleTrackPointerDown(e, 'vertical')}
     >
       <div
         class="a-scroll-area__thumb {draggingAxis === 'vertical' ? 'a-scroll-area__thumb--dragging' : ''}"
+        role="presentation"
         style:height={vThumb.size + 'px'}
         style:transform={'translateY(' + vThumb.offset + 'px)'}
         onpointerdown={(e) => handleThumbPointerDown(e, 'vertical')}
@@ -8388,12 +8580,14 @@ Object.assign(svelteTemplates, {
   {#if horizontal && hScrollable}
     <div
       class="a-scroll-area__bar a-scroll-area__bar--horizontal {barsVisible ? 'a-scroll-area__bar--visible' : ''}"
+      role="presentation"
       onpointerenter={() => (hoveringBar = true)}
       onpointerleave={handleBarLeave}
       onpointerdown={(e) => handleTrackPointerDown(e, 'horizontal')}
     >
       <div
         class="a-scroll-area__thumb {draggingAxis === 'horizontal' ? 'a-scroll-area__thumb--dragging' : ''}"
+        role="presentation"
         style:width={hThumb.size + 'px'}
         style:transform={'translateX(' + hThumb.offset + 'px)'}
         onpointerdown={(e) => handleThumbPointerDown(e, 'horizontal')}

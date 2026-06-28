@@ -16,6 +16,14 @@
       </div>
     </div>
     <div class="demo-block">
+      <div class="demo-block__label">Sizes</div>
+      <div class="demo-row">
+        <a-otp-input model-value="12" :length="4" size="small"></a-otp-input>
+        <a-otp-input model-value="123" :length="4"></a-otp-input>
+        <a-otp-input model-value="1234" :length="4" size="large"></a-otp-input>
+      </div>
+    </div>
+    <div class="demo-block">
       <div class="demo-block__label">Disabled</div>
       <div class="demo-row">
         <a-otp-input model-value="12" :length="4" disabled></a-otp-input>

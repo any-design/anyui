@@ -1,11 +1,14 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import type { AScrollFadeConfig, AScrollFadeOptions } from '../types';
+
   let {
     height = undefined,
     maxHeight = undefined,
     fill = false,
     horizontal = false,
     scrollBehavior = 'smooth',
+    scrollFade = false as AScrollFadeConfig,
     class: className = '',
     children,
   } = $props();
@@ -27,8 +30,40 @@
   let draggingAxis = $state<string | undefined>(undefined);
   let hoveringBar = false;
   let hideTimer: ReturnType<typeof setTimeout> | undefined;
-  const formatSize = (size: number | string | undefined) =>
-    typeof size === 'number' ? size + 'px' : size;
+  const formatSize = (size: number | string | undefined) => {
+    if (typeof size === 'number') return size + 'px';
+    if (typeof size === 'string' && /^\d+$/.test(size)) return size + 'px';
+    return size;
+  };
+  const scrollFadeOptions = $derived<AScrollFadeOptions | undefined>(
+    scrollFade ? (scrollFade === true ? { axis: horizontal ? 'both' : 'vertical' } : {
+      axis: scrollFade.axis ?? (horizontal ? 'both' : 'vertical'),
+      size: scrollFade.size,
+      topSize: scrollFade.topSize,
+      bottomSize: scrollFade.bottomSize,
+      startSize: scrollFade.startSize,
+      endSize: scrollFade.endSize,
+      reveal: scrollFade.reveal,
+    }) : undefined,
+  );
+  const scrollFadeClass = $derived(
+    scrollFadeOptions
+      ? 'a-scroll-fade a-scroll-fade--' + (scrollFadeOptions.axis ?? 'vertical')
+      : '',
+  );
+  const viewportStyle = $derived(
+    [
+      height !== undefined ? 'height: ' + formatSize(height) : '',
+      maxHeight !== undefined ? 'max-height: ' + formatSize(maxHeight) : '',
+      'scroll-behavior: ' + scrollBehavior,
+      scrollFadeOptions?.size !== undefined ? '--a-scroll-fade-size: ' + formatSize(scrollFadeOptions.size) : '',
+      scrollFadeOptions?.topSize !== undefined ? '--a-scroll-fade-top-size: ' + formatSize(scrollFadeOptions.topSize) : '',
+      scrollFadeOptions?.bottomSize !== undefined ? '--a-scroll-fade-bottom-size: ' + formatSize(scrollFadeOptions.bottomSize) : '',
+      scrollFadeOptions?.startSize !== undefined ? '--a-scroll-fade-start-size: ' + formatSize(scrollFadeOptions.startSize) : '',
+      scrollFadeOptions?.endSize !== undefined ? '--a-scroll-fade-end-size: ' + formatSize(scrollFadeOptions.endSize) : '',
+      scrollFadeOptions?.reveal !== undefined ? '--a-scroll-fade-reveal: ' + formatSize(scrollFadeOptions.reveal) : '',
+    ].filter(Boolean).join('; '),
+  );
   const updateMetrics = () => {
     if (!viewportEl) return;
     metrics = {
@@ -128,10 +163,8 @@
 <div class="a-scroll-area {fill ? 'a-scroll-area--fill' : ''} {horizontal ? 'a-scroll-area--horizontal' : ''} {className}">
   <div
     bind:this={viewportEl}
-    class="a-scroll-area__viewport"
-    style:height={formatSize(height)}
-    style:max-height={formatSize(maxHeight)}
-    style:scroll-behavior={scrollBehavior}
+    class="a-scroll-area__viewport {scrollFadeClass}"
+    style={viewportStyle}
     onscroll={() => {
       updateMetrics();
       showBars();
@@ -144,12 +177,14 @@
   {#if vScrollable}
     <div
       class="a-scroll-area__bar a-scroll-area__bar--vertical {barsVisible ? 'a-scroll-area__bar--visible' : ''}"
+      role="presentation"
       onpointerenter={() => (hoveringBar = true)}
       onpointerleave={handleBarLeave}
       onpointerdown={(e) => handleTrackPointerDown(e, 'vertical')}
     >
       <div
         class="a-scroll-area__thumb {draggingAxis === 'vertical' ? 'a-scroll-area__thumb--dragging' : ''}"
+        role="presentation"
         style:height={vThumb.size + 'px'}
         style:transform={'translateY(' + vThumb.offset + 'px)'}
         onpointerdown={(e) => handleThumbPointerDown(e, 'vertical')}
@@ -159,12 +194,14 @@
   {#if horizontal && hScrollable}
     <div
       class="a-scroll-area__bar a-scroll-area__bar--horizontal {barsVisible ? 'a-scroll-area__bar--visible' : ''}"
+      role="presentation"
       onpointerenter={() => (hoveringBar = true)}
       onpointerleave={handleBarLeave}
       onpointerdown={(e) => handleTrackPointerDown(e, 'horizontal')}
     >
       <div
         class="a-scroll-area__thumb {draggingAxis === 'horizontal' ? 'a-scroll-area__thumb--dragging' : ''}"
+        role="presentation"
         style:width={hThumb.size + 'px'}
         style:transform={'translateX(' + hThumb.offset + 'px)'}
         onpointerdown={(e) => handleThumbPointerDown(e, 'horizontal')}

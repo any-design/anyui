@@ -11,7 +11,7 @@
   } = $props();
 
   // replicates Vue's <transition> fade classes
-  let rendered = $state(loading);
+  let rendered = $state(false);
   let transitionClass = $state('');
   let firstTransition = true;
   $effect(() => {

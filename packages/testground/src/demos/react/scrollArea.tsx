@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { ScrollArea } from '@any-design/anyui-react';
+import { ScrollArea, ScrollFade } from '@any-design/anyui-react';
 
 const rows = Array.from({ length: 30 }, (_, index) => index + 1);
 
@@ -35,7 +35,7 @@ export default function ScrollAreaDemo() {
       <div className="demo-block">
         <div className="demo-block__label">Fixed Height</div>
         <div className="demo-row">
-          <ScrollArea height={220} style={boxStyle}>
+          <ScrollArea height={220} scrollFade style={boxStyle}>
             {rows.map((row) => (
               <div key={row} style={rowStyle}>
                 Row {row}
@@ -47,7 +47,7 @@ export default function ScrollAreaDemo() {
       <div className="demo-block">
         <div className="demo-block__label">Horizontal</div>
         <div className="demo-row">
-          <ScrollArea height={80} horizontal style={{ ...boxStyle, width: 420 }}>
+          <ScrollArea height={80} horizontal scrollFade={{ size: 28, reveal: 72 }} style={{ ...boxStyle, width: 420 }}>
             <div style={stripStyle}>
               {Array.from({ length: 24 }, (_, index) => (
                 <div key={index} style={chipStyle}>
@@ -56,6 +56,18 @@ export default function ScrollAreaDemo() {
               ))}
             </div>
           </ScrollArea>
+        </div>
+      </div>
+      <div className="demo-block">
+        <div className="demo-block__label">ScrollFade Wrapper</div>
+        <div className="demo-row">
+          <ScrollFade height={160} size={36} style={boxStyle}>
+            {rows.map((row) => (
+              <div key={`fade-${row}`} style={rowStyle}>
+                Fade row {row}
+              </div>
+            ))}
+          </ScrollFade>
         </div>
       </div>
     </div>

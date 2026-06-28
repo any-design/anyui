@@ -91,6 +91,7 @@
     <div class="a-slider__fill" style:width={percent + '%'}></div>
     <div
       class="a-slider__thumb"
+      role="presentation"
       style:left={percent + '%'}
       onpointerenter={() => (hovering = true)}
       onpointerleave={() => (hovering = false)}

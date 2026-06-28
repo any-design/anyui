@@ -41,7 +41,7 @@ import QrCode from './packages/qrCode';
 import Radio from './packages/radio';
 import RadioButtonGroup, { RadioButton } from './packages/radioButtonGroup';
 import RadioGroup from './packages/radioGroup';
-import ScrollArea from './packages/scrollArea';
+import ScrollArea, { ScrollFade } from './packages/scrollArea';
 import Select from './packages/select';
 import Slider from './packages/slider';
 import Spinner from './packages/spinner';
@@ -202,6 +202,8 @@ export {
   RadioButtonGroup as ARadioButtonGroup,
   ScrollArea,
   ScrollArea as AScrollArea,
+  ScrollFade,
+  ScrollFade as AScrollFade,
   Select,
   Select as ASelect,
   Slider,

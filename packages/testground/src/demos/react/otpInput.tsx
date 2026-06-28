@@ -23,6 +23,14 @@ export default function OtpInputDemo() {
         </div>
       </div>
       <div className="demo-block">
+        <div className="demo-block__label">Sizes</div>
+        <div className="demo-row">
+          <OtpInput modelValue="12" length={4} size="small" />
+          <OtpInput modelValue="123" length={4} />
+          <OtpInput modelValue="1234" length={4} size="large" />
+        </div>
+      </div>
+      <div className="demo-block">
         <div className="demo-block__label">Disabled</div>
         <div className="demo-row">
           <OtpInput modelValue="12" length={4} disabled />

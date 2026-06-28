@@ -46,20 +46,21 @@
 {/snippet}
 
 {#if isLink}
-  <a class={classes} {href} tabindex={interactive ? 0 : undefined} aria-disabled={disabled || undefined} onclick={handleClick}>{@render inner()}</a>
-{:else}
+  <a class={classes} {href} aria-disabled={disabled || undefined} onclick={handleClick}>{@render inner()}</a>
+{:else if interactive}
   <div
     class={classes}
-    role={interactive ? 'button' : undefined}
-    tabindex={interactive ? 0 : undefined}
+    role="button"
+    tabindex="0"
     aria-disabled={disabled || undefined}
     onclick={handleClick}
     onkeydown={(event) => {
-      if (!interactive) return;
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         (event.currentTarget as HTMLElement).click();
       }
     }}
   >{@render inner()}</div>
+{:else}
+  <div class={classes} aria-disabled={disabled || undefined}>{@render inner()}</div>
 {/if}

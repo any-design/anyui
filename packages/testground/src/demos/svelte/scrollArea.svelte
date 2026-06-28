@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { ScrollArea } from '@any-design/anyui-svelte';
+  import { ScrollArea, ScrollFade } from '@any-design/anyui-svelte';
 
   const rows = Array.from({ length: 30 }, (_, index) => index + 1);
   const cols = Array.from({ length: 24 }, (_, index) => index + 1);
+  const fadeOptions = { size: 28, reveal: 72 };
 </script>
 
 <div>
   <div class="demo-block">
     <div class="demo-block__label">Fixed Height</div>
     <div class="demo-row">
-      <ScrollArea height={220} class="scroll-demo">
+      <ScrollArea height={220} scrollFade class="scroll-demo">
         {#each rows as row (row)}
           <div class="scroll-demo__row">Row {row}</div>
         {/each}
@@ -19,13 +20,23 @@
   <div class="demo-block">
     <div class="demo-block__label">Horizontal</div>
     <div class="demo-row">
-      <ScrollArea height={80} horizontal class="scroll-demo scroll-demo--wide">
+      <ScrollArea height={80} horizontal scrollFade={fadeOptions} class="scroll-demo scroll-demo--wide">
         <div class="scroll-demo__strip">
           {#each cols as col (col)}
             <div class="scroll-demo__chip">Item {col}</div>
           {/each}
         </div>
       </ScrollArea>
+    </div>
+  </div>
+  <div class="demo-block">
+    <div class="demo-block__label">ScrollFade Wrapper</div>
+    <div class="demo-row">
+      <ScrollFade height={160} size={36} class="scroll-demo">
+        {#each rows as row (row)}
+          <div class="scroll-demo__row">Fade row {row}</div>
+        {/each}
+      </ScrollFade>
     </div>
   </div>
 </div>

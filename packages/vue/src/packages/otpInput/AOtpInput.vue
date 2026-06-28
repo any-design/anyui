@@ -2,8 +2,11 @@
   <div
     :class="{
       'a-otp-input': true,
+      [`a-otp-input--${size}`]: size !== 'default',
       'a-otp-input--disabled': disabled,
     }"
+    role="group"
+    :aria-disabled="disabled"
     @pointerdown.prevent="handlePointerDown"
   >
     <input
@@ -26,6 +29,7 @@
         'a-otp-input__cell--filled': !!char,
         'a-otp-input__cell--active': focused && index === activeIndex,
       }"
+      role="presentation"
       @pointerdown.prevent="handleCellPointerDown(index)"
     >
       <transition name="a-trans-otp-char">
@@ -36,7 +40,10 @@
 </template>
 
 <script lang="ts">
+import type { PropType } from 'vue';
 import { computed, defineComponent, onBeforeMount, onMounted, ref, watch } from 'vue';
+
+import type { AOtpInputSize } from './types';
 
 export default defineComponent({
   name: 'AOtpInput',
@@ -50,6 +57,11 @@ export default defineComponent({
     length: {
       type: Number,
       default: 6,
+    },
+    size: {
+      type: String as PropType<AOtpInputSize>,
+      default: 'default',
+      validator: (value: string) => ['small', 'default', 'large'].includes(value),
     },
     disabled: {
       type: Boolean,
@@ -184,7 +196,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (props.autoFocus && !props.disabled) {
-        inputRef.value?.focus();
+        inputRef.value?.focus({ preventScroll: true });
       }
     });
 
@@ -254,6 +266,28 @@ export default defineComponent({
 
   &__char {
     display: block;
+  }
+}
+
+.a-otp-input--small {
+  gap: 6px;
+
+  .a-otp-input__cell {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--a-radius-xs, 8px);
+    font-size: 14px;
+  }
+}
+
+.a-otp-input--large {
+  gap: 10px;
+
+  .a-otp-input__cell {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--a-radius, 14px);
+    font-size: 22px;
   }
 }
 
