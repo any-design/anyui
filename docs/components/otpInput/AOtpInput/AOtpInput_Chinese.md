@@ -28,6 +28,25 @@ const code = ref('');
 
 ## 示例
 
+### 尺寸
+
+通过 `size` 适配紧凑表单、默认验证码流程，或更适合触控的大尺寸输入。
+
+```vue
+<template>
+  <AOtpInput v-model="smallCode" :length="4" size="small" />
+  <AOtpInput v-model="code" :length="4" />
+  <AOtpInput v-model="largeCode" :length="4" size="large" />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const smallCode = ref('');
+const code = ref('');
+const largeCode = ref('');
+</script>
+```
+
 ### 掩码模式
 
 设置 `masked` 可将输入的数字以圆点遮蔽，适合 PIN 输入。
@@ -68,6 +87,7 @@ const onComplete = (val) => {
 | --- | --- | --- | --- |
 | `modelValue` | String | '' | 当前验证码（`v-model`）。 |
 | `length` | Number | 6 | 输入格数量。 |
+| `size` | 'small' \| 'default' \| 'large' | 'default' | 输入格尺寸。 |
 | `disabled` | Boolean | false | 禁用。 |
 | `masked` | Boolean | false | 将数字以圆点遮蔽。 |
 | `autoFocus` | Boolean | false | 挂载时自动聚焦首个格子。 |

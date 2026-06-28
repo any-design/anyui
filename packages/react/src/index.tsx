@@ -3364,6 +3364,7 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
     className,
     modelValue = '',
     length = 6,
+    size = 'default',
     disabled = false,
     masked = false,
     autoFocus = false,
@@ -3384,7 +3385,7 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
     setActiveIndex((index) => Math.min(Math.max(index, 0), Math.min(next.length, length - 1)));
   }, [modelValue, length]);
   useEffect(() => {
-    if (autoFocus && !disabled) inputRef.current?.focus();
+    if (autoFocus && !disabled) inputRef.current?.focus({ preventScroll: true });
   }, []);
   const clampIndex = (index: number, nextValue: string) =>
     Math.min(Math.max(index, 0), Math.min(nextValue.length, length - 1));
@@ -3446,8 +3447,15 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
     <div
       {...pickDataAttrs(rest)}
       ref={ref}
-      className={cx('a-otp-input', disabled && 'a-otp-input--disabled', className)}
+      className={cx(
+        'a-otp-input',
+        size !== 'default' && `a-otp-input--${size}`,
+        disabled && 'a-otp-input--disabled',
+        className,
+      )}
       style={rest.style}
+      role="group"
+      aria-disabled={disabled}
       onPointerDown={(e) => {
         e.preventDefault();
         focusAt(value.length);
@@ -3473,6 +3481,7 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
             char && 'a-otp-input__cell--filled',
             focused && index === activeIndex && 'a-otp-input__cell--active',
           )}
+          role="presentation"
           onPointerDown={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -3486,8 +3495,81 @@ export const OtpInput = forwardRef<HTMLDivElement, AnyUIReactProps>(function Otp
   );
 });
 
+const buildScrollFadeStyle = (options?: Record<string, any>): React.CSSProperties | undefined => {
+  if (!options) return undefined;
+  const style: React.CSSProperties = {};
+  const setVar = (key: string, value: string | number | undefined) => {
+    if (typeof value !== 'undefined') {
+      (style as Record<string, string | undefined>)[key] = formatStyleSize(value);
+    }
+  };
+  setVar('--a-scroll-fade-size', options.size);
+  setVar('--a-scroll-fade-top-size', options.topSize);
+  setVar('--a-scroll-fade-bottom-size', options.bottomSize);
+  setVar('--a-scroll-fade-start-size', options.startSize);
+  setVar('--a-scroll-fade-end-size', options.endSize);
+  setVar('--a-scroll-fade-reveal', options.reveal);
+  return style;
+};
+
+const getScrollFadeAxis = (options: boolean | Record<string, any> | undefined, fallback: string) => {
+  if (!options) return undefined;
+  return options === true ? fallback : options.axis ?? fallback;
+};
+
+const getScrollFadeClass = (axis?: string) =>
+  axis
+    ? cx(
+        'a-scroll-fade',
+        axis === 'vertical' && 'a-scroll-fade--vertical',
+        axis === 'horizontal' && 'a-scroll-fade--horizontal',
+        axis === 'both' && 'a-scroll-fade--both',
+      )
+    : undefined;
+
+export const ScrollFade = forwardRef<HTMLDivElement, AnyUIReactProps>(function ScrollFade(
+  {
+    children,
+    className,
+    axis = 'vertical',
+    size,
+    topSize,
+    bottomSize,
+    startSize,
+    endSize,
+    reveal,
+    height,
+    maxHeight,
+    fill = false,
+    scrollBehavior = 'smooth',
+    ...rest
+  },
+  ref,
+) {
+  return (
+    <div
+      {...pickDataAttrs(rest)}
+      ref={ref}
+      className={cx(
+        getScrollFadeClass(axis),
+        fill && 'a-scroll-fade--fill',
+        className,
+      )}
+      style={{
+        ...buildScrollFadeStyle({ size, topSize, bottomSize, startSize, endSize, reveal }),
+        height: formatStyleSize(height),
+        maxHeight: formatStyleSize(maxHeight),
+        scrollBehavior,
+        ...rest.style,
+      }}
+    >
+      {children}
+    </div>
+  );
+});
+
 export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function ScrollArea(
-  { children, className, height, maxHeight, fill = false, horizontal = false, scrollBehavior = 'smooth', ...rest },
+  { children, className, height, maxHeight, fill = false, horizontal = false, scrollBehavior = 'smooth', scrollFade = false, ...rest },
   ref,
 ) {
   // the bars are inset 2px from each edge (see the shared styles)
@@ -3606,6 +3688,8 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
     hoveringBarRef.current = false;
     showBars();
   };
+  const scrollFadeAxis = getScrollFadeAxis(scrollFade, horizontal ? 'both' : 'vertical');
+  const scrollFadeOptions = scrollFade && scrollFade !== true ? scrollFade : undefined;
   return (
     <div
       {...pickDataAttrs(rest)}
@@ -3615,8 +3699,13 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
     >
       <div
         ref={viewportRef}
-        className="a-scroll-area__viewport"
-        style={{ height: formatStyleSize(height), maxHeight: formatStyleSize(maxHeight), scrollBehavior }}
+        className={cx('a-scroll-area__viewport', getScrollFadeClass(scrollFadeAxis))}
+        style={{
+          height: formatStyleSize(height),
+          maxHeight: formatStyleSize(maxHeight),
+          scrollBehavior,
+          ...buildScrollFadeStyle(scrollFadeOptions),
+        }}
         onScroll={() => {
           updateMetrics();
           showBars();

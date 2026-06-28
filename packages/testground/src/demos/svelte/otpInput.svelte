@@ -23,6 +23,14 @@
     </div>
   </div>
   <div class="demo-block">
+    <div class="demo-block__label">Sizes</div>
+    <div class="demo-row">
+      <OtpInput modelValue="12" length={4} size="small" />
+      <OtpInput modelValue="123" length={4} />
+      <OtpInput modelValue="1234" length={4} size="large" />
+    </div>
+  </div>
+  <div class="demo-block">
     <div class="demo-block__label">Disabled</div>
     <div class="demo-row">
       <OtpInput modelValue="12" length={4} disabled />

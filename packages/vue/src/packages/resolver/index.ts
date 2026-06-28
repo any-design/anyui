@@ -29,6 +29,7 @@ const STYLE_LINKED_COMPONENT_MAP = {
   radioButtonGroup: 'radioButton',
   listMenu: 'listMenuItem',
   popupMenu: 'popper',
+  scrollArea: 'scrollFade',
   select: ['input', 'popper'],
   table: 'empty',
 };

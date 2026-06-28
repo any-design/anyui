@@ -2,6 +2,7 @@
   let {
     modelValue = $bindable(''),
     length = 6,
+    size = 'default',
     disabled = false,
     masked = false,
     autoFocus = false,
@@ -70,12 +71,14 @@
     activeIndex = clampIndex(pasted.length, pasted);
   };
   $effect(() => {
-    if (autoFocus && !disabled) inputEl?.focus();
+    if (autoFocus && !disabled) inputEl?.focus({ preventScroll: true });
   });
 </script>
 
 <div
-  class="a-otp-input {disabled ? 'a-otp-input--disabled' : ''} {className}"
+  class="a-otp-input {size !== 'default' ? `a-otp-input--${size}` : ''} {disabled ? 'a-otp-input--disabled' : ''} {className}"
+  role="group"
+  aria-disabled={disabled}
   onpointerdown={(e) => {
     e.preventDefault();
     focusAt(value.length);
@@ -96,6 +99,7 @@
   {#each cells as char, index (index)}
     <div
       class="a-otp-input__cell {char ? 'a-otp-input__cell--filled' : ''} {focused && index === activeIndex ? 'a-otp-input__cell--active' : ''}"
+      role="presentation"
       onpointerdown={(e) => {
         e.preventDefault();
         e.stopPropagation();

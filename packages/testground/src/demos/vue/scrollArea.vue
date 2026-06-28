@@ -3,7 +3,7 @@
     <div class="demo-block">
       <div class="demo-block__label">Fixed Height</div>
       <div class="demo-row">
-        <a-scroll-area :height="220" class="scroll-demo">
+        <a-scroll-area :height="220" scroll-fade class="scroll-demo">
           <div v-for="row in rows" :key="row" class="scroll-demo__row">Row {{ row }}</div>
         </a-scroll-area>
       </div>
@@ -11,11 +11,26 @@
     <div class="demo-block">
       <div class="demo-block__label">Horizontal</div>
       <div class="demo-row">
-        <a-scroll-area :height="80" horizontal class="scroll-demo scroll-demo--wide">
+        <a-scroll-area
+          :height="80"
+          horizontal
+          :scroll-fade="{ size: 28, reveal: 72 }"
+          class="scroll-demo scroll-demo--wide"
+        >
           <div class="scroll-demo__strip">
             <div v-for="col in 24" :key="col" class="scroll-demo__chip">Item {{ col }}</div>
           </div>
         </a-scroll-area>
+      </div>
+    </div>
+    <div class="demo-block">
+      <div class="demo-block__label">ScrollFade Wrapper</div>
+      <div class="demo-row">
+        <a-scroll-fade height="160" size="36" class="scroll-demo">
+          <div v-for="row in rows" :key="`fade-${row}`" class="scroll-demo__row">
+            Fade row {{ row }}
+          </div>
+        </a-scroll-fade>
       </div>
     </div>
   </div>
