@@ -1,13 +1,18 @@
 <template>
-  <aside class="toc" data-toc>
-    <div class="toc__title">On this page</div>
-    <a-list-menu
-      class="toc__menu"
-      :menu="menu"
-      :model-value="currentActive"
-      @update:model-value="handleSelect"
-    />
-  </aside>
+  <details v-if="resolvedHeadings.length > 0" class="mobile-toc" :open="open">
+    <summary class="mobile-toc__head" @click.prevent="toggle">
+      <span class="mobile-toc__title">On this page</span>
+      <span class="mobile-toc__chevron" :class="{ 'mobile-toc__chevron--open': open }" aria-hidden="true">▾</span>
+    </summary>
+    <div class="mobile-toc__body">
+      <a-list-menu
+        class="mobile-toc__menu"
+        :menu="menu"
+        :model-value="currentActive"
+        @update:model-value="handleSelect"
+      />
+    </div>
+  </details>
 </template>
 
 <script setup lang="ts">
@@ -26,21 +31,24 @@ const props = defineProps<{
 
 const localHeadings = ref<TocHeading[]>([]);
 const currentActive = ref<string>();
+const open = ref(false);
 let scrollRaf = 0;
 let isProgrammaticScroll = false;
 let scrollTimer: number | undefined;
 
 const normalizedHeadings = computed(() =>
   (props.auto ? localHeadings.value : props.headings ?? []).filter(
-    (heading) => heading.depth >= 2 && heading.depth <= 3 && heading.slug && heading.text,
+    (h) => h.depth >= 2 && h.depth <= 3 && h.slug && h.text,
   ),
 );
 
+const resolvedHeadings = computed(() => normalizedHeadings.value);
+
 const menu = computed(() =>
-  normalizedHeadings.value.map((heading) => ({
-    label: heading.text,
-    value: heading.slug,
-    className: `toc__item toc__item--depth-${heading.depth}`,
+  normalizedHeadings.value.map((h) => ({
+    label: h.text,
+    value: h.slug,
+    className: `mobile-toc__item mobile-toc__item--depth-${h.depth}`,
   })),
 );
 
@@ -52,14 +60,12 @@ const slugify = (value: string) =>
     .replace(/\s+/g, '-');
 
 const scanHeadings = () => {
-  if (!props.auto) {
-    return;
-  }
-  const currentLang = document.documentElement.dataset.lang || 'en';
+  if (!props.auto) return;
+  const lang = document.documentElement.dataset.lang || 'en';
   localHeadings.value = Array.from(document.querySelectorAll<HTMLElement>('.prose h2, .prose h3'))
     .filter((heading) => {
       const pane = heading.closest<HTMLElement>('.localized-doc__pane');
-      return !pane || pane.dataset.lang === currentLang;
+      return !pane || pane.dataset.lang === lang;
     })
     .map((heading, index) => {
       heading.id = slugify(heading.textContent || '') || `section-${index + 1}`;
@@ -81,7 +87,7 @@ const disconnectObserver = () => {
 
 const setActiveFromHash = () => {
   const slug = decodeURIComponent(window.location.hash.replace(/^#/, ''));
-  if (slug && normalizedHeadings.value.some((heading) => heading.slug === slug)) {
+  if (slug && normalizedHeadings.value.some((h) => h.slug === slug)) {
     currentActive.value = slug;
     return true;
   }
@@ -89,9 +95,10 @@ const setActiveFromHash = () => {
 };
 
 // Scroll-based scrollspy: the active heading is the last one whose top sits
-// above a trigger line (scroll top + offset). Near the bottom of the scroll
-// container, force the last heading active so the TOC never sticks on an
-// earlier heading when the final few share the last screenful.
+// above a trigger line (scroll top + offset). When the scroll container is at
+// (or near) the bottom, force the last heading active so the TOC never gets
+// "stuck" on a heading above the final ones when several share the last
+// screenful.
 //
 // AnyUI's layout.scss makes <body> the scroll container (height:100vh,
 // overflow-y:auto), so we read scroll position from document.body, not window.
@@ -108,9 +115,7 @@ const computeActive = () => {
   const scrollTop = scroller.scrollTop;
   const trigger = scrollTop + TOP_OFFSET;
   // Walk the headings and pick the last one whose top has crossed the trigger
-  // line. This naturally highlights each heading in order as it scrolls past,
-  // so several headings sharing one screenful advance one-by-one instead of
-  // jumping.
+  // line, so several headings sharing one screenful advance one-by-one.
   let active = headings[0].slug;
   for (const heading of headings) {
     const el = document.getElementById(heading.slug);
@@ -123,9 +128,7 @@ const computeActive = () => {
     }
   }
   // Only at the very bottom (can't scroll further) do we force the last heading
-  // active, so the TOC never gets stuck on an earlier heading when the final
-  // few share the last screenful. We check the real max scroll position rather
-  // than "last heading entered viewport" so the middle ones still get visited.
+  // active, so the TOC never gets stuck on an earlier heading.
   const maxScroll = scroller.scrollHeight - scroller.clientHeight;
   if (scrollTop + BOTTOM_SLOP >= maxScroll && scrollTop > 0) {
     active = headings[headings.length - 1].slug;
@@ -142,37 +145,26 @@ const onScroll = () => {
   });
 };
 
-const syncInitialActive = () => {
-  if (setActiveFromHash()) {
-    return;
-  }
-  computeActive();
-};
-
 const setupObserver = async () => {
   disconnectObserver();
   await nextTick();
-
   if (normalizedHeadings.value.length === 0) {
     currentActive.value = undefined;
     return;
   }
-
-  syncInitialActive();
+  if (!setActiveFromHash()) {
+    computeActive();
+  }
   // body is the scroll container (see comment above); listen there.
   document.body.addEventListener('scroll', onScroll, { passive: true });
 };
 
 const handleSelect = (value: string | number | undefined) => {
-  if (typeof value !== 'string') {
-    return;
-  }
+  if (typeof value !== 'string') return;
   const target = document.getElementById(value);
-  if (!target) {
-    return;
-  }
-
+  if (!target) return;
   currentActive.value = value;
+  open.value = false;
   isProgrammaticScroll = true;
   window.clearTimeout(scrollTimer);
   history.pushState(null, '', `#${encodeURIComponent(value)}`);
@@ -182,9 +174,11 @@ const handleSelect = (value: string | number | undefined) => {
   }, 700);
 };
 
-const handleHashChange = () => {
-  setActiveFromHash();
+const toggle = () => {
+  open.value = !open.value;
 };
+
+const handleHashChange = () => setActiveFromHash();
 
 const handleLanguageApplied = () => {
   scanHeadings();
@@ -195,9 +189,7 @@ watch(normalizedHeadings, setupObserver, { deep: true });
 
 onMounted(() => {
   scanHeadings();
-  if (!props.auto) {
-    setupObserver();
-  }
+  if (!props.auto) setupObserver();
   window.addEventListener('hashchange', handleHashChange);
   window.addEventListener('anyui:lang-applied', handleLanguageApplied);
 });

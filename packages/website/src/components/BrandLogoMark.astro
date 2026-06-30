@@ -1,0 +1,33 @@
+---
+// Brand mark only (no wordmark) — tuned for the compact mobile navbar where
+// the full AnyUI wordmark would overflow. Inline SVG so it paints on first
+// paint with no extra request.
+---
+
+<svg
+  class="site-logo site-logo--mark"
+  viewBox="0 0 512 512"
+  role="img"
+  aria-label="AnyUI"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="brand-logo-mark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#55b5ff"></stop>
+      <stop offset="55%" stop-color="#2f7df6"></stop>
+      <stop offset="100%" stop-color="#2456e6"></stop>
+    </linearGradient>
+  </defs>
+  <path
+    fill="url(#brand-logo-mark)"
+    d="M118.934,77.178C136.155,109.356,77.4,297.533,196,333c150.192,44.915,234.335-128.512,286-102,31.611,25.493,10.5,62-62,132C232.36,523.034,41.307,462.966,18,265c-6.406-75.776-4.113-131.212,19-172S101.712,45,118.934,77.178Zm69.5,81.788c13.388,1.421,67.454,28.819,67.454,28.819a650.051,650.051,0,0,1,58.905,34.341c29.67,18.68,45.308,33.425,39.061,42.022-7.059,10.141-34.909,2.011-51.663-1.166-37.18-11.042-55.574-17.58-92.064-32.854-27.858-12.962-39.754-23.143-43.168-26.665-2.868-2.426-19.973-17.957-11.425-32.223S175.043,157.546,188.43,158.966Z"
+  ></path>
+</svg>
+
+<style>
+  .site-logo--mark {
+    height: 28px;
+    width: 28px;
+    display: none;
+  }
+</style>
