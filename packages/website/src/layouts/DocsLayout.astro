@@ -3,6 +3,7 @@ import BaseLayout from './BaseLayout.astro';
 import Toc from '../components/Toc.astro';
 import DocsSidebar from '../components/vue/DocsSidebar.vue';
 import LangToggle from '../components/vue/LangToggle.vue';
+import MobileToc from '../components/vue/MobileToc.vue';
 import type { BreadcrumbItem, SchemaType } from '../data/seo';
 
 interface Heading {
@@ -61,6 +62,11 @@ const nav = [
     ],
   },
 ];
+
+const mobileMenuGroups = nav.map((group) => ({
+  label: group.label,
+  items: group.items.map((item) => ({ label: item.label, value: item.id, href: item.href })),
+}));
 ---
 
 <BaseLayout
@@ -70,6 +76,9 @@ const nav = [
   active="docs"
   schemaType={schemaType}
   breadcrumbs={breadcrumbs}
+  mobileNavMenuGroups={mobileMenuGroups}
+  mobileNavMenuActive={active}
+  mobileNavMenuKind="docs"
 >
   <div class="docs" class:list={[showToc ? 'docs--has-toc' : '']}>
     <DocsSidebar
@@ -80,6 +89,16 @@ const nav = [
       groups={nav}
     />
     <article class="prose">
+      <MobileToc
+        client:load
+        transition:persist="mobile-toc"
+        transition:persist-props
+        auto={tocAuto}
+        headings={headings}
+      />
+      <div class="doc-body">
+        <slot />
+      </div>
       <div class="doc-toolbar">
         <LangToggle
           client:load
@@ -88,7 +107,6 @@ const nav = [
           model-value="en"
         />
       </div>
-      <slot />
     </article>
     {showToc && (headings && headings.length > 0 ? <Toc headings={headings} /> : <Toc />)}
   </div>

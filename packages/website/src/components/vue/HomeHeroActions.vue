@@ -5,7 +5,7 @@
         Get Started
       </a-button>
     </a>
-    <a href="/testground/" data-astro-reload>
+    <a href="/testground/" class="hero__action-testground" data-astro-reload>
       <a-button round icon="ri:flask-line" icon-position="trailing">
         Open Testground
       </a-button>

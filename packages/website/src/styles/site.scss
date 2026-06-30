@@ -15,6 +15,41 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(92px + env(safe-area-inset-top, 0px));
+  // Overlay-style scrollbar across platforms: don't reserve a gutter for the
+  // scrollbar (so it floats over content instead of eating layout width), and
+  // use a thin tinted thumb with a transparent track. WebKit gets custom thumb
+  // / track rules below; Firefox uses scrollbar-width + scrollbar-color.
+  scrollbar-gutter: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar, var(--line)) transparent;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--scrollbar, var(--line)) 70%, transparent);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--scrollbar, var(--line)) 90%, transparent);
+    background-clip: padding-box;
+  }
+
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
 }
 
 body {
@@ -23,6 +58,10 @@ body {
   background: transparent;
   min-height: 100vh;
   overflow-x: hidden;
+  // Inherit the overlay scrollbar styling for any internally-scrollable body
+  // regions too.
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar, var(--line)) transparent;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   --site-gutter: clamp(16px, 5vw, 24px);
   --site-header-top: calc(14px + env(safe-area-inset-top, 0px));
@@ -30,6 +69,43 @@ body {
   --site-header-clearance: calc(
     var(--site-header-top) + var(--site-header-height) + 36px
   );
+}
+
+// Global overlay scrollbar styling for every scrollable element on the site
+// (sidebars, drawer, TOC, code blocks, preview frames). A single thin tinted
+// thumb on a transparent track reads as an overlay bar on every platform,
+// including Chrome/Edge on Windows which otherwise paint a wide solid bar.
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar, var(--line)) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--scrollbar, var(--line)) 70%, transparent);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--scrollbar, var(--line)) 90%, transparent);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 // AnyUI's bundled layout.scss sets `html, body { position: relative; background: var(--bg) }`.
@@ -265,6 +341,13 @@ html[theme='dark'] {
     gap: 6px;
   }
 
+  // The mobile menu trigger is hidden on desktop (revealed at the 760px
+  // breakpoint). The full/mark logo swap is handled inside BrandLogo and
+  // BrandLogoMark (scoped styles), not here.
+  &__menu-button {
+    display: none;
+  }
+
   .a-button {
     letter-spacing: 0;
   }
@@ -384,7 +467,27 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
   }
 }
 
-@media (max-width: 760px) {
+// On tablet/mobile (<=840px) the full wordmark doesn't fit the narrow navbar,
+// so the mark-only logo takes over. The scoped styles in BrandLogo /
+// BrandLogoMark set the defaults (full shown, mark hidden); these globals
+// override them with !important because scoped attribute selectors win the
+// non-important cascade.
+@media (max-width: 840px) {
+  .site-header__brand .site-logo {
+    display: none !important;
+  }
+
+  .site-header__brand .site-logo--mark {
+    display: block !important;
+  }
+}
+
+// Tablet + mobile navbar (<=840px). The bar becomes full-width with the mark
+// logo on the left, the Docs/Components entries inline, and a borderless menu
+// button on the right that opens the mobile nav drawer (which hosts the page
+// listMenu, the full nav, and the appearance toggles). Testground/GitHub are
+// desktop-only and hidden from the inline nav here.
+@media (max-width: 840px) {
   .site-header {
     justify-content: flex-start;
     padding-inline:
@@ -393,31 +496,133 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
     overflow: visible;
 
     &__inner {
-      gap: 10px;
+      gap: 8px;
       width: 100%;
       height: 50px;
       padding: 0 8px 0 14px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-padding-inline: 14px;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      overflow: visible;
+    }
 
-      &::-webkit-scrollbar {
-        display: none;
+    &__brand {
+      flex: 0 0 auto;
+      margin-right: 6px;
+    }
+
+    // Inline nav (Docs/Components) sits right after the brand; the actions
+    // (light/solid + menu) are pushed to the far right. nav-wrap fills the
+    // remaining width so margin-left:auto on actions reaches the right edge.
+    &__nav-wrap {
+      flex: 1 1 auto;
+      min-width: 0;
+      gap: 4px;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    &__nav {
+      flex: 0 0 auto;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    &__actions {
+      flex: 0 0 auto;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    // Theme / glass toggles stay in the navbar on tablet/mobile (moved out of
+    // the drawer). On very narrow bars we collapse them to icon-only pills.
+    &__action-button.a-button {
+      height: 32px;
+      padding: 3px 10px;
+      font-size: 12px;
+    }
+
+    &__menu-button {
+      display: inline-flex;
+    }
+
+    &__nav-button.a-button {
+      padding-inline: 10px;
+      font-size: 12.5px;
+    }
+
+    &__menu-button.a-button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      font-size: 15px;
+      border-color: transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      box-shadow: none;
+
+      &:hover {
+        background: var(--bg-semi-light);
+        color: var(--text);
+        transform: none;
+        box-shadow: none;
+      }
+
+      &:active {
+        transform: scale(0.94);
       }
     }
 
-    &__nav-wrap,
-    &__nav,
-    &__actions {
-      flex: 0 0 auto;
+    // Testground/GitHub are desktop-only on the inline nav.
+    &__nav-link--mobile-hidden {
+      display: none;
+    }
+  }
+
+  // Collapse the light/solid toggles to icon-only on narrow bars so the navbar
+  // never overflows. Keep labels on tablet widths where there's room.
+  @media (max-width: 600px) {
+    .site-header__action-button.a-button .a-button__inner {
+      display: none;
     }
 
-    &__nav-button.a-button,
-    &__action-button.a-button {
-      padding: 3px 10px;
+    .site-header__action-button.a-button {
+      width: 32px;
+      padding: 3px;
+    }
+  }
+
+  .hero__action-testground {
+    display: none;
+  }
+
+  // On tablet/mobile the docs/components sidebar moves into the nav drawer,
+  // so the in-page sticky sidebar is hidden entirely (no more horizontal
+  // scroll bar).
+  .docs-menu,
+  .components-sidebar {
+    display: none;
+  }
+
+  // Mobile-only collapsible "On this page" block at the top of docs articles.
+  .mobile-toc {
+    display: block;
+  }
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    &__inner {
+      gap: 4px;
+      padding: 0 6px 0 12px;
+    }
+
+    &__nav-button.a-button {
+      padding-inline: 8px;
       font-size: 12px;
+    }
+
+    &__menu-button.a-button {
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
     }
   }
 }
@@ -432,59 +637,31 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
 
   .site-header {
     &__brand {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__brand .site-logo--mark {
+      height: 28px;
       width: 28px;
-      overflow: hidden;
-    }
-
-    &__brand .site-logo {
-      max-width: none;
-    }
-
-    &__inner {
-      gap: 4px;
-      padding-inline: 10px 8px;
-    }
-
-    &__nav-wrap {
-      flex: 1 1 auto;
-      gap: 4px;
-      overflow: hidden;
-    }
-
-    &__nav {
-      gap: 2px;
-      min-width: 0;
-    }
-
-    &__actions {
-      flex: 0 0 auto;
-      gap: 3px;
-    }
-
-    &__nav-link[href^='https://'] {
-      display: none;
-    }
-
-    &__nav-button.a-button {
-      padding-inline: 7px;
-      font-size: 11px;
-    }
-
-    &__action-button.a-button {
-      width: 32px;
-      padding: 3px;
-    }
-
-    &__action-button.a-button .a-button__inner {
-      display: none;
     }
   }
 }
 
 @media (max-width: 340px) {
   .site-header {
-    &__actions {
-      display: none;
+    &__nav-button.a-button {
+      padding-inline: 6px;
+      font-size: 11px;
+    }
+
+    &__menu-button.a-button {
+      width: 30px;
+      height: 30px;
+      font-size: 13px;
     }
   }
 }
@@ -512,6 +689,18 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
 
   a:hover {
     color: var(--primary);
+  }
+
+  // The dedicated GitHub entry is mobile/tablet-only (on desktop the navbar
+  // already has a GitHub link); it's hidden by default and revealed at <=840px.
+  &__github {
+    display: none;
+  }
+}
+
+@media (max-width: 840px) {
+  .site-footer__github {
+    display: inline;
   }
 }
 
@@ -1320,78 +1509,282 @@ html[theme='dark'] {
   }
 }
 
-@media (max-width: 840px) {
-  .docs-menu,
-  .components-sidebar {
-    position: sticky;
-    top: calc(var(--site-header-top) + var(--site-header-height) + 8px);
-    z-index: 30;
-    width: auto;
-    max-width: calc(100vw - (var(--site-gutter) * 2));
-    max-height: none;
-    margin-inline: calc(var(--site-gutter) * -1);
-    padding:
-      8px var(--site-gutter) 10px
-      calc(var(--site-gutter) + env(safe-area-inset-left, 0px));
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-padding-inline: var(--site-gutter);
-    -webkit-overflow-scrolling: touch;
-    border-block: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    -webkit-backdrop-filter: blur(18px) saturate(1.25);
-    backdrop-filter: blur(18px) saturate(1.25);
+// ------------------------------------------------------------------ mobile toc
+// Collapsible "On this page" block shown at the top of docs articles on
+// mobile only. Desktop hides it (display:none below); the 760px query reveals
+// it. Fumadocs-style disclosure with the AnyUI rounded, tinted surface.
 
-    .a-list-menu {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      width: max-content;
-      min-width: 100%;
-    }
+.mobile-toc {
+  display: none;
+  margin: 0 0 14px 0;
+  border: 1px solid var(--line);
+  border-radius: var(--a-radius, 14px);
+  background: color-mix(in srgb, var(--bg-bright) 96%, transparent);
+  overflow: hidden;
 
-    .a-list-menu__split {
-      width: auto;
-      min-width: max-content;
-      margin: 0 4px 0 10px;
-      padding: 0;
-      border: none;
-    }
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 11px 14px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
 
-    .a-list-menu__split span {
-      font-size: 10.5px;
-      white-space: nowrap;
-    }
-
-    .a-list-menu__item {
-      width: auto;
-      min-width: max-content;
-      margin: 0;
-      padding: 7px 11px;
-      white-space: nowrap;
+    &::-webkit-details-marker {
+      display: none;
     }
   }
 
-  .docs--components .components-sidebar,
-  .components-sidebar {
-    max-height: none;
-    padding-right: var(--site-gutter);
+  &__title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06rem;
+    text-transform: uppercase;
+    color: var(--text-placeholder);
+  }
+
+  &__chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--a-radius-full, 999px);
+    background: var(--bg-semi-light);
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1;
+    transition: transform var(--anim-duration, 200ms) ease;
+
+    &--open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__body {
+    padding: 4px 8px 12px 8px;
+    border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  }
+
+  &__menu {
+    --a-item-selected-bg: color-mix(in srgb, var(--primary) 10%, transparent);
+    --a-item-selected-color: var(--text);
+    --a-item-hover-bg: color-mix(in srgb, var(--primary) 7%, transparent);
+  }
+
+  .a-list-menu__item {
+    width: 100%;
+    margin: 2px 0;
+    padding: 7px 10px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    text-shadow: none;
+    box-shadow: none;
+    border-radius: var(--a-radius-sm, 10px);
+  }
+
+  .a-list-menu__item:hover {
+    color: var(--text);
+  }
+
+  .a-list-menu__item--selected {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  &__item--depth-3 {
+    padding-left: 22px;
+    font-size: 12.5px;
+  }
+}
+
+// ------------------------------------------------------------------ mobile nav drawer
+// Right-side drawer opened from the navbar menu button on tablet/mobile.
+// Hosts the page listMenu (docs/components), the primary nav links, and the
+// dark/glass appearance toggles. Desktop never renders it visibly (the trigger
+// is hidden, and the drawer only mounts when the button is clicked).
+
+// Ensure the drawer body always sits above its own mask. ADrawer only applies
+// zIndex when width is a string; we set width as a string + a z-index prop, but
+// add a CSS guarantee too in case of prop edge cases.
+.a-drawer--right .mobile-nav-drawer__body {
+  z-index: 200;
+}
+
+.mobile-nav-drawer__body {
+  padding: 0;
+  // Lift the surface so the drawer reads as a layer above the page, with the
+  // AnyUI rounded corner + soft tinted shadow already provided by ADrawer.
+  background: var(--a-surface, var(--bg-bright));
+  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
+  backdrop-filter: var(--a-surface-backdrop, none);
+}
+
+.mobile-nav-drawer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 14px calc(16px + env(safe-area-inset-bottom, 0px));
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-nav-drawer__section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  // The page listMenu scrolls if it's long (e.g. components has ~50 entries);
+  // the footer stays pinned at the bottom because the menu section flexes to
+  // fill remaining height and scrolls internally.
+  &--menu {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--line);
+      border-radius: 999px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+}
+
+// Footer row: a single line of three controls (light/dark, solid/glass,
+// GitHub). No divider, no label — the icons + labels are self-explanatory and
+// the row mirrors the desktop navbar's action styling.
+.mobile-nav-drawer__footer {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.mobile-nav-drawer__section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06rem;
+  text-transform: uppercase;
+  color: var(--text-placeholder);
+  padding: 0 6px;
+}
+
+.mobile-nav-drawer__menu {
+  --a-item-selected-bg: color-mix(in srgb, var(--primary) 10%, transparent);
+  --a-item-selected-color: var(--text);
+  --a-item-hover-bg: color-mix(in srgb, var(--primary) 7%, transparent);
+
+  .a-list-menu__split {
+    margin: 10px 6px 4px 6px;
+    padding: 4px 2px;
+    border-top: none;
+    border-bottom: 1px solid var(--line);
+
+    span {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.06rem;
+      text-transform: uppercase;
+      color: var(--text-placeholder);
+    }
+  }
+
+  .a-list-menu__item {
+    margin: 2px 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-shadow: none;
+    box-shadow: none;
+    border-radius: var(--a-radius-sm, 10px);
+  }
+
+  .a-list-menu__item:hover {
+    color: var(--text);
+  }
+
+  .a-list-menu__item--selected {
+    color: var(--text);
+    font-weight: 700;
+  }
+}
+
+.mobile-nav-drawer__pref.a-button {
+  flex: 1 1 0;
+  height: 38px;
+  letter-spacing: 0;
+  font-size: 13px;
+  font-weight: 600;
+  // Match the desktop navbar action buttons: no border, transparent surface,
+  // tinted hover, so the drawer prefs read as the same controls.
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  box-shadow: none;
+
+  &:hover {
+    background: var(--bg-semi-light);
+    color: var(--text);
+    transform: translateY(-1px);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 48%, transparent);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+// The GitHub entry is an <a> wrapping an a-button; the anchor itself shouldn't
+// add its own box, the button fills it.
+.mobile-nav-drawer__pref--link {
+  flex: 1 1 0;
+  display: flex;
+  text-decoration: none;
+  color: inherit;
+
+  .mobile-nav-drawer__pref-inner.a-button {
+    width: 100%;
+  }
+}
+
+.mobile-nav-drawer__pref--active.a-button {
+  background: var(--primary-10, var(--primary-8));
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #fff 60%, transparent),
+    inset 0 0 0 1px var(--primary-20, color-mix(in srgb, var(--primary) 20%, transparent)),
+    0 2px 8px var(--shadow-8);
+}
+
+// Dark-mode tuning: keep the drawer surface lifted against the dark bg.
+html[theme='dark'] {
+  .mobile-nav-drawer__body {
+    background: var(--a-surface, var(--bg-bright));
   }
 }
 
 @media (max-width: 520px) {
   .docs {
     padding-inline: var(--site-gutter);
-  }
-
-  .docs-menu,
-  .components-sidebar {
-    top: calc(var(--site-header-top) + var(--site-header-height) + 6px);
-
-    .a-list-menu__item {
-      font-size: 12.5px;
-      padding: 7px 10px;
-    }
   }
 }
 
@@ -1738,12 +2131,54 @@ html[theme='dark'] .preview-frame {
 
 // ------------------------------------------------------------------ components
 
+// The docs article lays out its top as a two-column grid so the language
+// switcher (.doc-toolbar) sits on the same row as the article's h1 (which is
+// the first child of .doc-body), h1 on the left, switcher on the right. The
+// mobile TOC (.mobile-toc) spans the full width above that row. This works
+// across all viewport widths without moving any DOM.
+.prose {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 16px;
+  row-gap: 0;
+}
+
+// Mobile TOC (disclosure) sits full-width in row 1 when present.
+.mobile-toc {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+// The article body (slot content) occupies the left column of row 2.
+.doc-body {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+}
+
+// The language switcher hugs the right edge of row 2, aligned to the top so it
+// lines up with the h1 (the first child of .doc-body).
 .doc-toolbar {
+  grid-column: 2;
+  grid-row: 2;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 12px;
-  margin-bottom: 8px;
+  margin: 0;
+  // Nudge the switcher down so it vertically centers against the h1's text
+  // rather than its cap height. h1 has margin-bottom:18px from .prose h1.
+  padding-top: 4px;
+}
+
+// When there's no mobile TOC (e.g. a doc with no headings), the toolbar + body
+// should still land in the first row so the switcher lines up with the h1.
+.prose:not(:has(.mobile-toc)) {
+  .doc-body,
+  .doc-toolbar {
+    grid-row: 1;
+  }
 }
 
 .components-index {
@@ -1812,13 +2247,6 @@ html[theme='dark'] .preview-frame {
 }
 
 @media (max-width: 560px) {
-  .doc-toolbar {
-    position: relative;
-    z-index: 2;
-    justify-content: flex-start;
-    margin-bottom: 16px;
-  }
-
   .components-index {
     &__intro {
       font-size: 14.5px;

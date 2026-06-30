@@ -5,6 +5,7 @@
         v-for="item in navItems"
         :key="item.href"
         class="site-header__nav-link"
+        :class="{ 'site-header__nav-link--mobile-hidden': item.mobileHidden }"
         :href="item.href"
         :target="item.external ? '_blank' : undefined"
         :rel="item.external ? 'noreferrer' : undefined"
@@ -58,6 +59,20 @@
       >
         {{ glass ? 'Glass' : 'Solid' }}
       </a-button>
+      <a-button
+        v-if="hasMobileMenu"
+        class="site-header__menu-button"
+        size="small"
+        round
+        icon="ph:list-bold"
+        title="Open menu"
+        aria-label="Open menu"
+        role="button"
+        tabindex="0"
+        @click="openMobileNav"
+        @keydown.enter.prevent="openMobileNav"
+        @keydown.space.prevent="openMobileNav"
+      />
     </div>
   </div>
 </template>
@@ -65,6 +80,7 @@
 <script lang="ts" setup>
 import { navigate } from 'astro:transitions/client';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useSitePrefs } from './useSitePrefs';
 
 interface NavItem {
   label: string;
@@ -72,6 +88,7 @@ interface NavItem {
   active?: string;
   external?: boolean;
   reload?: boolean;
+  mobileHidden?: boolean;
 }
 
 const props = defineProps<{
@@ -81,14 +98,13 @@ const props = defineProps<{
 const navItems: NavItem[] = [
   { label: 'Docs', href: '/docs/getting-started', active: 'docs' },
   { label: 'Components', href: '/components', active: 'components' },
-  { label: 'Testground', href: '/testground/', active: 'testground', reload: true },
-  { label: 'GitHub', href: 'https://github.com/any-design/anyui', external: true },
+  { label: 'Testground', href: '/testground/', active: 'testground', reload: true, mobileHidden: true },
+  { label: 'GitHub', href: 'https://github.com/any-design/anyui', external: true, mobileHidden: true },
 ];
 
-const STORAGE_KEY = 'anyui-site-prefs';
 const currentActive = ref(props.active ?? '');
-const dark = ref(false);
-const glass = ref(false);
+const hasMobileMenu = ref(false);
+const { dark, glass, toggleDark, toggleGlass, syncPrefs } = useSitePrefs();
 
 watch(
   () => props.active,
@@ -96,37 +112,6 @@ watch(
     currentActive.value = value ?? '';
   },
 );
-
-const readPrefs = () => {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') as Record<string, unknown>;
-  } catch {
-    return {};
-  }
-};
-
-const writePrefs = (next: Record<string, unknown>) => {
-  const prefs = { ...readPrefs(), ...next };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-};
-
-const applyPrefs = (nextDark: boolean, nextGlass: boolean) => {
-  const html = document.documentElement;
-  html.setAttribute('theme', nextDark ? 'dark' : 'light');
-  if (nextGlass) {
-    html.setAttribute('data-anyui-style', 'glass');
-  } else {
-    html.removeAttribute('data-anyui-style');
-  }
-};
-
-const syncPrefs = () => {
-  const prefs = readPrefs();
-  dark.value = document.documentElement.getAttribute('theme') === 'dark' || prefs.dark === true;
-  glass.value =
-    document.documentElement.getAttribute('data-anyui-style') === 'glass' || prefs.glass === true;
-  applyPrefs(dark.value, glass.value);
-};
 
 const activeFromPath = (path: string) => {
   if (path.startsWith('/docs')) {
@@ -141,8 +126,16 @@ const activeFromPath = (path: string) => {
   return '';
 };
 
+// The mobile menu button (which opens the page listMenu drawer) only makes
+// sense on pages that actually have a listMenu — docs and components pages.
+// Derive it from the URL so it stays correct across SPA navigations even
+// though the SiteNav island is persisted.
+const pageHasMenu = (path: string) =>
+  path.startsWith('/docs') || path.startsWith('/components');
+
 const syncActive = () => {
   currentActive.value = activeFromPath(window.location.pathname);
+  hasMobileMenu.value = pageHasMenu(window.location.pathname);
 };
 
 const isPlainLeftClick = (event: MouseEvent) =>
@@ -157,27 +150,17 @@ const handleNavClick = (event: MouseEvent, item: NavItem) => {
   navigate(item.href);
 };
 
-const toggleDark = () => {
-  dark.value = !dark.value;
-  applyPrefs(dark.value, glass.value);
-  writePrefs({ dark: dark.value });
-};
-
-const toggleGlass = () => {
-  glass.value = !glass.value;
-  applyPrefs(dark.value, glass.value);
-  writePrefs({ glass: glass.value });
+const openMobileNav = () => {
+  window.dispatchEvent(new CustomEvent('anyui:open-mobile-nav'));
 };
 
 onMounted(() => {
   syncPrefs();
   syncActive();
   document.addEventListener('astro:page-load', syncActive);
-  document.addEventListener('astro:after-swap', syncPrefs);
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('astro:page-load', syncActive);
-  document.removeEventListener('astro:after-swap', syncPrefs);
 });
 </script>

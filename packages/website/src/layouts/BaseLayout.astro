@@ -1,7 +1,9 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import BrandLogo from '../components/BrandLogo.astro';
+import BrandLogoMark from '../components/BrandLogoMark.astro';
 import SiteNav from '../components/vue/SiteNav.vue';
+import MobileNavDrawer from '../components/vue/MobileNavDrawer.vue';
 import {
   SITE,
   breadcrumbJsonLd,
@@ -15,6 +17,16 @@ import {
 
 import '../styles/site.scss';
 
+interface MenuGroupItem {
+  label: string | { en: string; zh?: string };
+  value: string;
+  href?: string;
+}
+interface MenuGroup {
+  label: string | { en: string; zh?: string };
+  items: MenuGroupItem[];
+}
+
 interface Props {
   title?: string;
   description?: string;
@@ -25,6 +37,10 @@ interface Props {
   breadcrumbs?: BreadcrumbItem[];
   structuredData?: Array<Record<string, unknown>>;
   robots?: string;
+  mobileNavMenuGroups?: MenuGroup[];
+  mobileNavMenuActive?: string;
+  mobileNavMenuTitle?: string;
+  mobileNavMenuKind?: 'docs' | 'components';
 }
 
 const {
@@ -37,9 +53,14 @@ const {
   breadcrumbs = [],
   structuredData = [],
   robots = 'index, follow, max-image-preview:large',
+  mobileNavMenuGroups,
+  mobileNavMenuActive,
+  mobileNavMenuTitle,
+  mobileNavMenuKind,
 } = Astro.props;
 
 const seo = pageSeo({ title, description, path: canonicalPath });
+const hasMobileMenu = Boolean(mobileNavMenuGroups && mobileNavMenuGroups.length > 0);
 const resolvedOgType = ogType ?? (schemaType === 'TechArticle' ? 'article' : 'website');
 const jsonLd = [
   organizationJsonLd(),
@@ -190,6 +211,7 @@ const criticalThemeCss =
       <div class="site-header__inner">
         <a class="site-header__brand" href="/" aria-label="AnyUI home">
           <BrandLogo />
+          <BrandLogoMark />
         </a>
         <SiteNav
           client:load
@@ -197,6 +219,17 @@ const criticalThemeCss =
           transition:persist-props
           active={active}
         />
+        {hasMobileMenu && (
+          <MobileNavDrawer
+            client:only="vue"
+            transition:persist="mobile-nav-drawer"
+            transition:persist-props
+            menu-groups={mobileNavMenuGroups}
+            menu-active={mobileNavMenuActive}
+            menu-title={mobileNavMenuTitle}
+            menu-kind={mobileNavMenuKind}
+          />
+        )}
       </div>
     </header>
 
@@ -205,6 +238,9 @@ const criticalThemeCss =
     <footer class="site-footer">
       <div class="site-footer__inner">
         <span>Made with 🧁 by <a href="https://github.com/any-design">Any Design</a></span>
+        <a class="site-footer__github" href="https://github.com/any-design/anyui" target="_blank" rel="noreferrer">
+          GitHub
+        </a>
         <a href="https://github.com/any-design/anyui">MIT Licensed</a>
       </div>
     </footer>

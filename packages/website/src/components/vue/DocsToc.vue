@@ -26,7 +26,7 @@ const props = defineProps<{
 
 const localHeadings = ref<TocHeading[]>([]);
 const currentActive = ref<string>();
-let observer: IntersectionObserver | undefined;
+let scrollRaf = 0;
 let isProgrammaticScroll = false;
 let scrollTimer: number | undefined;
 
@@ -72,8 +72,11 @@ const scanHeadings = () => {
 };
 
 const disconnectObserver = () => {
-  observer?.disconnect();
-  observer = undefined;
+  if (scrollRaf) {
+    cancelAnimationFrame(scrollRaf);
+    scrollRaf = 0;
+  }
+  document.body.removeEventListener('scroll', onScroll);
 };
 
 const setActiveFromHash = () => {
@@ -85,47 +88,79 @@ const setActiveFromHash = () => {
   return false;
 };
 
+// Scroll-based scrollspy: the active heading is the last one whose top sits
+// above a trigger line (scroll top + offset). Near the bottom of the scroll
+// container, force the last heading active so the TOC never sticks on an
+// earlier heading when the final few share the last screenful.
+//
+// AnyUI's layout.scss makes <body> the scroll container (height:100vh,
+// overflow-y:auto), so we read scroll position from document.body, not window.
+const TOP_OFFSET = 96;
+const BOTTOM_SLOP = 4;
+
+const computeActive = () => {
+  const headings = normalizedHeadings.value;
+  if (headings.length === 0) {
+    currentActive.value = undefined;
+    return;
+  }
+  const scroller = document.body;
+  const scrollTop = scroller.scrollTop;
+  const trigger = scrollTop + TOP_OFFSET;
+  // Walk the headings and pick the last one whose top has crossed the trigger
+  // line. This naturally highlights each heading in order as it scrolls past,
+  // so several headings sharing one screenful advance one-by-one instead of
+  // jumping.
+  let active = headings[0].slug;
+  for (const heading of headings) {
+    const el = document.getElementById(heading.slug);
+    if (!el) continue;
+    const top = el.getBoundingClientRect().top + scrollTop;
+    if (top <= trigger) {
+      active = heading.slug;
+    } else {
+      break;
+    }
+  }
+  // Only at the very bottom (can't scroll further) do we force the last heading
+  // active, so the TOC never gets stuck on an earlier heading when the final
+  // few share the last screenful. We check the real max scroll position rather
+  // than "last heading entered viewport" so the middle ones still get visited.
+  const maxScroll = scroller.scrollHeight - scroller.clientHeight;
+  if (scrollTop + BOTTOM_SLOP >= maxScroll && scrollTop > 0) {
+    active = headings[headings.length - 1].slug;
+  }
+  currentActive.value = active;
+};
+
+const onScroll = () => {
+  if (isProgrammaticScroll) return;
+  if (scrollRaf) return;
+  scrollRaf = requestAnimationFrame(() => {
+    scrollRaf = 0;
+    computeActive();
+  });
+};
+
 const syncInitialActive = () => {
   if (setActiveFromHash()) {
     return;
   }
-  currentActive.value = normalizedHeadings.value[0]?.slug;
+  computeActive();
 };
 
 const setupObserver = async () => {
   disconnectObserver();
   await nextTick();
 
-  const targets = normalizedHeadings.value
-    .map((heading) => document.getElementById(heading.slug))
-    .filter((target): target is HTMLElement => Boolean(target));
-
-  if (targets.length === 0) {
+  if (normalizedHeadings.value.length === 0) {
     currentActive.value = undefined;
     return;
   }
 
   syncInitialActive();
-
-  observer = new IntersectionObserver(
-    (entries) => {
-      if (isProgrammaticScroll) {
-        return;
-      }
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-      if (visible[0]?.target.id) {
-        currentActive.value = visible[0].target.id;
-      }
-    },
-    {
-      rootMargin: '-80px 0px -70% 0px',
-      threshold: 0,
-    },
-  );
-
-  targets.forEach((target) => observer?.observe(target));
+  // body is the scroll container (see comment above); listen there.
+  document.body.addEventListener('scroll', onScroll, { passive: true });
 };
 
 const handleSelect = (value: string | number | undefined) => {

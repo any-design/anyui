@@ -1,6 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import { componentsByCategory } from '../data/components';
+import { componentsByCategory, type CategoryMeta, type ComponentEntry } from '../data/components';
 import ComponentsSidebar from '../components/vue/ComponentsSidebar.vue';
 import LangToggle from '../components/vue/LangToggle.vue';
 import type { BreadcrumbItem, SchemaType } from '../data/seo';
@@ -16,6 +16,17 @@ interface Props {
 
 const { title, description, canonicalPath, active, schemaType, breadcrumbs } = Astro.props;
 const groups = componentsByCategory();
+
+const mobileMenuGroups = [
+  {
+    label: '',
+    items: [{ label: { en: 'Overview', zh: '概览' }, value: 'overview', href: '/components' }],
+  },
+  ...groups.map((g: { category: CategoryMeta; items: ComponentEntry[] }) => ({
+    label: g.category.label,
+    items: g.items.map((item) => ({ label: item.name, value: item.slug, href: `/components/${item.slug}` })),
+  })),
+];
 ---
 
 <BaseLayout
@@ -25,6 +36,9 @@ const groups = componentsByCategory();
   active="components"
   schemaType={schemaType}
   breadcrumbs={breadcrumbs}
+  mobileNavMenuGroups={mobileMenuGroups}
+  mobileNavMenuActive={active}
+  mobileNavMenuKind="components"
 >
   <div class="docs docs--components">
     <ComponentsSidebar
@@ -36,6 +50,9 @@ const groups = componentsByCategory();
     />
 
     <article class="prose">
+      <div class="doc-body">
+        <slot />
+      </div>
       <div class="doc-toolbar">
         <slot name="toolbar" />
         <LangToggle
@@ -45,7 +62,6 @@ const groups = componentsByCategory();
           model-value="en"
         />
       </div>
-      <slot />
     </article>
   </div>
 </BaseLayout>
