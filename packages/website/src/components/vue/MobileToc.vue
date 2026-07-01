@@ -95,15 +95,31 @@ const setActiveFromHash = () => {
 };
 
 // Scroll-based scrollspy: the active heading is the last one whose top sits
-// above a trigger line (scroll top + offset). When the scroll container is at
-// (or near) the bottom, force the last heading active so the TOC never gets
-// "stuck" on a heading above the final ones when several share the last
-// screenful.
+// above a trigger line. Near the bottom of the scroll container we ease that
+// trigger line down through the final viewport, so final headings that share
+// one screenful still become active in scroll order instead of jumping straight
+// to the last one.
 //
 // AnyUI's layout.scss makes <body> the scroll container (height:100vh,
 // overflow-y:auto), so we read scroll position from document.body, not window.
 const TOP_OFFSET = 96;
-const BOTTOM_SLOP = 4;
+
+const getTriggerOffset = (scroller: HTMLElement, scrollTop: number) => {
+  const maxScroll = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
+  if (maxScroll === 0) {
+    return TOP_OFFSET;
+  }
+
+  const bottomRange = Math.min(scroller.clientHeight, maxScroll);
+  if (bottomRange <= 0) {
+    return TOP_OFFSET;
+  }
+
+  const bottomStart = maxScroll - bottomRange;
+  const bottomProgress = Math.min(Math.max((scrollTop - bottomStart) / bottomRange, 0), 1);
+  const bottomOffset = Math.max(TOP_OFFSET, scroller.clientHeight);
+  return TOP_OFFSET + (bottomOffset - TOP_OFFSET) * bottomProgress;
+};
 
 const computeActive = () => {
   const headings = normalizedHeadings.value;
@@ -113,7 +129,7 @@ const computeActive = () => {
   }
   const scroller = document.body;
   const scrollTop = scroller.scrollTop;
-  const trigger = scrollTop + TOP_OFFSET;
+  const trigger = scrollTop + getTriggerOffset(scroller, scrollTop);
   // Walk the headings and pick the last one whose top has crossed the trigger
   // line, so several headings sharing one screenful advance one-by-one.
   let active = headings[0].slug;
@@ -126,12 +142,6 @@ const computeActive = () => {
     } else {
       break;
     }
-  }
-  // Only at the very bottom (can't scroll further) do we force the last heading
-  // active, so the TOC never gets stuck on an earlier heading.
-  const maxScroll = scroller.scrollHeight - scroller.clientHeight;
-  if (scrollTop + BOTTOM_SLOP >= maxScroll && scrollTop > 0) {
-    active = headings[headings.length - 1].slug;
   }
   currentActive.value = active;
 };
