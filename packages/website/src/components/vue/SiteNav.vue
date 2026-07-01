@@ -60,7 +60,7 @@
         {{ glass ? 'Glass' : 'Solid' }}
       </a-button>
       <a-button
-        v-if="hasMobileMenu"
+        v-if="shouldRenderMobileMenu"
         class="site-header__menu-button"
         size="small"
         round
@@ -79,7 +79,7 @@
 
 <script lang="ts" setup>
 import { navigate } from 'astro:transitions/client';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useSitePrefs } from './useSitePrefs';
 
 interface NavItem {
@@ -104,7 +104,11 @@ const navItems: NavItem[] = [
 
 const currentActive = ref(props.active ?? '');
 const hasMobileMenu = ref(false);
+const isMobileNavViewport = ref(false);
 const { dark, glass, toggleDark, toggleGlass, syncPrefs } = useSitePrefs();
+const shouldRenderMobileMenu = computed(() => hasMobileMenu.value && isMobileNavViewport.value);
+const MOBILE_NAV_MEDIA_QUERY = '(max-width: 840px)';
+let mobileNavMediaQuery: MediaQueryList | undefined;
 
 watch(
   () => props.active,
@@ -138,6 +142,10 @@ const syncActive = () => {
   hasMobileMenu.value = pageHasMenu(window.location.pathname);
 };
 
+const syncMobileNavViewport = () => {
+  isMobileNavViewport.value = Boolean(mobileNavMediaQuery?.matches);
+};
+
 const isPlainLeftClick = (event: MouseEvent) =>
   event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
@@ -155,12 +163,16 @@ const openMobileNav = () => {
 };
 
 onMounted(() => {
+  mobileNavMediaQuery = window.matchMedia(MOBILE_NAV_MEDIA_QUERY);
+  syncMobileNavViewport();
+  mobileNavMediaQuery.addEventListener('change', syncMobileNavViewport);
   syncPrefs();
   syncActive();
   document.addEventListener('astro:page-load', syncActive);
 });
 
 onBeforeUnmount(() => {
+  mobileNavMediaQuery?.removeEventListener('change', syncMobileNavViewport);
   document.removeEventListener('astro:page-load', syncActive);
 });
 </script>
