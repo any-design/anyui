@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - "**"
+  # Allow manual runs from the Actions tab. Defaults to the branch the run is
+  # dispatched from (e.g. main), so WIP site changes can be previewed without
+  # cutting a tag.
+  workflow_dispatch:
 
 jobs:
   deploy:
