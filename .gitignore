@@ -13,3 +13,9 @@ lib
 /styles
 # generated live-preview SFCs (built by vite/preview-plugin.ts)
 **/.anyui-previews
+# Astro dev cache + settings timestamp; content.d.ts/types.d.ts stay tracked
+# (generated types for IDE without running astro sync).
+**/.astro/dev.json
+**/.astro/settings.json
+# Vite dev cache
+**/.vite/
