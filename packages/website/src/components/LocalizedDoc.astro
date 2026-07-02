@@ -53,8 +53,12 @@ if (rawEn) {
 }
 
 const previewLimitsBySlug: Record<string, number> = {
+  empty: 1,
+  image: 2,
   masonry: 1,
   otpInput: 1,
+  qrCode: 1,
+  textarea: 2,
 };
 const previewBlocks = vueBlocks.slice(0, previewLimitsBySlug[slug] ?? vueBlocks.length);
 

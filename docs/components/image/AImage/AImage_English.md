@@ -20,6 +20,20 @@ import { Image } from '@any-design/anyui/vue';
 
 ## Examples
 
+### Empty state
+
+Use the `error` slot to keep a missing image visually aligned with the rest of the UI.
+
+```vue
+<template>
+  <AImage width="320" height="200">
+    <template #error>
+      <AEmpty text="Image not found" />
+    </template>
+  </AImage>
+</template>
+```
+
 ### Fixed dimensions with cover
 
 `size`, `position`, and `repeat` map to the corresponding `background-*` CSS properties. `cover` (the default) fills the box without distortion.

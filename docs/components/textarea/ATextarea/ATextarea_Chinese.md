@@ -1,6 +1,6 @@
 # ATextarea
 
-`ATextarea` 是多行文本框，会随内容自适应高度，并在最小 / 最大行数之间收缩。它支持 `v-model`、Ctrl/Cmd + Enter 提交，以及 `before` / `after` 插槽用于放置周边内容。
+`ATextarea` 是多行文本框，可以随内容自适应高度，也可以开启原生拖拽手柄让用户手动调整尺寸。它支持 `v-model`、Ctrl/Cmd + Enter 提交，以及 `before` / `after` 插槽用于放置周边内容。
 
 ## 引入
 
@@ -14,16 +14,43 @@ import { Textarea } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <ATextarea v-model="msg" placeholder="写点什么…" />
+  <ATextarea
+    v-model="msg"
+    auto-match-height
+    :min-rows="2"
+    :max-rows="6"
+    placeholder="写点什么…"
+  />
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const msg = ref('');
+const msg = ref('这个文本框会根据内容自动增高。');
 </script>
 ```
 
 ## 示例
+
+### 手动拖拽调整
+
+设置 `resizable` 后，用户可以拖动原生缩放手柄。`minRows` 与 `maxRows` 仍然用于提供合理边界。
+
+```vue
+<template>
+  <ATextarea
+    v-model="msg"
+    resizable
+    :min-rows="3"
+    :max-rows="8"
+    placeholder="拖动右下角调整大小"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const msg = ref('手动调整适合备注、提示词和长评论。');
+</script>
+```
 
 ### 控制高度
 
@@ -87,8 +114,9 @@ const save = () => console.log(msg.value);
 | `lineHeight` | Number | 1.5 | 用于高度计算的行高。 |
 | `readonly` | Boolean | false | 只读。 |
 | `disabled` | Boolean | false | 禁用。 |
-| `disableResizeCorner` | Boolean | false | 隐藏原生缩放手柄。 |
-| `autoMatchHeight` | Boolean | false | 持续匹配内容高度（无上限）。 |
+| `resizable` | Boolean | false | 启用原生纵向缩放手柄。 |
+| `disableResizeCorner` | Boolean | false | 手动缩放开启时隐藏原生缩放手柄。 |
+| `autoMatchHeight` | Boolean | false | 持续匹配内容高度，最高到 `maxRows`。 |
 | `borderless` | Boolean | false | 移除边框。 |
 | `maxlength / minlength` | Number | undefined | 原生长度约束。 |
 | `autocomplete` | String | 'off' | 原生 autocomplete。 |

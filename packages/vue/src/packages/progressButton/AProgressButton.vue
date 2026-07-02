@@ -119,6 +119,14 @@ export default defineComponent({
 
 <style lang="scss">
 .a-progress-button {
+  --a-progress-button-color: var(--primary);
+  --a-progress-button-fill: color-mix(in srgb, var(--a-progress-button-color) 18%, transparent);
+  --a-progress-button-fill-strong: color-mix(
+    in srgb,
+    var(--a-progress-button-color) 30%,
+    transparent
+  );
+
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -127,9 +135,9 @@ export default defineComponent({
   height: 42px;
   padding: 4px 20px;
   border-radius: var(--a-radius, 14px);
-  border: 1px solid var(--border);
+  border: 1px solid var(--a-progress-button-color);
   background: var(--a-surface-control, var(--bg));
-  color: var(--text);
+  color: var(--a-progress-button-color);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.05rem;
@@ -137,6 +145,9 @@ export default defineComponent({
   cursor: pointer;
   overflow: hidden;
   white-space: nowrap;
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    var(--a-shadow-sm, 0 4px 10px var(--shadow-6));
   transition:
     transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease),
     box-shadow var(--anim-duration-quick, 120ms) ease,
@@ -147,32 +158,43 @@ export default defineComponent({
     top: 0;
     left: 0;
     height: 100%;
-    background: linear-gradient(90deg, var(--primary), var(--primary-85));
+    border-radius: inherit;
+    background: linear-gradient(
+      90deg,
+      var(--a-progress-button-fill),
+      var(--a-progress-button-fill-strong)
+    );
+    overflow: hidden;
     transition: width var(--anim-duration, 200ms) var(--a-ease-soft, ease);
-    // bar sits behind the label; the label color shifts once the bar covers it.
     z-index: 0;
   }
 
   &__stripes {
     position: absolute;
     inset: 0;
-    background-image: repeating-linear-gradient(
+    border-radius: inherit;
+    background-image: linear-gradient(
       45deg,
-      rgba(255, 255, 255, 0.28) 0,
-      rgba(255, 255, 255, 0.28) 6px,
-      transparent 6px,
-      transparent 12px
+      color-mix(in srgb, var(--a-progress-button-color) 28%, transparent) 25%,
+      transparent 25%,
+      transparent 50%,
+      color-mix(in srgb, var(--a-progress-button-color) 28%, transparent) 50%,
+      color-mix(in srgb, var(--a-progress-button-color) 28%, transparent) 75%,
+      transparent 75%,
+      transparent
     );
-    background-size: 24px 24px;
+    background-size: 18px 18px;
+    opacity: 0.88;
   }
 
   &__inner {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
     z-index: 1;
-    // mix-blend-mode lets the label read against both the empty track and the
-    // filled bar without a second copy of the text.
-    mix-blend-mode: difference;
-    color: #fff;
+    color: inherit;
   }
 }
 
@@ -190,7 +212,9 @@ export default defineComponent({
 }
 .a-progress-button:focus-visible {
   outline: none;
-  box-shadow: var(--a-focus-ring, 0 0 0 3px var(--primary-18));
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    0 0 0 3px color-mix(in srgb, var(--a-progress-button-color) 22%, transparent);
 }
 
 .a-progress-button--round {
@@ -219,20 +243,20 @@ export default defineComponent({
 }
 
 // status tints
-.a-progress-button--secondary .a-progress-button__bar {
-  background: linear-gradient(90deg, var(--secondary), color-mix(in srgb, var(--secondary) 85%, #fff));
+.a-progress-button--secondary {
+  --a-progress-button-color: var(--secondary);
 }
-.a-progress-button--success .a-progress-button__bar {
-  background: linear-gradient(90deg, var(--success), color-mix(in srgb, var(--success) 85%, #fff));
+.a-progress-button--success {
+  --a-progress-button-color: var(--success);
 }
-.a-progress-button--warn .a-progress-button__bar {
-  background: linear-gradient(90deg, var(--warn), color-mix(in srgb, var(--warn) 85%, #fff));
+.a-progress-button--warn {
+  --a-progress-button-color: var(--warn);
 }
-.a-progress-button--danger .a-progress-button__bar {
-  background: linear-gradient(90deg, var(--danger), color-mix(in srgb, var(--danger) 85%, #fff));
+.a-progress-button--danger {
+  --a-progress-button-color: var(--danger);
 }
-.a-progress-button--info .a-progress-button__bar {
-  background: linear-gradient(90deg, var(--info), color-mix(in srgb, var(--info) 85%, #fff));
+.a-progress-button--info {
+  --a-progress-button-color: var(--info);
 }
 
 .a-progress-button--striped.a-progress-button--active .a-progress-button__stripes {
@@ -244,7 +268,7 @@ export default defineComponent({
     background-position: 0 0;
   }
   100% {
-    background-position: 24px 0;
+    background-position: 18px 0;
   }
 }
 
@@ -255,57 +279,11 @@ export default defineComponent({
     background: linear-gradient(
       90deg,
       transparent,
-      var(--primary),
-      color-mix(in srgb, var(--primary) 85%, #fff),
+      var(--a-progress-button-fill),
+      var(--a-progress-button-fill-strong),
       transparent
     );
     animation: a-progress-button-indeterminate 1.1s var(--a-ease-soft, ease-in-out) infinite;
-  }
-
-  &.a-progress-button--secondary .a-progress-button__bar {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--secondary),
-      color-mix(in srgb, var(--secondary) 85%, #fff),
-      transparent
-    );
-  }
-  &.a-progress-button--success .a-progress-button__bar {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--success),
-      color-mix(in srgb, var(--success) 85%, #fff),
-      transparent
-    );
-  }
-  &.a-progress-button--warn .a-progress-button__bar {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--warn),
-      color-mix(in srgb, var(--warn) 85%, #fff),
-      transparent
-    );
-  }
-  &.a-progress-button--danger .a-progress-button__bar {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--danger),
-      color-mix(in srgb, var(--danger) 85%, #fff),
-      transparent
-    );
-  }
-  &.a-progress-button--info .a-progress-button__bar {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--info),
-      color-mix(in srgb, var(--info) 85%, #fff),
-      transparent
-    );
   }
 }
 
@@ -321,14 +299,15 @@ export default defineComponent({
 .a-progress-button--disabled {
   cursor: not-allowed;
   border-color: transparent;
+  background: var(--bg-disabled) !important;
+  color: var(--text-disabled) !important;
   box-shadow: 0 3px 12px var(--shadow-5);
 
   .a-progress-button__bar {
-    background: var(--text-disabled);
+    background: color-mix(in srgb, var(--text-disabled) 24%, transparent);
   }
   .a-progress-button__inner {
-    color: var(--text-disabled);
-    mix-blend-mode: normal;
+    color: inherit;
   }
 }
 </style>

@@ -28,7 +28,7 @@ The `media` slot holds an avatar or icon; the `actions` slot holds trailing cont
 <template>
   <AItem title="Ada Lovelace" description="ada@anyui.dev">
     <template #media>
-      <AAvatar src="/users/ada.png" size="medium" round />
+      <AAvatar src="/favicon.png" size="medium" round />
     </template>
     <template #actions>
       <AButton size="small">Message</AButton>

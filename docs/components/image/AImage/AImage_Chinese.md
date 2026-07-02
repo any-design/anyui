@@ -20,6 +20,20 @@ import { Image } from '@any-design/anyui/vue';
 
 ## 示例
 
+### 空状态
+
+使用 `error` 插槽，让缺失图片也能和界面里的其他空状态保持一致。
+
+```vue
+<template>
+  <AImage width="320" height="200">
+    <template #error>
+      <AEmpty text="图片未找到" />
+    </template>
+  </AImage>
+</template>
+```
+
 ### 固定尺寸与 cover
 
 `size`、`position`、`repeat` 分别对应 `background-*` CSS 属性。`cover`（默认）填充区域且不变形。

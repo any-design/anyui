@@ -1,6 +1,6 @@
 # ATextarea
 
-`ATextarea` is a multiline text field that grows with its content, clamped between a minimum and maximum number of rows. It supports `v-model`, Ctrl/Cmd+Enter to submit, and `before` / `after` slots for surrounding content.
+`ATextarea` is a multiline text field that can grow with its content or expose the native drag handle for manual resizing. It supports `v-model`, Ctrl/Cmd+Enter to submit, and `before` / `after` slots for surrounding content.
 
 ## Import
 
@@ -14,16 +14,43 @@ import { Textarea } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <ATextarea v-model="msg" placeholder="Write a message…" />
+  <ATextarea
+    v-model="msg"
+    auto-match-height
+    :min-rows="2"
+    :max-rows="6"
+    placeholder="Write a message…"
+  />
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const msg = ref('');
+const msg = ref('This textarea grows with the content.');
 </script>
 ```
 
 ## Examples
+
+### Manual resize
+
+Set `resizable` to let the user drag the native resize handle. `minRows` and `maxRows` still provide sensible bounds.
+
+```vue
+<template>
+  <ATextarea
+    v-model="msg"
+    resizable
+    :min-rows="3"
+    :max-rows="8"
+    placeholder="Drag the corner to resize"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const msg = ref('Manual resizing is useful for notes, prompts, and long comments.');
+</script>
+```
 
 ### Controlling height
 
@@ -87,8 +114,9 @@ const save = () => console.log(msg.value);
 | `lineHeight` | Number | 1.5 | Line-height used for height math. |
 | `readonly` | Boolean | false | Read-only. |
 | `disabled` | Boolean | false | Disabled. |
-| `disableResizeCorner` | Boolean | false | Hides the native resize handle. |
-| `autoMatchHeight` | Boolean | false | Continuously match content height (no max). |
+| `resizable` | Boolean | false | Enables the native vertical resize handle. |
+| `disableResizeCorner` | Boolean | false | Hides the native resize handle when manual resizing is enabled. |
+| `autoMatchHeight` | Boolean | false | Continuously match content height up to `maxRows`. |
 | `borderless` | Boolean | false | Removes the border. |
 | `maxlength / minlength` | Number | undefined | Native length constraints. |
 | `autocomplete` | String | 'off' | Native autocomplete. |

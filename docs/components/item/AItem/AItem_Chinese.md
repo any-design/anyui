@@ -28,7 +28,7 @@ import { Item } from '@any-design/anyui/vue';
 <template>
   <AItem title="Ada Lovelace" description="ada@anyui.dev">
     <template #media>
-      <AAvatar src="/users/ada.png" size="medium" round />
+      <AAvatar src="/favicon.png" size="medium" round />
     </template>
     <template #actions>
       <AButton size="small">发消息</AButton>

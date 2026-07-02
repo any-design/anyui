@@ -1,5 +1,5 @@
 <template>
-  <teleport :disabled="!appendToBody" to="body">
+  <teleport v-if="mounted" :disabled="!appendToBody" to="body">
     <transition :name="transitionForUse">
       <div
         v-if="visible"
@@ -38,8 +38,8 @@
 </template>
 
 <script lang="ts">
-import type { PropType, CSSProperties} from 'vue';
-import { defineComponent, ref, computed, watch, onBeforeMount } from 'vue';
+import type { PropType, CSSProperties } from 'vue';
+import { defineComponent, ref, computed, watch, onMounted } from 'vue';
 
 import { SCROLL_LOCK_PROPS, useScrollLock } from '../hooks/useScrollLock';
 
@@ -117,6 +117,7 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const visible = ref(false);
+    const mounted = ref(false);
     const wrapper = ref<HTMLElement | null>(null);
 
     const maskStyles = computed<CSSProperties>(() => {
@@ -166,12 +167,17 @@ export default defineComponent({
       emit('update:modelValue', false);
     };
 
-    onBeforeMount(() => {
+    onMounted(() => {
+      mounted.value = true;
       visible.value = props.modelValue;
+      if (visible.value && props.lockScroll) {
+        useScrollLock(scrollLockTarget.value);
+      }
     });
 
     return {
       visible,
+      mounted,
       wrapper,
       maskStyles,
       drawerStyles,

@@ -32,9 +32,7 @@
 </template>
 
 <script lang="ts">
-import type {
-  PropType,
-  StyleValue} from 'vue';
+import type { PropType, StyleValue } from 'vue';
 import {
   defineComponent,
   onBeforeMount,
@@ -43,7 +41,7 @@ import {
   computed,
   onUnmounted,
   getCurrentInstance,
-  watch
+  watch,
 } from 'vue';
 
 import type { FormItemEventEmitter } from '../formItem/bus';
@@ -109,6 +107,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    resizable: {
+      type: Boolean,
+      default: false,
+    },
     autoMatchHeight: {
       type: Boolean,
       default: false,
@@ -163,7 +165,12 @@ export default defineComponent({
       });
 
     const showResizeCorner = computed(
-      () => props.minRows !== props.maxRows && props.disableResizeCorner,
+      () =>
+        props.resizable &&
+        !props.disableResizeCorner &&
+        !props.autoMatchHeight &&
+        !props.disabled &&
+        !props.readonly,
     );
 
     watch(

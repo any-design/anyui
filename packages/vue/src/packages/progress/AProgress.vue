@@ -3,6 +3,7 @@
     :class="{
       'a-progress': true,
       'a-progress--striped': striped,
+      'a-progress--active': active,
       'a-progress--indeterminate': indeterminate,
       [`a-progress--${status}`]: true,
       [`a-progress--${size}`]: size !== 'default',
@@ -137,20 +138,26 @@ export default defineComponent({
     height: 100%;
     border-radius: inherit;
     background: linear-gradient(90deg, var(--primary), var(--primary-85));
+    overflow: hidden;
     transition: width var(--anim-duration, 200ms) var(--a-ease-soft, ease);
   }
 
   &__stripes {
     position: absolute;
     inset: 0;
-    background-image: repeating-linear-gradient(
+    border-radius: inherit;
+    background-image: linear-gradient(
       45deg,
-      rgba(255, 255, 255, 0.28) 0,
-      rgba(255, 255, 255, 0.28) 6px,
-      transparent 6px,
-      transparent 12px
+      color-mix(in srgb, var(--text-btn) 30%, transparent) 25%,
+      transparent 25%,
+      transparent 50%,
+      color-mix(in srgb, var(--text-btn) 30%, transparent) 50%,
+      color-mix(in srgb, var(--text-btn) 30%, transparent) 75%,
+      transparent 75%,
+      transparent
     );
-    background-size: 24px 24px;
+    background-size: 18px 18px;
+    opacity: 0.82;
   }
 
   &__label {
@@ -200,7 +207,7 @@ export default defineComponent({
     background-position: 0 0;
   }
   100% {
-    background-position: 24px 0;
+    background-position: 18px 0;
   }
 }
 

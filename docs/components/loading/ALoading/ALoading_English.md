@@ -26,16 +26,25 @@ A common pattern: show the dots inside a button while an async action runs.
 
 ```vue
 <template>
-  <AButton type="primary" :disabled="saving">
-    <ALoading v-if="saving" />
-    <span v-else>Save</span>
+  <AButton type="primary" disabled>
+    <span class="loading-button-content">
+      <ALoading class="loading-button-dots" />
+      Saving
+    </span>
   </AButton>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-const saving = ref(false);
-</script>
+<style scoped>
+.loading-button-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loading-button-dots {
+  font-size: 4px;
+}
+</style>
 ```
 
 ### Centered in a region

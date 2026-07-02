@@ -1946,9 +1946,26 @@ html[theme='dark'] {
   .demo-row > .a-button:not(.a-button--fill),
   .demo-col > .a-button:not(.a-button--fill) {
     flex: 0 1 auto;
-    width: fit-content;
-    max-width: min(100%, 168px);
+    width: max-content;
+    max-width: 100%;
+    min-height: 42px;
+    height: auto;
     padding-inline: 14px;
+    line-height: 1.35;
+  }
+
+  > .a-button--small:not(.a-button--fill),
+  .preview-frame__demo > .a-button--small:not(.a-button--fill),
+  .demo-row > .a-button--small:not(.a-button--fill),
+  .demo-col > .a-button--small:not(.a-button--fill) {
+    min-height: 32px;
+  }
+
+  > .a-button--large:not(.a-button--fill),
+  .preview-frame__demo > .a-button--large:not(.a-button--fill),
+  .demo-row > .a-button--large:not(.a-button--fill),
+  .demo-col > .a-button--large:not(.a-button--fill) {
+    min-height: 52px;
   }
 
   > .a-button:not(.a-button--fill) .a-button__inner,
@@ -1956,8 +1973,14 @@ html[theme='dark'] {
   .demo-row > .a-button:not(.a-button--fill) .a-button__inner,
   .demo-col > .a-button:not(.a-button--fill) .a-button__inner {
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+  }
+
+  .preview-frame__demo > .a-table,
+  .demo-row > .a-table,
+  .demo-col > .a-table {
+    width: max-content;
+    max-width: 100%;
   }
 }
 

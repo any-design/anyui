@@ -69,7 +69,7 @@ export default defineComponent({
   },
   setup(props) {
     const isLoading = ref(false);
-    const isError = ref(false);
+    const isError = ref(!props.src);
     const containerRef = ref<HTMLElement | undefined>(undefined);
     const backgroundPicUrl = ref('');
 
@@ -112,13 +112,18 @@ export default defineComponent({
     watch(
       () => props.src,
       () => {
-        if (!backgroundPicUrl.value || typeof props.src !== 'string' || !props.src) {
+        backgroundPicUrl.value = '';
+        isLoading.value = false;
+        isError.value = !props.src;
+
+        if (typeof props.src !== 'string' || !props.src) {
           return;
         }
-        backgroundPicUrl.value = '';
+
         if (containerRef.value?.dataset.intersecting !== 'true') {
           return;
         }
+
         loadImage(imageId, props.src);
       },
     );
@@ -131,7 +136,6 @@ export default defineComponent({
 
     onMounted(() => {
       if (!props.src) {
-        console.warn('[AnyUI][image] You should give a source to the image component.');
         isError.value = true;
         return;
       }

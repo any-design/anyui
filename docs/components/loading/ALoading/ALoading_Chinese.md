@@ -26,16 +26,25 @@ import { Loading } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AButton type="primary" :disabled="saving">
-    <ALoading v-if="saving" />
-    <span v-else>保存</span>
+  <AButton type="primary" disabled>
+    <span class="loading-button-content">
+      <ALoading class="loading-button-dots" />
+      保存中
+    </span>
   </AButton>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-const saving = ref(false);
-</script>
+<style scoped>
+.loading-button-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loading-button-dots {
+  font-size: 4px;
+}
+</style>
 ```
 
 ### 区域内居中
