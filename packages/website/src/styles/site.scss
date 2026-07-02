@@ -1942,6 +1942,7 @@ html[theme='dark'] {
 
 .preview-frame__render {
   > .a-button:not(.a-button--fill),
+  .preview-frame__demo > .a-button:not(.a-button--fill),
   .demo-row > .a-button:not(.a-button--fill),
   .demo-col > .a-button:not(.a-button--fill) {
     flex: 0 1 auto;
@@ -1951,6 +1952,7 @@ html[theme='dark'] {
   }
 
   > .a-button:not(.a-button--fill) .a-button__inner,
+  .preview-frame__demo > .a-button:not(.a-button--fill) .a-button__inner,
   .demo-row > .a-button:not(.a-button--fill) .a-button__inner,
   .demo-col > .a-button:not(.a-button--fill) .a-button__inner {
     min-width: 0;
@@ -1959,21 +1961,9 @@ html[theme='dark'] {
   }
 }
 
-// live previews rendered above the markdown docs
+// primary live preview placed after the component title and intro
 .component-previews {
-  margin: 32px 0 0 0;
-
-  &__title {
-    font-size: 22px;
-    font-weight: 700;
-    margin: 0 0 14px 0;
-  }
-
-  &__list {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
+  margin: 22px 0 30px 0;
 }
 
 .preview-frame {
@@ -1990,6 +1980,21 @@ html[theme='dark'] {
     // contain wide demo content + allow horizontal scroll instead of bursting
     min-width: 0;
     overflow-x: auto;
+  }
+
+  &__render--stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  &__demo {
+    min-width: 0;
+  }
+
+  &__render--stack > &__demo + &__demo {
+    border-top: 1px solid color-mix(in srgb, var(--line) 72%, transparent);
+    padding-top: 18px;
   }
 
   &__toolbar {
@@ -2069,11 +2074,7 @@ html[theme='dark'] {
 
 @media (max-width: 560px) {
   .component-previews {
-    margin-top: 26px;
-
-    &__title {
-      font-size: 20px;
-    }
+    margin: 20px 0 26px 0;
   }
 
   .preview-frame {
