@@ -119,10 +119,10 @@ export default defineComponent({
       containerWidth: 0,
       maxHeight: 0,
       restoreContainerWidth: false,
-      screenWidth: document.documentElement.clientWidth,
-      screenHeight: document.documentElement.clientHeight,
+      screenWidth: 0,
+      screenHeight: 0,
       scrollTarget: null as HTMLElement | null,
-      scrollTop: document.documentElement.scrollTop,
+      scrollTop: 0,
       containerOffset: 0,
       lastScroll: 0,
       lastResizeTriggered: 0,
@@ -136,7 +136,7 @@ export default defineComponent({
       if (this.col) {
         return this.col;
       } else {
-        return Math.floor((this.containerWidth + this.gap) / (this.colWidth + this.gap));
+        return Math.max(1, Math.floor((this.containerWidth + this.gap) / (this.colWidth + this.gap)));
       }
     },
     containerFitWidth() {
@@ -177,6 +177,13 @@ export default defineComponent({
     this.resetWidthStore();
     this.resetHeightStore();
     this.resetPositionMap();
+    this.setMaxHeight();
+    this.setDisplay();
+  },
+  async mounted() {
+    this.screenWidth = document.documentElement.clientWidth;
+    this.screenHeight = document.documentElement.clientHeight;
+    this.scrollTop = document.documentElement.scrollTop;
     if (this.scrollEventTarget) {
       const scrollTarget = document.querySelector(this.scrollEventTarget);
       if (scrollTarget) {
@@ -190,8 +197,6 @@ export default defineComponent({
       window.addEventListener('scroll', this.handleScroll);
     }
     window.addEventListener('resize', this.handleWindowResize);
-  },
-  async mounted() {
     this.containerWidth = await this.getContainerWidth();
     this.containerOffset = this.getContainerOffset();
     this.renderMasonry();
@@ -204,6 +209,9 @@ export default defineComponent({
     this.containerWidth = await this.getContainerWidth();
   },
   beforeUnmount() {
+    if (typeof window === 'undefined') {
+      return;
+    }
     window.removeEventListener('resize', this.handleWindowResize);
     if (this.scrollTarget) {
       this.scrollTarget.removeEventListener('scroll', this.handleScroll);
@@ -233,6 +241,9 @@ export default defineComponent({
       return containerWidth;
     },
     getContainerOffset() {
+      if (typeof document === 'undefined') {
+        return 0;
+      }
       const container = this.$refs.container as HTMLDivElement;
       if (!container) {
         return 0;
@@ -256,14 +267,15 @@ export default defineComponent({
     },
     // waterfall items
     itemsChanged() {
-      if (this.items.length <= this.storedItemsLength) {
+      const items = Array.isArray(this.items) ? this.items : [];
+      if (items.length <= this.storedItemsLength) {
         this.renderMasonry();
       } else {
         this.computePosition();
         this.setMaxHeight();
         this.setDisplay();
       }
-      this.storedItemsLength = this.items.length;
+      this.storedItemsLength = items.length;
     },
     columnsChanged() {
       this.renderMasonry();
@@ -307,18 +319,23 @@ export default defineComponent({
           if (inList[idx]) {
             continue;
           }
-          list = list.concat(this.items.slice(idx * countPerSection, (idx + 1) * countPerSection));
+          const items = Array.isArray(this.items) ? this.items : [];
+          list = list.concat(items.slice(idx * countPerSection, (idx + 1) * countPerSection));
           inList[idx] = true;
         }
       }
-      if (window.requestAnimationFrame && seq >= this.setDisplayExecCounter) {
-        window.requestAnimationFrame(() => {
-          this.displayItems = list;
+      const commit = () => {
+        this.displayItems = list;
+        if (typeof window !== 'undefined') {
           this.$forceUpdate();
+        }
+      };
+      if (typeof window !== 'undefined' && window.requestAnimationFrame && seq >= this.setDisplayExecCounter) {
+        window.requestAnimationFrame(() => {
+          commit();
         });
       } else {
-        this.displayItems = list;
-        this.$forceUpdate();
+        commit();
       }
     },
     resetWidthStore() {
@@ -351,7 +368,8 @@ export default defineComponent({
         return;
       }
       const countPerSection = this.columns * this.rowsPerSection;
-      this.items.forEach((item: MasonryItem, index) => {
+      const items = Array.isArray(this.items) ? this.items : [];
+      items.forEach((item: MasonryItem, index) => {
         // ignore computed
         const mapKey = index;
         // eslint-disable-next-line no-param-reassign
@@ -444,11 +462,17 @@ export default defineComponent({
     },
     // window event handler
     handleWindowResize() {
+      if (typeof document === 'undefined') {
+        return;
+      }
       this.screenWidth = document.documentElement.clientWidth;
       this.screenHeight = document.documentElement.clientHeight;
       this.containerOffset = this.getContainerOffset();
     },
     handleScroll() {
+      if (typeof document === 'undefined') {
+        return;
+      }
       if (this.scrollTimer) {
         clearTimeout(this.scrollTimer);
         this.scrollTimer = null;

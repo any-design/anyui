@@ -1,7 +1,7 @@
 <template>
   <a-drawer
     v-model="visible"
-    class="mobile-nav-drawer"
+    drawer-class="mobile-nav-drawer"
     body-class="mobile-nav-drawer__body"
     position="right"
     width="320px"
@@ -27,6 +27,10 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { navigate } from 'astro:transitions/client';
 import { useSiteLang } from './useSiteLang';
+
+defineOptions({
+  inheritAttrs: false,
+});
 
 type LocalizedLabel = string | { en: string; zh?: string };
 

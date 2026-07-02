@@ -14,7 +14,7 @@
       'a-button--icon-trailing': !!icon && hasContent && iconPosition === 'trailing' && !loading,
       'a-button--loading': loading,
     }"
-    :disabled="disabled"
+    :aria-disabled="disabled || loading ? 'true' : undefined"
     @click="onButtonClicked"
   >
     <Icon v-if="icon && iconPosition === 'leading' && !loading" :icon="icon" />

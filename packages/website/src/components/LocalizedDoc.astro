@@ -52,7 +52,13 @@ if (rawEn) {
   }
 }
 
-const combinedPreviewCode = vueBlocks
+const previewLimitsBySlug: Record<string, number> = {
+  masonry: 1,
+  otpInput: 1,
+};
+const previewBlocks = vueBlocks.slice(0, previewLimitsBySlug[slug] ?? vueBlocks.length);
+
+const combinedPreviewCode = previewBlocks
   .map((block, index) => `<!-- Demo ${index + 1} -->\n${block.code.trim()}`)
   .join('\n\n');
 const combinedPreviewCodeHtml = combinedPreviewCode
@@ -67,7 +73,7 @@ const combinedPreviewCodeHtml = combinedPreviewCode
 
 // Build the preview registry key for each selected block: <slug>__<subfolder>-<index>
 const previewKey = (index: number) => `${slug}__${subfolder}-${index}`;
-const previewKeys = vueBlocks.map((block) => previewKey(block.index));
+const previewKeys = previewBlocks.map((block) => previewKey(block.index));
 ---
 
 <div class="localized-doc" data-lang="en">
@@ -80,8 +86,32 @@ const previewKeys = vueBlocks.map((block) => previewKey(block.index));
   {
     previewKeys.length > 0 && (
       <div class="component-previews">
+        <script is:inline>
+          (() => {
+            const preview = document.currentScript?.closest('.component-previews');
+            const doc = preview?.closest('.localized-doc');
+            if (!preview || !doc) return;
+
+            const readDocLang = () => {
+              try {
+                return JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}').lang;
+              } catch {
+                return undefined;
+              }
+            };
+            const target = readDocLang() === 'zh' ? 'zh' : 'en';
+            const pane = doc.querySelector(`:scope > .localized-doc__pane[data-lang="${target}"]`);
+            const intro = pane?.querySelector('h1 + p') || pane?.querySelector('p');
+            if (intro && intro.nextElementSibling !== preview) {
+              intro.insertAdjacentElement('afterend', preview);
+            }
+            doc.setAttribute('data-lang', target);
+            document.documentElement.setAttribute('lang', target === 'zh' ? 'zh-CN' : 'en');
+            document.documentElement.setAttribute('data-lang', target);
+          })();
+        </script>
         <PreviewFrame
-          client:only="vue"
+          client:visible
           previewKeys={previewKeys}
           code={combinedPreviewCode}
           codeHtml={combinedPreviewCodeHtml}
@@ -114,11 +144,15 @@ const previewKeys = vueBlocks.map((block) => previewKey(block.index));
 
       const intro = pane.querySelector('h1 + p') || pane.querySelector('p');
       if (intro) {
-        intro.insertAdjacentElement('afterend', preview);
+        if (intro.nextElementSibling !== preview) {
+          intro.insertAdjacentElement('afterend', preview);
+        }
         return;
       }
 
-      pane.appendChild(preview);
+      if (preview.parentElement !== pane) {
+        pane.appendChild(preview);
+      }
     };
 
     // Apply the persisted language to every .localized-doc on the page.

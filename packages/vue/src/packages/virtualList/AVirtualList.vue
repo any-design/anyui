@@ -207,16 +207,16 @@ const getDisplayStart = (startTop: number) => {
 let updateFrame: ReturnType<typeof requestAnimationFrame> | undefined;
 
 const refreshDisplayItems = () => {
-  if (updateFrame) window.cancelAnimationFrame(updateFrame);
+  if (updateFrame && typeof window !== 'undefined') window.cancelAnimationFrame(updateFrame);
   isRefreshing.value = true;
-  updateFrame = window.requestAnimationFrame(() => {
+  const update = () => {
     scrollTop.value = containerRef.value?.scrollTop || 0;
 
     const buffer = props.buffer || 0;
     const { start, scrolledHeight } = getDisplayStart(scrollTop.value);
 
     let end = start;
-    let visibleHeight = -transformedItems[start].__itemHeight;
+    let visibleHeight = -(transformedItems[start]?.__itemHeight ?? 0);
 
     while (visibleHeight <= containerHeight.value + buffer && end < transformedItems.length) {
       visibleHeight += transformedItems[end].__itemHeight;
@@ -238,7 +238,13 @@ const refreshDisplayItems = () => {
 
     updateFrame = undefined;
     isRefreshing.value = false;
-  });
+  };
+
+  if (typeof window !== 'undefined' && componentActivated.value) {
+    updateFrame = window.requestAnimationFrame(update);
+  } else {
+    update();
+  }
 };
 
 const scrollDirection = ref<'up' | 'down' | undefined>(undefined);
@@ -372,7 +378,15 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
   refreshDisplayItems();
 };
 
-const itemResizeObserver = new ResizeObserver(onItemResized);
+const createNoopResizeObserver = (): ResizeObserver =>
+  ({
+    observe() {},
+    unobserve() {},
+    disconnect() {},
+  }) as ResizeObserver;
+
+const itemResizeObserver =
+  typeof ResizeObserver === 'undefined' ? createNoopResizeObserver() : new ResizeObserver(onItemResized);
 
 provide('getResizeObserver', itemResizeObserver);
 
@@ -419,6 +433,11 @@ const firstRender = () => {
   });
 };
 
+if (props.estimatedItemHeight) {
+  estimatedItemHeightRef.value = props.estimatedItemHeight;
+  refreshItems();
+}
+
 // render items at first set
 const items = computed(() => props.items);
 
@@ -429,13 +448,16 @@ const stopItemWatching = watch(items, (newVal) => {
   }
 });
 
-const containerResizeObserver = new ResizeObserver((entries) => {
-  const [container] = entries;
-  // if component is not activated, should not mutate containerHeight here
-  if (componentActivated.value) {
-    containerHeight.value = container.contentRect.height;
-  }
-});
+const containerResizeObserver =
+  typeof ResizeObserver === 'undefined'
+    ? createNoopResizeObserver()
+    : new ResizeObserver((entries) => {
+        const [container] = entries;
+        // if component is not activated, should not mutate containerHeight here
+        if (componentActivated.value) {
+          containerHeight.value = container.contentRect.height;
+        }
+      });
 
 // check if the container could be scrolled now
 const checkContainerScrollState = () => {
