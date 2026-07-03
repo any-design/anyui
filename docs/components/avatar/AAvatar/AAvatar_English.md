@@ -2,6 +2,8 @@
 
 `AAvatar` renders a user avatar from an image URL. It supports five preset sizes (or a custom `width`), an optional circular `round` mode, and a `name` prop that drives an initials fallback when the image fails to load.
 
+The image is loaded in the background via an `Image()` — the `<img>` only mounts once the browser has decoded the picture, so a slow or broken URL shows a subtle loading spinner instead of a broken-image icon, and falls back to the initials / slot only on real failure.
+
 ## Import
 
 ```ts

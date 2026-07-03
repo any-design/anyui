@@ -1,5 +1,5 @@
 <template>
-  <div class="a-list-menu">
+  <div :class="['a-list-menu', `a-list-menu--selected-${selectedVariant}`]">
     <template
       v-for="item in displayItems"
       :key="item.type === 'split' ? `split-${item.label}` : (item.value ?? item.label)"
@@ -24,7 +24,7 @@ import type { PropType } from 'vue';
 import { computed, ref, watch } from 'vue';
 
 import AListMenuItem from './AListMenuItem.vue';
-import type { AListMenuConfig, AListMenuDisplayItem, AListMenuItemConfig } from './types';
+import type { AListMenuConfig, AListMenuDisplayItem, AListMenuItemConfig, AListMenuSelectedVariant } from './types';
 
 const props = defineProps({
   modelValue: {
@@ -32,6 +32,11 @@ const props = defineProps({
   },
   menu: {
     type: [Array, Object] as PropType<AListMenuConfig>,
+  },
+  selectedVariant: {
+    type: String as PropType<AListMenuSelectedVariant>,
+    default: 'soft',
+    validator: (value: string) => ['soft', 'solid'].includes(value),
   },
 });
 

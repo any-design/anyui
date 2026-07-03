@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from '@iconify/svelte';
-  import { getContext } from 'svelte';
+  import { getContext, untrack } from 'svelte';
 
   let {
     value = undefined as string | number | undefined,
@@ -12,17 +12,20 @@
 
   const ctx = getContext<any>('anyui:tabs');
   let el = $state<HTMLElement>();
-  const resolvedValue = $derived(ctx ? (typeof value === 'undefined' ? ctx.nextTabValue() : value) : value);
+  const autoValue = ctx ? ctx.nextTabValue('tab') : undefined;
+  const resolvedValue = $derived(typeof value === 'undefined' ? autoValue : value);
   const active = $derived(ctx ? ctx.getSelected() === resolvedValue : false);
 
   $effect(() => {
-    ctx?.registerTab(value, el);
-    return () => ctx?.registerTab(value, null);
+    const tabValue = resolvedValue;
+    const tabEl = el;
+    untrack(() => ctx?.registerTab(tabValue, tabEl ?? null));
+    return () => untrack(() => ctx?.registerTab(tabValue, null));
   });
 
   const handleClick = () => {
     if (disabled || !ctx) return;
-    ctx.select(value);
+    ctx.select(resolvedValue);
   };
   const handleKeyDown = (e: KeyboardEvent) => {
     if (disabled) return;

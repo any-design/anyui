@@ -40,18 +40,13 @@ export default function ToastDemo() {
   return (
     <div>
       <div className="demo-block">
-        <div className="demo-block__label">Types</div>
+        <div className="demo-block__label">Triggers</div>
         <div className="demo-row">
           <Button onClick={() => popup('info')}>Info</Button>
           <Button onClick={() => popup('success')}>Success</Button>
           <Button onClick={() => popup('warning')}>Warning</Button>
           <Button onClick={() => popup('error')}>Error</Button>
-        </div>
-      </div>
-      <div className="demo-block">
-        <div className="demo-block__label">Options</div>
-        <div className="demo-row">
-          <Button onClick={popupSticky}>Sticky (no auto close)</Button>
+          <Button onClick={popupSticky}>Sticky</Button>
           <Button onClick={popupBottom}>Bottom right</Button>
           <Button onClick={popupContentOnly}>Content only</Button>
         </div>

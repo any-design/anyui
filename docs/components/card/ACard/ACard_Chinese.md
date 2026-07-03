@@ -14,29 +14,17 @@ import { Card } from '@any-design/anyui/vue';
 
 ## 基础用法
 
-带标题的卡片，正文内容通过默认插槽传入。
+一个全功能卡片：自定义 `header` 插槽、正文内容、带操作的 `footer` 插槽、`link` 让整张卡片可点击导航，以及 `clean` 让正文图片贴边显示。
 
 ```vue
 <template>
-  <ACard title="账户">
-    <p>管理你的资料、密码与已连接的服务。</p>
-  </ACard>
-</template>
-```
-
-## 示例
-
-### 自定义头部与底部
-
-使用 `header` 与 `footer` 插槽可以完全自定义这两个区域，而不必依赖 `title` 属性与默认布局。
-
-```vue
-<template>
-  <ACard width="320">
+  <ACard width="320" link="/docs/getting-started" clean>
     <template #header>
       <strong>通知</strong>
     </template>
-    <p>选择你希望接收的通知类型。</p>
+    <div
+      style="height:120px;background:linear-gradient(135deg,var(--primary),var(--info));"
+    ></div>
     <template #footer>
       <AButton type="primary" size="small">保存设置</AButton>
     </template>
@@ -44,31 +32,7 @@ import { Card } from '@any-design/anyui/vue';
 </template>
 ```
 
-### 链接卡片
-
-设置 `link` 后，卡片会渲染为 `<a>`，整个卡片变为可点击的导航元素。
-
-```vue
-<template>
-  <ACard title="文档" link="/docs/getting-started">
-    阅读快速上手指南 →
-  </ACard>
-</template>
-```
-
-### 贴边内容
-
-传入 `clean` 可移除默认的正文内边距 —— 当正文本身是列表、表格或图片等需要贴边的元素时很有用。
-
-```vue
-<template>
-  <ACard title="图库" clean>
-    <div
-      style="height:120px;background:linear-gradient(135deg,var(--primary),var(--info));"
-    ></div>
-  </ACard>
-</template>
-```
+用 `title` 属性显示普通标题，用 `header`/`footer` 插槽自定义这两个区域，`link` 让卡片渲染为 `<a>`，`clean` 移除默认正文内边距。
 
 ## 属性
 

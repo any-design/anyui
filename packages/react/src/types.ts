@@ -106,6 +106,7 @@ export interface AListMenuItemConfigObject {
 
 export type AListMenuItemConfig = AListMenuItemConfigObject | string;
 export type AListMenuConfig = Record<string, AListMenuItemConfig[]> | AListMenuItemConfig[];
+export type AListMenuSelectedVariant = 'soft' | 'solid';
 
 export interface AListMenuDisplayItem extends AListMenuItemConfigObject {
   type: 'item' | 'split';
@@ -201,7 +202,7 @@ export interface TableColumn {
 
 export type TableRow = Record<string, unknown>;
 
-export type ATabsType = 'line' | 'card';
+export type ATabsType = 'default' | 'line' | 'card';
 
 export type ATabsSize = 'small' | 'default' | 'large';
 

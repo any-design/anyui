@@ -14,16 +14,6 @@ import { Button } from '@any-design/anyui/vue';
 
 在 Vue 中通过 `app.use(AnyUI)` 全局注册后，可直接在模板里使用 `<AButton>`，无需手动引入。
 
-## 基础用法
-
-最简单的按钮 —— 默认样式、默认尺寸，内容通过默认插槽传入。
-
-```vue
-<template>
-  <AButton>点我</AButton>
-</template>
-```
-
 ## 示例
 
 ### 样式类型

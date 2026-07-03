@@ -24,7 +24,7 @@
     popup,
     onPopupStatusChanged,
   } = $props();
-  const popperId = Date.now() + '_' + Math.random().toString(36).slice(2);
+  const popperId = $props.id();
   let triggerEl = $state<HTMLSpanElement>();
   let popupEl = $state<HTMLDivElement>();
   let hideTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -36,7 +36,7 @@
   });
   const insetStyle = $derived(getInsetStyle());
   const popupStyle = $derived(appendToBody
-    ? fixedStyle || 'position: fixed; z-index: ' + zIndex + ';'
+    ? fixedStyle || 'position: fixed; z-index: ' + zIndex + '; visibility: hidden;'
     : insetStyle + ' z-index: ' + zIndex + ';');
   function setOpen(next: boolean) {
     if (open === next) return;
@@ -79,6 +79,7 @@
   }
   export function show() {
     if (hideTimeout) clearTimeout(hideTimeout);
+    fixedStyle = appendToBody ? 'position: fixed; z-index: ' + zIndex + '; visibility: hidden;' : '';
     setOpen(true);
     updatePosition();
   }
@@ -96,7 +97,11 @@
     if (hideTimeout) clearTimeout(hideTimeout);
     hideTimeout = setTimeout(hide, hideDelay);
   };
-  const toggle = () => (open ? hide() : show());
+  const toggle = (event?: Event) => {
+    event?.preventDefault();
+    event?.stopPropagation();
+    open ? hide() : show();
+  };
   function portal(node: HTMLElement, enabled: boolean) {
     if (enabled && typeof document !== 'undefined') document.body.appendChild(node);
     return {
@@ -147,15 +152,13 @@
   onclick={triggerType === 'click' ? toggle : undefined}
   onkeydown={(event) => {
     if ((event.key === 'Enter' || event.key === ' ') && triggerType === 'click') {
-      event.preventDefault();
-      toggle();
+      toggle(event);
     }
     if (event.key === 'Escape') hide();
   }}
   oncontextmenu={(event) => {
     if (triggerType === 'contextmenu') {
-      event.preventDefault();
-      toggle();
+      toggle(event);
     }
   }}
 >

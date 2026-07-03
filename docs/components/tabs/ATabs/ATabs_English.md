@@ -1,6 +1,6 @@
 # ATabs
 
-`ATabs` switches between panels of content. Compose it with `ATab` (the trigger) and `ATabPanel` (the content). Use the `line` variant for an animated underline indicator, or `card` for a highlighted-button style. Bind `v-model:modelValue` to track the active tab.
+`ATabs` switches between panels of content. Compose it with `ATab` (the trigger) and `ATabPanel` (the content). The default style highlights the active label directly, while `card` renders the active tab as a filled button. Bind `v-model:modelValue` to track the active tab.
 
 ## Import
 
@@ -35,7 +35,7 @@ const active = ref(1);
 
 ### Card variant
 
-Set `type="card"` to highlight the active tab as a filled button instead of an underline.
+Set `type="card"` to highlight the active tab as a filled button instead of the default text-only selected state.
 
 ```vue
 <template>
@@ -77,7 +77,7 @@ Set `keepAlive` on a panel to keep it mounted (hidden) when inactive, preserving
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `modelValue` | String \| Number | — | Active tab value (`v-model:modelValue`). |
-| `type` | 'line' \| 'card' | 'line' | Visual variant. |
+| `type` | 'default' \| 'line' \| 'card' | 'default' | Visual variant. `line` is kept as a compatibility alias of `default`. |
 | `size` | 'small' \| 'default' \| 'large' | 'default' | Bar density. |
 | `position` | 'top' \| 'bottom' | 'top' | Bar placement. |
 | `autoSelect` | Boolean | true | Auto-select the first tab when no `modelValue` is provided. |

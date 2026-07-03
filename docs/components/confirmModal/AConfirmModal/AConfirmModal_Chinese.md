@@ -12,11 +12,11 @@ import { ConfirmModal, confirmModal } from '@any-design/anyui/vue';
 
 ## 基础用法
 
-声明式：用 `v-model` 控制显隐，监听 `confirm` / `cancel` 事件。
+声明式：用 `v-model` 控制显隐，监听 `confirm` / `cancel` 事件。确定 / 取消按钮始终在弹窗底部同一行内排列。
 
 ```vue
 <template>
-  <AButton @click="open = true">删除账号</AButton>
+  <AButton type="primary" @click="open = true">删除账号</AButton>
   <AConfirmModal
     v-model="open"
     type="danger"
@@ -74,7 +74,7 @@ const ask = async () => {
 
 <script setup>
 import { ref } from 'vue';
-const open = ref(true);
+const open = ref(false);
 const onPublish = () => console.log('已发布');
 </script>
 ```

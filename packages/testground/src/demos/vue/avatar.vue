@@ -3,11 +3,11 @@
     <div class="demo-block">
       <div class="demo-block__label">Sizes &amp; Shapes</div>
       <div class="demo-row">
-        <a-avatar src="https://0.gravatar.com/avatar/" :size="AvatarSize.Large" round />
-        <a-avatar src="https://0.gravatar.com/avatar/" :size="AvatarSize.Medium" />
-        <a-avatar src="https://0.gravatar.com/avatar/" :width="40" />
-        <a-avatar src="https://0.gravatar.com/avatar/" width="50px" round />
-        <a-avatar src="https://0.gravatar.com/avatar/" :size="AvatarSize.XSmall" />
+        <a-avatar :src="`https://i.pravatar.cc/120?img=12`" :size="AvatarSize.XLarge" round />
+        <a-avatar :src="`https://i.pravatar.cc/96?img=12`" :size="AvatarSize.Large" />
+        <a-avatar :src="`https://i.pravatar.cc/64?img=12`" :width="40" />
+        <a-avatar src="https://i.pravatar.cc/96?img=5" width="50px" round />
+        <a-avatar :src="`https://i.pravatar.cc/48?img=12`" :size="AvatarSize.XSmall" />
       </div>
     </div>
     <div class="demo-block">

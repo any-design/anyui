@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Avatar } from '@any-design/anyui-svelte';
 
-  const src = 'https://0.gravatar.com/avatar/';
+  const src = 'https://i.pravatar.cc/120?img=12';
 </script>
 
 <div>
@@ -9,18 +9,18 @@
     <div class="demo-block__label">Sizes</div>
     <div class="demo-row">
       <Avatar {src} size="xlarge" />
-      <Avatar {src} size="large" />
-      <Avatar {src} size="medium" />
-      <Avatar {src} size="small" />
-      <Avatar {src} size="xsmall" />
+      <Avatar src="https://i.pravatar.cc/96?img=12" size="large" />
+      <Avatar src="https://i.pravatar.cc/64?img=12" size="medium" />
+      <Avatar src="https://i.pravatar.cc/48?img=12" size="small" />
+      <Avatar src="https://i.pravatar.cc/32?img=12" size="xsmall" />
     </div>
   </div>
   <div class="demo-block">
     <div class="demo-block__label">Round &amp; Custom Width</div>
     <div class="demo-row">
-      <Avatar {src} size="large" round />
-      <Avatar {src} width={40} />
-      <Avatar {src} width="56px" round />
+      <Avatar src="https://i.pravatar.cc/96?img=12" size="large" round />
+      <Avatar src="https://i.pravatar.cc/80?img=12" width={40} />
+      <Avatar src="https://i.pravatar.cc/96?img=5" width="56px" round />
     </div>
   </div>
   <div class="demo-block">

@@ -1,12 +1,7 @@
 <template>
   <div>
     <div class="demo-block">
-      <div class="demo-block__label">Workflow</div>
-      <div class="demo-row">
-        <a-button round size="small" @click="addCurrentStep(-1)">Prev</a-button>
-        <a-button round size="small" @click="addCurrentStep(1)">Next</a-button>
-        <span>Current: {{ currentStepLabel }}</span>
-      </div>
+      <div class="demo-block__label">With labels</div>
       <div class="step-preview-shell">
         <div class="step-preview-shell__meta">
           <div class="step-preview-shell__eyebrow">Checkout</div>
@@ -16,7 +11,23 @@
             <template v-if="currentStep > demoSteps.length"> · Done</template>
           </div>
         </div>
+        <div class="demo-row" style="margin-bottom: 18px">
+          <a-button round size="small" @click="addCurrentStep(-1)">Prev</a-button>
+          <a-button round size="small" type="primary" @click="addCurrentStep(1)">Next</a-button>
+        </div>
         <a-step :steps="demoSteps" :current="currentStep"></a-step>
+      </div>
+    </div>
+
+    <div class="demo-block">
+      <div class="demo-block__label">Custom finish color</div>
+      <div class="step-preview-shell">
+        <div class="step-preview-shell__meta">
+          <div class="step-preview-shell__eyebrow">Onboarding</div>
+          <div class="step-preview-shell__title">Invite team</div>
+          <div class="step-preview-shell__caption">Step 3 of 4</div>
+        </div>
+        <a-step :steps="finishSteps" :current="3" finish-color="#1faeff"></a-step>
       </div>
     </div>
   </div>
@@ -27,6 +38,7 @@ import { computed, ref } from 'vue';
 
 const currentStep = ref(1);
 const demoSteps = ['Cart', 'Shipping', 'Payment', 'Done'];
+const finishSteps = ['Profile', 'Workspace', 'Invite', 'Launch'];
 const currentStepLabel = computed(() => {
   return currentStep.value > demoSteps.length ? 'Completed' : demoSteps[currentStep.value - 1];
 });

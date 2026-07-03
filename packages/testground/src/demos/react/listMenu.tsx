@@ -12,19 +12,15 @@ export default function ListMenuDemo() {
   return (
     <div>
       <div className="demo-block">
-        <div className="demo-block__label">Grouped Menu</div>
+        <div className="demo-block__label">List Menu</div>
         <div className="demo-row">
-          <div style={{ width: 180 }}>
-            <ListMenu menu={menu} modelValue={selected} onUpdateModelValue={setSelected} />
-          </div>
-          <span>Selected: {selected ?? 'none'}</span>
-        </div>
-      </div>
-      <div className="demo-block">
-        <div className="demo-block__label">Flat Menu</div>
-        <div className="demo-row">
-          <div style={{ width: 180 }}>
-            <ListMenu menu={['Home', 'Profile', 'Settings']} />
+          <div style={{ width: 220 }}>
+            <ListMenu
+              menu={menu}
+              modelValue={selected}
+              selectedVariant="solid"
+              onUpdateModelValue={setSelected}
+            />
           </div>
         </div>
       </div>

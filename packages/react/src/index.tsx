@@ -16,6 +16,7 @@ import { createRoot } from 'react-dom/client';
 import { Icon as IconifyIcon } from '@iconify/react';
 import ValidateSchema from 'async-validator';
 import type { Rules } from 'async-validator';
+import * as QRCodeServer from 'qrcode';
 
 import type {
   AChatMessage,
@@ -738,10 +739,44 @@ export const Avatar = forwardRef<HTMLImageElement, AnyUIReactProps>(function Ava
   { className, src, alt = '', size = 'medium', width, round = false, name = '', fallback, onError, ...rest },
   ref,
 ) {
-  const [failed, setFailed] = useState(false);
+  const [loadedSrc, setLoadedSrc] = useState('');
+  const [loading, setLoading] = useState(Boolean(src));
   useEffect(() => {
-    setFailed(false);
-  }, [src]);
+    if (!src) {
+      setLoadedSrc('');
+      setLoading(false);
+      return undefined;
+    }
+    // Background-load via an Image() so we never flash a broken-image icon;
+    // the <img> only mounts once the browser has the picture ready. Use
+    // globalThis.Image because this module also exports an `Image` component.
+    if (typeof globalThis.Image !== 'function') {
+      setLoadedSrc('');
+      setLoading(false);
+      return undefined;
+    }
+    setLoading(true);
+    setLoadedSrc('');
+    const image = new globalThis.Image();
+    let cancelled = false;
+    image.onload = () => {
+      if (cancelled) return;
+      setLoadedSrc(src);
+      setLoading(false);
+    };
+    image.onerror = (event) => {
+      if (cancelled) return;
+      setLoading(false);
+      setLoadedSrc('');
+      onError?.(event);
+    };
+    image.src = src;
+    return () => {
+      cancelled = true;
+      image.onload = null;
+      image.onerror = null;
+    };
+  }, [src, onError]);
   const pixelSize = typeof size === 'number' ? size : ({ xlarge: 64, large: 48, medium: 32, small: 24, xsmall: 16 } as Record<string, number>)[size] ?? 32;
   const avatarWidth = formatStyleSize(width ?? pixelSize);
   const numericSize =
@@ -758,24 +793,22 @@ export const Avatar = forwardRef<HTMLImageElement, AnyUIReactProps>(function Ava
         {initials}
       </span>
     ) : null);
-  const showImage = Boolean(src) && (!failed || !fallbackNode);
+  const showFallback = !loadedSrc && !loading;
   return (
     <div className={cx('a-avatar', className)} style={{ width: avatarWidth, height: avatarWidth, borderRadius: round ? '50%' : '8px', overflow: 'hidden', ...rest.style }}>
-      {showImage ? (
+      {loadedSrc ? (
         <img
           {...pickDataAttrs(rest)}
           ref={ref}
-          src={src}
+          src={loadedSrc}
           alt={alt}
           loading="lazy"
-          onError={(event) => {
-            setFailed(true);
-            onError?.(event);
-          }}
         />
-      ) : (
+      ) : loading ? (
+        <span className="a-avatar__loading" aria-hidden="true" />
+      ) : showFallback ? (
         fallbackNode
-      )}
+      ) : null}
     </div>
   );
 });
@@ -943,6 +976,7 @@ export const Drawer = forwardRef<HTMLDivElement, AnyUIReactProps>(function Drawe
     width = '30%',
     zIndex = 100,
     maskZIndex,
+    glassOpacity = 1,
     lockScroll = true,
     transitionName,
     onUpdateModelValue,
@@ -956,6 +990,11 @@ export const Drawer = forwardRef<HTMLDivElement, AnyUIReactProps>(function Drawe
     lockBodyScroll();
     return () => unlockBodyScroll();
   }, [modelValue, lockScroll]);
+  const bodyStyle: React.CSSProperties = { width: formatStyleSize(width), zIndex, ...rest.style };
+  const opacity = Math.min(1, Math.max(0, Number(glassOpacity)));
+  if (opacity < 1) {
+    bodyStyle.backgroundColor = `color-mix(in srgb, var(--a-surface, var(--bg)) ${opacity * 100}%, transparent)`;
+  }
   const node = rendered ? (
     <div
       ref={ref}
@@ -972,7 +1011,7 @@ export const Drawer = forwardRef<HTMLDivElement, AnyUIReactProps>(function Drawe
       ) : null}
       <div
         className={cx('a-drawer__body', appendToBody && 'a-drawer__body--outside', bodyClass)}
-        style={{ width: formatStyleSize(width), zIndex, ...rest.style }}
+        style={bodyStyle}
       >
         {children}
       </div>
@@ -1374,7 +1413,7 @@ const normalizeMenu = (menu?: AListMenuConfig): AListMenuDisplayItem[] => {
   ]);
 };
 
-export const ListMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function ListMenu({ className, menu, modelValue, onUpdateModelValue, ...rest }, ref) {
+export const ListMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function ListMenu({ className, menu, modelValue, selectedVariant = 'soft', onUpdateModelValue, ...rest }, ref) {
   const [selected, setSelected] = useState(modelValue);
   useEffect(() => setSelected(modelValue), [modelValue]);
   const update = (value?: string | number) => {
@@ -1382,7 +1421,7 @@ export const ListMenu = forwardRef<HTMLDivElement, AnyUIReactProps>(function Lis
     onUpdateModelValue?.(value);
   };
   return (
-    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-list-menu', className)}>
+    <div {...pickDataAttrs(rest)} ref={ref} className={cx('a-list-menu', `a-list-menu--selected-${selectedVariant}`, className)}>
       {normalizeMenu(menu).map((item, index) =>
         item.type === 'split' && item.label ? (
           <div key={`split-${index}`} className="a-list-menu__split">
@@ -1786,7 +1825,7 @@ export const Popper = forwardRef<any, AnyUIReactProps>(function Popper(
   const popperId = useId();
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [open, setOpen] = useState(triggerType === 'manual' ? Boolean(visible) : false);
-  const [popupStyle, setPopupStyle] = useState<React.CSSProperties>({ zIndex });
+  const [popupStyle, setPopupStyle] = useState<React.CSSProperties>({ position: 'fixed', zIndex, visibility: 'hidden' });
   const setOpenState = (next: boolean) => {
     setOpen((current) => {
       if (current !== next) onPopupStatusChanged?.(next);
@@ -1802,11 +1841,15 @@ export const Popper = forwardRef<any, AnyUIReactProps>(function Popper(
     setPopupStyle({
       position: appendToBody ? 'fixed' : 'absolute',
       zIndex,
+      visibility: 'visible',
       ...position,
     });
   };
   const show = () => {
     if (hideTimeoutRef.current) clearTimeout(hideTimeoutRef.current);
+    // hide until the position is computed so the popup never flashes at its
+    // previous / default coordinates before being re-positioned.
+    setPopupStyle({ position: appendToBody ? 'fixed' : 'absolute', zIndex, visibility: 'hidden' });
     setOpenState(true);
     requestAnimationFrame(updatePosition);
   };
@@ -2182,40 +2225,76 @@ export const QrCode = forwardRef<HTMLDivElement, AnyUIReactProps>(function QrCod
   },
   ref,
 ) {
-  const [svg, setSvg] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const requestRef = useRef(0);
   const numericSize =
     typeof size === 'number' ? size : typeof size === 'string' && /^\d+$/.test(size) ? Number(size) : undefined;
   const resolvedAriaLabel = ariaLabel || (value ? 'QR code for ' + value : placeholder);
+  const buildOptions = () => ({
+    type: 'svg' as const,
+    width: numericSize,
+    margin,
+    errorCorrectionLevel,
+    color: {
+      dark: normalizeQrCodeColor(dark),
+      light: normalizeQrCodeColor(light),
+    },
+  });
+
+  const renderKey = JSON.stringify([value, numericSize, margin, errorCorrectionLevel, dark, light]);
+  const renderSync = (): { svg: string; error: string; key: string } => {
+    if (!value) {
+      return { svg: '', error: '', key: '' };
+    }
+    let nextSvg = '';
+    let nextError = '';
+    try {
+      QRCodeServer.toString(value, buildOptions(), (err: Error | null | undefined, out: string) => {
+        if (err) {
+          nextError = err instanceof Error ? err.message : 'Failed to render QR code';
+        } else {
+          nextSvg = out;
+        }
+      });
+    } catch (error) {
+      nextError = error instanceof Error ? error.message : 'Failed to render QR code';
+    }
+    return { svg: nextSvg, error: nextError, key: nextSvg || nextError ? renderKey : '' };
+  };
+
+  // Compute the initial svg synchronously on both server and client so the
+  // hydrated first frame matches the SSR HTML.
+  const [initial] = useState(renderSync);
+  const initialSvg = initial.svg;
+  const initialError = initial.error;
+  const [svg, setSvg] = useState<string>(initialSvg);
+  const [errorMessage, setErrorMessage] = useState<string>(initialError);
+  const [isLoading, setIsLoading] = useState<boolean>(!initialSvg && !initialError && !!value);
+  const requestRef = useRef(0);
+  const renderedKeyRef = useRef(initial.key);
 
   useEffect(() => {
     const current = ++requestRef.current;
-    setSvg('');
-    setErrorMessage('');
-
     if (!value) {
+      setSvg('');
+      setErrorMessage('');
+      setIsLoading(false);
+      renderedKeyRef.current = '';
       return undefined;
     }
+    if (renderedKeyRef.current === renderKey) {
+      setIsLoading(false);
+      return undefined;
+    }
+    setIsLoading(true);
+    setErrorMessage('');
 
     let cancelled = false;
 
-    import('qrcode')
-      .then((qrcodeModule) =>
-        resolveQrCodeModule(qrcodeModule).toString(value, {
-          type: 'svg',
-          width: numericSize,
-          margin,
-          errorCorrectionLevel,
-          color: {
-            dark: normalizeQrCodeColor(dark),
-            light: normalizeQrCodeColor(light),
-          },
-        }),
-      )
+    Promise.resolve(resolveQrCodeModule(QRCodeServer).toString(value, buildOptions()))
       .then((nextSvg) => {
         if (!cancelled && current === requestRef.current) {
           setSvg(nextSvg);
+          setIsLoading(false);
+          renderedKeyRef.current = renderKey;
         }
       })
       .catch((error) => {
@@ -2223,13 +2302,16 @@ export const QrCode = forwardRef<HTMLDivElement, AnyUIReactProps>(function QrCod
           return;
         }
         setErrorMessage(error instanceof Error ? error.message : 'Failed to render QR code');
+        setIsLoading(false);
+        renderedKeyRef.current = renderKey;
         onError?.(error);
       });
 
     return () => {
       cancelled = true;
     };
-  }, [value, numericSize, margin, errorCorrectionLevel, dark, light, onError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, numericSize, margin, errorCorrectionLevel, dark, light, onError, renderKey]);
 
   return (
     <div
@@ -2240,14 +2322,20 @@ export const QrCode = forwardRef<HTMLDivElement, AnyUIReactProps>(function QrCod
         bordered && 'a-qr-code--bordered',
         !value && 'a-qr-code--empty',
         errorMessage && 'a-qr-code--error',
+        isLoading && 'a-qr-code--loading',
         className,
       )}
       style={{ width: formatStyleSize(size), height: formatStyleSize(size), ...rest.style }}
       role="img"
       aria-label={resolvedAriaLabel}
+      aria-busy={isLoading || undefined}
     >
       {svg && value && !errorMessage ? (
         <div className="a-qr-code__svg" dangerouslySetInnerHTML={{ __html: svg }} />
+      ) : isLoading ? (
+        <div className="a-qr-code__loading" aria-hidden="true">
+          <span className="a-qr-code__spinner" />
+        </div>
       ) : (
         <span className="a-qr-code__placeholder">{errorMessage || placeholder}</span>
       )}
@@ -3303,6 +3391,7 @@ export const ProgressButton = forwardRef<HTMLDivElement, AnyUIReactProps>(functi
     children,
     className,
     value = 0,
+    type = 'outline',
     status = 'primary',
     round = false,
     fill = false,
@@ -3317,6 +3406,10 @@ export const ProgressButton = forwardRef<HTMLDivElement, AnyUIReactProps>(functi
   ref,
 ) {
   const percent = Math.min(100, Math.max(0, Number(value)));
+  const rootStyle = {
+    ...rest.style,
+    '--a-progress-button-progress': percent + '%',
+  } as React.CSSProperties;
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (disabled) return;
     onClick?.(event);
@@ -3337,6 +3430,7 @@ export const ProgressButton = forwardRef<HTMLDivElement, AnyUIReactProps>(functi
       aria-disabled={disabled}
       className={cx(
         'a-progress-button',
+        type && `a-progress-button--${type}`,
         `a-progress-button--${status}`,
         size !== 'default' && `a-progress-button--${size}`,
         round && 'a-progress-button--round',
@@ -3347,7 +3441,7 @@ export const ProgressButton = forwardRef<HTMLDivElement, AnyUIReactProps>(functi
         indeterminate && 'a-progress-button--indeterminate',
         className,
       )}
-      style={rest.style}
+      style={rootStyle}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
@@ -3355,6 +3449,9 @@ export const ProgressButton = forwardRef<HTMLDivElement, AnyUIReactProps>(functi
         {striped ? <span className="a-progress-button__stripes" /> : null}
       </div>
       <span className="a-progress-button__inner">{children}</span>
+      <span className="a-progress-button__inner a-progress-button__inner-fill" aria-hidden="true">
+        {children}
+      </span>
     </div>
   );
 });
@@ -3754,8 +3851,9 @@ export const ScrollArea = forwardRef<HTMLDivElement, AnyUIReactProps>(function S
 type TabsContextValue = {
   selected: string | number | undefined;
   select: (value: string | number) => void;
-  registerTab: (value: string | number | undefined, el: HTMLDivElement | null) => void;
-  unregisterTab: (value: string | number | undefined) => void;
+  registerTab: (value: string | number, el: HTMLDivElement | null) => void;
+  unregisterTab: (value: string | number) => void;
+  nextTabValue: (role: 'tab' | 'panel') => number;
   barRef: React.RefObject<HTMLDivElement | null>;
 };
 
@@ -3769,7 +3867,7 @@ export const Tabs = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tabs(
     children,
     className,
     modelValue,
-    type = 'line',
+    type = 'default',
     size = 'default',
     position = 'top',
     autoSelect = true,
@@ -3781,21 +3879,18 @@ export const Tabs = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tabs(
 ) {
   const barRef = useRef<HTMLDivElement | null>(null);
   const [selected, setSelected] = useState<string | number | undefined>(modelValue);
-  const [indicator, setIndicator] = useState<{ width: number; left: number } | undefined>();
-  const [showIndicator, setShowIndicator] = useState(false);
   const tabValuesRef = useRef<Array<string | number>>([]);
   const tabElsRef = useRef<Map<string | number, HTMLDivElement>>(new Map());
+  const tabCounterRef = useRef(0);
+  const panelCounterRef = useRef(0);
   const firstRun = useRef(true);
 
-  const setBarRef = (node: HTMLDivElement | null) => {
-    barRef.current = node;
+  const setRootRef = (node: HTMLDivElement | null) => {
     if (typeof ref === 'function') ref(node);
     else if (ref) (ref as any).current = node;
   };
 
-  const registerTab = (value: string | number | undefined, el: HTMLDivElement | null) => {
-    const index = tabElsRef.current.size;
-    const key = resolveTabValue(value, index);
+  const registerTab = (key: string | number, el: HTMLDivElement | null) => {
     if (el) {
       tabElsRef.current.set(key, el);
       if (!tabValuesRef.current.includes(key)) {
@@ -3806,23 +3901,17 @@ export const Tabs = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tabs(
       tabValuesRef.current = tabValuesRef.current.filter((v) => v !== key);
     }
   };
-  const unregisterTab = (value: string | number | undefined) => registerTab(value, null);
+  const unregisterTab = (value: string | number) => registerTab(value, null);
 
-  const refreshIndicator = (value: string | number | undefined) => {
-    if (typeof value === 'undefined') {
-      setIndicator(undefined);
-      setShowIndicator(false);
-      return;
+  const nextTabValue = (role: 'tab' | 'panel') => {
+    if (role === 'panel') {
+      const next = panelCounterRef.current;
+      panelCounterRef.current += 1;
+      return next;
     }
-    const el = tabElsRef.current.get(value);
-    const container = barRef.current;
-    if (!el || !container) return;
-    const rect = el.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
-    setIndicator({ width: rect.width, left: rect.left - containerRect.left });
-    if (!showIndicator) {
-      requestAnimationFrame(() => setShowIndicator(true));
-    }
+    const next = tabCounterRef.current;
+    tabCounterRef.current += 1;
+    return next;
   };
 
   const select = (value: string | number) => {
@@ -3844,25 +3933,14 @@ export const Tabs = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tabs(
     }
   }, [modelValue, autoSelect]);
 
-  useEffect(() => {
-    refreshIndicator(selected);
-  }, [selected, type, size, position, children]);
-
   const ctx: TabsContextValue = {
     selected,
     select,
     registerTab,
     unregisterTab,
+    nextTabValue,
     barRef,
   };
-
-  const indicatorStyle = indicator
-    ? {
-        opacity: showIndicator ? 1 : 0,
-        width: `${indicator.width}px`,
-        transform: `translateX(${indicator.left}px) scaleX(${showIndicator ? 1 : 0.4})`,
-      }
-    : { opacity: 0, transform: 'scaleX(0)' };
 
   // Separate tab triggers from panels. In React we render them via the children
   // directly, so Tabs just provides the bar + content wrapper; children place
@@ -3876,7 +3954,7 @@ export const Tabs = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tabs(
     <TabsContext.Provider value={ctx}>
       <div
         {...pickDataAttrs(rest)}
-        ref={ref}
+        ref={setRootRef}
         className={cx(
           'a-tabs',
           `a-tabs--${type}`,
@@ -3885,9 +3963,8 @@ export const Tabs = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tabs(
           className,
         )}
       >
-        <div ref={setBarRef} className="a-tabs__bar" role="tablist">
+        <div ref={barRef} className="a-tabs__bar" role="tablist">
           {tabs}
-          {type === 'line' ? <div className="a-tabs__indicator" style={indicatorStyle} /> : null}
         </div>
         <div className="a-tabs__content">{panels}</div>
       </div>
@@ -3901,25 +3978,23 @@ export const Tab = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tab(
 ) {
   const ctx = useContext(TabsContext);
   const elRef = useRef<HTMLDivElement | null>(null);
-  const indexRef = useRef<number>(ctx ? -1 : 0);
-  // assign a stable index per mount order for uncontrolled tabs
-  if (ctx && indexRef.current === -1) {
-    indexRef.current = (ctx as any).__counter ?? 0;
-    (ctx as any).__counter = indexRef.current + 1;
+  const indexRef = useRef<number | undefined>(undefined);
+  if (typeof value === 'undefined' && typeof indexRef.current === 'undefined') {
+    indexRef.current = ctx?.nextTabValue('tab') ?? 0;
   }
-  const resolvedValue = resolveTabValue(value, indexRef.current);
+  const resolvedValue = resolveTabValue(value, indexRef.current ?? 0);
   const active = ctx?.selected === resolvedValue;
 
   const setElRef = (node: HTMLDivElement | null) => {
     elRef.current = node;
     if (typeof ref === 'function') ref(node);
     else if (ref) (ref as any).current = node;
-    ctx?.registerTab(value, node);
+    ctx?.registerTab(resolvedValue, node);
   };
 
   useEffect(() => {
-    return () => ctx?.unregisterTab(value);
-  }, [value]);
+    return () => ctx?.unregisterTab(resolvedValue);
+  }, [resolvedValue]);
 
   const handleClick = () => {
     if (disabled) return;
@@ -3960,10 +4035,11 @@ export const TabPanel = forwardRef<HTMLDivElement, AnyUIReactProps>(function Tab
   ref,
 ) {
   const ctx = useContext(TabsContext);
-  const indexRef = useRef<number>(0);
-  // reuse the same counter scheme — panels are rendered in the same children array
-  // but we cannot share the tab counter, so resolve via the provided value or index
-  const resolvedValue = resolveTabValue(value, indexRef.current);
+  const indexRef = useRef<number | undefined>(undefined);
+  if (typeof value === 'undefined' && typeof indexRef.current === 'undefined') {
+    indexRef.current = ctx?.nextTabValue('panel') ?? 0;
+  }
+  const resolvedValue = resolveTabValue(value, indexRef.current ?? 0);
   const active = ctx?.selected === resolvedValue;
   const [rendered, setRendered] = useState(active);
   useEffect(() => {

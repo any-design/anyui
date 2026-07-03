@@ -20,7 +20,6 @@ import {
   onUnmounted,
   ref,
   watch,
-  onBeforeMount,
 } from 'vue';
 
 import { getCertainParent } from '../../utils';
@@ -46,7 +45,7 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
-    const selected = ref<string | number | undefined>(undefined);
+    const selected = ref<string | number | undefined>(props.modelValue);
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
     let formItemEventEmitter: FormItemEventEmitter | undefined;
@@ -81,9 +80,10 @@ export default defineComponent({
 
     watch(
       () => props.modelValue,
-      () => {
-        selected.value = props.modelValue;
+      (value) => {
+        selected.value = value;
       },
+      { immediate: true },
     );
 
     const handleItemChange = (item: ARadioGroupItem) => {
@@ -99,10 +99,6 @@ export default defineComponent({
       emit('update:modelValue', undefined);
       emit('change', undefined);
     };
-
-    onBeforeMount(() => {
-      selected.value = props.modelValue;
-    });
 
     onMounted(() => {
       formItemEventEmitter?.on('clear', handleClear);

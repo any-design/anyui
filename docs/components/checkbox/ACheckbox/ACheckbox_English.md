@@ -64,9 +64,15 @@ const agree = ref(true);
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `modelValue` | Boolean | false | Checked state (`v-model`). |
-| `label` | String \| Number | undefined | Label shown next to the box. |
+| `label` | String \| Number | '' | Label shown next to the box. |
 | `checkIcon` | String \| IconifyIcon | 'si-glyph:checked' | Icon used for the checked state. |
 | `iconTransition` | String | 'a-trans-check-icon' | Transition name for the check icon. |
+
+## Slots
+
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | - | Label content shown next to the checkbox when `label` is not provided. |
 
 ## Events
 

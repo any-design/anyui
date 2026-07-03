@@ -5,6 +5,8 @@ node_modules
 .DS_Store
 .vscode
 .vercel
+.playwright-cli/
+output/
 *.tsbuildinfo
 dist
 dist-ssr
@@ -17,5 +19,6 @@ lib
 # (generated types for IDE without running astro sync).
 **/.astro/dev.json
 **/.astro/settings.json
+**/.astro/*.log
 # Vite dev cache
 **/.vite/

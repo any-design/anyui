@@ -20,62 +20,29 @@ import { ProgressButton } from '@any-design/anyui/vue';
 
 ## 示例
 
-### 状态色
+### 实色与框线
 
-通过 `status` 切换进度条颜色：`primary`（默认）、`secondary`、`success`、`warn`、`danger`、`info`。
-
-```vue
-<template>
-  <AProgressButton :value="80" status="success">完成</AProgressButton>
-</template>
-```
-
-### 圆角与填充
-
-`round` 将按钮变为胶囊形；`fill` 让按钮撑满父容器宽度。
+默认为**框线**样式——在透明底上有一条浅色进度条延伸。设置 `type="solid"` 后，按钮不再显示边框，而是通过随进度改变尺寸的渐变背景图，从左到右填充真实状态色。文字会渲染为一层状态色底字和一层按进度裁切的填充区文字，在未填充底面与饱和填充上都保持清晰。`status` 切换进度条颜色（`primary`、`secondary`、`success`、`warn`、`danger`、`info`）；`round` / `fill` 胶囊形与撑满宽度。
 
 ```vue
 <template>
-  <AProgressButton :value="60" round fill>安装</AProgressButton>
-</template>
-```
-
-### 条纹与动画
-
-同时设置 `striped` 与 `active`，可在进度条上叠加滑动的斜纹纹理。
-
-```vue
-<template>
-  <AProgressButton :value="45" striped active>上传中…</AProgressButton>
+  <div class="demo-row">
+    <AProgressButton :value="55">框线</AProgressButton>
+    <AProgressButton :value="55" type="solid" status="success" round>实色</AProgressButton>
+  </div>
 </template>
 ```
 
 ### 不确定状态
 
-当无法确定具体进度时，使用 `indeterminate` 显示横穿按钮的滑动光带。
+当无法确定具体进度时，使用 `indeterminate` 显示横穿按钮的滑动光带；`striped` + `active` 叠加滑动斜纹。
 
 ```vue
 <template>
-  <AProgressButton indeterminate>连接中…</AProgressButton>
-</template>
-```
-
-### 尺寸
-
-通过 `size`（`small`、`default`、`large`）调整按钮粗细。
-
-```vue
-<template>
-  <AProgressButton :value="40" size="small">小</AProgressButton>
-  <AProgressButton :value="40" size="large">大</AProgressButton>
-</template>
-```
-
-### 禁用
-
-```vue
-<template>
-  <AProgressButton :value="40" disabled>禁用</AProgressButton>
+  <div class="demo-row">
+    <AProgressButton :value="45" striped active>上传中…</AProgressButton>
+    <AProgressButton indeterminate>连接中…</AProgressButton>
+  </div>
 </template>
 ```
 
@@ -83,7 +50,8 @@ import { ProgressButton } from '@any-design/anyui/vue';
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `value` | Number | 0 | 当前进度（0–100，自动夹取）。 |
+| `value` | Number | 0 | 当前进度（0–100，自动夹取）。变化时平滑过渡。 |
+| `type` | `'outline' \| 'solid'` | `'outline'` | 视觉风格。`solid` 使用无边框、按进度裁切的渐变背景，并用裁切文字层保证可读性。 |
 | `status` | `'primary' \| 'secondary' \| 'success' \| 'warn' \| 'danger' \| 'info'` | `'primary'` | 进度条颜色。 |
 | `round` | Boolean | false | 胶囊圆角。 |
 | `fill` | Boolean | false | 撑满父容器宽度。 |

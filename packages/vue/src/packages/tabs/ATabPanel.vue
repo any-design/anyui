@@ -32,7 +32,7 @@ export default defineComponent({
     const ctx = inject(TABS_CONTEXT, undefined as any);
     const rendered = ref(false);
 
-    const active = ctx ? ctx.isTabActive(props.value, undefined) : ref(false);
+    const active = ctx ? ctx.registerPanel(props.value) : ref(false);
 
     watch(
       active,

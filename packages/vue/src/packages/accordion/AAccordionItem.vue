@@ -123,16 +123,15 @@ export default defineComponent({
     user-select: none;
     box-sizing: border-box;
     transition:
-      background-color var(--anim-duration-quick, 120ms) ease,
-      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
+      background-color var(--anim-duration-quick, 120ms) ease;
 
     // the shared anyui item hover wash; the glass theme overrides this token
     &:hover {
       background: var(--a-item-hover-bg, var(--bg-hover));
     }
     &:active {
-      // a small squish on tap, like buttons / checkboxes
-      transform: scale(0.995);
+      // Keep the active wash full-size; only the foreground should press.
+      --a-accordion-foreground-scale: 0.985;
     }
   }
 
@@ -141,7 +140,10 @@ export default defineComponent({
     align-items: center;
     font-size: 18px;
     color: var(--text-secondary);
-    transition: color var(--anim-duration, 200ms) ease;
+    transform: scale(var(--a-accordion-foreground-scale, 1));
+    transition:
+      color var(--anim-duration, 200ms) ease,
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
   }
 
   &__title {
@@ -150,7 +152,11 @@ export default defineComponent({
     color: var(--text);
     font-weight: 600;
     letter-spacing: 0.04rem;
-    transition: color var(--anim-duration, 200ms) ease;
+    transform: scale(var(--a-accordion-foreground-scale, 1));
+    transform-origin: left center;
+    transition:
+      color var(--anim-duration, 200ms) ease,
+      transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease);
   }
 
   &__arrow {
@@ -158,6 +164,8 @@ export default defineComponent({
     align-items: center;
     font-size: 20px;
     color: var(--text-disabled);
+    transform: rotate(var(--a-accordion-arrow-rotate, 0deg))
+      scale(var(--a-accordion-foreground-scale, 1));
     // springy overshoot for the chevron flip — the cute "toggle" feel
     transition:
       transform var(--anim-duration, 200ms) var(--a-ease-spring, ease),
@@ -180,7 +188,7 @@ export default defineComponent({
 
   &--expanded {
     .a-accordion-item__arrow {
-      transform: rotate(180deg);
+      --a-accordion-arrow-rotate: 180deg;
       color: var(--primary);
     }
     .a-accordion-item__title {
@@ -201,8 +209,8 @@ export default defineComponent({
       color: var(--text-disabled);
       &:hover,
       &:active {
+        --a-accordion-foreground-scale: 1;
         background: transparent;
-        transform: none;
       }
     }
     .a-accordion-item__title,

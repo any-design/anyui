@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="demo-block">
-      <div class="demo-block__label">Line (default)</div>
+      <div class="demo-block__label">Default</div>
       <div class="demo-row">
-        <a-tabs v-model="line" style="flex: 1">
+        <a-tabs v-model="defaultTab" style="flex: 1">
           <template #tab>
             <a-tab :value="1">Profile</a-tab>
             <a-tab :value="2">Settings</a-tab>
@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const line = ref(1);
+const defaultTab = ref(1);
 const card = ref(1);
 const sized = ref(1);
 </script>

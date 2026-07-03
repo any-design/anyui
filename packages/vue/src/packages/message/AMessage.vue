@@ -157,16 +157,16 @@ export default defineComponent({
   flex: 1;
 }
 
-@mixin white-content {
+@mixin inverted-content {
   .a-message__icon {
     svg {
       path {
-        fill: #fff;
+        fill: var(--text-btn, #fff);
       }
     }
   }
   .a-message__text {
-    color: #fff;
+    color: var(--text-btn, #fff);
   }
 }
 
@@ -188,7 +188,7 @@ export default defineComponent({
     var(--a-surface-highlight, 0 0 #0000),
     0 6px 18px -6px color-mix(in srgb, var(--#{$color}) 55%, transparent),
     0 2px 6px var(--shadow-4);
-  @include white-content();
+  @include inverted-content();
 }
 
 .a-message--success {

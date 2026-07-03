@@ -1,39 +1,35 @@
 <template>
   <div>
     <div class="demo-block">
-      <div class="demo-block__label">Basic</div>
       <div class="demo-row">
-        <a-button type="primary" @click="basicVisible = true">Open dialog</a-button>
-        <a-dialog
-          v-model="basicVisible"
-          title="Delete workspace"
-          @confirm="onAction('confirm')"
-          @cancel="onAction('cancel')"
-        >
-          This action cannot be undone. All files in the workspace will be removed.
-        </a-dialog>
+        <a-button type="primary" @click="basicVisible = true">Basic</a-button>
+        <a-button type="primary" @click="customVisible = true">Custom footer</a-button>
+        <a-button type="primary" @click="persistentVisible = true">Persistent</a-button>
       </div>
     </div>
-    <div class="demo-block">
-      <div class="demo-block__label">Custom footer</div>
-      <div class="demo-row">
-        <a-button @click="customVisible = true">Open dialog</a-button>
-        <a-dialog v-model="customVisible" title="Custom footer" :width="380">
-          A dialog with a custom footer slot.
-          <template #footer>
-            <a-button size="small" type="gradient" fill @click="customVisible = false">
-              Got it
-            </a-button>
-          </template>
-        </a-dialog>
-      </div>
-    </div>
-    <div class="demo-block">
-      <div class="demo-block__label">Last action</div>
-      <div class="demo-row">
-        <span>{{ lastAction || 'none' }}</span>
-      </div>
-    </div>
+    <a-dialog
+      v-model="basicVisible"
+      title="Delete workspace"
+      @confirm="lastAction = 'confirm'"
+      @cancel="lastAction = 'cancel'"
+    >
+      This action cannot be undone. All files in the workspace will be removed.
+    </a-dialog>
+    <a-dialog v-model="customVisible" title="Custom footer" :width="380">
+      A dialog with a custom footer slot.
+      <template #footer>
+        <a-button size="small" type="gradient" fill @click="customVisible = false">Got it</a-button>
+      </template>
+    </a-dialog>
+    <a-dialog
+      v-model="persistentVisible"
+      title="Persistent"
+      :mask-closable="false"
+      @confirm="lastAction = 'confirm'"
+      @cancel="lastAction = 'cancel'"
+    >
+      Clicking the mask won't close this one — use the buttons.
+    </a-dialog>
   </div>
 </template>
 
@@ -42,9 +38,6 @@ import { ref } from 'vue';
 
 const basicVisible = ref(false);
 const customVisible = ref(false);
+const persistentVisible = ref(false);
 const lastAction = ref('');
-
-const onAction = (action: string) => {
-  lastAction.value = action;
-};
 </script>

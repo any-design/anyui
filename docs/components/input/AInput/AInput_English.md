@@ -77,9 +77,9 @@ The `prefix` and `postfix` slots render adornments inside the field (commonly ic
 ```vue
 <template>
   <AInput v-model="q" placeholder="Search…">
-    <template #prefix><AIcon name="ri:search-line" /></template>
+    <template #prefix><span class="input-prefix" aria-hidden="true">Search</span></template>
     <template #post-button>
-      <AButton type="primary" size="small" @click="search">Go</AButton>
+      <AButton type="primary" size="small" icon="ri:search-line" @click="search">Go</AButton>
     </template>
   </AInput>
 </template>
@@ -89,6 +89,14 @@ import { ref } from 'vue';
 const q = ref('');
 const search = () => console.log(q.value);
 </script>
+
+<style scoped>
+.input-prefix {
+  color: var(--text-placeholder);
+  font-size: 12px;
+  font-weight: 700;
+}
+</style>
 ```
 
 ## Props

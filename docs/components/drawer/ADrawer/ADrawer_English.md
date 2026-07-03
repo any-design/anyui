@@ -17,7 +17,7 @@ Toggle with `v-model`; the slot renders the drawer body. Since the component has
 ```vue
 <template>
   <AButton @click="open = true">Open drawer</AButton>
-  <ADrawer v-model="open">
+  <ADrawer v-model="open" position="right">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <strong>Filters</strong>
       <AButton size="small" type="secondary" @click="open = false">Close</AButton>
@@ -66,12 +66,30 @@ Set `with-mask="false"` to keep the page interactive while the drawer is open.
 ```vue
 <template>
   <AButton @click="open = true">Open without mask</AButton>
-  <ADrawer v-model="open" :with-mask="false">
+  <ADrawer v-model="open" position="right" :with-mask="false">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <strong>Unmasked</strong>
       <AButton size="small" type="secondary" @click="open = false">Close</AButton>
     </div>
     <p>The page behind stays usable.</p>
+  </ADrawer>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const open = ref(false);
+</script>
+```
+
+### Glass background opacity
+
+The drawer body has its own padding and scroll. Under the liquid-glass theme, set `glass-opacity` below `1` to mix the panel background with transparent — the backdrop blur then reads through the panel so the drawer looks like glass instead of an opaque sheet.
+
+```vue
+<template>
+  <ADrawer v-model="open" position="right" width="360px" :glass-opacity="0.7">
+    <strong>Settings</strong>
+    <p>Toggle the Glass theme to see the blur show through.</p>
   </ADrawer>
 </template>
 
@@ -94,6 +112,7 @@ const open = ref(false);
 | `lockTarget` | String | 'document.body' | CSS selector of the element to lock (passed to querySelector). |
 | `zIndex` | Number | 100 | z-index of the panel. |
 | `maskZIndex` | Number | undefined | z-index of the mask. |
+| `glassOpacity` | Number | 1 | Background opacity of the body (0–1). Below 1 mixes the surface color with transparent so the glass backdrop blur shows through. |
 | `drawerClass / maskClass / bodyClass` | String | undefined | Extra class hooks. |
 | `transitionName` | String | undefined | Override the transition name. |
 

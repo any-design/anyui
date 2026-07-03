@@ -115,6 +115,8 @@ export default defineComponent({
 
 <style lang="scss">
 .a-progress {
+  --a-progress-highlight: var(--text-btn, #fff);
+
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -171,16 +173,16 @@ export default defineComponent({
 
 // status tints
 .a-progress--success .a-progress__fill {
-  background: linear-gradient(90deg, var(--success), color-mix(in srgb, var(--success) 85%, #fff));
+  background: linear-gradient(90deg, var(--success), color-mix(in srgb, var(--success) 85%, var(--a-progress-highlight)));
 }
 .a-progress--warn .a-progress__fill {
-  background: linear-gradient(90deg, var(--warn), color-mix(in srgb, var(--warn) 85%, #fff));
+  background: linear-gradient(90deg, var(--warn), color-mix(in srgb, var(--warn) 85%, var(--a-progress-highlight)));
 }
 .a-progress--danger .a-progress__fill {
-  background: linear-gradient(90deg, var(--danger), color-mix(in srgb, var(--danger) 85%, #fff));
+  background: linear-gradient(90deg, var(--danger), color-mix(in srgb, var(--danger) 85%, var(--a-progress-highlight)));
 }
 .a-progress--info .a-progress__fill {
-  background: linear-gradient(90deg, var(--info), color-mix(in srgb, var(--info) 85%, #fff));
+  background: linear-gradient(90deg, var(--info), color-mix(in srgb, var(--info) 85%, var(--a-progress-highlight)));
 }
 
 // sizes
@@ -219,7 +221,7 @@ export default defineComponent({
       90deg,
       transparent,
       var(--primary),
-      color-mix(in srgb, var(--primary) 85%, #fff),
+      color-mix(in srgb, var(--primary) 85%, var(--a-progress-highlight)),
       transparent
     );
     animation: a-progress-indeterminate 1.1s var(--a-ease-soft, ease-in-out) infinite;
@@ -230,7 +232,7 @@ export default defineComponent({
       90deg,
       transparent,
       var(--success),
-      color-mix(in srgb, var(--success) 85%, #fff),
+      color-mix(in srgb, var(--success) 85%, var(--a-progress-highlight)),
       transparent
     );
   }
@@ -239,7 +241,7 @@ export default defineComponent({
       90deg,
       transparent,
       var(--warn),
-      color-mix(in srgb, var(--warn) 85%, #fff),
+      color-mix(in srgb, var(--warn) 85%, var(--a-progress-highlight)),
       transparent
     );
   }
@@ -248,7 +250,7 @@ export default defineComponent({
       90deg,
       transparent,
       var(--danger),
-      color-mix(in srgb, var(--danger) 85%, #fff),
+      color-mix(in srgb, var(--danger) 85%, var(--a-progress-highlight)),
       transparent
     );
   }
@@ -257,7 +259,7 @@ export default defineComponent({
       90deg,
       transparent,
       var(--info),
-      color-mix(in srgb, var(--info) 85%, #fff),
+      color-mix(in srgb, var(--info) 85%, var(--a-progress-highlight)),
       transparent
     );
   }

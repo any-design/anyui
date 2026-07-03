@@ -1,67 +1,86 @@
 <script lang="ts">
-  import { Popper } from '@any-design/anyui-svelte';
+  import { Button, Popper } from '@any-design/anyui-svelte';
 
-  let status = $state('');
+  let manualPopper = $state<{ show: () => void; hide: () => void }>();
 
-  const onPopupStatusChanged = (open: boolean) => {
-    status = open ? 'open' : 'closed';
+  const openManual = () => {
+    manualPopper?.hide();
+    requestAnimationFrame(() => manualPopper?.show());
   };
 </script>
 
 <div>
-  <div class="demo-block">
-    <div class="demo-block__label">Trigger Types</div>
-    <div class="demo-row">
-      <Popper {onPopupStatusChanged}>
-        <span class="popper-trigger">hover me</span>
-        {#snippet popup()}
-          <span class="popper-content">Hover popup</span>
-        {/snippet}
-      </Popper>
-      <Popper triggerType="click">
-        <span class="popper-trigger">click me</span>
-        {#snippet popup()}
-          <span class="popper-content">Click popup</span>
-        {/snippet}
-      </Popper>
-    </div>
-  </div>
-  <div class="demo-block">
-    <div class="demo-block__label">Placements</div>
-    <div class="demo-row">
-      <Popper placement="right">
-        <span class="popper-trigger">right</span>
-        {#snippet popup()}
-          <span class="popper-content">Right popup</span>
-        {/snippet}
-      </Popper>
-      <Popper placement="top">
-        <span class="popper-trigger">top</span>
-        {#snippet popup()}
-          <span class="popper-content">Top popup</span>
-        {/snippet}
-      </Popper>
-    </div>
-  </div>
-  <div class="demo-block">
-    <div class="demo-block__label">Status</div>
-    <div class="demo-row">
-      <span>First popper status: {status || 'closed'}</span>
-    </div>
+  <div class="demo-row popper-demo-row">
+    <Popper placement="top">
+      <Button>Hover</Button>
+      {#snippet popup()}
+        <div class="popper-card">
+          <strong>Hover panel</strong>
+          <p>A small floating panel above.</p>
+        </div>
+      {/snippet}
+    </Popper>
+    <Popper placement="bottom" triggerType="click">
+      <Button type="primary">Click</Button>
+      {#snippet popup()}
+        <div class="popper-card">
+          <strong>Click panel</strong>
+          <p>Click outside to dismiss this.</p>
+        </div>
+      {/snippet}
+    </Popper>
+    <Popper placement="bottom-start" triggerType="contextmenu">
+      <Button type="secondary">Right click</Button>
+      {#snippet popup()}
+        <div class="popper-card">
+          <strong>Context panel</strong>
+          <p>Right-click outside, then trigger it again.</p>
+        </div>
+      {/snippet}
+    </Popper>
+    <Popper bind:this={manualPopper} placement="right" triggerType="manual">
+      <Button onClick={openManual}>Open</Button>
+      {#snippet popup()}
+        <div class="popper-card">
+          <strong>Manual panel</strong>
+          <p>Open can be fired repeatedly.</p>
+          <Button size="small" type="secondary" onClick={() => manualPopper?.hide()}>Close</Button>
+        </div>
+      {/snippet}
+    </Popper>
   </div>
 </div>
 
 <style>
-  .popper-trigger {
-    cursor: pointer;
-    text-decoration: underline;
+  .popper-demo-row {
+    gap: 12px 14px;
   }
-  .popper-content {
-    display: inline-block;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background: var(--bg-light, #fff);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-    white-space: nowrap;
+
+  .popper-card {
+    padding: 12px 16px;
+    border-radius: var(--a-radius, 14px);
+    background: var(--a-surface, var(--bg-bright));
+    border: 1px solid var(--line);
+    box-shadow: var(--a-shadow-md, 0 4px 10px var(--shadow-5), 0 12px 28px -8px var(--shadow-10));
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 240px;
+  }
+
+  .popper-card strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .popper-card p {
+    margin: 0 0 10px;
+    color: var(--text-secondary, var(--text));
+  }
+
+  .popper-card p:last-child {
+    margin-bottom: 0;
   }
 </style>

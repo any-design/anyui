@@ -191,6 +191,11 @@ export default defineComponent({
 
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
+  // Keep the fade inside the container so user-provided borders stay visible.
+  -webkit-mask-origin: padding-box;
+  mask-origin: padding-box;
+  -webkit-mask-clip: padding-box;
+  mask-clip: padding-box;
 
   &:where([dir='rtl'], [dir='rtl'] *) {
     --a-scroll-fade-inline-mask: linear-gradient(

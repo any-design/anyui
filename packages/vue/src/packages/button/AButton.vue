@@ -174,7 +174,7 @@ export default defineComponent({
     justify-content: center;
     z-index: 1;
     overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.16);
+    background-color: color-mix(in srgb, var(--shadow) 16%, transparent);
     border-radius: inherit;
     color: inherit;
     cursor: not-allowed;
@@ -445,14 +445,14 @@ export default defineComponent({
   transform: none;
 
   .a-button__loading {
-    background-color: rgba(0, 0, 0, 0.24);
+    background-color: color-mix(in srgb, var(--shadow) 24%, transparent);
   }
 }
 .a-button--loading:active {
   transform: none;
 
   .a-button__loading {
-    background-color: rgba(0, 0, 0, 0.24);
+    background-color: color-mix(in srgb, var(--shadow) 24%, transparent);
   }
 }
 </style>

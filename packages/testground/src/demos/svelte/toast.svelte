@@ -40,18 +40,13 @@
 
 <div>
   <div class="demo-block">
-    <div class="demo-block__label">Types</div>
+    <div class="demo-block__label">Triggers</div>
     <div class="demo-row">
       <Button onClick={() => popup('info')}>Info</Button>
       <Button onClick={() => popup('success')}>Success</Button>
       <Button onClick={() => popup('warning')}>Warning</Button>
       <Button onClick={() => popup('error')}>Error</Button>
-    </div>
-  </div>
-  <div class="demo-block">
-    <div class="demo-block__label">Options</div>
-    <div class="demo-row">
-      <Button onClick={popupSticky}>Sticky (no auto close)</Button>
+      <Button onClick={popupSticky}>Sticky</Button>
       <Button onClick={popupBottom}>Bottom right</Button>
       <Button onClick={popupContentOnly}>Content only</Button>
     </div>

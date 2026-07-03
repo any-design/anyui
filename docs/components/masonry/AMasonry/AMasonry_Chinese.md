@@ -14,25 +14,56 @@ import { Masonry } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AMasonry
-    :items="items"
-    :col-width="200"
-    :item-height-getter="(item) => item.height"
-    :gap="12"
-  >
-    <template #default="{ data }">
-      <div class="card" :style="{ height: data.height + 'px' }">{{ data.title }}</div>
-    </template>
-  </AMasonry>
+  <div class="masonry-preview">
+    <AMasonry
+      :items="items"
+      :col-width="180"
+      :item-height-getter="(item) => item.height"
+      :gap="12"
+      scroll-event-target=".masonry-preview"
+      fit
+    >
+      <template #default="{ data }">
+        <div class="masonry-card" :style="{ height: data.height + 'px' }">
+          <strong>{{ data.title }}</strong>
+        </div>
+      </template>
+    </AMasonry>
+  </div>
 </template>
 
 <script setup>
-const items = Array.from({ length: 500 }, (_, i) => ({
+const items = Array.from({ length: 80 }, (_, i) => ({
   id: i,
   title: `项目 ${i}`,
-  height: 120 + (i % 5) * 40,
+  height: 112 + (i % 5) * 34,
 }));
 </script>
+
+<style scoped>
+.masonry-preview {
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--a-radius-lg, 18px);
+  background: var(--bg-semi-light, var(--bg));
+}
+
+.masonry-card {
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px;
+  border-radius: var(--a-radius, 14px);
+  background: linear-gradient(140deg, var(--primary), var(--secondary));
+  color: var(--text-btn, #fff);
+  box-shadow: var(--a-shadow-sm, 0 4px 12px var(--shadow-6));
+}
+
+</style>
 ```
 
 ## 示例
@@ -43,9 +74,9 @@ const items = Array.from({ length: 500 }, (_, i) => ({
 
 ```vue
 <template>
-  <AMasonry :items="items" :col="3" :item-height-getter="(i) => i.height">
+  <AMasonry :items="items" :col="3" :col-width="180" :item-height-getter="(i) => i.height">
     <template #default="{ data }">
-      <div class="card">{{ data.title }}</div>
+      <div class="masonry-card" :style="{ height: data.height + 'px' }">{{ data.title }}</div>
     </template>
   </AMasonry>
 </template>
@@ -59,7 +90,7 @@ const items = Array.from({ length: 500 }, (_, i) => ({
 <template>
   <AMasonry :items="items" :col-width="240" :item-height-getter="(i) => i.height" fit>
     <template #default="{ data }">
-      <img :src="data.src" />
+      <div class="masonry-card" :style="{ height: data.height + 'px' }">{{ data.title }}</div>
     </template>
   </AMasonry>
 </template>

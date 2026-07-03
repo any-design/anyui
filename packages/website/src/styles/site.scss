@@ -1944,7 +1944,11 @@ html[theme='dark'] {
   > .a-button:not(.a-button--fill),
   .preview-frame__demo > .a-button:not(.a-button--fill),
   .demo-row > .a-button:not(.a-button--fill),
-  .demo-col > .a-button:not(.a-button--fill) {
+  .demo-col > .a-button:not(.a-button--fill),
+  > .a-progress-button:not(.a-progress-button--fill),
+  .preview-frame__demo > .a-progress-button:not(.a-progress-button--fill),
+  .demo-row > .a-progress-button:not(.a-progress-button--fill),
+  .demo-col > .a-progress-button:not(.a-progress-button--fill) {
     flex: 0 1 auto;
     width: max-content;
     max-width: 100%;
@@ -1957,21 +1961,33 @@ html[theme='dark'] {
   > .a-button--small:not(.a-button--fill),
   .preview-frame__demo > .a-button--small:not(.a-button--fill),
   .demo-row > .a-button--small:not(.a-button--fill),
-  .demo-col > .a-button--small:not(.a-button--fill) {
+  .demo-col > .a-button--small:not(.a-button--fill),
+  > .a-progress-button--small:not(.a-progress-button--fill),
+  .preview-frame__demo > .a-progress-button--small:not(.a-progress-button--fill),
+  .demo-row > .a-progress-button--small:not(.a-progress-button--fill),
+  .demo-col > .a-progress-button--small:not(.a-progress-button--fill) {
     min-height: 32px;
   }
 
   > .a-button--large:not(.a-button--fill),
   .preview-frame__demo > .a-button--large:not(.a-button--fill),
   .demo-row > .a-button--large:not(.a-button--fill),
-  .demo-col > .a-button--large:not(.a-button--fill) {
+  .demo-col > .a-button--large:not(.a-button--fill),
+  > .a-progress-button--large:not(.a-progress-button--fill),
+  .preview-frame__demo > .a-progress-button--large:not(.a-progress-button--fill),
+  .demo-row > .a-progress-button--large:not(.a-progress-button--fill),
+  .demo-col > .a-progress-button--large:not(.a-progress-button--fill) {
     min-height: 52px;
   }
 
   > .a-button:not(.a-button--fill) .a-button__inner,
   .preview-frame__demo > .a-button:not(.a-button--fill) .a-button__inner,
   .demo-row > .a-button:not(.a-button--fill) .a-button__inner,
-  .demo-col > .a-button:not(.a-button--fill) .a-button__inner {
+  .demo-col > .a-button:not(.a-button--fill) .a-button__inner,
+  > .a-progress-button:not(.a-progress-button--fill) .a-progress-button__inner,
+  .preview-frame__demo > .a-progress-button:not(.a-progress-button--fill) .a-progress-button__inner,
+  .demo-row > .a-progress-button:not(.a-progress-button--fill) .a-progress-button__inner,
+  .demo-col > .a-progress-button:not(.a-progress-button--fill) .a-progress-button__inner {
     min-width: 0;
     white-space: normal;
   }
@@ -2013,6 +2029,13 @@ html[theme='dark'] {
 
   &__demo {
     min-width: 0;
+  }
+
+  &__demo:has(> .a-progress-button) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
   }
 
   &__render--stack > &__demo + &__demo {

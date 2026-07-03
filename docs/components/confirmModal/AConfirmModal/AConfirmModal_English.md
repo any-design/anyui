@@ -12,11 +12,11 @@ import { ConfirmModal, confirmModal } from '@any-design/anyui/vue';
 
 ## Basic usage
 
-Declarative: drive visibility with `v-model` and listen to `confirm` / `cancel`.
+Declarative: drive visibility with `v-model` and listen to `confirm` / `cancel`. The OK / Cancel buttons always render together in a single row at the bottom of the dialog.
 
 ```vue
 <template>
-  <AButton @click="open = true">Delete account</AButton>
+  <AButton type="primary" @click="open = true">Delete account</AButton>
   <AConfirmModal
     v-model="open"
     type="danger"
@@ -74,7 +74,7 @@ Override `confirmText` and `cancelText` for non-English UIs or clearer labels.
 
 <script setup>
 import { ref } from 'vue';
-const open = ref(true);
+const open = ref(false);
 const onPublish = () => console.log('published');
 </script>
 ```

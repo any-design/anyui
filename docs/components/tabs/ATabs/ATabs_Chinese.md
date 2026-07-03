@@ -1,6 +1,6 @@
 # ATabs
 
-`ATabs` 用于在不同内容面板之间切换。由 `ATab`（触发器）与 `ATabPanel`（内容）组合使用。`line` 变体带动画下划线指示器，`card` 变体为高亮按钮样式。通过 `v-model:modelValue` 绑定当前激活的标签。
+`ATabs` 用于在不同内容面板之间切换。由 `ATab`（触发器）与 `ATabPanel`（内容）组合使用。默认样式直接高亮当前文字，`card` 变体将激活标签渲染为填充按钮。通过 `v-model:modelValue` 绑定当前激活的标签。
 
 ## 引入
 
@@ -35,7 +35,7 @@ const active = ref(1);
 
 ### 卡片样式
 
-设置 `type="card"` 将激活标签以填充按钮高亮，替代下划线。
+设置 `type="card"` 将激活标签以填充按钮高亮，区别于默认的文字选中态。
 
 ```vue
 <template>
@@ -77,7 +77,7 @@ const active = ref(1);
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `modelValue` | String \| Number | — | 当前激活标签值（`v-model:modelValue`）。 |
-| `type` | 'line' \| 'card' | 'line' | 视觉样式。 |
+| `type` | 'default' \| 'line' \| 'card' | 'default' | 视觉样式。`line` 保留为 `default` 的兼容别名。 |
 | `size` | 'small' \| 'default' \| 'large' | 'default' | 栏密度。 |
 | `position` | 'top' \| 'bottom' | 'top' | 标签栏位置。 |
 | `autoSelect` | Boolean | true | 未提供 `modelValue` 时自动选中首个标签。 |

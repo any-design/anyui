@@ -23,6 +23,7 @@ import {
   computed,
   watch,
   onBeforeMount,
+  useId,
 } from 'vue';
 
 import { formatStyleSize } from '../../utils';
@@ -84,7 +85,7 @@ export default defineComponent({
       ...(backgroundPicUrl.value ? { backgroundImage: `url(${backgroundPicUrl.value})` } : {}),
     }));
 
-    const imageId = `a-image__${Math.random() + Date.now()}`;
+    const imageId = `a-image__${useId()}`;
 
     let observed = false;
 

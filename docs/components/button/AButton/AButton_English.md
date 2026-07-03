@@ -14,16 +14,6 @@ import { Button } from '@any-design/anyui/vue';
 
 When you install the Vue plugin globally (`app.use(AnyUI)`) you can use `<AButton>` directly in templates without importing it.
 
-## Basic usage
-
-The simplest button — default style, default size, content in the default slot.
-
-```vue
-<template>
-  <AButton>Click me</AButton>
-</template>
-```
-
 ## Examples
 
 ### Style types

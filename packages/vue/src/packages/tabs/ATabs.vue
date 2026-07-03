@@ -1,13 +1,7 @@
 <template>
   <div :class="rootClass">
-    <div
-      ref="bar"
-      class="a-tabs__bar"
-      role="tablist"
-      :aria-orientation="'horizontal'"
-    >
+    <div class="a-tabs__bar" role="tablist" :aria-orientation="'horizontal'">
       <slot name="tab"></slot>
-      <div class="a-tabs__indicator" :style="indicatorStyle"></div>
     </div>
     <div class="a-tabs__content">
       <slot></slot>
@@ -16,11 +10,10 @@
 </template>
 
 <script lang="ts">
-import type { CSSProperties, PropType, Ref } from 'vue';
+import type { PropType, Ref } from 'vue';
 import {
   computed,
   defineComponent,
-  nextTick,
   onMounted,
   provide,
   ref,
@@ -28,7 +21,7 @@ import {
 } from 'vue';
 
 import { TABS_CONTEXT } from './constants';
-import type { ATabsIndicatorPosition, ATabsPosition, ATabsSize, ATabsType } from './types';
+import type { ATabsPosition, ATabsSize, ATabsType } from './types';
 
 export default defineComponent({
   name: 'ATabs',
@@ -38,10 +31,10 @@ export default defineComponent({
       type: [String, Number],
       default: undefined,
     },
-    // visual variant: 'line' shows an animated underline indicator, 'card' highlights the active tab.
+    // visual variant: default highlights the active label, card highlights the active tab.
     type: {
       type: String as PropType<ATabsType>,
-      default: 'line',
+      default: 'default',
     },
     // density of the tab bar.
     size: {
@@ -63,43 +56,16 @@ export default defineComponent({
   },
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
-    const bar = ref<HTMLElement | undefined>();
-    const indicator = ref<ATabsIndicatorPosition | undefined>();
-    const showIndicator = ref(false);
     const internalValue = ref<string | number | undefined>(props.modelValue);
+    let autoTabIndex = 0;
+    let autoPanelIndex = 0;
 
     const tabOrder = ref<Array<string | number>>([]);
-    const tabReporters = ref<
-      Map<string | number, () => ATabsIndicatorPosition | undefined>
-    >(new Map());
 
     const currentValue = computed(() => internalValue.value);
 
-    const isTabActive = (
-      value: string | number | undefined,
-      elementRef: (() => HTMLElement | undefined) | undefined,
-    ): Ref<boolean> => {
+    const createActiveRef = (key: string | number): Ref<boolean> => {
       const isActive = ref(false);
-      const resolveValue = (): string | number => {
-        if (typeof value !== 'undefined') return value;
-        const idx = tabReporters.value.size;
-        return idx;
-      };
-      const key = resolveValue();
-      if (typeof value === 'undefined') {
-        tabOrder.value.push(key);
-      } else if (!tabOrder.value.includes(key)) {
-        tabOrder.value.push(key);
-      }
-      const reporter = () => {
-        if (!elementRef) return undefined;
-        const el = elementRef();
-        const containerRect = bar.value?.getBoundingClientRect();
-        if (!el || !containerRect) return undefined;
-        const rect = el.getBoundingClientRect();
-        return { width: rect.width, left: rect.left - containerRect.left };
-      };
-      tabReporters.value.set(key, reporter);
 
       const updateActive = () => {
         isActive.value = currentValue.value === key;
@@ -107,35 +73,29 @@ export default defineComponent({
       updateActive();
       watch(currentValue, updateActive);
 
-      return isActive as any;
+      return isActive as Ref<boolean>;
     };
 
-    const updateIndicator = (pos: ATabsIndicatorPosition) => {
-      indicator.value = pos;
-      if (!showIndicator.value) {
-        nextTick(() => {
-          showIndicator.value = true;
-        });
+    const registerTab = (
+      value: string | number | undefined,
+    ): { active: Ref<boolean>; key: string | number } => {
+      const key = typeof value !== 'undefined' ? value : autoTabIndex++;
+      if (!tabOrder.value.includes(key)) {
+        tabOrder.value.push(key);
       }
+
+      return { active: createActiveRef(key), key };
     };
 
-    const refreshIndicator = () => {
-      const value = currentValue.value;
-      const reporter = tabReporters.value.get(value as string | number);
-      const pos = reporter?.();
-      if (pos) {
-        updateIndicator(pos);
-      } else {
-        indicator.value = undefined;
-        showIndicator.value = false;
-      }
+    const registerPanel = (value: string | number | undefined): Ref<boolean> => {
+      const key = typeof value !== 'undefined' ? value : autoPanelIndex++;
+      return createActiveRef(key);
     };
 
     const select = (value: string | number | undefined) => {
       internalValue.value = value;
       emit('update:modelValue', value);
       emit('change', value);
-      nextTick(refreshIndicator);
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -159,56 +119,34 @@ export default defineComponent({
     };
 
     provide(TABS_CONTEXT, {
-      isTabActive,
-      updateIndicator,
+      registerTab,
+      registerPanel,
       select,
       handleKeyDown,
-      getBarRect: () => bar.value?.getBoundingClientRect(),
     });
 
-    const rootClass = computed(() => ({
-      'a-tabs': true,
-      [`a-tabs--${props.type}`]: true,
-      [`a-tabs--${props.size}`]: props.size !== 'default',
-      [`a-tabs--${props.position}`]: props.position !== 'top',
-    }));
-
-    const indicatorStyle = computed<CSSProperties | undefined>(() => {
-      if (!indicator.value) {
-        return { opacity: 0, transform: 'scaleX(0)' };
-      }
-      return {
-        opacity: showIndicator.value ? 1 : 0,
-        width: `${indicator.value.width}px`,
-        transform: `translateX(${indicator.value.left}px) scaleX(${
-          showIndicator.value ? 1 : 0.4
-        })`,
-      };
-    });
+    const rootClass = computed(() => [
+      'a-tabs',
+      `a-tabs--${props.type}`,
+      props.size !== 'default' ? `a-tabs--${props.size}` : '',
+      props.position !== 'top' ? `a-tabs--${props.position}` : '',
+    ]);
 
     watch(
       () => props.modelValue,
       (value) => {
         internalValue.value = value;
-        nextTick(refreshIndicator);
       },
     );
-
-    watch([() => props.type, () => props.size, () => props.position], () => {
-      nextTick(refreshIndicator);
-    });
 
     onMounted(() => {
       if (typeof props.modelValue === 'undefined' && props.autoSelect && tabOrder.value.length) {
         internalValue.value = tabOrder.value[0];
       }
-      nextTick(refreshIndicator);
     });
 
     return {
-      bar,
       rootClass,
-      indicatorStyle,
     };
   },
 });
@@ -224,31 +162,12 @@ export default defineComponent({
     display: flex;
     align-items: center;
     gap: 0;
-    // soft hairline divider — anyui uses --line for inset dividers, never the
-    // harsh --border token, so the bar reads as a gentle guide rather than a rule
-    border-bottom: 1px solid var(--line);
+    border-bottom: none;
     overflow-x: auto;
     scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none;
     }
-  }
-
-  &__indicator {
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    height: 3px;
-    background: var(--primary);
-    border-radius: var(--a-radius-full, 999px);
-    // soft diffuse primary glow, never a tight harsh halo
-    box-shadow: 0 2px 8px -2px var(--primary-40, color-mix(in srgb, var(--primary) 40%, transparent));
-    transform-origin: left center;
-    transition:
-      transform var(--anim-duration, 200ms) var(--a-ease-spring, ease),
-      width var(--anim-duration, 200ms) var(--a-ease-spring, ease),
-      opacity var(--anim-duration, 200ms) ease;
-    pointer-events: none;
   }
 
   &__content {
@@ -261,20 +180,17 @@ export default defineComponent({
   flex-direction: column-reverse;
   .a-tabs__bar {
     border-bottom: none;
-    border-top: 1px solid var(--line);
-  }
-  .a-tabs__indicator {
-    bottom: auto;
-    top: -1px;
+    border-top: none;
   }
 }
 
 // card variant: the bar becomes a soft pill tray the tabs sit inside, instead
 // of a flat row with a flat fill on the active tab. Matches the segmented
-// control (RadioButtonGroup) cute look: rounded tray + lifted active pill.
+// control (RadioButtonGroup) cute look: rounded tray + filled active pill.
 .a-tabs--card {
   .a-tabs__bar {
     border-bottom: none;
+    border-top: none;
     gap: 6px;
     padding: 6px;
     box-sizing: border-box;
@@ -282,10 +198,8 @@ export default defineComponent({
     background: var(--a-surface, var(--bg-bright));
     box-shadow:
       var(--a-surface-highlight, 0 0 #0000),
+      inset 0 0 0 1px var(--a-surface-border-color, var(--line)),
       var(--a-shadow-xs, 0 1px 3px var(--shadow-4), 0 2px 8px var(--shadow-4));
-  }
-  .a-tabs__indicator {
-    display: none;
   }
 }
 </style>

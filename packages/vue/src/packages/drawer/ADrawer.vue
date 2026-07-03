@@ -93,6 +93,13 @@ export default defineComponent({
     maskZIndex: {
       type: Number,
     },
+    // background opacity of the drawer body (0–1). Useful under the liquid-glass
+    // theme — lower values let the backdrop blur show through the panel so the
+    // drawer reads as glass instead of an opaque sheet.
+    glassOpacity: {
+      type: Number,
+      default: 1,
+    },
     // the class name of the drawer transition when it is opening or closing.
     transitionName: {
       type: String,
@@ -126,15 +133,22 @@ export default defineComponent({
       };
     });
     const drawerStyles = computed<CSSProperties>(() => {
-      if (typeof props.width === 'number') {
-        return {
-          width: `${props.width}px`,
-        };
-      }
-      return {
-        width: props.width,
+      const base: CSSProperties = {
         zIndex: props.zIndex,
       };
+      if (typeof props.width === 'number') {
+        base.width = `${props.width}px`;
+      } else {
+        base.width = props.width;
+      }
+      // mix the surface color with transparent by the requested opacity so the
+      // backdrop blur shows through under the glass theme. Keep it on the body
+      // element (not a wrapper) so the blur region matches the panel exactly.
+      const opacity = Math.min(1, Math.max(0, Number(props.glassOpacity)));
+      if (opacity < 1) {
+        base.backgroundColor = `color-mix(in srgb, var(--a-surface, var(--bg)) ${opacity * 100}%, transparent)`;
+      }
+      return base;
     });
 
     const transitionForUse = computed<string>(() => {
@@ -242,7 +256,7 @@ export default defineComponent({
     left: 0;
     bottom: 0;
     right: 0;
-    background-color: var(--mask, rgba(0, 0, 0, 0.8));
+    background-color: var(--mask);
   }
   &__mask--outside {
     width: 100vw;
@@ -251,10 +265,15 @@ export default defineComponent({
   }
   &__body {
     position: absolute;
+    box-sizing: border-box;
+    // default internal padding so drawer content has breathing room; override
+    // with `bodyClass` or your own padding if you need edge-to-edge content.
+    padding: 20px 22px;
     background-color: var(--a-surface, var(--bg));
     -webkit-backdrop-filter: var(--a-surface-backdrop, none);
     backdrop-filter: var(--a-surface-backdrop, none);
-    box-sizing: border-box;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   &__body--outside {
     position: fixed;

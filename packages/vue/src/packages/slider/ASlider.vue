@@ -268,7 +268,7 @@ export default defineComponent({
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--a-surface-control, var(--bg-bright, #fff));
     border: 2px solid var(--primary);
     box-sizing: border-box;
     box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--primary) 55%, transparent);

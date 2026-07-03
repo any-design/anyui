@@ -1,16 +1,16 @@
 <script lang="ts">
   import { Tabs, Tab, TabPanel } from '@any-design/anyui-svelte';
 
-  let line = $state<string | number>(1);
+  let defaultTab = $state<string | number>(1);
   let card = $state<string | number>(1);
   let sized = $state<string | number>(1);
 </script>
 
 <div>
   <div class="demo-block">
-    <div class="demo-block__label">Line (default)</div>
+    <div class="demo-block__label">Default</div>
     <div class="demo-row">
-      <Tabs bind:modelValue={line} style="flex:1">
+      <Tabs bind:modelValue={defaultTab} style="flex:1">
         <Tab value={1}>Profile</Tab>
         <Tab value={2}>Settings</Tab>
         <Tab value={3} disabled>Disabled</Tab>

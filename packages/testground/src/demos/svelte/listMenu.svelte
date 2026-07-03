@@ -15,10 +15,9 @@
   <div class="demo-block">
     <div class="demo-block__label">List Menu</div>
     <div class="demo-row">
-      <div style="width: 180px;">
-        <ListMenu {menu} bind:modelValue={selected} />
+      <div style="width: 220px;">
+        <ListMenu {menu} bind:modelValue={selected} selectedVariant="solid" />
       </div>
-      <span>Selected: {selected ?? 'none'}</span>
     </div>
   </div>
 </div>

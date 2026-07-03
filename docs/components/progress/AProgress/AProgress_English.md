@@ -20,54 +20,24 @@ import { Progress } from '@any-design/anyui/vue';
 
 ## Examples
 
-### Status colors
+### Status colors &amp; label
 
-Use `status` to tint the fill — `primary` (default), `success`, `warn`, `danger`, or `info`.
-
-```vue
-<template>
-  <AProgress :value="70" status="success" />
-</template>
-```
-
-### Label and custom format
-
-Set `showLabel` to render the percentage after the bar. Pass a `format` function to customize the text.
+Use `status` to tint the fill (`primary`, `success`, `warn`, `danger`, `info`) and `showLabel` to render the percentage. Pass a `format` function to customize the text.
 
 ```vue
 <template>
-  <AProgress :value="63" show-label :format="(v) => `${v} / 100`" />
-</template>
-```
-
-### Striped and animated
-
-Combine `striped` and `active` for a moving diagonal-stripe texture over the fill.
-
-```vue
-<template>
-  <AProgress :value="55" striped active />
+  <AProgress :value="70" status="success" show-label :format="(v) => `${v} / 100`" />
 </template>
 ```
 
 ### Indeterminate
 
-When the exact progress is unknown, use `indeterminate` to show a sliding sliver instead of a static fill.
+When the exact progress is unknown, use `indeterminate` for a sliding sliver instead of a static fill. Combine `striped` + `active` for a moving stripe texture.
 
 ```vue
 <template>
+  <AProgress :value="55" striped active />
   <AProgress indeterminate />
-</template>
-```
-
-### Sizes
-
-Use `size` (`small`, `default`, `large`) for a denser or chunkier bar.
-
-```vue
-<template>
-  <AProgress :value="40" size="small" />
-  <AProgress :value="40" size="large" />
 </template>
 ```
 

@@ -131,22 +131,28 @@ export default defineComponent({
   overflow: hidden;
   // surface indirection so the liquid-glass theme cascades onto accordions
   background: var(--a-surface, var(--bg-bright));
-  border: 1px solid var(--a-surface-border-color, transparent);
   border-radius: var(--a-radius-lg, 18px);
-  // soft diffuse elevation — the cute depth every anyui container shares
+  // render the hairline as an inset shadow instead of `border: 1px` — a real
+  // border reserves 1px around the panel, so the item hover/active background
+  // stops 1px short of the edge and reads as a faint frame around the wash.
+  // The inset shadow follows the rounded corners and lets the wash reach the
+  // very edge.
   box-shadow:
     var(--a-surface-highlight, 0 0 #0000),
+    inset 0 0 0 1px var(--a-surface-border-color, transparent),
     var(--a-shadow-sm, 0 2px 6px var(--shadow-4), 0 6px 16px -4px var(--shadow-8));
 
   // borderless variant drops the hairline + elevation for inline use
   &:not(.a-accordion--border) {
-    border: none;
     box-shadow: none;
     background: transparent;
   }
 
   &--border {
-    border: 1px solid var(--a-surface-border-color, var(--line));
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      inset 0 0 0 1px var(--a-surface-border-color, var(--line)),
+      var(--a-shadow-sm, 0 2px 6px var(--shadow-4), 0 6px 16px -4px var(--shadow-8));
   }
 
   &--round {

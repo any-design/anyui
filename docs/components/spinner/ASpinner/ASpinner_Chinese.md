@@ -14,8 +14,19 @@ import { Spinner } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <ASpinner />
+  <div class="spinner-preview">
+    <ASpinner />
+  </div>
 </template>
+
+<style scoped>
+.spinner-preview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+}
+</style>
 ```
 
 ## 示例

@@ -1,6 +1,6 @@
 import { Avatar } from '@any-design/anyui-react';
 
-const SRC = 'https://0.gravatar.com/avatar/';
+const SRC = 'https://i.pravatar.cc/120?img=12';
 
 export default function AvatarDemo() {
   return (
@@ -9,18 +9,18 @@ export default function AvatarDemo() {
         <div className="demo-block__label">Sizes</div>
         <div className="demo-row">
           <Avatar src={SRC} size="xlarge" />
-          <Avatar src={SRC} size="large" />
-          <Avatar src={SRC} size="medium" />
-          <Avatar src={SRC} size="small" />
-          <Avatar src={SRC} size="xsmall" />
+          <Avatar src="https://i.pravatar.cc/96?img=12" size="large" />
+          <Avatar src="https://i.pravatar.cc/64?img=12" size="medium" />
+          <Avatar src="https://i.pravatar.cc/48?img=12" size="small" />
+          <Avatar src="https://i.pravatar.cc/32?img=12" size="xsmall" />
         </div>
       </div>
       <div className="demo-block">
         <div className="demo-block__label">Round &amp; Custom Width</div>
         <div className="demo-row">
-          <Avatar src={SRC} size="large" round />
-          <Avatar src={SRC} width={40} />
-          <Avatar src={SRC} width="50px" round />
+          <Avatar src="https://i.pravatar.cc/96?img=12" size="large" round />
+          <Avatar src="https://i.pravatar.cc/80?img=12" width={40} />
+          <Avatar src="https://i.pravatar.cc/96?img=5" width="50px" round />
         </div>
       </div>
       <div className="demo-block">

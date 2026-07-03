@@ -7,22 +7,31 @@ export interface AImageObserverOptions {
 }
 
 export const loadImage = (imageId: string, targetSrc: string) => {
-  const image = new Image();
+  if (!targetSrc || typeof window === 'undefined' || typeof window.Image !== 'function') {
+    emitter.emit('error', { imageId });
+    return;
+  }
+
+  const image = new window.Image();
   image.onload = () => {
     emitter.emit('loaded', {
       imageId,
-      src: targetSrc!,
+      src: targetSrc,
     });
   };
   image.onerror = () => {
     emitter.emit('error', { imageId });
   };
-  image.src = targetSrc!;
+  image.src = targetSrc;
   emitter.emit('load', { imageId });
 };
 
-export const getObserver = (options: AImageObserverOptions) =>
-  new IntersectionObserver(
+export const getObserver = (options: AImageObserverOptions) => {
+  if (typeof window === 'undefined' || typeof window.IntersectionObserver !== 'function') {
+    return undefined;
+  }
+
+  return new window.IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         const div = entry.target as HTMLDivElement;
@@ -53,3 +62,4 @@ export const getObserver = (options: AImageObserverOptions) =>
       threshold: options.threshold || DEFAULT_THRESHOLD,
     },
   );
+};

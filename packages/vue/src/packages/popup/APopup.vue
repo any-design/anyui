@@ -1,5 +1,5 @@
 <template>
-  <teleport :disabled="!appendToBody" to="body">
+  <teleport v-if="mounted" :disabled="!appendToBody" to="body">
     <transition name="a-popup">
       <div v-if="visible" class="a-popup" :style="wrapperStyles" role="dialog" aria-modal="true">
         <div v-if="showMask" class="a-popup__mask" @click="onMaskClicked"></div>
@@ -72,6 +72,7 @@ export default defineComponent({
   emits: ['update:modelValue', 'open', 'close'],
   setup(props, { emit }) {
     const visible = ref(false);
+    const mounted = ref(false);
     // tracks whether this instance currently holds a body scroll lock
     let holdingLock = false;
 
@@ -140,6 +141,7 @@ export default defineComponent({
     });
 
     onMounted(() => {
+      mounted.value = true;
       document.addEventListener('keydown', onKeydown);
       if (visible.value) {
         applyScrollLock(true);
@@ -153,6 +155,7 @@ export default defineComponent({
 
     return {
       visible,
+      mounted,
       wrapperStyles,
       panelStyles,
       onMaskClicked,
@@ -232,7 +235,7 @@ export default defineComponent({
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--mask, rgba(0, 0, 0, 0.6));
+    background-color: var(--mask);
     pointer-events: auto;
   }
 

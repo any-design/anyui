@@ -3,42 +3,32 @@
 
   let basicVisible = $state(false);
   let customVisible = $state(false);
-  let lastAction = $state('');
+  let persistentVisible = $state(false);
 </script>
 
 <div>
   <div class="demo-block">
-    <div class="demo-block__label">Basic</div>
     <div class="demo-row">
-      <Button type="primary" onClick={() => (basicVisible = true)}>Open dialog</Button>
-      <Dialog
-        bind:modelValue={basicVisible}
-        title="Delete workspace"
-        onConfirm={() => (lastAction = 'confirm')}
-        onCancel={() => (lastAction = 'cancel')}
-      >
-        This action cannot be undone. All files in the workspace will be removed.
-      </Dialog>
-    </div>
-  </div>
-  <div class="demo-block">
-    <div class="demo-block__label">Custom footer</div>
-    <div class="demo-row">
-      <Button onClick={() => (customVisible = true)}>Open dialog</Button>
-      <Dialog bind:modelValue={customVisible} title="Custom footer" width={380}>
-        A dialog with a custom footer.
-        {#snippet footer()}
-          <Button size="small" type="gradient" fill onClick={() => (customVisible = false)}>
-            Got it
-          </Button>
-        {/snippet}
-      </Dialog>
-    </div>
-  </div>
-  <div class="demo-block">
-    <div class="demo-block__label">Last action</div>
-    <div class="demo-row">
-      <span>{lastAction || 'none'}</span>
+      <Button type="primary" onClick={() => (basicVisible = true)}>Basic</Button>
+      <Button type="primary" onClick={() => (customVisible = true)}>Custom footer</Button>
+      <Button type="primary" onClick={() => (persistentVisible = true)}>Persistent</Button>
     </div>
   </div>
 </div>
+
+<Dialog bind:modelValue={basicVisible} title="Delete workspace">
+  This action cannot be undone. All files in the workspace will be removed.
+</Dialog>
+
+<Dialog bind:modelValue={customVisible} title="Custom footer" width={380}>
+  A dialog with a custom footer slot.
+  {#snippet footer()}
+    <Button size="small" type="gradient" fill onClick={() => (customVisible = false)}>
+      Got it
+    </Button>
+  {/snippet}
+</Dialog>
+
+<Dialog bind:modelValue={persistentVisible} title="Persistent" maskClosable={false}>
+  Clicking the mask won't close this one — use the buttons.
+</Dialog>

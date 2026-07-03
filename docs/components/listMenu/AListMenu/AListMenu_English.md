@@ -14,18 +14,31 @@ import { ListMenu } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AListMenu v-model="active" :menu="items" />
+  <div class="list-menu-preview">
+    <AListMenu v-model="active" :menu="groups" selected-variant="solid" />
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const active = ref('inbox');
-const items = [
-  { label: 'Inbox', value: 'inbox' },
-  { label: 'Sent', value: 'sent' },
-  { label: 'Drafts', value: 'drafts' },
-];
+const active = ref('profile');
+const groups = {
+  Account: [
+    { label: 'Profile', value: 'profile' },
+    { label: 'Security', value: 'security' },
+  ],
+  Preferences: [
+    { label: 'Theme', value: 'theme' },
+    { label: 'Language', value: 'language' },
+  ],
+};
 </script>
+
+<style scoped>
+.list-menu-preview {
+  max-width: 280px;
+}
+</style>
 ```
 
 ## Examples
@@ -70,18 +83,29 @@ const active = ref('Vue');
 </script>
 ```
 
+### Solid selected state
+
+Use `selectedVariant="solid"` when the selected item should keep the gradient, filled, tactile style.
+
+```vue
+<template>
+  <AListMenu v-model="active" :menu="groups" selected-variant="solid" />
+</template>
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `modelValue` | String | undefined | Selected value (`v-model`). |
+| `modelValue` | String \| Number | undefined | Selected value (`v-model`). |
 | `menu` | Array \| Object | undefined | Flat array of items, or a grouped object keyed by header. |
+| `selectedVariant` | `'soft' \| 'solid'` | `'soft'` | Visual style for the selected item. Use `solid` for the gradient filled state. |
 
 ## Events
 
 | Event | Payload | Description |
 | --- | --- | --- |
-| `update:modelValue` | String | Selection change. |
+| `update:modelValue` | String \| Number | Selection change. |
 
 ## Notes
 

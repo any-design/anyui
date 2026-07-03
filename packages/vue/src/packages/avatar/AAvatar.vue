@@ -4,13 +4,14 @@
     <span v-else-if="showFallback && initials" class="a-avatar__initials" :style="initialsStyle">
       {{ initials }}
     </span>
-    <img v-else :src="src" loading="lazy" @error="handleError" />
+    <span v-else-if="loading" class="a-avatar__loading" aria-hidden="true"></span>
+    <img v-else-if="loadedSrc" :src="loadedSrc" :alt="alt" loading="lazy" />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { StyleValue } from 'vue';
-import { computed, ref, useSlots, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, useSlots, watch } from 'vue';
 
 import { AvatarSize, PREDEFINED_SIZE } from './types';
 
@@ -18,6 +19,7 @@ import type { EnumValues } from '@/utils/types';
 
 const props = defineProps<{
   src: string;
+  alt?: string;
   size?: EnumValues<typeof AvatarSize>;
   width?: number | string;
   round?: boolean;
@@ -28,22 +30,65 @@ const emit = defineEmits<{ error: [Event] }>();
 
 const slots = useSlots();
 
-const failed = ref(false);
+// Background-load the image: only mount the <img> once the browser has
+// successfully decoded it, so we never flash a broken-image icon. While the
+// fetch is in flight we show a loading placeholder; on failure we fall back to
+// the slot / initials.
+const loading = ref(false);
+const loadedSrc = ref('');
+let currentImage: HTMLImageElement | undefined;
+let stopWatchingSrc: (() => void) | undefined;
 
-watch(
-  () => props.src,
-  () => {
-    failed.value = false;
-  },
-);
-
-const handleError = (event: Event) => {
-  failed.value = true;
-  emit('error', event);
+const cancelLoad = () => {
+  if (currentImage) {
+    currentImage.onload = null;
+    currentImage.onerror = null;
+    currentImage = undefined;
+  }
 };
 
-// fallback content only takes over when the image is missing or failed to load
-const showFallback = computed(() => failed.value || !props.src);
+const startLoad = (src: string) => {
+  cancelLoad();
+  if (!src) {
+    loading.value = false;
+    loadedSrc.value = '';
+    return;
+  }
+  if (typeof window === 'undefined' || typeof window.Image !== 'function') {
+    loading.value = false;
+    loadedSrc.value = '';
+    return;
+  }
+  loading.value = true;
+  loadedSrc.value = '';
+  const image = new window.Image();
+  image.onload = () => {
+    loadedSrc.value = src;
+    loading.value = false;
+  };
+  image.onerror = (event) => {
+    loading.value = false;
+    loadedSrc.value = '';
+    emit('error', event instanceof Event ? event : new Event('error'));
+  };
+  image.src = src;
+  currentImage = image;
+};
+
+onMounted(() => {
+  stopWatchingSrc = watch(
+    () => props.src,
+    (src) => {
+      startLoad(src ?? '');
+    },
+    { immediate: true },
+  );
+});
+
+onBeforeUnmount(() => {
+  stopWatchingSrc?.();
+  cancelLoad();
+});
 
 const initials = computed(() => {
   const name = props.name?.trim();
@@ -86,6 +131,8 @@ const styles = computed<StyleValue>(() => {
     overflow: 'hidden',
   };
 });
+
+const showFallback = computed(() => !loadedSrc.value && !loading.value);
 </script>
 
 <style lang="scss">
@@ -106,10 +153,36 @@ const styles = computed<StyleValue>(() => {
     align-items: center;
     justify-content: center;
     background: linear-gradient(135deg, var(--primary-70), var(--secondary-70));
-    color: #fff;
+    color: var(--text-btn, #fff);
     font-weight: 600;
     line-height: 1;
     user-select: none;
+  }
+
+  &__loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-semi-light, var(--bg));
+    position: relative;
+
+    &::after {
+      content: '';
+      width: 40%;
+      height: 40%;
+      border-radius: 50%;
+      border: 2px solid color-mix(in srgb, var(--text-secondary) 24%, transparent);
+      border-top-color: var(--text-secondary);
+      animation: a-avatar-spin 0.7s linear infinite;
+    }
+  }
+}
+
+@keyframes a-avatar-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>

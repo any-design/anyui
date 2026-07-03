@@ -3,6 +3,7 @@
   let {
     menu = [] as AListMenuConfig,
     modelValue = $bindable(undefined),
+    selectedVariant = 'soft',
     class: className = '',
     children,
     onUpdateModelValue,
@@ -25,7 +26,7 @@
   };
 </script>
 
-<div class="a-list-menu {className}">
+<div class="a-list-menu a-list-menu--selected-{selectedVariant} {className}">
   {#each displayItems as item, index}
     {#if item.type === 'split' && item.label}
       <div class="a-list-menu__split"><span>{item.label}</span></div>

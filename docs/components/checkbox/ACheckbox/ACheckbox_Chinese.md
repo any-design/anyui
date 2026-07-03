@@ -64,9 +64,15 @@ const agree = ref(true);
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `modelValue` | Boolean | false | 选中状态（`v-model`）。 |
-| `label` | String \| Number | undefined | 显示在复选框旁的标签。 |
+| `label` | String \| Number | '' | 显示在复选框旁的标签。 |
 | `checkIcon` | String \| IconifyIcon | 'si-glyph:checked' | 选中状态的图标。 |
 | `iconTransition` | String | 'a-trans-check-icon' | 勾选图标的过渡名。 |
+
+## 插槽
+
+| 插槽 | 作用域参数 | 说明 |
+| --- | --- | --- |
+| `default` | - | 未提供 `label` 时，显示在复选框旁的标签内容。 |
 
 ## 事件
 

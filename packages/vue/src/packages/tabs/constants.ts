@@ -1,6 +1,6 @@
 export const TABS_CONTEXT = Symbol('tabsContext');
 
-export type ATabsType = 'line' | 'card';
+export type ATabsType = 'default' | 'line' | 'card';
 
 export type ATabsSize = 'small' | 'default' | 'large';
 

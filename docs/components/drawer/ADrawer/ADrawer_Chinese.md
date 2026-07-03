@@ -17,7 +17,7 @@ import { Drawer } from '@any-design/anyui/vue';
 ```vue
 <template>
   <AButton @click="open = true">打开抽屉</AButton>
-  <ADrawer v-model="open">
+  <ADrawer v-model="open" position="right">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <strong>筛选</strong>
       <AButton size="small" type="secondary" @click="open = false">关闭</AButton>
@@ -66,12 +66,30 @@ const open = ref(false);
 ```vue
 <template>
   <AButton @click="open = true">无遮罩打开</AButton>
-  <ADrawer v-model="open" :with-mask="false">
+  <ADrawer v-model="open" position="right" :with-mask="false">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
       <strong>无遮罩</strong>
       <AButton size="small" type="secondary" @click="open = false">关闭</AButton>
     </div>
     <p>背后的页面仍可操作。</p>
+  </ADrawer>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+const open = ref(false);
+</script>
+```
+
+### 玻璃背景不透明度
+
+抽屉主体自带内边距与滚动。在液态玻璃主题下，将 `glass-opacity` 设为小于 `1` 的值，面板背景会与透明色混合，背后的模糊即可透出，抽屉呈现玻璃质感而非不透明面板。
+
+```vue
+<template>
+  <ADrawer v-model="open" position="right" width="360px" :glass-opacity="0.7">
+    <strong>设置</strong>
+    <p>切换玻璃主题即可看到背景模糊透出的效果。</p>
   </ADrawer>
 </template>
 
@@ -94,6 +112,7 @@ const open = ref(false);
 | `lockTarget` | String | 'document.body' | 锁定元素的 CSS 选择器（传给 querySelector）。 |
 | `zIndex` | Number | 100 | 面板的 z-index。 |
 | `maskZIndex` | Number | undefined | 遮罩的 z-index。 |
+| `glassOpacity` | Number | 1 | 面板背景不透明度（0–1）。小于 1 时将背景色与透明色混合，玻璃背景模糊可透出。 |
 | `drawerClass / maskClass / bodyClass` | String | undefined | 额外的类名钩子。 |
 | `transitionName` | String | undefined | 覆盖过渡名。 |
 

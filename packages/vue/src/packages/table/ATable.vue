@@ -150,9 +150,13 @@ export default defineComponent({
   background: var(--a-surface, var(--bg-bright));
   -webkit-backdrop-filter: var(--a-surface-backdrop, none);
   backdrop-filter: var(--a-surface-backdrop, none);
-  border: 1px solid var(--a-surface-border-color, transparent);
+  // render the hairline as an inset shadow instead of `border: 1px` — a real
+  // border reserves 1px on the left/right of every row, so the row hover /
+  // striped backgrounds stop 1px short of the edge. The inset shadow follows
+  // the rounded corners and lets row backgrounds reach the very edge.
   box-shadow:
     var(--a-surface-highlight, 0 0 #0000),
+    inset 0 0 0 1px var(--a-surface-border-color, transparent),
     var(--a-shadow-xs, 0 1px 3px var(--shadow-4));
 
   &--round {

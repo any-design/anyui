@@ -53,14 +53,31 @@ if (rawEn) {
 }
 
 const previewLimitsBySlug: Record<string, number> = {
+  checkbox: 1,
+  dialog: 1,
   empty: 1,
   image: 2,
+  loading: 1,
+  loadingMask: 1,
   masonry: 1,
   otpInput: 1,
+  popper: 1,
   qrCode: 1,
+  spinner: 1,
   textarea: 2,
 };
-const previewBlocks = vueBlocks.slice(0, previewLimitsBySlug[slug] ?? vueBlocks.length);
+const previewBlockIndicesBySlug: Record<string, number[]> = {
+  confirmModal: [1],
+  drawer: [0, 1, 2],
+  listMenu: [0],
+  step: [1, 3],
+};
+const selectedPreviewIndices = previewBlockIndicesBySlug[slug];
+const previewBlocks = selectedPreviewIndices
+  ? selectedPreviewIndices
+      .map((index) => vueBlocks.find((block) => block.index === index))
+      .filter((block): block is { index: number; code: string } => Boolean(block))
+  : vueBlocks.slice(0, previewLimitsBySlug[slug] ?? vueBlocks.length);
 
 const combinedPreviewCode = previewBlocks
   .map((block, index) => `<!-- Demo ${index + 1} -->\n${block.code.trim()}`)

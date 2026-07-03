@@ -145,7 +145,7 @@ export default defineComponent({
   &__mask {
     width: 100%;
     height: 100%;
-    background: var(--mask, rgba(0, 0, 0, 0.6));
+    background: var(--mask);
     position: absolute;
     top: 0;
     left: 0;

@@ -12,9 +12,15 @@ const areContainsInTree = (source: HTMLElement, targets: HTMLElement[]): boolean
 // Check if a click happened outside of the element
 export const attachClickOutsideListener = (
   targets: HTMLElement | HTMLElement[],
-): ((e: MouseEvent) => void) => {
+  eventNames: Array<keyof WindowEventMap> = ['click'],
+): (() => void) => {
   const actualTargets = Array.isArray(targets) ? targets : [targets];
-  const handler = (e: MouseEvent) => {
+  function cleanup() {
+    eventNames.forEach((eventName) => {
+      window.removeEventListener(eventName, handler);
+    });
+  }
+  function handler(e: Event) {
     const targetElement = e.target as HTMLElement;
     if (areContainsInTree(targetElement, actualTargets)) {
       return;
@@ -22,8 +28,10 @@ export const attachClickOutsideListener = (
     actualTargets.forEach((target: HTMLElement) => {
       target.dispatchEvent(new CustomEvent('clickOutside', { bubbles: true }));
     });
-    window.removeEventListener('click', handler);
-  };
-  window.addEventListener('click', handler);
-  return handler;
+    cleanup();
+  }
+  eventNames.forEach((eventName) => {
+    window.addEventListener(eventName, handler);
+  });
+  return cleanup;
 };

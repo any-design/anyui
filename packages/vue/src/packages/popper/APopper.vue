@@ -1,7 +1,7 @@
 <template>
-  <span ref="trigger" class="a-popper__trigger">
+  <span ref="trigger" class="a-popper__trigger" :class="{ 'a-popper__trigger--inset': !appendToBody }">
     <slot></slot>
-    <teleport v-if="appendToBody" to="body">
+    <teleport v-if="appendToBody && mounted" to="body">
       <div
         v-show="popupRendered"
         ref="popup"
@@ -18,7 +18,7 @@
         </template>
       </div>
     </teleport>
-    <template v-else>
+    <template v-else-if="!appendToBody">
       <div
         v-show="popupRendered"
         ref="popup"
@@ -42,7 +42,7 @@
 import type { Placement } from '@popperjs/core';
 import type { Handler } from 'mitt';
 import type { PropType } from 'vue';
-import { defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { defineComponent, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 
 import bus from './bus';
 import { createPopperInstance } from './popper';
@@ -109,8 +109,9 @@ export default defineComponent({
     const popupRendered = ref(false);
     const trigger = ref(null);
     const popup = ref(null);
+    const mounted = ref(false);
 
-    const popperId = `${Date.now()}_${Math.random()}`;
+    const popperId = useId();
 
     const sideEffectCleaners: (() => void)[] = [];
     const eventEffectCleaners: (() => void)[] = [];
@@ -179,8 +180,13 @@ export default defineComponent({
         clearTimeout(renderTimeout);
       }
       popupRendered.value = true;
-      popperIns.update();
-      popupShowed.value = true;
+      // Wait a frame so the now-displayed popup has a real layout for popperjs
+      // to measure — without this, update() runs on a 0-size element and the
+      // popup flashes at the wrong position before being re-positioned.
+      window.requestAnimationFrame(() => {
+        popperIns.update();
+        popupShowed.value = true;
+      });
     };
 
     const hide = () => {
@@ -213,6 +219,9 @@ export default defineComponent({
     });
 
     onMounted(async () => {
+      mounted.value = true;
+      await nextTick();
+
       if (!trigger.value || !popup.value) {
         return;
       }
@@ -251,8 +260,12 @@ export default defineComponent({
             clearTimeout(renderTimeout);
           }
           popupRendered.value = true;
-          popperIns.update();
-          popupShowed.value = true;
+          // defer the popperjs update + show to the next frame so the popup has
+          // been laid out and popperjs can measure it (see `show()`).
+          window.requestAnimationFrame(() => {
+            popperIns.update();
+            popupShowed.value = true;
+          });
           getCurrentInstance()?.proxy?.$forceUpdate();
         };
 
@@ -288,38 +301,50 @@ export default defineComponent({
         });
       }
 
-      let clickOutsideHandler: ((e: MouseEvent) => void) | undefined;
+      let clickOutsideCleaner: (() => void) | undefined;
 
-      const hidePopupByClick = () => {
+      function removeClickOutside() {
+        popupEl?.removeEventListener('clickOutside', hidePopupByClick);
+        clickOutsideCleaner?.();
+        clickOutsideCleaner = undefined;
+      }
+
+      function hidePopupByClick() {
+        if (renderTimeout) {
+          clearTimeout(renderTimeout);
+        }
         popupShowed.value = false;
         const animationDurationQuick = getStyleNumVarInCSS('animation-duration-quick') || 100;
         renderTimeout = setTimeout(() => {
           popupRendered.value = false;
         }, animationDurationQuick);
-      };
+        removeClickOutside();
+      }
 
       if (['click', 'contextmenu'].includes(props.triggerType)) {
         const handleTriggerClick = (e: Event) => {
+          e.stopPropagation();
+          e.preventDefault();
+
           if (!popupShowed.value) {
             if (renderTimeout) {
               clearTimeout(renderTimeout);
             }
             popupRendered.value = true;
-            popperIns.update();
-            popupShowed.value = true;
-            if (props.closeWhenClickOutside) {
-              clickOutsideHandler = attachClickOutsideListener([popupEl, triggerEl]);
-              popupEl.addEventListener('clickOutside', hidePopupByClick);
-            }
+            // defer update + show one frame so popperjs measures a laid-out
+            // popup (see `show()`).
+            window.requestAnimationFrame(() => {
+              popperIns.update();
+              popupShowed.value = true;
+              if (props.closeWhenClickOutside) {
+                removeClickOutside();
+                clickOutsideCleaner = attachClickOutsideListener([popupEl, triggerEl], ['click', 'contextmenu']);
+                popupEl.addEventListener('clickOutside', hidePopupByClick);
+              }
+            });
           } else {
             hidePopupByClick();
-            popupEl.removeEventListener('clickOutside', hidePopupByClick);
-            if (clickOutsideHandler) {
-              window.removeEventListener('click', clickOutsideHandler);
-            }
           }
-          e.stopPropagation();
-          e.preventDefault();
         };
         triggerEl.addEventListener(props.triggerType, handleTriggerClick);
         if (!props.appendToBody) {
@@ -330,23 +355,16 @@ export default defineComponent({
         // add cleaners
         sideEffectCleaners.push(() => {
           triggerEl?.removeEventListener(props.triggerType, handleTriggerClick);
-          popupEl?.removeEventListener('clickOutside', hidePopupByClick);
-          if (clickOutsideHandler) {
-            window.removeEventListener('click', clickOutsideHandler);
-          }
+          removeClickOutside();
         });
-        eventEffectCleaners.push(() => {
-          popupEl?.removeEventListener('clickOutside', hidePopupByClick);
-          if (clickOutsideHandler) {
-            window.removeEventListener('click', clickOutsideHandler);
-          }
-        });
+        eventEffectCleaners.push(removeClickOutside);
       }
     });
 
     return {
       popupShowed,
       popupRendered,
+      mounted,
       trigger,
       popup,
       show,
@@ -361,5 +379,18 @@ export default defineComponent({
 <style lang="scss">
 .a-popper__trigger {
   height: max-content;
+  // when the popup is rendered inline (not portalled to body), the trigger
+  // must be the positioning context for the absolutely-placed popup.
+  &--inset {
+    position: relative;
+  }
+}
+
+.a-popper__popup {
+  // popperjs sets position/top/left/transform inline; this just ensures the
+  // popup reads as a floating surface and never contributes to the trigger's
+  // inline flow while it is being positioned.
+  display: block;
+  box-sizing: border-box;
 }
 </style>

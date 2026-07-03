@@ -3,6 +3,7 @@
     :class="{
       'a-checkbox': true,
       'a-checkbox--checked': checked,
+      'a-checkbox--has-label': hasLabel,
     }"
     @click="handleClick"
   >
@@ -11,8 +12,9 @@
         <Icon v-show="checked" class="a-checkbox-checker__icon" :icon="checkIcon" />
       </transition>
     </div>
-    <div class="a-checkbox-label">
-      {{ `${label}` }}
+    <div v-if="hasLabel" class="a-checkbox-label">
+      <template v-if="labelText">{{ labelText }}</template>
+      <slot v-else></slot>
     </div>
   </div>
 </template>
@@ -21,7 +23,7 @@
 import type { IconifyIcon } from '@iconify/vue';
 import { Icon } from '@iconify/vue';
 import type { PropType } from 'vue';
-import { defineComponent, ref, watch, onBeforeMount } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
   name: 'ACheckbox',
@@ -32,6 +34,7 @@ export default defineComponent({
     // a label text after the checkbox.
     label: {
       type: [String, Number],
+      default: '',
     },
     // the icon which will showed when the checkbox is checked.
     checkIcon: {
@@ -50,13 +53,15 @@ export default defineComponent({
     },
   },
   emits: ['change', 'update:modelValue'],
-  setup(props, { emit }) {
-    const checked = ref(false);
+  setup(props, { emit, slots }) {
+    const checked = ref(props.modelValue);
+    const labelText = computed(() => (props.label === undefined || props.label === null ? '' : `${props.label}`));
+    const hasLabel = computed(() => Boolean(labelText.value || slots.default));
 
     watch(
       () => props.modelValue,
-      () => {
-        checked.value = props.modelValue;
+      (value) => {
+        checked.value = value;
       },
     );
 
@@ -68,12 +73,10 @@ export default defineComponent({
       emit('change', checked.value);
     };
 
-    onBeforeMount(() => {
-      checked.value = props.modelValue;
-    });
-
     return {
       checked,
+      hasLabel,
+      labelText,
       handleClick,
     };
   },
@@ -95,7 +98,6 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     background-color: var(--bg-light);
-    margin-right: 10px;
     box-shadow: var(--a-shadow-xs, 0px 2px 8px var(--shadow-5));
     border-radius: 7px;
     box-sizing: border-box;
@@ -116,17 +118,26 @@ export default defineComponent({
     }
   }
 }
+
+.a-checkbox--has-label {
+  .a-checkbox-checker {
+    margin-right: 10px;
+  }
+}
+
 .a-checkbox:hover {
   .a-checkbox-checker {
     border: 1px solid var(--primary-70);
     transform: scale(1.08);
   }
 }
+
 .a-checkbox:active {
   .a-checkbox-checker {
     transform: scale(0.92);
   }
 }
+
 .a-checkbox--checked {
   .a-checkbox-checker {
     border: 1px solid var(--primary);
@@ -134,6 +145,7 @@ export default defineComponent({
     box-shadow: 0 2px 8px -2px color-mix(in srgb, var(--primary) 50%, transparent);
   }
 }
+
 .a-checkbox--checked:hover {
   .a-checkbox-checker {
     border: 1px solid var(--primary);
@@ -143,13 +155,16 @@ export default defineComponent({
 .a-trans-check-icon-enter-active {
   transition: all var(--anim-duration, 200ms) var(--a-ease-spring, ease-out);
 }
+
 .a-trans-check-icon-leave-active {
   transition: all var(--anim-duration-quick, 100ms) ease-out;
 }
+
 .a-trans-check-icon-enter-to {
   opacity: 1;
   transform: scale(1);
 }
+
 .a-trans-check-icon-enter-from,
 .a-trans-check-icon-leave-to {
   opacity: 0;

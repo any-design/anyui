@@ -10,7 +10,8 @@
   } = $props();
 
   const ctx = getContext<any>('anyui:tabs');
-  const resolvedValue = $derived(ctx ? (typeof value === 'undefined' ? ctx.nextTabValue() : value) : value);
+  const autoValue = ctx ? ctx.nextTabValue('panel') : undefined;
+  const resolvedValue = $derived(typeof value === 'undefined' ? autoValue : value);
   const active = $derived(ctx ? ctx.getSelected() === resolvedValue : false);
   let rendered = $state(false);
 

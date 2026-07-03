@@ -2,15 +2,15 @@ import { useState } from 'react';
 import { Tabs, Tab, TabPanel } from '@any-design/anyui-react';
 
 export default function TabsDemo() {
-  const [line, setLine] = useState<string | number>(1);
+  const [defaultTab, setDefaultTab] = useState<string | number>(1);
   const [card, setCard] = useState<string | number>(1);
   const [sized, setSized] = useState<string | number>(1);
   return (
     <div>
       <div className="demo-block">
-        <div className="demo-block__label">Line (default)</div>
+        <div className="demo-block__label">Default</div>
         <div className="demo-row">
-          <Tabs modelValue={line} onUpdateModelValue={setLine} style={{ flex: 1 }}>
+          <Tabs modelValue={defaultTab} onUpdateModelValue={setDefaultTab} style={{ flex: 1 }}>
             <Tab value={1}>Profile</Tab>
             <Tab value={2}>Settings</Tab>
             <Tab value={3} disabled>Disabled</Tab>

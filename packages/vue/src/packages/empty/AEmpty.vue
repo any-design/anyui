@@ -53,7 +53,7 @@ export default defineComponent({
     justify-content: center;
     border-radius: var(--a-radius-xl, 22px);
     background: linear-gradient(135deg, var(--primary-12), var(--secondary-20));
-    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 40%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--shadow-w, #fff) 40%, transparent);
   }
 
   &__icon {

@@ -14,18 +14,31 @@ import { ListMenu } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AListMenu v-model="active" :menu="items" />
+  <div class="list-menu-preview">
+    <AListMenu v-model="active" :menu="groups" selected-variant="solid" />
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-const active = ref('inbox');
-const items = [
-  { label: '收件箱', value: 'inbox' },
-  { label: '已发送', value: 'sent' },
-  { label: '草稿', value: 'drafts' },
-];
+const active = ref('profile');
+const groups = {
+  账户: [
+    { label: '资料', value: 'profile' },
+    { label: '安全', value: 'security' },
+  ],
+  偏好: [
+    { label: '主题', value: 'theme' },
+    { label: '语言', value: 'language' },
+  ],
+};
 </script>
+
+<style scoped>
+.list-menu-preview {
+  max-width: 280px;
+}
+</style>
 ```
 
 ## 示例
@@ -70,18 +83,29 @@ const active = ref('Vue');
 </script>
 ```
 
+### 实色选中态
+
+当选中项需要保留渐变实色、有立体感的历史样式时，使用 `selectedVariant="solid"`。
+
+```vue
+<template>
+  <AListMenu v-model="active" :menu="groups" selected-variant="solid" />
+</template>
+```
+
 ## 属性
 
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `modelValue` | String | undefined | 已选值（`v-model`）。 |
+| `modelValue` | String \| Number | undefined | 已选值（`v-model`）。 |
 | `menu` | Array \| Object | undefined | 扁平数组，或按分组标题为键的对象。 |
+| `selectedVariant` | `'soft' \| 'solid'` | `'soft'` | 选中项的视觉样式。使用 `solid` 显示渐变实色选中态。 |
 
 ## 事件
 
 | 事件 | 载荷 | 说明 |
 | --- | --- | --- |
-| `update:modelValue` | String | 选择变化。 |
+| `update:modelValue` | String \| Number | 选择变化。 |
 
 ## 说明
 

@@ -20,54 +20,24 @@ import { Progress } from '@any-design/anyui/vue';
 
 ## 示例
 
-### 状态色
+### 状态色 &amp; 标签
 
-通过 `status` 切换填充色：`primary`（默认）、`success`、`warn`、`danger`、`info`。
-
-```vue
-<template>
-  <AProgress :value="70" status="success" />
-</template>
-```
-
-### 标签与自定义格式
-
-设置 `showLabel` 在进度条后显示百分比，传入 `format` 函数自定义文本。
+通过 `status` 切换填充色（`primary`、`success`、`warn`、`danger`、`info`），`showLabel` 显示百分比，`format` 自定义文本。
 
 ```vue
 <template>
-  <AProgress :value="63" show-label :format="(v) => `${v} / 100`" />
-</template>
-```
-
-### 条纹与动画
-
-同时设置 `striped` 与 `active`，即可在填充上叠加滑动的斜纹纹理。
-
-```vue
-<template>
-  <AProgress :value="55" striped active />
+  <AProgress :value="70" status="success" show-label :format="(v) => `${v} / 100`" />
 </template>
 ```
 
 ### 不确定状态
 
-当无法确定具体进度时，使用 `indeterminate` 显示持续滑动的光带，而非静态填充。
+当无法确定具体进度时，使用 `indeterminate` 显示持续滑动的光带；`striped` + `active` 叠加滑动斜纹。
 
 ```vue
 <template>
+  <AProgress :value="55" striped active />
   <AProgress indeterminate />
-</template>
-```
-
-### 尺寸
-
-通过 `size`（`small`、`default`、`large`）调整粗细。
-
-```vue
-<template>
-  <AProgress :value="40" size="small" />
-  <AProgress :value="40" size="large" />
 </template>
 ```
 

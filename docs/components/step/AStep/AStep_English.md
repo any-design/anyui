@@ -51,15 +51,39 @@ Pass an array of strings to label each step.
 
 ```vue
 <template>
-  <div
-    style="padding: 20px 22px; border-radius: 18px; border: 1px solid var(--line); background: var(--a-surface, var(--bg-bright)); box-shadow: var(--a-surface-highlight, 0 0 #0000), var(--a-shadow-sm, 0 2px 6px var(--shadow-4));"
-  >
-    <Step :steps="['Cart', 'Shipping', 'Payment', 'Done']" :current="3" />
+  <div class="demo-col" style="gap: 20px">
+    <div
+      style="padding: 20px 22px; border-radius: 18px; border: 1px solid var(--line); background: var(--a-surface, var(--bg-bright)); box-shadow: var(--a-surface-highlight, 0 0 #0000), var(--a-shadow-sm, 0 2px 6px var(--shadow-4));"
+    >
+      <div class="demo-row" style="justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <div>
+          <div
+            style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05rem; color: var(--text-placeholder);"
+          >
+            Checkout
+          </div>
+          <div style="margin-top: 4px; font-size: 14px; font-weight: 700">{{ currentLabel }}</div>
+        </div>
+        <div class="demo-row">
+          <Button round size="small" @click="move(-1)">Prev</Button>
+          <Button round size="small" type="primary" @click="move(1)">Next</Button>
+        </div>
+      </div>
+      <Step :steps="steps" :current="current" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Step } from '@any-design/anyui/vue';
+import { computed, ref } from 'vue';
+import { Button, Step } from '@any-design/anyui/vue';
+
+const steps = ['Cart', 'Shipping', 'Payment', 'Done'];
+const current = ref(2);
+const currentLabel = computed(() => (current.value > steps.length ? 'Completed' : steps[current.value - 1]));
+const move = (delta: number) => {
+  current.value = Math.min(steps.length + 1, Math.max(1, current.value + delta));
+};
 </script>
 ```
 

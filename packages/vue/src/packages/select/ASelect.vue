@@ -10,6 +10,8 @@
     :popupClass="dropdownClass"
     transition="a-fade"
     :offset="8"
+    :style="{ width: formattedWidth }"
+    @click.capture="syncDropdownWidth"
     @popup-status-changed="handlePopupStatusChanged"
   >
     <div
@@ -85,6 +87,7 @@ import {
   computed,
   defineComponent,
   getCurrentInstance,
+  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -107,6 +110,9 @@ interface PopperExposed {
   getTriggerEl: () => HTMLElement | undefined;
   getPopupEl: () => HTMLElement | undefined;
 }
+
+const formatStyleSize = (value: string | number | undefined) =>
+  typeof value === 'number' ? `${value}px` : value;
 
 export default defineComponent({
   name: 'ASelect',
@@ -161,12 +167,15 @@ export default defineComponent({
     const popperRef = ref<PopperExposed | null>(null);
 
     let triggerResizeObserver: ResizeObserver | undefined;
+    let syncAnimationFrame: number | undefined;
 
     const dropdownClass = computed(() =>
       props.round
         ? 'a-select-dropdown__wrapper a-select-dropdown__wrapper--round'
         : 'a-select-dropdown__wrapper',
     );
+
+    const formattedWidth = computed(() => formatStyleSize(props.width));
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
     let formItemEventEmitter: FormItemEventEmitter | undefined;
@@ -241,8 +250,44 @@ export default defineComponent({
       emit('change', props.multiple ? [] : '');
     };
 
+    const syncDropdownWidth = () => {
+      const triggerEl = popperRef.value?.getTriggerEl?.();
+      const popupEl = popperRef.value?.getPopupEl?.();
+      if (!triggerEl || !popupEl) {
+        return false;
+      }
+
+      const triggerWidth = triggerEl.getBoundingClientRect().width || triggerEl.offsetWidth;
+      if (!triggerWidth) {
+        return false;
+      }
+
+      const width = `${triggerWidth}px`;
+      popupEl.style.width = width;
+      popupEl.style.minWidth = width;
+      popupEl.style.maxWidth = width;
+      return true;
+    };
+
+    const queueDropdownWidthSync = () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
+      syncDropdownWidth();
+      if (syncAnimationFrame) {
+        window.cancelAnimationFrame(syncAnimationFrame);
+      }
+      syncAnimationFrame = window.requestAnimationFrame(() => {
+        syncAnimationFrame = undefined;
+        syncDropdownWidth();
+      });
+    };
+
     const handlePopupStatusChanged = (status: boolean) => {
       expanded.value = status;
+      if (status) {
+        queueDropdownWidthSync();
+      }
     };
 
     const handleClear: Handler = () => {
@@ -287,25 +332,37 @@ export default defineComponent({
       { immediate: true },
     );
 
-    onMounted(() => {
+    onMounted(async () => {
       formItemEventEmitter?.on('clear', handleClear);
       // the dropdown is teleported to the body to avoid being clipped by
       // `overflow: hidden` ancestors, so its width must be synced manually
-      const triggerEl = popperRef.value?.getTriggerEl?.();
-      const popupEl = popperRef.value?.getPopupEl?.();
-      if (triggerEl && popupEl) {
-        const syncDropdownWidth = () => {
-          popupEl.style.width = `${triggerEl.offsetWidth}px`;
-        };
-        syncDropdownWidth();
-        triggerResizeObserver = new ResizeObserver(syncDropdownWidth);
+      await nextTick();
+
+      const setupDropdownWidthSync = () => {
+        const triggerEl = popperRef.value?.getTriggerEl?.();
+        if (!triggerEl) {
+          return false;
+        }
+        queueDropdownWidthSync();
+        triggerResizeObserver = new ResizeObserver(queueDropdownWidthSync);
         triggerResizeObserver.observe(triggerEl);
+        return true;
+      };
+
+      if (!setupDropdownWidthSync() && typeof window !== 'undefined') {
+        syncAnimationFrame = window.requestAnimationFrame(() => {
+          syncAnimationFrame = undefined;
+          setupDropdownWidthSync();
+        });
       }
     });
 
     onUnmounted(() => {
       formItemEventEmitter?.off('clear', handleClear);
       triggerResizeObserver?.disconnect();
+      if (syncAnimationFrame && typeof window !== 'undefined') {
+        window.cancelAnimationFrame(syncAnimationFrame);
+      }
     });
 
     return {
@@ -315,7 +372,9 @@ export default defineComponent({
       displayPlaceholder,
       expanded,
       dropdownClass,
+      formattedWidth,
       isItemSelected,
+      syncDropdownWidth,
       handlePopupStatusChanged,
       handleItemClick,
       removeTag,
@@ -329,8 +388,11 @@ export default defineComponent({
 
 <style lang="scss">
 .a-select__wrapper {
+  display: inline-block;
   width: 100%;
+  max-width: 100%;
   position: relative;
+  vertical-align: top;
   .a-select {
     width: 100%;
     position: relative;
@@ -418,9 +480,14 @@ export default defineComponent({
   }
 }
 .a-select-dropdown__wrapper {
-  width: 100%;
+  box-sizing: border-box;
+  > span {
+    display: block;
+    width: 100%;
+  }
   .a-select-dropdown {
     width: 100%;
+    max-width: 100%;
     border-radius: var(--a-radius, 14px);
     background: var(--a-surface, var(--bg-semi-light));
     -webkit-backdrop-filter: var(--a-surface-backdrop, none);

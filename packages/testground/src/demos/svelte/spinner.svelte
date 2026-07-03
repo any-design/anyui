@@ -3,11 +3,7 @@
 </script>
 
 <div>
-  <div class="demo-block">
-    <div class="demo-block__label">Spinner</div>
-    <div class="demo-row">
-      <Spinner />
-      <Spinner icon="mingcute:loading-fill" />
-    </div>
+  <div class="demo-row" style="font-size: 36px;">
+    <Spinner />
   </div>
 </div>

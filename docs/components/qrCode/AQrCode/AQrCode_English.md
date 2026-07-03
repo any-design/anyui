@@ -47,6 +47,10 @@ Use `errorCorrectionLevel="H"` when the code may be printed, resized, or display
 </template>
 ```
 
+### Loading state & SSR pre-rendering
+
+While the QR is being generated a small spinner occupies the surface, so the bordered frame never collapses or flashes empty text. On the server (Astro / Nuxt / SvelteKit / Next SSR) the QR is pre-rendered synchronously into the shipped HTML — the first client paint already shows the code and no loading state flashes.
+
 ## Props
 
 | Prop | Type | Default | Description |

@@ -49,7 +49,6 @@ import type {
 import {
   defineComponent,
   getCurrentInstance,
-  onBeforeMount,
   onMounted,
   onUnmounted,
   ref,
@@ -63,6 +62,7 @@ import type { FormItemEventEmitter } from '../formItem/bus';
 
 // extra padding to slot elements
 const SLOT_EXTRA_PADDING = 12;
+const normalizeInputValue = (value: string | number | null | undefined) => `${value ?? ''}`;
 
 export default defineComponent({
   name: 'AInput',
@@ -145,7 +145,7 @@ export default defineComponent({
     const inputWrapperRef = ref<HTMLDivElement | undefined>();
 
     // form related
-    const storedValue = ref<string>('');
+    const storedValue = ref<string>(normalizeInputValue(props.modelValue));
 
     const formItemParent = getCertainParent('AFormItem', getCurrentInstance());
     let formItemEventEmitter: FormItemEventEmitter | undefined;
@@ -163,7 +163,8 @@ export default defineComponent({
       if (!e.target) {
         return;
       }
-      emit('update:modelValue', (e.target as HTMLInputElement).value);
+      storedValue.value = (e.target as HTMLInputElement).value;
+      emit('update:modelValue', storedValue.value);
       emit('input', e);
     };
     const handleBlur = (e: Event) => {
@@ -172,8 +173,9 @@ export default defineComponent({
     };
     const handleChange = (e: Event) => {
       const target = e.target as HTMLInputElement;
-      emit('update:modelValue', target.value);
-      emit('change', target.value);
+      storedValue.value = target.value;
+      emit('update:modelValue', storedValue.value);
+      emit('change', storedValue.value);
       formItemEventEmitter?.emit('change');
     };
     const handleEnterDown = () => {
@@ -186,8 +188,8 @@ export default defineComponent({
     // life hooks
     watch(
       () => props.modelValue,
-      () => {
-        storedValue.value = `${props.modelValue}`;
+      (value) => {
+        storedValue.value = normalizeInputValue(value);
       },
     );
 
@@ -290,10 +292,6 @@ export default defineComponent({
       } else if (!postButtonObserver) {
         postButtonObserver = createSizeObserver(postButtonWidth, '.a-input__post-button');
       }
-    });
-
-    onBeforeMount(() => {
-      storedValue.value = `${props.modelValue}`;
     });
 
     onMounted(() => {

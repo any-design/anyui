@@ -8,12 +8,14 @@
       'a-progress-button--striped': striped,
       'a-progress-button--active': active,
       'a-progress-button--indeterminate': indeterminate,
+      [`a-progress-button--${type}`]: !!type,
       [`a-progress-button--${status}`]: true,
       [`a-progress-button--${size}`]: size !== 'default',
     }"
     role="button"
     :tabindex="disabled ? -1 : 0"
     :aria-disabled="disabled"
+    :style="rootStyle"
     @click="onClicked"
     @keydown="onKeydown"
   >
@@ -23,13 +25,16 @@
     <span class="a-progress-button__inner">
       <slot></slot>
     </span>
+    <span class="a-progress-button__inner a-progress-button__inner-fill" aria-hidden="true">
+      <slot></slot>
+    </span>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 
-import type { AProgressButtonSize, AProgressButtonStatus } from './types';
+import type { AProgressButtonSize, AProgressButtonStatus, AProgressButtonType } from './types';
 
 // A button whose background is a progress bar — useful for "download", "upload"
 // or any long-running action where you want to show progress right on the CTA.
@@ -40,6 +45,12 @@ export default defineComponent({
     value: {
       type: Number,
       default: 0,
+    },
+    // visual style — `outline` keeps a tinted bar over a transparent surface;
+    // `solid` uses a borderless gradient background whose size follows progress.
+    type: {
+      type: String as () => AProgressButtonType,
+      default: 'outline',
     },
     // color status — drives both the bar and the label tint.
     status: {
@@ -90,6 +101,10 @@ export default defineComponent({
       width: `${percent.value}%`,
     }));
 
+    const rootStyle = computed(() => ({
+      '--a-progress-button-progress': `${percent.value}%`,
+    }));
+
     const onClicked = (e: MouseEvent) => {
       if (props.disabled) {
         return;
@@ -110,6 +125,7 @@ export default defineComponent({
     return {
       percent,
       barStyle,
+      rootStyle,
       onClicked,
       onKeydown,
     };
@@ -120,12 +136,23 @@ export default defineComponent({
 <style lang="scss">
 .a-progress-button {
   --a-progress-button-color: var(--primary);
+  --a-progress-button-progress: 0%;
   --a-progress-button-fill: color-mix(in srgb, var(--a-progress-button-color) 18%, transparent);
   --a-progress-button-fill-strong: color-mix(
     in srgb,
     var(--a-progress-button-color) 30%,
     transparent
   );
+  --a-progress-button-solid-fill: var(--a-progress-button-color);
+  --a-progress-button-solid-shade: var(--shadow, #001220);
+  --a-progress-button-solid-track: color-mix(
+    in srgb,
+    var(--a-progress-button-color) 12%,
+    var(--a-surface-control, var(--bg)) 88%
+  );
+  --a-progress-button-solid-filled-text: var(--text-btn, #fff);
+  --a-progress-button-bar-duration: var(--anim-duration, 200ms);
+  --a-progress-button-bar-ease: var(--a-ease-soft, cubic-bezier(0.22, 0.61, 0.36, 1));
 
   position: relative;
   display: inline-flex;
@@ -133,6 +160,7 @@ export default defineComponent({
   justify-content: center;
   box-sizing: border-box;
   height: 42px;
+  line-height: 30px;
   padding: 4px 20px;
   border-radius: var(--a-radius, 14px);
   border: 1px solid var(--a-progress-button-color);
@@ -141,6 +169,7 @@ export default defineComponent({
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.05rem;
+  text-shadow: none;
   user-select: none;
   cursor: pointer;
   overflow: hidden;
@@ -151,7 +180,10 @@ export default defineComponent({
   transition:
     transform var(--anim-duration-quick, 120ms) var(--a-ease-spring, ease),
     box-shadow var(--anim-duration-quick, 120ms) ease,
-    border-color var(--anim-duration-quick, 120ms) ease;
+    border-color var(--anim-duration-quick, 120ms) ease,
+    background-color var(--anim-duration-quick, 120ms) ease,
+    background-size var(--a-progress-button-bar-duration) var(--a-progress-button-bar-ease),
+    color var(--anim-duration-quick, 120ms) ease;
 
   &__bar {
     position: absolute;
@@ -165,8 +197,12 @@ export default defineComponent({
       var(--a-progress-button-fill-strong)
     );
     overflow: hidden;
-    transition: width var(--anim-duration, 200ms) var(--a-ease-soft, ease);
+    // Smooth, slightly springy bar growth so progress changes feel alive.
+    transition:
+      width var(--a-progress-button-bar-duration) var(--a-progress-button-bar-ease),
+      background var(--anim-duration-quick, 120ms) ease;
     z-index: 0;
+    will-change: width;
   }
 
   &__stripes {
@@ -195,6 +231,23 @@ export default defineComponent({
     min-width: 0;
     z-index: 1;
     color: inherit;
+    text-shadow: inherit;
+    // keep text crisp above the moving bar without truncation
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__inner-fill {
+    display: none;
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    padding: inherit;
+    z-index: 2;
+    color: var(--a-progress-button-solid-filled-text);
+    pointer-events: none;
+    clip-path: inset(0 calc(100% - var(--a-progress-button-progress)) 0 0);
+    transition: clip-path var(--a-progress-button-bar-duration) var(--a-progress-button-bar-ease);
   }
 }
 
@@ -225,6 +278,7 @@ export default defineComponent({
 }
 .a-progress-button--small {
   height: 32px;
+  line-height: 30px;
   padding: 3px 14px;
   font-size: 12px;
   border-radius: var(--a-radius-sm, 10px);
@@ -234,6 +288,7 @@ export default defineComponent({
 }
 .a-progress-button--large {
   height: 52px;
+  line-height: 36px;
   padding: 6px 24px;
   font-size: 16px;
   border-radius: var(--a-radius-lg, 18px);
@@ -251,12 +306,54 @@ export default defineComponent({
 }
 .a-progress-button--warn {
   --a-progress-button-color: var(--warn);
+  --a-progress-button-solid-filled-text: var(--text, #202426);
 }
 .a-progress-button--danger {
   --a-progress-button-color: var(--danger);
 }
 .a-progress-button--info {
   --a-progress-button-color: var(--info);
+}
+
+// solid variant — borderless, with the root background image sized to progress.
+// A second clipped label layer keeps the text readable across the fill edge.
+.a-progress-button--solid {
+  border: 0;
+  background-color: var(--a-progress-button-solid-track);
+  background-image: linear-gradient(
+    90deg,
+    var(--a-progress-button-solid-fill),
+    var(--a-progress-button-solid-fill)
+  );
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: var(--a-progress-button-progress) 100%;
+  color: var(--a-progress-button-color);
+  text-shadow: none;
+  box-shadow:
+    var(--a-surface-highlight, 0 0 #0000),
+    0 6px 18px -6px color-mix(in srgb, var(--a-progress-button-color) 45%, transparent),
+    var(--a-shadow-sm, 0 4px 10px var(--shadow-6));
+
+  .a-progress-button__bar {
+    background: transparent;
+  }
+
+  .a-progress-button__inner-fill {
+    display: inline-flex;
+  }
+
+  &:hover:not(.a-progress-button--disabled) {
+    --a-progress-button-solid-fill: color-mix(in srgb, var(--a-progress-button-color) 88%, var(--a-progress-button-solid-shade));
+  }
+  &:active:not(.a-progress-button--disabled) {
+    --a-progress-button-solid-fill: color-mix(in srgb, var(--a-progress-button-color) 78%, var(--a-progress-button-solid-shade));
+  }
+  &:focus-visible {
+    box-shadow:
+      var(--a-surface-highlight, 0 0 #0000),
+      0 0 0 3px color-mix(in srgb, var(--a-progress-button-color) 35%, transparent);
+  }
 }
 
 .a-progress-button--striped.a-progress-button--active .a-progress-button__stripes {
@@ -272,7 +369,7 @@ export default defineComponent({
   }
 }
 
-// indeterminate — a sliding sliver across the button
+// indeterminate — a sliding sliver of the solid fill sweeps across the button
 .a-progress-button--indeterminate {
   .a-progress-button__bar {
     width: 35% !important;
@@ -285,6 +382,19 @@ export default defineComponent({
     );
     animation: a-progress-button-indeterminate 1.1s var(--a-ease-soft, ease-in-out) infinite;
   }
+}
+.a-progress-button--solid.a-progress-button--indeterminate .a-progress-button__bar {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--a-progress-button-solid-fill) 55%, transparent),
+    var(--a-progress-button-solid-fill),
+    color-mix(in srgb, var(--a-progress-button-solid-fill) 55%, transparent),
+    transparent
+  );
+}
+.a-progress-button--solid.a-progress-button--indeterminate {
+  background-size: 0 100%;
 }
 
 @keyframes a-progress-button-indeterminate {
@@ -301,13 +411,18 @@ export default defineComponent({
   border-color: transparent;
   background: var(--bg-disabled) !important;
   color: var(--text-disabled) !important;
+  text-shadow: none;
   box-shadow: 0 3px 12px var(--shadow-5);
 
   .a-progress-button__bar {
     background: color-mix(in srgb, var(--text-disabled) 24%, transparent);
+    transition: none;
   }
   .a-progress-button__inner {
     color: inherit;
+  }
+  .a-progress-button__inner-fill {
+    display: none;
   }
 }
 </style>

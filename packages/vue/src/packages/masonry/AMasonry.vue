@@ -1,15 +1,13 @@
 <template>
   <div ref="container" class="a-masonry" :style="containerStyle">
-    <template v-if="displayItems.length">
-      <div
-        v-for="(item, index) in displayItems"
-        :key="getKey(item, index)"
-        class="a-masonry__item"
-        :style="getItemStyles(item)"
-      >
-        <slot :data="item" :position="positionMap[item._masonryIndex]" :colWidth="colWidth"> </slot>
-      </div>
-    </template>
+    <div
+      v-for="(item, index) in displayItems"
+      :key="getKey(item, index)"
+      class="a-masonry__item"
+      :style="getItemStyles(item)"
+    >
+      <slot :data="item" :position="positionMap[item._masonryIndex]" :colWidth="colWidth"> </slot>
+    </div>
   </div>
 </template>
 
@@ -128,6 +126,8 @@ export default defineComponent({
       lastResizeTriggered: 0,
       resizeTimer: null as Timeout | null,
       scrollTimer: null as Timeout | null,
+      displayFrame: null as number | null,
+      canDeferDisplay: false,
       setDisplayExecCounter: 0,
     };
   },
@@ -181,9 +181,6 @@ export default defineComponent({
     this.setDisplay();
   },
   async mounted() {
-    this.screenWidth = document.documentElement.clientWidth;
-    this.screenHeight = document.documentElement.clientHeight;
-    this.scrollTop = document.documentElement.scrollTop;
     if (this.scrollEventTarget) {
       const scrollTarget = document.querySelector(this.scrollEventTarget);
       if (scrollTarget) {
@@ -197,9 +194,11 @@ export default defineComponent({
       window.addEventListener('scroll', this.handleScroll);
     }
     window.addEventListener('resize', this.handleWindowResize);
+    this.updateViewportMetrics();
     this.containerWidth = await this.getContainerWidth();
-    this.containerOffset = this.getContainerOffset();
+    this.updateViewportMetrics();
     this.renderMasonry();
+    this.canDeferDisplay = true;
   },
   async updated() {
     // if the col is not speicified, getContainerWidth will restore the original width, which will trigger the updated hook and cause dead loop.
@@ -217,6 +216,15 @@ export default defineComponent({
       this.scrollTarget.removeEventListener('scroll', this.handleScroll);
     } else {
       window.removeEventListener('scroll', this.handleScroll);
+    }
+    if (this.resizeTimer) {
+      clearTimeout(this.resizeTimer);
+    }
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+    }
+    if (this.displayFrame !== null && typeof window.cancelAnimationFrame === 'function') {
+      window.cancelAnimationFrame(this.displayFrame);
     }
   },
   methods: {
@@ -248,9 +256,30 @@ export default defineComponent({
       if (!container) {
         return 0;
       }
+      if (this.scrollTarget) {
+        const targetRect = this.scrollTarget.getBoundingClientRect();
+        const elRect = container.getBoundingClientRect();
+        return elRect.top - targetRect.top + this.scrollTarget.scrollTop;
+      }
       const bodyRect = document.documentElement.getBoundingClientRect();
       const elRect = container.getBoundingClientRect();
       return elRect.top - bodyRect.top;
+    },
+    getDocumentScrollTop() {
+      if (typeof window === 'undefined' || typeof document === 'undefined') {
+        return 0;
+      }
+      return window.pageYOffset || document.documentElement.scrollTop || document.body?.scrollTop || 0;
+    },
+    updateViewportMetrics() {
+      if (typeof document === 'undefined') {
+        return;
+      }
+      this.screenWidth = document.documentElement.clientWidth;
+      this.screenHeight = this.scrollTarget?.clientHeight || document.documentElement.clientHeight;
+      this.containerOffset = this.getContainerOffset();
+      const rawScrollTop = this.scrollTarget ? this.scrollTarget.scrollTop : this.getDocumentScrollTop();
+      this.scrollTop = Math.max(0, rawScrollTop - this.containerOffset);
     },
     getItemStyles(item: MasonryItem) {
       if (typeof item._masonryIndex === 'undefined') {
@@ -325,13 +354,17 @@ export default defineComponent({
         }
       }
       const commit = () => {
-        this.displayItems = list;
-        if (typeof window !== 'undefined') {
-          this.$forceUpdate();
+        if (seq !== this.setDisplayExecCounter) {
+          return;
         }
+        this.displayItems = list;
       };
-      if (typeof window !== 'undefined' && window.requestAnimationFrame && seq >= this.setDisplayExecCounter) {
-        window.requestAnimationFrame(() => {
+      if (this.canDeferDisplay && typeof window !== 'undefined' && window.requestAnimationFrame) {
+        if (this.displayFrame !== null && typeof window.cancelAnimationFrame === 'function') {
+          window.cancelAnimationFrame(this.displayFrame);
+        }
+        this.displayFrame = window.requestAnimationFrame(() => {
+          this.displayFrame = null;
           commit();
         });
       } else {
@@ -465,9 +498,7 @@ export default defineComponent({
       if (typeof document === 'undefined') {
         return;
       }
-      this.screenWidth = document.documentElement.clientWidth;
-      this.screenHeight = document.documentElement.clientHeight;
-      this.containerOffset = this.getContainerOffset();
+      this.updateViewportMetrics();
     },
     handleScroll() {
       if (typeof document === 'undefined') {
@@ -483,8 +514,7 @@ export default defineComponent({
       if (this.lastScroll && Date.now() - this.lastScroll < this.scrollThrottleTime) {
         return;
       }
-      this.containerOffset = this.getContainerOffset();
-      this.scrollTop = document.documentElement.scrollTop - this.containerOffset;
+      this.updateViewportMetrics();
       this.setDisplay();
       this.lastScroll = Date.now();
     },
