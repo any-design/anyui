@@ -1,5 +1,5 @@
 <template>
-  <teleport to="body">
+  <teleport v-if="mounted" to="body">
     <transition name="a-float-fade">
       <div
         v-if="visible"
@@ -74,6 +74,11 @@ export default defineComponent({
     },
   },
   emits: ['close', 'update:visible'],
+  data() {
+    return {
+      mounted: false,
+    };
+  },
   computed: {
     className() {
       return this.class;
@@ -107,19 +112,35 @@ export default defineComponent({
   watch: {
     visible: {
       handler(v) {
-        const dom = document.querySelector(this.scrollLockTarget);
+        this.updateScrollLock(v);
         if (!v) {
-          // show
-          dom?.classList.contains('scroll-locked') && dom.classList.remove('scroll-locked');
           this.$emit('close');
-        } else {
-          // hide
-          dom && !dom.classList.contains('scroll-locked') && dom.classList.add('scroll-locked');
         }
       },
     },
   },
+  mounted() {
+    this.mounted = true;
+    if (this.visible) {
+      this.updateScrollLock(true);
+    }
+  },
+  beforeUnmount() {
+    this.updateScrollLock(false);
+  },
   methods: {
+    updateScrollLock(locked: boolean) {
+      if (!this.lockScroll || typeof document === 'undefined') {
+        return;
+      }
+
+      const dom = document.querySelector(this.scrollLockTarget);
+      if (locked) {
+        dom && !dom.classList.contains('scroll-locked') && dom.classList.add('scroll-locked');
+      } else {
+        dom?.classList.contains('scroll-locked') && dom.classList.remove('scroll-locked');
+      }
+    },
     onClose() {
       // will be emitted when the float has been closed.
       this.$emit('close');
