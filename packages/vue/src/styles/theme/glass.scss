@@ -17,9 +17,10 @@
 @use './color/vars.scss' as *;
 
 @mixin glass-surface-light {
-  --a-surface: color-mix(in srgb, var(--text-white, #fff) 88%, transparent);
-  --a-surface-control: color-mix(in srgb, var(--text-white, #fff) 94%, transparent);
-  --a-surface-input: color-mix(in srgb, var(--text-white, #fff) 90%, transparent);
+  --a-glass-surface-base: color-mix(in srgb, var(--bg-bright) 35%, #fff);
+  --a-surface: color-mix(in srgb, var(--a-glass-surface-base) 88%, transparent);
+  --a-surface-control: color-mix(in srgb, var(--a-glass-surface-base) 94%, transparent);
+  --a-surface-input: color-mix(in srgb, var(--a-glass-surface-base) 90%, transparent);
   // keep light overlays airy; a heavy dark mask makes translucent panels read gray
   --mask: color-mix(in srgb, var(--text) 18%, transparent);
   // moderate blur: cost grows with radius, and large panels are the only
@@ -44,7 +45,7 @@
   --a-item-selected-shadow: 0 2px 10px var(--shadow-10);
 
   // tinted banners (alert) keep their tint but go translucent
-  --a-alert-surface: color-mix(in srgb, var(--text-white, #fff) 48%, transparent);
+  --a-alert-surface: color-mix(in srgb, var(--a-glass-surface-base) 48%, transparent);
 }
 
 @mixin glass-surface-dark {
