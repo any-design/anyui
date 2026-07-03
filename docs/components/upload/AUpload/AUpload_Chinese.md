@@ -14,7 +14,12 @@ import { Upload } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AUpload @upload="onUpload" />
+  <div style="width: 260px; height: 150px">
+    <AUpload @upload="onUpload">
+      <span>点击或拖入文件</span>
+      <template #dragging>放到这里</template>
+    </AUpload>
+  </div>
 </template>
 
 <script setup>
@@ -33,11 +38,14 @@ const onUpload = (file) => {
 
 ```vue
 <template>
-  <AUpload :status="status" @upload="handle">
-    <template #uploading>正在上传 {{ fileName }}…</template>
-    <template #success>{{ fileName }} 上传成功！</template>
-    <template #error>上传失败 —— 请重试。</template>
-  </AUpload>
+  <div style="width: 260px; height: 150px">
+    <AUpload :status="status" @upload="handle">
+      <span>{{ fileName || '选择文件' }}</span>
+      <template #uploading>正在上传 {{ fileName }}…</template>
+      <template #success>{{ fileName }} 上传成功！</template>
+      <template #error>上传失败 —— 请重试。</template>
+    </AUpload>
+  </div>
 </template>
 
 <script setup>
@@ -63,7 +71,11 @@ const handle = async (file) => {
 
 ```vue
 <template>
-  <AUpload disabled />
+  <div style="width: 260px; height: 150px">
+    <AUpload disabled>
+      <span>上传已禁用</span>
+    </AUpload>
+  </div>
 </template>
 ```
 

@@ -14,7 +14,12 @@ import { Upload } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AUpload @upload="onUpload" />
+  <div style="width: 260px; height: 150px">
+    <AUpload @upload="onUpload">
+      <span>Click or drop a file</span>
+      <template #dragging>Drop it here</template>
+    </AUpload>
+  </div>
 </template>
 
 <script setup>
@@ -33,11 +38,14 @@ Set `status` to show the corresponding slot (`uploading`, `success`, `error`).
 
 ```vue
 <template>
-  <AUpload :status="status" @upload="handle">
-    <template #uploading>Uploading {{ fileName }}…</template>
-    <template #success>{{ fileName }} uploaded!</template>
-    <template #error>Upload failed — try again.</template>
-  </AUpload>
+  <div style="width: 260px; height: 150px">
+    <AUpload :status="status" @upload="handle">
+      <span>{{ fileName || 'Pick a file' }}</span>
+      <template #uploading>Uploading {{ fileName }}…</template>
+      <template #success>{{ fileName }} uploaded!</template>
+      <template #error>Upload failed — try again.</template>
+    </AUpload>
+  </div>
 </template>
 
 <script setup>
@@ -63,7 +71,11 @@ Lock the upload area with `disabled`.
 
 ```vue
 <template>
-  <AUpload disabled />
+  <div style="width: 260px; height: 150px">
+    <AUpload disabled>
+      <span>Upload disabled</span>
+    </AUpload>
+  </div>
 </template>
 ```
 
