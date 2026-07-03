@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui-react",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "React package for AnyUI",
   "type": "module",

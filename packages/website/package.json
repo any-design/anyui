@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui-website",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "description": "Official website and docs for AnyUI",
   "type": "module",

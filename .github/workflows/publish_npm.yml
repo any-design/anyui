@@ -56,8 +56,11 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
 
+      - name: Clean build artifacts
+        run: pnpm run clean
+
       - name: Build package
-        run: pnpm run dist
+        run: pnpm exec turbo run build
 
       - name: Ensure generated sources are committed
         run: git diff --exit-code

@@ -1,5 +1,28 @@
 # CHANGELOG
 
+## [0.5.1](https://github.com/any-design/anyui/compare/v0.5.0...v0.5.1) (2026-07-03)
+
+### Highlights
+
+- Added an npm Trusted Publisher release workflow. Tagged releases can now publish `@any-design/anyui` from GitHub Actions through OIDC, without storing an npm token in repository secrets.
+- Improved cross-framework component parity across Vue, React, and Svelte, especially for Popper, Drawer, Tabs, Progress, ProgressButton, QRCode, Masonry, Avatar, Step, Checkbox, Select, ScrollArea, and related demos.
+- Added and refreshed multi-framework testground examples, including ProgressButton and richer interaction states for Popper, Drawer, Masonry, Step, Toast, Spinner, ListMenu, Loading, Dialog, ConfirmModal, and Tabs.
+- Reworked website documentation previews so component examples render more reliably, are easier to scan, and remain visible across localized documentation pages.
+- Improved the responsive website experience with a better mobile/tablet navigation drawer, table-of-contents behavior, scrollspy updates, and mobile layout sizing.
+
+### Fixes
+
+- Fixed Float hydration issues by avoiding client-only state mismatches during SSR hydration.
+- Fixed Collapse so the initial visible state is available during setup instead of only after mount.
+- Fixed website component previews, including SSR rendering and upload demo visibility.
+- Tightened glass theme surface tokens so translucent panels remain readable and closer to the intended AnyUI visual language.
+
+### Release
+
+- Added explicit npm publish configuration for the public npm registry.
+- Added manual website deployment support in CI.
+- Added repo-local Codex skill documentation and ignore rules for generated local development artifacts.
+
 ## [0.4.0](https://github.com/any-design/anyui/compare/v0.3.3...v0.4.0) (2024-06-05)
 
 ### Features
