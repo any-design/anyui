@@ -31,6 +31,10 @@
     "type": "git",
     "url": "git+https://github.com/any-design/anyui.git"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "packageManager": "pnpm@11.9.0",
   "workspaces": [
     "packages/*"

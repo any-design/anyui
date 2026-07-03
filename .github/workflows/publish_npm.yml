@@ -1,0 +1,74 @@
+name: Publish npm
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Choose dry-run to verify packaging, or publish to release to npm."
+        required: true
+        default: "dry-run"
+        type: choice
+        options:
+          - "dry-run"
+          - "publish"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish @any-design/anyui
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ref
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify release tag
+        if: github.event_name == 'push'
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ "${GITHUB_REF_NAME}" != "v${VERSION}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match package version v${VERSION}" >&2
+            exit 1
+          fi
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Build package
+        run: pnpm run dist
+
+      - name: Ensure generated sources are committed
+        run: git diff --exit-code
+
+      - name: Verify package contents
+        run: npm pack --dry-run
+
+      - name: Publish dry run
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run'
+        run: npm publish --access public --dry-run
+
+      - name: Publish to npm
+        if: github.event_name == 'push' || inputs.mode == 'publish'
+        run: npm publish --access public
