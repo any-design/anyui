@@ -70,7 +70,9 @@ const active = ref(1);
 
 ## 键盘操作
 
-`←/→`、`↑/↓` 在标签间移动；`Home`/`End` 跳到首个 / 末个标签；`Enter`/`Space` 激活。
+`Tab` 聚焦当前标签。`←/→` 在可用标签间移动焦点并切换选中项；`Home`/`End` 跳到首个 / 末个可用标签；`Enter`/`Space` 激活。禁用标签会被跳过。
+
+标签和面板都省略 `value` 时，分别使用各自列表中从 0 开始的位置。会新增、删除或排序的动态列表应使用明确且唯一的值。
 
 ## ATabs 属性
 
@@ -80,7 +82,7 @@ const active = ref(1);
 | `type` | 'default' \| 'line' \| 'card' | 'default' | 视觉样式。`line` 保留为 `default` 的兼容别名。 |
 | `size` | 'small' \| 'default' \| 'large' | 'default' | 栏密度。 |
 | `position` | 'top' \| 'bottom' | 'top' | 标签栏位置。 |
-| `autoSelect` | Boolean | true | 未提供 `modelValue` 时自动选中首个标签。 |
+| `autoSelect` | Boolean | true | 未提供 `modelValue` 时自动选中首个可用标签。 |
 
 ## ATabs 插槽
 

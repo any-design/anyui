@@ -14,8 +14,13 @@
       'a-button--icon-trailing': !!icon && hasContent && iconPosition === 'trailing' && !loading,
       'a-button--loading': loading,
     }"
+    role="button"
+    :tabindex="disabled || loading ? -1 : 0"
     :aria-disabled="disabled || loading ? 'true' : undefined"
+    :aria-busy="loading || undefined"
     @click="onButtonClicked"
+    @keydown="onKeyDown"
+    @keyup="onKeyUp"
   >
     <Icon v-if="icon && iconPosition === 'leading' && !loading" :icon="icon" />
     <span v-if="loading" class="a-button__loading">
@@ -110,9 +115,26 @@ export default defineComponent({
       emit('click', e);
     };
 
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.target !== event.currentTarget || event.defaultPrevented) return;
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      if (event.key === 'Enter' && !event.repeat && !props.disabled && !props.loading) {
+        (event.currentTarget as HTMLElement).click();
+      }
+    };
+
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (event.target !== event.currentTarget || event.defaultPrevented || event.key !== ' ') return;
+      event.preventDefault();
+      if (!props.disabled && !props.loading) (event.currentTarget as HTMLElement).click();
+    };
+
     return {
       hasContent,
       onButtonClicked,
+      onKeyDown,
+      onKeyUp,
     };
   },
 });
@@ -303,7 +325,7 @@ export default defineComponent({
 }
 
 .a-button.a-button--anim {
-  transition: all var(--anim-duration, 200ms) var(--a-ease-spring, ease);
+  transition-duration: var(--anim-duration, 200ms);
 }
 .a-button.a-button--anim:hover {
   transform: translateY(-4px);
@@ -324,6 +346,19 @@ export default defineComponent({
 .a-button.a-button--disabled:active {
   transform: none;
   filter: none;
+}
+
+.a-button.a-button--loading {
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.a-button.a-button:focus-visible {
+  outline: none;
+  box-shadow:
+    var(--a-focus-ring, 0 0 0 3px var(--primary-18)),
+    var(--a-shadow-sm, 0 4px 10px var(--shadow-6));
 }
 
 .a-button--icon {
@@ -453,6 +488,16 @@ export default defineComponent({
 
   .a-button__loading {
     background-color: color-mix(in srgb, var(--shadow) 24%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-button {
+    transition: none;
+  }
+  .a-button.a-button:hover,
+  .a-button.a-button:active {
+    transform: none;
   }
 }
 </style>

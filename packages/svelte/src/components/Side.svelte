@@ -3,7 +3,7 @@
     width = 300,
     noDefault = false,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
   const formattedWidth = $derived(noDefault && !width ? undefined : formatStyleSize(width));

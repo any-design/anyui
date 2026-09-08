@@ -7,11 +7,11 @@
     fullscreen = false,
     zIndex = 2000,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
 
   // replicates Vue's <transition> fade classes
-  let rendered = $state(false);
+  let rendered = $state(loading);
   let transitionClass = $state('');
   let firstTransition = true;
   $effect(() => {

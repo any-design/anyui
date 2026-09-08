@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [0.5.2](https://github.com/any-design/anyui/compare/v0.5.1...v0.5.2) (2026-09-08)
+
+### Security
+
+- Upgrade PostCSS to 8.5.28 to address CVE-2026-73646 and subsequent source map advisories, and refresh compatible dependencies. The workspace security audit reports no known vulnerabilities.
+
+### Fixes
+
+- Align Button keyboard activation, focus feedback, loading behavior, and reduced motion across Vue, React, and Svelte.
+- Fix Tabs panel visibility, Svelte content placement, implicit values, disabled-tab keyboard navigation, and retained panel state; connect tab and panel accessibility attributes.
+- Fix VirtualList resize tracking, replacement/reordered arrays, clearing, and lifecycle cleanup without changing its visual design.
+- Improve Select sizing and keyboard behavior, and align cross-framework demos and documented component APIs.
+- Ship Svelte component sources and generated types through `@sveltejs/package`, allowing consumers to compile for both the browser and SSR with their own Svelte runtime.
+- Keep optional Svelte snippets and callbacks optional in generated component declarations.
+
+### Documentation and build
+
+- Improve documentation navigation, scroll restoration, localized previews, mobile menus, table of contents, and theme persistence while reducing JavaScript loaded by guide pages.
+- Add browser regressions for the documentation site and multi-framework testground.
+- Preserve maintained React/Svelte sources during normal builds and keep preview test servers attached to Playwright.
+- Verify packed Vue, React, and Svelte consumers, SSR, styles, resolver exports, and component declarations before publishing.
+
 ## [0.5.1](https://github.com/any-design/anyui/compare/v0.5.0...v0.5.1) (2026-07-03)
 
 ### Highlights

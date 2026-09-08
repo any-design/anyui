@@ -3,7 +3,7 @@
   let {
     item = undefined as VirtualListItem<unknown> | undefined,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
 </script>
 

@@ -2,13 +2,19 @@
   <div>
     <div class="demo-block">
       <div class="demo-block__label">10,000 Items</div>
+      <div class="demo-row">
+        <a-button size="small" @click="list = []">Clear list</a-button>
+        <a-button size="small" @click="list = createItems()">Reset list</a-button>
+        <a-button size="small" @click="expandedFirst = !expandedFirst">Resize first row</a-button>
+        <a-button size="small" @click="list = [...list].reverse()">Reverse list</a-button>
+      </div>
       <div class="virtual-container">
         <a-virtual-list :items="list">
           <template #default="scope">
             <div
               class="virtual-item"
               :style="{
-                height: `${scope.item.height}px`,
+                height: `${scope.item.height + (scope.item.index === 0 && expandedFirst ? 120 : 0)}px`,
               }"
             >
               {{ scope.item.index }} ({{ scope.item.height }}px)
@@ -25,7 +31,7 @@ import { ref } from 'vue';
 
 import type { RawVirtualListItem } from '@/packages/virtualList/types';
 
-const list = ref(
+const createItems = () =>
   new Array(10000).fill(null).map((_, index) => {
     const random = Math.random();
     const height = Math.floor(random * 100) + 60;
@@ -38,8 +44,10 @@ const list = ref(
       index,
     };
     return item;
-  }),
-);
+  });
+
+const list = ref(createItems());
+const expandedFirst = ref(false);
 </script>
 
 <style lang="scss" scoped>

@@ -3,8 +3,8 @@
   let {
     messages = [] as AChatMessage[],
     class: className = '',
-    children,
-    message,
+    children = undefined,
+    message = undefined,
   } = $props();
 </script>
 

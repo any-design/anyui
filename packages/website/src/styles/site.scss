@@ -13,13 +13,17 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  width: 100%;
+  height: auto;
+  overflow-x: clip;
+  overflow-y: auto;
+  scroll-behavior: auto;
   scroll-padding-top: calc(92px + env(safe-area-inset-top, 0px));
   // Overlay-style scrollbar across platforms: don't reserve a gutter for the
   // scrollbar (so it floats over content instead of eating layout width), and
   // use a thin tinted thumb with a transparent track. WebKit gets custom thumb
   // / track rules below; Firefox uses scrollbar-width + scrollbar-color.
-  scrollbar-gutter: auto;
+  scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar, var(--line)) transparent;
 
@@ -56,8 +60,10 @@ body {
   font-family: var(--font-normal);
   color: var(--text);
   background: transparent;
-  min-height: 100vh;
-  overflow-x: hidden;
+  width: 100%;
+  height: auto;
+  min-height: 100svh;
+  overflow: visible;
   // Inherit the overlay scrollbar styling for any internally-scrollable body
   // regions too.
   scrollbar-width: thin;
@@ -66,9 +72,7 @@ body {
   --site-gutter: clamp(16px, 5vw, 24px);
   --site-header-top: calc(14px + env(safe-area-inset-top, 0px));
   --site-header-height: 54px;
-  --site-header-clearance: calc(
-    var(--site-header-top) + var(--site-header-height) + 36px
-  );
+  --site-header-clearance: calc(var(--site-header-top) + var(--site-header-height) + 36px);
 }
 
 // Global overlay scrollbar styling for every scrollable element on the site
@@ -145,128 +149,37 @@ kbd,
   font-family: var(--font-mono) !important;
 }
 
-// pastel candy backdrop — a dreamy, blurred field of soft dots and puffy
-// color blooms. The texture is a large dotted grid drawn with radial gradients
-// (no SVG tiling, no hard strokes), softened with a generous blur so it reads
-// as fluffy confetti floating behind the content instead of a crisp printed
-// pattern. Ambient color washes underneath add the brand-hued haze. Masked to
-// fade out toward the lower half so it never competes with page content.
+// Static gradients keep the brand color without full-screen blur layers.
 .site-backdrop {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  overflow: hidden;
   z-index: -1;
-
-  // Dotted confetti field. Two offset layers of soft radial-gradient dots —
-  // primary-tinted and secondary-tinted — on a large 64px grid. The whole layer
-  // is blurred so each dot melts into a puffy pastel puff, like floating bubbles
-  // or candy dust. Masked to the upper region so it never competes with content.
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -10%;
-    background-image:
-      radial-gradient(
-        circle at center,
-        color-mix(in srgb, var(--primary) 22%, transparent) 0 4px,
-        transparent 5px
-      ),
-      radial-gradient(
-        circle at center,
-        color-mix(in srgb, var(--secondary) 18%, transparent) 0 3px,
-        transparent 4px
-      ),
-      radial-gradient(
-        circle at center,
-        color-mix(in srgb, var(--primary) 12%, transparent) 0 2px,
-        transparent 3px
-      );
-    background-size: 64px 64px, 64px 64px, 96px 96px;
-    // offset the layers so primary + secondary dots interleave and the third
-    // sparse layer floats on its own wider rhythm
-    background-position:
-      0 0,
-      32px 32px,
-      16px 48px;
-    filter: blur(8px);
-    opacity: 0.9;
-    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 78%);
-    mask-image: linear-gradient(180deg, #000 0%, #000 38%, transparent 78%);
-  }
-
-  // Soft ambient color washes (not glows): heavier blur than the dots so they
-  // sit further back, just enough to give the page a dreamy brand-hued haze in
-  // the upper region. These are the puffy candy clouds behind the confetti.
-  span {
-    position: absolute;
-    border-radius: var(--a-radius-full, 999px);
-    filter: blur(90px);
-    opacity: 0.22;
-  }
-
-  span:nth-child(1) {
-    width: 540px;
-    height: 540px;
-    left: -180px;
-    top: -200px;
-    background: var(--primary);
-  }
-  span:nth-child(2) {
-    width: 480px;
-    height: 480px;
-    right: -160px;
-    top: 40px;
-    background: var(--secondary);
-  }
-  span:nth-child(3) {
-    width: 600px;
-    height: 600px;
-    left: 28%;
-    top: 55%;
-    background: var(--secondary);
-    opacity: 0.12;
-  }
+  background:
+    radial-gradient(
+      ellipse 65% 55% at 0% 0%,
+      color-mix(in srgb, var(--primary) 8%, transparent),
+      transparent 80%
+    ),
+    radial-gradient(
+      ellipse 50% 45% at 100% 10%,
+      color-mix(in srgb, var(--secondary) 12%, transparent),
+      transparent 80%
+    );
 }
-
-// Dark mode: the blur + low-alpha dots need a brighter tint to read against the
-// charcoal background, and the ambient washes are dimmed so they stay subtle.
-html[theme='dark'] {
-  .site-backdrop::before {
-    background-image:
-      radial-gradient(
-        circle at center,
-        color-mix(in srgb, var(--primary) 30%, transparent) 0 4px,
-        transparent 5px
-      ),
-      radial-gradient(
-        circle at center,
-        color-mix(in srgb, var(--secondary) 26%, transparent) 0 3px,
-        transparent 4px
-      ),
-      radial-gradient(
-        circle at center,
-        color-mix(in srgb, var(--primary) 16%, transparent) 0 2px,
-        transparent 3px
-      );
-    filter: blur(10px);
-    opacity: 0.6;
-    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 28%, transparent 60%);
-    mask-image: linear-gradient(180deg, #000 0%, #000 28%, transparent 60%);
-  }
-
-  .site-backdrop span {
-    opacity: 0.14;
-  }
-
-  .site-backdrop span:nth-child(3) {
-    opacity: 0.09;
-  }
+body[data-section='home'] .site-backdrop {
+  background:
+    radial-gradient(
+      ellipse 60% 70% at 0% 0%,
+      color-mix(in srgb, var(--primary) 12%, transparent),
+      transparent 80%
+    ),
+    radial-gradient(
+      ellipse 60% 70% at 100% 30%,
+      color-mix(in srgb, var(--secondary) 16%, transparent),
+      transparent 80%
+    );
 }
-
-// ------------------------------------------------------------------ header
-// floating capsule nav; it follows the same solid / glass surface toggle as the
-// component demos so the global preference is visible immediately.
 
 .site-header {
   position: fixed;
@@ -277,8 +190,7 @@ html[theme='dark'] {
   display: flex;
   justify-content: center;
   pointer-events: none;
-  padding-inline:
-    max(14px, env(safe-area-inset-left, 0px))
+  padding-inline: max(14px, env(safe-area-inset-left, 0px))
     max(14px, env(safe-area-inset-right, 0px));
 
   &__inner {
@@ -484,14 +396,12 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
 
 // Tablet + mobile navbar (<=840px). The bar becomes full-width with the mark
 // logo on the left, the Docs/Components entries inline, and a borderless menu
-// button on the right that opens the mobile nav drawer (which hosts the page
-// listMenu, the full nav, and the appearance toggles). Testground/GitHub are
+// button on the right that opens the page navigation. Testground/GitHub are
 // desktop-only and hidden from the inline nav here.
 @media (max-width: 840px) {
   .site-header {
     justify-content: flex-start;
-    padding-inline:
-      max(12px, env(safe-area-inset-left, 0px))
+    padding-inline: max(12px, env(safe-area-inset-left, 0px))
       max(12px, env(safe-area-inset-right, 0px));
     overflow: visible;
 
@@ -630,9 +540,7 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
 @media (max-width: 520px) {
   body {
     --site-header-height: 50px;
-    --site-header-clearance: calc(
-      var(--site-header-top) + var(--site-header-height) + 30px
-    );
+    --site-header-clearance: calc(var(--site-header-top) + var(--site-header-height) + 30px);
   }
 
   .site-header {
@@ -799,8 +707,7 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
     backdrop-filter: var(--a-surface-backdrop, none);
     border: 1px solid var(--a-surface-border-color, var(--line));
     box-shadow:
-      var(--a-surface-highlight, 0 0 #0000),
-      var(--a-shadow-xs, 0 2px 10px var(--shadow-4));
+      var(--a-surface-highlight, 0 0 #0000), var(--a-shadow-xs, 0 2px 10px var(--shadow-4));
     font-size: 14px;
     max-width: 100%;
     box-sizing: border-box;
@@ -897,8 +804,7 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
   backdrop-filter: var(--a-surface-backdrop, none);
   border: 1px solid var(--a-surface-border-color, transparent);
   box-shadow:
-    var(--a-surface-highlight, 0 0 #0000),
-    var(--a-shadow-lg, 0 18px 44px var(--shadow-10));
+    var(--a-surface-highlight, 0 0 #0000), var(--a-shadow-lg, 0 18px 44px var(--shadow-10));
   padding: 26px;
 }
 
@@ -1022,9 +928,7 @@ html[theme='dark'][data-anyui-style='glass'] .site-header {
   -webkit-backdrop-filter: var(--a-surface-backdrop, none);
   backdrop-filter: var(--a-surface-backdrop, none);
   border: 1px solid var(--a-surface-border-color, transparent);
-  box-shadow:
-    var(--a-surface-highlight, 0 0 #0000),
-    var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
+  box-shadow: var(--a-surface-highlight, 0 0 #0000), var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
   // no card-level padding: the header and code block carry their own, so the
   // code block's border/radius sit flush with the card edge and don't double up
 
@@ -1322,19 +1226,19 @@ html[theme='dark'] {
   margin: 0 auto;
   padding: var(--site-header-clearance) var(--site-gutter) 0;
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 40px;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 36px;
 
   // when a right-side TOC is present, expand to a 3-column grid
   &--has-toc {
-    grid-template-columns: 220px minmax(0, 1fr) 200px;
+    grid-template-columns: 200px minmax(0, 1fr) 180px;
     max-width: 1280px;
   }
 
   @media (max-width: 1100px) {
     // collapse the TOC column first on mid-width screens
     &--has-toc {
-      grid-template-columns: 220px minmax(0, 1fr);
+      grid-template-columns: 200px minmax(0, 1fr);
     }
     .toc {
       display: none;
@@ -1378,8 +1282,7 @@ html[theme='dark'] {
   }
 }
 
-// AListMenu-backed docs sidebars. The wrappers provide sticky pinning and
-// internal scroll; AListMenu itself renders the items.
+// Persistent sidebars keep their position while native links handle navigation.
 .docs-menu,
 .components-sidebar {
   position: sticky;
@@ -1602,192 +1505,6 @@ html[theme='dark'] {
   }
 }
 
-// ------------------------------------------------------------------ mobile nav drawer
-// Right-side drawer opened from the navbar menu button on tablet/mobile.
-// Hosts the page listMenu (docs/components), the primary nav links, and the
-// dark/glass appearance toggles. Desktop never renders it visibly (the trigger
-// is hidden, and the drawer only mounts when the button is clicked).
-
-// Ensure the drawer body always sits above its own mask. ADrawer only applies
-// zIndex when width is a string; we set width as a string + a z-index prop, but
-// add a CSS guarantee too in case of prop edge cases.
-.a-drawer--right .mobile-nav-drawer__body {
-  z-index: 200;
-}
-
-.mobile-nav-drawer__body {
-  padding: 0;
-  // Lift the surface so the drawer reads as a layer above the page, with the
-  // AnyUI rounded corner + soft tinted shadow already provided by ADrawer.
-  background: var(--a-surface, var(--bg-bright));
-  -webkit-backdrop-filter: var(--a-surface-backdrop, none);
-  backdrop-filter: var(--a-surface-backdrop, none);
-}
-
-.mobile-nav-drawer__inner {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 16px 14px calc(16px + env(safe-area-inset-bottom, 0px));
-  height: 100%;
-  box-sizing: border-box;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.mobile-nav-drawer__section {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-
-  // The page listMenu scrolls if it's long (e.g. components has ~50 entries);
-  // the footer stays pinned at the bottom because the menu section flexes to
-  // fill remaining height and scrolls internally.
-  &--menu {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    padding-bottom: 6px;
-    margin-bottom: 8px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--line) transparent;
-
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: var(--line);
-      border-radius: 999px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-  }
-}
-
-// Footer row: a single line of three controls (light/dark, solid/glass,
-// GitHub). No divider, no label — the icons + labels are self-explanatory and
-// the row mirrors the desktop navbar's action styling.
-.mobile-nav-drawer__footer {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: auto;
-  padding-top: 10px;
-}
-
-.mobile-nav-drawer__section-title {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06rem;
-  text-transform: uppercase;
-  color: var(--text-placeholder);
-  padding: 0 6px;
-}
-
-.mobile-nav-drawer__menu {
-  --a-item-selected-bg: color-mix(in srgb, var(--primary) 10%, transparent);
-  --a-item-selected-color: var(--text);
-  --a-item-hover-bg: color-mix(in srgb, var(--primary) 7%, transparent);
-
-  .a-list-menu__split {
-    margin: 10px 6px 4px 6px;
-    padding: 4px 2px;
-    border-top: none;
-    border-bottom: 1px solid var(--line);
-
-    span {
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.06rem;
-      text-transform: uppercase;
-      color: var(--text-placeholder);
-    }
-  }
-
-  .a-list-menu__item {
-    margin: 2px 4px;
-    padding: 8px 12px;
-    font-size: 14px;
-    color: var(--text-secondary);
-    text-shadow: none;
-    box-shadow: none;
-    border-radius: var(--a-radius-sm, 10px);
-  }
-
-  .a-list-menu__item:hover {
-    color: var(--text);
-  }
-
-  .a-list-menu__item--selected {
-    color: var(--text);
-    font-weight: 700;
-  }
-}
-
-.mobile-nav-drawer__pref.a-button {
-  flex: 1 1 0;
-  height: 38px;
-  letter-spacing: 0;
-  font-size: 13px;
-  font-weight: 600;
-  // Match the desktop navbar action buttons: no border, transparent surface,
-  // tinted hover, so the drawer prefs read as the same controls.
-  border-color: transparent;
-  background: transparent;
-  color: var(--text-secondary);
-  box-shadow: none;
-
-  &:hover {
-    background: var(--bg-semi-light);
-    color: var(--text);
-    transform: translateY(-1px);
-    box-shadow: inset 0 1px 0 color-mix(in srgb, #fff 48%, transparent);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-// The GitHub entry is an <a> wrapping an a-button; the anchor itself shouldn't
-// add its own box, the button fills it.
-.mobile-nav-drawer__pref--link {
-  flex: 1 1 0;
-  display: flex;
-  text-decoration: none;
-  color: inherit;
-
-  .mobile-nav-drawer__pref-inner.a-button {
-    width: 100%;
-  }
-}
-
-.mobile-nav-drawer__pref--active.a-button {
-  background: var(--primary-10, var(--primary-8));
-  color: var(--text);
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #fff 60%, transparent),
-    inset 0 0 0 1px var(--primary-20, color-mix(in srgb, var(--primary) 20%, transparent)),
-    0 2px 8px var(--shadow-8);
-}
-
-// Dark-mode tuning: keep the drawer surface lifted against the dark bg.
-html[theme='dark'] {
-  .mobile-nav-drawer__body {
-    background: var(--a-surface, var(--bg-bright));
-  }
-}
-
-@media (max-width: 520px) {
-  .docs {
-    padding-inline: var(--site-gutter);
-  }
-}
-
 .prose {
   min-width: 0;
   font-size: 15px;
@@ -1802,13 +1519,13 @@ html[theme='dark'] {
   h2 {
     font-size: 22px;
     margin: 36px 0 12px 0;
-    scroll-margin-top: 112px;
+    scroll-margin-top: 20px;
   }
 
   h3 {
     font-size: 17px;
     margin: 26px 0 10px 0;
-    scroll-margin-top: 112px;
+    scroll-margin-top: 20px;
   }
 
   p {
@@ -1884,11 +1601,11 @@ html[theme='dark'] {
 
     h2 {
       font-size: 20px;
-      scroll-margin-top: calc(var(--site-header-clearance) + 54px);
+      scroll-margin-top: 20px;
     }
 
     h3 {
-      scroll-margin-top: calc(var(--site-header-clearance) + 54px);
+      scroll-margin-top: 20px;
     }
 
     ul,
@@ -2009,9 +1726,7 @@ html[theme='dark'] {
   border-radius: var(--a-radius-lg, 18px);
   border: 1px solid var(--a-surface-border-color, var(--line));
   background: var(--a-surface, var(--bg-bright));
-  box-shadow:
-    var(--a-surface-highlight, 0 0 #0000),
-    var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
+  box-shadow: var(--a-surface-highlight, 0 0 #0000), var(--a-shadow-sm, 0 6px 18px var(--shadow-5));
   overflow: hidden;
 
   &__render {
@@ -2178,54 +1893,31 @@ html[theme='dark'] .preview-frame {
 
 // ------------------------------------------------------------------ components
 
-// The docs article lays out its top as a two-column grid so the language
-// switcher (.doc-toolbar) sits on the same row as the article's h1 (which is
-// the first child of .doc-body), h1 on the left, switcher on the right. The
-// mobile TOC (.mobile-toc) spans the full width above that row. This works
-// across all viewport widths without moving any DOM.
+// Keep controls in their own row so code and API tables use the full article.
 .prose {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  column-gap: 16px;
-  row-gap: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
-
-// Mobile TOC (disclosure) sits full-width in row 1 when present.
-.mobile-toc {
-  grid-column: 1 / -1;
-  grid-row: 1;
-}
-
-// The article body (slot content) occupies the left column of row 2.
-.doc-body {
-  grid-column: 1;
-  grid-row: 2;
-  min-width: 0;
-}
-
-// The language switcher hugs the right edge of row 2, aligned to the top so it
-// lines up with the h1 (the first child of .doc-body).
 .doc-toolbar {
-  grid-column: 2;
-  grid-row: 2;
+  order: -2;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  margin: 0;
-  // Nudge the switcher down so it vertically centers against the h1's text
-  // rather than its cap height. h1 has margin-bottom:18px from .prose h1.
-  padding-top: 4px;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 32px;
+  margin-bottom: 24px;
 }
-
-// When there's no mobile TOC (e.g. a doc with no headings), the toolbar + body
-// should still land in the first row so the switcher lines up with the h1.
-.prose:not(:has(.mobile-toc)) {
-  .doc-body,
-  .doc-toolbar {
-    grid-row: 1;
-  }
+.doc-toolbar__label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+.mobile-toc {
+  order: -1;
+}
+.doc-body {
+  min-width: 0;
 }
 
 .components-index {
@@ -2308,4 +2000,282 @@ html[theme='dark'] .preview-frame {
       padding: 15px 16px;
     }
   }
+}
+
+// Site chrome uses native links and buttons with the shared surface tokens.
+html[data-lang='en'] [data-site-lang='zh'],
+html[data-lang='zh'] [data-site-lang='en'],
+html[data-lang='en'] .localized-doc__pane[data-lang='zh'],
+html[data-lang='zh'] .localized-doc__pane[data-lang='en'] {
+  display: none;
+}
+
+.docs-links__group + .docs-links__group {
+  margin-top: 22px;
+}
+.docs-links__label {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text-secondary);
+}
+.docs-links__link {
+  display: block;
+  padding: 8px 12px;
+  margin: 2px 0;
+  border-radius: var(--a-radius-sm);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  transition:
+    background-color var(--anim-duration-quick),
+    color var(--anim-duration-quick);
+  &:hover {
+    background: var(--primary-8);
+    color: var(--text);
+  }
+  &[aria-current='page'] {
+    background: var(--primary-12);
+    color: var(--primary);
+    font-weight: 650;
+  }
+}
+.toc__link {
+  display: block;
+  padding: 6px 10px;
+  border-radius: var(--a-radius-xs);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  &:hover {
+    color: var(--text);
+    background: var(--primary-8);
+  }
+  &[aria-current='location'] {
+    color: var(--primary);
+    background: var(--primary-8);
+  }
+  &--nested {
+    padding-left: 22px;
+  }
+}
+.toc__title {
+  color: var(--text-secondary);
+}
+.language-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 3px;
+  gap: 2px;
+  background: var(--a-surface-control);
+  border: 1px solid var(--line);
+  border-radius: var(--a-radius-full);
+  button {
+    border: 0;
+    border-radius: inherit;
+    padding: 5px 12px;
+    min-height: 28px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    &[aria-pressed='true'] {
+      background: var(--primary-12);
+      color: var(--primary);
+    }
+    &:hover {
+      background: var(--primary-8);
+    }
+  }
+}
+.site-menu-dialog {
+  position: fixed;
+  inset: 12px 12px 12px auto;
+  width: min(340px, calc(100vw - 24px));
+  max-width: none;
+  height: calc(100dvh - 24px);
+  max-height: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--a-surface-border-color, var(--line));
+  border-radius: var(--a-radius-xl);
+  background: var(--a-surface, var(--bg-bright));
+  backdrop-filter: var(--a-surface-backdrop, none);
+  box-shadow: var(--a-shadow-lg);
+  color: var(--text);
+  overflow: hidden;
+  &[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  &::backdrop {
+    background: color-mix(in srgb, var(--bg-darker) 45%, transparent);
+  }
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  &__close {
+    border: 0;
+    background: var(--primary-8);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--a-radius-full);
+    cursor: pointer;
+    font-size: 24px;
+  }
+  &__links {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 12px;
+  }
+  .docs-links__link {
+    min-height: 24px;
+    padding-block: 10px;
+  }
+}
+html.site-menu-open {
+  overflow: hidden;
+}
+.docs-menu,
+.components-sidebar,
+.toc {
+  overscroll-behavior: contain;
+}
+.docs-menu {
+  max-height: calc(100dvh - 142px);
+  overflow-y: auto;
+}
+.prose h1 {
+  letter-spacing: -0.035em;
+  font-weight: 750;
+}
+.prose .localized-doc__pane > h1 + p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+.prose th {
+  background: var(--primary-8);
+}
+.prose td {
+  vertical-align: top;
+}
+.prose :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+.preview-frame__toolbar {
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding: 12px 16px;
+}
+.preview-frame__label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.preview-frame__demo:empty {
+  min-height: 72px;
+}
+.preview-frame__loading {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.code-frame:focus-within .code-frame__copy {
+  opacity: 1;
+}
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  box-shadow: var(--a-focus-ring);
+}
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 16px;
+  z-index: 300;
+  transform: translateY(-160%);
+  padding: 10px 16px;
+  border-radius: var(--a-radius);
+  background: var(--bg-bright);
+}
+.skip-link:focus {
+  transform: none;
+}
+#main-content {
+  min-height: calc(100svh - 140px);
+}
+#main-content:focus {
+  outline: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 120ms;
+}
+::view-transition-old(site-header),
+::view-transition-new(site-header),
+::view-transition-old(site-backdrop),
+::view-transition-new(site-backdrop) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+@media (max-width: 1100px) {
+  .mobile-toc {
+    display: block;
+  }
+}
+@media (max-width: 840px) {
+  .docs-menu,
+  .components-sidebar {
+    display: none;
+  }
+}
+@media (max-width: 560px) {
+  .doc-toolbar {
+    margin-bottom: 16px;
+  }
+  .language-toggle button {
+    min-height: 32px;
+  }
+  .prose .localized-doc__pane > h1 + p {
+    font-size: 15px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+html[theme='light'] {
+  --text-secondary: #606b78;
+  --text-placeholder: #6f7a86;
+  --line: #e3e8f0;
 }

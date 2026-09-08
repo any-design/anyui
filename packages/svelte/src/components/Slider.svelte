@@ -8,8 +8,8 @@
     showTooltip = true,
     width = undefined,
     class: className = '',
-    onUpdateModelValue,
-    onChange,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
   } = $props();
   let trackEl = $state<HTMLDivElement>();
   let dragging = $state(false);
@@ -91,7 +91,6 @@
     <div class="a-slider__fill" style:width={percent + '%'}></div>
     <div
       class="a-slider__thumb"
-      role="presentation"
       style:left={percent + '%'}
       onpointerenter={() => (hovering = true)}
       onpointerleave={() => (hovering = false)}

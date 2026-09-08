@@ -41,3 +41,23 @@ Demo contract:
 `demo-col` is available for vertical stacks. Panels are ~420px wide — keep tall demos self-contained (fixed heights).
 
 `pnpm new` (component scaffold) drops a Vue demo stub here automatically.
+
+## Local e2e checks
+
+The testground has a local Playwright suite. It is intentionally not wired into CI; run it when you want a browser-level check that the testground behavior still matches the component demos.
+
+```bash
+pnpm test:e2e
+pnpm test:e2e:headed # optional, opens the browser
+pnpm test:e2e:ui     # optional, Playwright UI mode
+```
+
+The suite starts the testground Vite server at `http://127.0.0.1:5174/testground/` and reuses an existing server if one is already running. Set `ANYUI_TESTGROUND_E2E_PORT` to use a different port.
+
+Expected behavior is derived from `src/demos/{vue,react,svelte}`:
+
+- every demo file becomes a component case;
+- each declared framework panel must render for that component;
+- the panel body must mount visible demo content using `demo-block` or `demo-row`;
+- missing demos, failed framework islands, page errors, and runtime `console.error` entries fail the run;
+- shell behavior such as hash navigation, framework toggles, dark mode, glass mode, and persisted local prefs is covered too.

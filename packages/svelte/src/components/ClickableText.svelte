@@ -2,8 +2,8 @@
   let {
     type = '',
     class: className = '',
-    children,
-    onClick,
+    children = undefined,
+    onClick = undefined,
   } = $props();
 </script>
 

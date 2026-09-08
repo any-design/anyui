@@ -4,7 +4,7 @@ const STORAGE_KEY = 'anyui-site-prefs';
 
 const readPrefs = (): Record<string, unknown> => {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {};
   } catch {
     return {};
   }
@@ -12,7 +12,9 @@ const readPrefs = (): Record<string, unknown> => {
 
 const writePrefs = (next: Record<string, unknown>) => {
   const prefs = { ...readPrefs(), ...next };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  } catch {}
 };
 
 const applyPrefs = (nextDark: boolean, nextGlass: boolean) => {
@@ -30,10 +32,8 @@ export const useSitePrefs = () => {
   const glass = ref(false);
 
   const syncPrefs = () => {
-    const prefs = readPrefs();
-    dark.value = document.documentElement.getAttribute('theme') === 'dark' || prefs.dark === true;
-    glass.value =
-      document.documentElement.getAttribute('data-anyui-style') === 'glass' || prefs.glass === true;
+    dark.value = document.documentElement.getAttribute('theme') === 'dark';
+    glass.value = document.documentElement.getAttribute('data-anyui-style') === 'glass';
     applyPrefs(dark.value, glass.value);
   };
 

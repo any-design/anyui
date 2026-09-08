@@ -2,7 +2,7 @@
   import Toast from './Toast.svelte';
   import type { ToastItem } from '../types';
 
-  let { onCleared } = $props();
+  let { onCleared = undefined } = $props();
 
   type QueueItem = ToastItem & { anim: string };
 

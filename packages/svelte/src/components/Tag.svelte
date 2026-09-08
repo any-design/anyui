@@ -5,7 +5,7 @@
     color = '',
     bgColor = '',
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   // Vue applies the custom tag color at 0.2 alpha unless it is a css variable
   const backgroundColor = $derived.by(() => {

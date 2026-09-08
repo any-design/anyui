@@ -5,8 +5,8 @@
     selected = undefined,
     modelValue = undefined,
     class: className = '',
-    children,
-    onClick,
+    children = undefined,
+    onClick = undefined,
   } = $props();
   const current = $derived(selected ?? modelValue);
 </script>

@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "src/**/*"],
+  "exclude": ["dist", "src/.anyui-previews"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@/*": ["../vue/src/*"],
+      "@any-design/anyui-vue": ["../vue/src/index.ts"],
+      "@any-design/anyui-react": ["../react/src/index.tsx"],
+      "@any-design/anyui-svelte": ["../svelte/src/index.ts"]
+    }
+  }
+}

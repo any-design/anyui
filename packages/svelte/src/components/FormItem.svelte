@@ -9,7 +9,7 @@
     invalid = false,
     invalidMessage = '',
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   const form = getContext<any>('anyui-form') ?? {};
   const fallbackValidation = writable<Record<string, { isValid: boolean; message: string }>>({});

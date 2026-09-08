@@ -2,6 +2,8 @@ packages:
   - packages/*
 overrides:
   esbuild: 0.28.1
+  # CVE-2026-73646 and the later source map advisory require >=8.5.23.
+  postcss: ^8.5.28
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
@@ -12,5 +14,3 @@ allowBuilds:
   esbuild: true
   sharp: true
   workerd: true
-minimumReleaseAgeExclude:
-  - prettier@3.8.5

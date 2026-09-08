@@ -6,8 +6,8 @@
     prevIcon = 'uil:angle-left',
     nextIcon = 'uil:angle-right',
     class: className = '',
-    onUpdatePagination,
-    onChange,
+    onUpdatePagination = undefined,
+    onChange = undefined,
   } = $props();
   const totalPages = $derived(Math.max(1, Math.ceil(pagination.total / pagination.pageSize)));
   const pages = $derived(Array.from({ length: totalPages }, (_, index) => index + 1).slice(0, 12));

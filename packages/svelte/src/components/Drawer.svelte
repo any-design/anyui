@@ -25,21 +25,15 @@
     lockScroll = true,
     zIndex = 100,
     maskZIndex = undefined,
-    glassOpacity = 1,
     transitionName = '',
     drawerClass = '',
     maskClass = '',
     bodyClass = '',
     class: className = '',
-    children,
-    onUpdateModelValue,
+    children = undefined,
+    onUpdateModelValue = undefined,
   } = $props();
   const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
-  const bodyBackground = $derived.by(() => {
-    const opacity = Math.min(1, Math.max(0, Number(glassOpacity)));
-    if (opacity >= 1) return undefined;
-    return `color-mix(in srgb, var(--a-surface, var(--bg)) ${opacity * 100}%, transparent)`;
-  });
   const transition = $derived(transitionName || 'a-drawer');
   const close = () => {
     modelValue = false;
@@ -123,6 +117,6 @@
         }
       }}
     ></div>{/if}
-    <div class="a-drawer__body {appendToBody ? 'a-drawer__body--outside' : ''} {bodyClass}" style:width={formattedWidth} style:z-index={zIndex} style:background-color={bodyBackground}>{@render children?.()}</div>
+    <div class="a-drawer__body {appendToBody ? 'a-drawer__body--outside' : ''} {bodyClass}" style:width={formattedWidth} style:z-index={zIndex}>{@render children?.()}</div>
   </div>
 {/if}

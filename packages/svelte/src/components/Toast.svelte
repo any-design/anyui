@@ -7,7 +7,7 @@
     content = '',
     closable = true,
     class: className = '',
-    onClose,
+    onClose = undefined,
   } = $props();
 
   const defaultToastIcon: Record<string, string> = {

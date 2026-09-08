@@ -19,6 +19,12 @@
         'a-select': true,
         'a-select--large': size === 'large',
       }"
+      role="combobox"
+      :tabindex="disabled ? -1 : 0"
+      :aria-controls="dropdownId"
+      :aria-expanded="expanded"
+      :aria-disabled="disabled"
+      @keydown="handleSelectKeydown"
     >
       <a-input
         v-model="selectedText"
@@ -56,7 +62,12 @@
       </div>
     </div>
     <template #popup>
-      <div class="a-select-dropdown">
+      <div
+        :id="dropdownId"
+        class="a-select-dropdown"
+        role="listbox"
+        :aria-multiselectable="multiple || undefined"
+      >
         <div
           v-for="item in items"
           :key="item.value"
@@ -64,7 +75,11 @@
             'a-select-dropdown__item': true,
             'a-select-dropdown__item--selected': isItemSelected(item),
           }"
+          role="option"
+          tabindex="0"
+          :aria-selected="isItemSelected(item)"
           @click="handleItemClick(item)"
+          @keydown="(event) => handleItemKeydown(event, item)"
         >
           <span class="a-select-dropdown__item-text">{{ item.text }}</span>
           <Icon
@@ -91,6 +106,7 @@ import {
   onMounted,
   onUnmounted,
   ref,
+  useId,
   watch,
 } from 'vue';
 
@@ -165,6 +181,7 @@ export default defineComponent({
     const selectedText = ref('');
     const expanded = ref(false);
     const popperRef = ref<PopperExposed | null>(null);
+    const dropdownId = `a-select-dropdown-${useId()}`;
 
     let triggerResizeObserver: ResizeObserver | undefined;
     let syncAnimationFrame: number | undefined;
@@ -206,6 +223,9 @@ export default defineComponent({
     );
 
     const handleItemClick = (item: ASelectItem) => {
+      if (props.disabled) {
+        return;
+      }
       if (props.multiple) {
         const values = [...getSelectedValues()];
         const existedIndex = values.indexOf(item.value);
@@ -228,6 +248,28 @@ export default defineComponent({
       formItemEventEmitter?.emit('change');
       // hide popper
       popperRef.value?.hide();
+    };
+
+    const handleSelectKeydown = (event: KeyboardEvent) => {
+      if (props.disabled) {
+        return;
+      }
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        if (expanded.value) {
+          popperRef.value?.hide();
+        } else {
+          popperRef.value?.show();
+        }
+      }
+    };
+
+    const handleItemKeydown = (event: KeyboardEvent, item: ASelectItem) => {
+      if (event.key !== 'Enter' && event.key !== ' ') {
+        return;
+      }
+      event.preventDefault();
+      handleItemClick(item);
     };
 
     // remove a single value from the multi-select without toggling the dropdown
@@ -371,12 +413,15 @@ export default defineComponent({
       selectedItems,
       displayPlaceholder,
       expanded,
+      dropdownId,
       dropdownClass,
       formattedWidth,
       isItemSelected,
       syncDropdownWidth,
       handlePopupStatusChanged,
       handleItemClick,
+      handleSelectKeydown,
+      handleItemKeydown,
       removeTag,
       popperRef,
       handleSelectChange,
@@ -496,8 +541,7 @@ export default defineComponent({
     box-sizing: border-box;
     padding: 6px;
     box-shadow:
-      var(--a-surface-highlight, 0 0 #0000),
-      var(--a-shadow-md, 2px 5px 12px var(--shadow-8));
+      var(--a-surface-highlight, 0 0 #0000), var(--a-shadow-md, 2px 5px 12px var(--shadow-8));
     left: 0;
     &__item {
       display: flex;
@@ -528,8 +572,7 @@ export default defineComponent({
       color: var(--a-item-selected-color, var(--primary));
       font-weight: 600;
       box-shadow:
-        var(--a-item-selected-highlight, 0 0 #0000),
-        var(--a-item-selected-shadow, 0 0 #0000);
+        var(--a-item-selected-highlight, 0 0 #0000), var(--a-item-selected-shadow, 0 0 #0000);
     }
     &__item-check {
       flex-shrink: 0;

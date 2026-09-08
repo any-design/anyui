@@ -9,9 +9,9 @@
     border = true,
     round = false,
     class: className = '',
-    children,
-    onUpdateModelValue,
-    onChange,
+    children = undefined,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
   } = $props();
 
   let itemCounter = 0;

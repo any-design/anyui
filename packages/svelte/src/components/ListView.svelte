@@ -5,7 +5,7 @@
     type = '',
     itemHeight = undefined,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   const context = {
     get type() {

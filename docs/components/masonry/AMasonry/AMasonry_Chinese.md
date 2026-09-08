@@ -74,12 +74,19 @@ const items = Array.from({ length: 80 }, (_, i) => ({
 
 ```vue
 <template>
-  <AMasonry :items="items" :col="3" :col-width="180" :item-height-getter="(i) => i.height">
+  <AMasonry :items="items" :col="3" :col-width="180" :item-height-getter="getItemHeight">
     <template #default="{ data }">
       <div class="masonry-card" :style="{ height: data.height + 'px' }">{{ data.title }}</div>
     </template>
   </AMasonry>
 </template>
+
+<script setup>
+const items = Array.from({ length: 12 }, (_, id) => ({
+  id, title: `Item ${id + 1}`, height: 112 + (id % 5) * 34,
+}));
+const getItemHeight = (item) => item.height;
+</script>
 ```
 
 ### 拉伸到列宽
@@ -88,12 +95,19 @@ const items = Array.from({ length: 80 }, (_, i) => ({
 
 ```vue
 <template>
-  <AMasonry :items="items" :col-width="240" :item-height-getter="(i) => i.height" fit>
+  <AMasonry :items="items" :col-width="240" :item-height-getter="getItemHeight" fit>
     <template #default="{ data }">
       <div class="masonry-card" :style="{ height: data.height + 'px' }">{{ data.title }}</div>
     </template>
   </AMasonry>
 </template>
+
+<script setup>
+const items = Array.from({ length: 12 }, (_, id) => ({
+  id, title: `Item ${id + 1}`, height: 112 + (id % 5) * 34,
+}));
+const getItemHeight = (item) => item.height;
+</script>
 ```
 
 ## 属性

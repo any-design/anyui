@@ -91,6 +91,17 @@ const active = ref('Vue');
 <template>
   <AListMenu v-model="active" :menu="groups" selected-variant="solid" />
 </template>
+
+<script setup>
+import { ref } from 'vue';
+const active = ref('profile');
+const groups = {
+  Account: [
+    { label: 'Profile', value: 'profile' },
+    { label: 'Security', value: 'security' },
+  ],
+};
+</script>
 ```
 
 ## 属性

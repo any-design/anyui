@@ -21,6 +21,7 @@ const props = defineProps<{
 const emit = defineEmits(['initHeight']);
 
 const itemRef = ref();
+const observer = inject<ResizeObserver>('getResizeObserver');
 
 onMounted(() => {
   if (!itemRef.value) {
@@ -31,12 +32,10 @@ onMounted(() => {
     itemId: props.item?.id,
     height: itemRef.value.clientHeight,
   });
-  const observer = inject<ResizeObserver>('getResizeObserver');
   observer?.observe(itemRef.value);
 });
 
 onBeforeUnmount(() => {
-  const observer = inject<ResizeObserver>('getResizeObserver');
-  observer?.unobserve(itemRef.value);
+  if (itemRef.value) observer?.unobserve(itemRef.value);
 });
 </script>

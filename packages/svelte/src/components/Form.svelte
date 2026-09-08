@@ -10,7 +10,7 @@
     layout = 'default',
     labelWidth = '20%',
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   const validation = writable<Record<string, { isValid: boolean; message: string }>>({});
   const clearSignals = writable<Record<string, number>>({});

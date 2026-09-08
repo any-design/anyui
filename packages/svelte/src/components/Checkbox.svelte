@@ -5,8 +5,8 @@
     modelValue = $bindable(false),
     checkIcon = 'si-glyph:checked',
     class: className = '',
-    onUpdateModelValue,
-    onChange,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
   } = $props();
   const update = () => {
     modelValue = !modelValue;

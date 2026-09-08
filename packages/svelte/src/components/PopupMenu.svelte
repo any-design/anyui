@@ -16,8 +16,8 @@
     hideAfterClick = false,
     group = '',
     class: className = '',
-    children,
-    onCommand,
+    children = undefined,
+    onCommand = undefined,
   } = $props();
   let popper = $state<any>();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);

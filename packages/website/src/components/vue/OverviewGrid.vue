@@ -10,14 +10,7 @@
     <section v-for="group in groups" :key="group.category.id" class="components-index__group">
       <h2 class="components-index__group-title">{{ group.category.label[currentLang] }}</h2>
       <a-grid class="components-index__grid" :columns="24" :gap="14" stretch>
-        <a-grid-col
-          v-for="item in group.items"
-          :key="item.slug"
-          :xs="24"
-          :sm="12"
-          :lg="8"
-          :xl="8"
-        >
+        <a-grid-col v-for="item in group.items" :key="item.slug" :xs="24" :sm="12" :lg="8" :xl="8">
           <a-card
             :link="`/components/${item.slug}`"
             :clean="true"
@@ -36,7 +29,6 @@
 </template>
 
 <script lang="ts" setup>
-import type { PropType } from 'vue';
 import { t } from '../../i18n/lang';
 import { useSiteLang } from './useSiteLang';
 
@@ -50,12 +42,7 @@ interface ComponentGroup {
   items: ComponentItem[];
 }
 
-defineProps({
-  groups: {
-    type: Array as PropType<ComponentGroup[]>,
-    default: () => [],
-  },
-});
+withDefaults(defineProps<{ groups?: ComponentGroup[] }>(), { groups: () => [] });
 
 const { currentLang } = useSiteLang();
 </script>

@@ -2,6 +2,8 @@
 import BaseLayout from './BaseLayout.astro';
 import { componentsByCategory, type CategoryMeta, type ComponentEntry } from '../data/components';
 import ComponentsSidebar from '../components/vue/ComponentsSidebar.vue';
+import Toc from '../components/Toc.astro';
+import MobileToc from '../components/vue/MobileToc.vue';
 import LangToggle from '../components/vue/LangToggle.vue';
 import type { BreadcrumbItem, SchemaType } from '../data/seo';
 
@@ -40,7 +42,7 @@ const mobileMenuGroups = [
   mobileNavMenuActive={active}
   mobileNavMenuKind="components"
 >
-  <div class="docs docs--components">
+  <div class:list={["docs docs--components", { "docs--has-toc": active !== "overview" }]}>
     <ComponentsSidebar
       client:load
       transition:persist="components-sidebar"
@@ -50,10 +52,12 @@ const mobileMenuGroups = [
     />
 
     <article class="prose">
+      {active !== "overview" && <MobileToc client:load auto />}
       <div class="doc-body">
         <slot />
       </div>
       <div class="doc-toolbar">
+        <span class="doc-toolbar__label"><span data-site-lang="en">Components</span><span data-site-lang="zh">组件参考</span></span>
         <slot name="toolbar" />
         <LangToggle
           client:load
@@ -63,5 +67,6 @@ const mobileMenuGroups = [
         />
       </div>
     </article>
+    {active !== "overview" && <Toc />}
   </div>
 </BaseLayout>

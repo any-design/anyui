@@ -3,7 +3,7 @@
     label = '',
     checked = false,
     class: className = '',
-    onChange,
+    onChange = undefined,
   } = $props();
 </script>
 

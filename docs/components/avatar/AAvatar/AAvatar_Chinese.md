@@ -16,7 +16,7 @@ import { Avatar } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AAvatar src="/users/ada.png" name="Ada Lovelace" size="medium" />
+  <AAvatar src="/favicon.png" name="Ada Lovelace" size="medium" />
 </template>
 ```
 
@@ -29,11 +29,11 @@ import { Avatar } from '@any-design/anyui/vue';
 ```vue
 <template>
   <div class="demo-row">
-    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="xsmall" />
-    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="small" />
-    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="medium" />
-    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="large" />
-    <AAvatar src="/users/ada.png" name="Ada Lovelace" size="xlarge" />
+    <AAvatar src="/favicon.png" name="Ada Lovelace" size="xsmall" />
+    <AAvatar src="/favicon.png" name="Ada Lovelace" size="small" />
+    <AAvatar src="/favicon.png" name="Ada Lovelace" size="medium" />
+    <AAvatar src="/favicon.png" name="Ada Lovelace" size="large" />
+    <AAvatar src="/favicon.png" name="Ada Lovelace" size="xlarge" />
   </div>
 </template>
 ```
@@ -44,7 +44,7 @@ import { Avatar } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AAvatar src="/users/ada.png" name="Ada Lovelace" round :width="72" />
+  <AAvatar src="/favicon.png" name="Ada Lovelace" round :width="72" />
 </template>
 ```
 
@@ -54,7 +54,7 @@ import { Avatar } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AAvatar src="/broken.png" name="Ada Lovelace" size="large" round />
+  <AAvatar src="" name="Ada Lovelace" size="large" round />
 </template>
 ```
 

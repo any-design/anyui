@@ -128,6 +128,9 @@ const clearVars = () => {
   itemIdIndexMap = {};
   itemHeightMap = {};
   biTree.value = undefined;
+  scrollHeight.value = 0;
+  firstItemTop.value = 0;
+  refreshInnerStyles();
 };
 
 const refreshItems = ({
@@ -207,7 +210,7 @@ const getDisplayStart = (startTop: number) => {
 let updateFrame: ReturnType<typeof requestAnimationFrame> | undefined;
 
 const refreshDisplayItems = () => {
-  if (updateFrame && typeof window !== 'undefined') window.cancelAnimationFrame(updateFrame);
+  if (updateFrame !== undefined && typeof window !== 'undefined') window.cancelAnimationFrame(updateFrame);
   isRefreshing.value = true;
   const update = () => {
     scrollTop.value = containerRef.value?.scrollTop || 0;
@@ -228,7 +231,7 @@ const refreshDisplayItems = () => {
 
     if (shouldScrollBottomWhenRefreshing.value) {
       nextTick(() => {
-        if (!containerRef.value) {
+        if (!containerRef.value || !componentActivated.value) {
           return;
         }
         containerRef.value.scrollTop = containerRef.value.scrollHeight;
@@ -284,13 +287,15 @@ const handleInitItemHeight = ({ itemId, height }: { itemId?: string; height?: nu
     return;
   }
 
+  const itemIndex = itemIdIndexMap[itemId];
+  if (!transformedItems[itemIndex]) return;
+
   const oldHeight = itemHeightMap[itemId] || 0;
   if (Math.floor(height) === Math.floor(oldHeight)) {
     return;
   }
   itemHeightMap[itemId] = height;
 
-  const itemIndex = itemIdIndexMap[itemId];
   transformedItems[itemIndex].__itemHeight = height;
 
   const diff = height - oldHeight;
@@ -327,7 +332,7 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
   if (!componentActivated.value) return;
 
   let scrollHeightDiff = 0;
-  let minUpdateIndex = Infinity;
+  let changed = false;
 
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < entries.length; i++) {
@@ -345,6 +350,8 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     if (!itemId) {
       throw new Error('Detect item resized but no item id found.');
     }
+    const itemIndex = itemIdIndexMap[itemId];
+    if (!transformedItems[itemIndex]) continue;
     if (props.ignoreInvisibleItems) {
       const targetStyle = getComputedStyle(targetEl);
       if (targetStyle.display === 'none') {
@@ -357,9 +364,8 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     }
     scrollHeightDiff += heightDiff;
     itemHeightMap[itemId] = height;
-    const itemIndex = itemIdIndexMap[itemId];
     transformedItems[itemIndex].__itemHeight = height;
-    minUpdateIndex = Math.min(itemIndex, minUpdateIndex);
+    changed = true;
 
     biTree.value?.update(itemIndex + 1, heightDiff);
   }
@@ -375,7 +381,7 @@ const onItemResized = (entries: ResizeObserverEntry[]) => {
     }
   }
 
-  refreshDisplayItems();
+  if (changed) refreshDisplayItems();
 };
 
 const createNoopResizeObserver = (): ResizeObserver =>
@@ -418,6 +424,7 @@ const firstRender = () => {
     const heights: number[] = [];
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < elements.length; i++) {
+      if (!transformedItems[i]) continue;
       const { clientHeight } = elements[i];
       const itemHeight = isFinite(clientHeight) ? clientHeight : estimatedItemHeightRef.value;
       transformedItems[i].__itemHeight = itemHeight;
@@ -426,7 +433,8 @@ const firstRender = () => {
       heights.push(clientHeight);
     }
     // remove the sub pixel value
-    estimatedItemHeightRef.value = Math.min(...heights.filter((item) => !!item));
+    const measuredHeights = heights.filter((height) => height > 0);
+    if (measuredHeights.length) estimatedItemHeightRef.value = Math.min(...measuredHeights);
     // rerender the current screen
     refreshItems();
     firstRendered = true;
@@ -456,6 +464,7 @@ const containerResizeObserver =
         // if component is not activated, should not mutate containerHeight here
         if (componentActivated.value) {
           containerHeight.value = container.contentRect.height;
+          refreshDisplayItems();
         }
       });
 
@@ -505,11 +514,11 @@ const scrollToBottom = () => {
   // the estimatedItemHeight will be smaller than the actual item height, so we need to scroll down twice to make things accurate
   if (scrollToBottomTimeout) clearTimeout(scrollToBottomTimeout);
   scrollToBottomTimeout = setTimeout(() => {
+    scrollToBottomTimeout = undefined;
     if (!checkContainerScrollState()) {
       return;
     }
     containerRef.value!.scrollTop = containerRef.value!.scrollHeight;
-    scrollToBottomTimeout = undefined;
   });
 };
 
@@ -528,29 +537,15 @@ defineExpose({
 let cancelWatch: ReturnType<typeof watch> | undefined;
 
 const startWatchItems = () => {
-  if (props.enableDeepWatch) {
-    cancelWatch = watch(
-      () => [...props.items],
-      (newVal) => {
-        if (firstRendered || !newVal?.length) {
-          refreshItems();
-        } else {
-          firstRender();
-        }
-      },
-    );
-  } else {
-    cancelWatch = watch(
-      () => props.items.length,
-      (newVal) => {
-        if (firstRendered || !newVal) {
-          refreshItems();
-        } else {
-          firstRender();
-        }
-      },
-    );
-  }
+  cancelWatch = watch(
+    () => props.items,
+    (newVal) => {
+      if (firstRendered || !newVal?.length) refreshItems();
+      else firstRender();
+    },
+    // Track array replacement/reordering without traversing every item's data.
+    { deep: props.enableDeepWatch ? true : 1 },
+  );
 };
 
 watch(
@@ -569,6 +564,7 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
+  componentActivated.value = true;
   // setup container
   if (!containerRef.value) {
     throw new Error('Cannot get the container reference.');
@@ -594,6 +590,7 @@ onActivated(() => {
   }
   // refresh items after activation
   nextTick(() => {
+    if (!componentActivated.value) return;
     if (containerRef.value) {
       containerHeight.value = containerRef.value.clientHeight;
     }
@@ -601,12 +598,28 @@ onActivated(() => {
   });
 });
 
+const cancelPendingWork = () => {
+  if (updateFrame !== undefined) cancelAnimationFrame(updateFrame);
+  if (scrollTimeout !== undefined) clearTimeout(scrollTimeout);
+  if (scrollToBottomTimeout !== undefined) clearTimeout(scrollToBottomTimeout);
+  updateFrame = undefined;
+  scrollTimeout = undefined;
+  scrollToBottomTimeout = undefined;
+  isRefreshing.value = false;
+  shouldScrollBottomWhenRefreshing.value = false;
+  scrollDirection.value = undefined;
+};
+
 onDeactivated(() => {
   componentActivated.value = false;
+  cancelPendingWork();
 });
 
 onBeforeUnmount(() => {
   // clean up
+  componentActivated.value = false;
+  cancelPendingWork();
+  cancelWatch?.();
   itemResizeObserver.disconnect();
   containerResizeObserver.disconnect();
 });

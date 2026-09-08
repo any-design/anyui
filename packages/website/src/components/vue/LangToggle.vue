@@ -1,68 +1,34 @@
 <template>
-  <a-radio-button-group
-    round
-    size="small"
-    :items="items"
-    :model-value="current"
-    @update:model-value="handleChange"
-  />
+  <div class="language-toggle" role="group" aria-label="Language / 语言">
+    <button
+      v-for="item in items"
+      :key="item.value"
+      type="button"
+      :lang="item.value === 'zh' ? 'zh-CN' : 'en'"
+      :aria-pressed="currentLang === item.value"
+      @click="setLang(item.value)"
+    >
+      {{ item.label }}
+    </button>
+  </div>
 </template>
 
-<script lang="ts" setup>
-import type { PropType } from 'vue';
-import { onMounted, ref } from 'vue';
-
-type Lang = 'en' | 'zh';
-
-const props = defineProps({
-  modelValue: {
-    type: String as PropType<Lang>,
-    default: 'en',
-  },
-});
-
-const emit = defineEmits(['update:modelValue']);
-
+<script setup lang="ts">
+import { useSiteLang } from './useSiteLang';
+import type { Lang } from '../../i18n/lang';
+defineProps<{ modelValue?: Lang }>();
+const emit = defineEmits<{ 'update:modelValue': [value: Lang] }>();
+const { currentLang } = useSiteLang();
 const items = [
-  { label: 'EN', value: 'en' },
-  { label: '中文', value: 'zh' },
+  { label: 'EN', value: 'en' as const },
+  { label: '中文', value: 'zh' as const },
 ];
-
-// The SSR render always starts from the default ('en'); sync the persisted
-// language from localStorage on mount so the pill reflects the user's choice
-// without a flash once hydrated.
-const current = ref<Lang>(props.modelValue);
-
-const applyRootLang = (lang: Lang) => {
-  document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
-  document.documentElement.setAttribute('data-lang', lang);
-};
-
-onMounted(() => {
+const setLang = (lang: Lang) => {
+  currentLang.value = lang;
   try {
-    const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
-    if (prefs.lang === 'zh' || prefs.lang === 'en') {
-      current.value = prefs.lang;
-      applyRootLang(prefs.lang);
-      emit('update:modelValue', prefs.lang);
-    }
-  } catch {
-    // ignore
-  }
-});
-
-const handleChange = (value: string | number | undefined) => {
-  const lang = (value === 'zh' ? 'zh' : 'en') as Lang;
-  current.value = lang;
-  applyRootLang(lang);
-  try {
-    const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
-    prefs.lang = lang;
-    localStorage.setItem('anyui-site-prefs', JSON.stringify(prefs));
-  } catch {
-    // ignore
-  }
-  // LocalizedDoc listens for this event to swap the visible markdown pane.
+    const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}') || {};
+    localStorage.setItem('anyui-site-prefs', JSON.stringify({ ...prefs, lang }));
+  } catch {}
   window.dispatchEvent(new CustomEvent('anyui:lang-change', { detail: lang }));
   emit('update:modelValue', lang);
 };

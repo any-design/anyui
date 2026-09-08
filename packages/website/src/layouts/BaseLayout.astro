@@ -102,8 +102,8 @@ const criticalThemeCss =
     <meta property="og:image" content={new URL(SITE.image.path, SITE.url).toString()} />
     <meta property="og:image:secure_url" content={new URL(SITE.image.path, SITE.url).toString()} />
     <meta property="og:image:type" content={SITE.image.type} />
-    <meta property="og:image:width" content={SITE.image.width} />
-    <meta property="og:image:height" content={SITE.image.height} />
+    <meta property="og:image:width" content={String(SITE.image.width)} />
+    <meta property="og:image:height" content={String(SITE.image.height)} />
     <meta property="og:image:alt" content={SITE.image.alt} />
     <meta property="og:locale" content="en_US" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -111,103 +111,35 @@ const criticalThemeCss =
     <meta name="twitter:description" content={seo.description} />
     <meta name="twitter:image" content={new URL(SITE.image.path, SITE.url).toString()} />
     <meta name="twitter:image:alt" content={SITE.image.alt} />
-    {jsonLd.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
-    <ClientRouter />
+    {jsonLd.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify(item)} />)}
+    <ClientRouter fallback="swap" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!--
-      Load the code font as early as possible: preload the CSS so the fetch starts
-      before render, then apply it. This avoids the code-block font swap (FOUC)
-      that happens on every MPA navigation in the docs.
-    -->
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
-    />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=optional"
+      media="print"
+      onload="this.media='all'"
     />
     <script is:inline>
-      // apply persisted site preferences before paint to avoid flashes.
-      // Runs on first load (inline) AND after every client-side navigation
-      // (astro:after-swap), so the theme attribute survives SPA routing.
-      const applySitePrefs = () => {
+      (() => {
         try {
-          const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}');
-          if (prefs.dark) document.documentElement.setAttribute('theme', 'dark');
-          else document.documentElement.setAttribute('theme', 'light');
-          if (prefs.glass) document.documentElement.setAttribute('data-anyui-style', 'glass');
-          else document.documentElement.removeAttribute('data-anyui-style');
-          const lang = prefs.lang === 'zh' ? 'zh' : 'en';
-          document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
-          document.documentElement.setAttribute('data-lang', lang);
+          const prefs = JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}') || {};
+          const root = document.documentElement;
+          root.setAttribute('theme', prefs.dark === true ? 'dark' : 'light');
+          if (prefs.glass === true) root.setAttribute('data-anyui-style', 'glass');
+          root.lang = prefs.lang === 'zh' ? 'zh-CN' : 'en';
+          root.dataset.lang = prefs.lang === 'zh' ? 'zh' : 'en';
         } catch {}
-      };
-      applySitePrefs();
-      document.addEventListener('astro:after-swap', applySitePrefs);
-    </script>
-    <script is:inline>
-      // Per-URL scroll restoration for SPA navigations.
-      //
-      // Astro's ClientRouter sets `history.scrollRestoration = "manual"` and only
-      // restores scroll on back/forward (traverse) navigations via history.state.
-      // A normal forward link navigation (e.g. clicking the Overview link in the
-      // components sidebar after browsing a component detail page) is a "push",
-      // so Astro always scrolls to the top — even when the destination was
-      // visited before. That makes the /components Overview grid snap back to the
-      // top every time you return to it via the sidebar, which feels broken.
-      //
-      // We keep a session-scoped map of URL → {x, y}, snapshot the scroll
-      // position of the page we're leaving on astro:before-preparation, and
-      // restore the saved position on astro:page-load for non-traverse
-      // navigations. Traverse is left to Astro (it already restores from
-      // history.state), and brand-new URLs have no saved entry so they still
-      // scroll to the top as expected.
-      (function () {
-        if (window.__anyuiScrollRestoration) return;
-        window.__anyuiScrollRestoration = true;
-        const positions = new Map();
-        const urlKey = (loc) => loc.pathname + loc.search + loc.hash;
-        let pendingNavType = null;
-
-        // Snapshot the outgoing page's scroll before we navigate away.
-        // e.from / e.to are URL objects (pathname/search/hash/href).
-        document.addEventListener('astro:before-preparation', (e) => {
-          try {
-            positions.set(urlKey(e.from), { x: window.scrollX, y: window.scrollY });
-          } catch {}
-          pendingNavType = e.navigationType;
-        });
-
-        // After the new page is in place, restore scroll if this was a forward
-        // (push/replace) navigation to a URL we've visited before.
-        document.addEventListener('astro:page-load', () => {
-          const wasTraverse = pendingNavType === 'traverse';
-          pendingNavType = null;
-          if (wasTraverse) return; // Astro already restored from history.state
-          const key = urlKey(window.location);
-          const saved = positions.get(key);
-          if (saved) {
-            // Wait a frame so layout/images have settled before scrolling.
-            requestAnimationFrame(() =>
-              window.scrollTo({ left: saved.x, top: saved.y, behavior: 'instant' }),
-            );
-          }
-        });
       })();
     </script>
     <style is:inline set:html={criticalThemeCss}></style>
   </head>
-  <body>
-    <div class="site-backdrop">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+  <body data-section={active || 'home'}>
+    <a class="skip-link" href="#main-content">Skip to content / 跳转到正文</a>
+    <div class="site-backdrop" aria-hidden="true" transition:name="site-backdrop"></div>
 
-    <header class="site-header">
+    <header class="site-header" transition:name="site-header">
       <div class="site-header__inner">
         <a class="site-header__brand" href="/" aria-label="AnyUI home">
           <BrandLogo />
@@ -222,8 +154,6 @@ const criticalThemeCss =
         {hasMobileMenu && (
           <MobileNavDrawer
             client:only="vue"
-            transition:persist="mobile-nav-drawer"
-            transition:persist-props
             menu-groups={mobileNavMenuGroups}
             menu-active={mobileNavMenuActive}
             menu-title={mobileNavMenuTitle}
@@ -233,7 +163,9 @@ const criticalThemeCss =
       </div>
     </header>
 
-    <slot />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
 
     <footer class="site-footer">
       <div class="site-footer__inner">
@@ -246,48 +178,7 @@ const criticalThemeCss =
     </footer>
 
     <script>
-      // Re-bind interactive UI on every page load (incl. client-side navigations
-      // via <ClientRouter />). Listening to astro:page-load covers both the
-      // initial load and every subsequent SPA navigation.
-      const initPage = () => {
-        // professional code blocks: language badge + copy button on every shiki block
-        document.querySelectorAll('pre.astro-code').forEach((pre) => {
-          // skip if already wrapped (e.g. persisted across a no-op swap)
-          if (pre.parentElement && pre.parentElement.classList.contains('code-frame')) return;
-          const frame = document.createElement('div');
-          frame.className = 'code-frame';
-          pre.parentNode.insertBefore(frame, pre);
-          frame.appendChild(pre);
-          const lang = pre.dataset.language;
-          if (lang && lang !== 'plaintext') {
-            const badge = document.createElement('span');
-            badge.className = 'code-frame__lang';
-            badge.textContent = lang;
-            frame.appendChild(badge);
-          }
-          const copy = document.createElement('button');
-          copy.className = 'code-frame__copy';
-          copy.type = 'button';
-          copy.textContent = 'Copy';
-          copy.addEventListener('click', async () => {
-            try {
-              await navigator.clipboard.writeText(pre.innerText);
-            } catch {
-              const helper = document.createElement('textarea');
-              helper.value = pre.innerText;
-              document.body.appendChild(helper);
-              helper.select();
-              document.execCommand('copy');
-              helper.remove();
-            }
-            copy.textContent = 'Copied!';
-            setTimeout(() => (copy.textContent = 'Copy'), 1400);
-          });
-          frame.appendChild(copy);
-        });
-      };
-
-      document.addEventListener('astro:page-load', initPage);
+      import '../scripts/site-runtime';
     </script>
   </body>
 </html>

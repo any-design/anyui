@@ -18,7 +18,9 @@ lib
 # Astro dev cache + settings timestamp; content.d.ts/types.d.ts stay tracked
 # (generated types for IDE without running astro sync).
 **/.astro/dev.json
+**/.astro/preview.json
 **/.astro/settings.json
 **/.astro/*.log
 # Vite dev cache
 **/.vite/
+**/.svelte-kit/

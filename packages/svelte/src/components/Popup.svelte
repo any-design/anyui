@@ -25,10 +25,10 @@
     width = undefined,
     zIndex = 1000,
     class: className = '',
-    children,
-    onUpdateModelValue,
-    onOpen,
-    onClose,
+    children = undefined,
+    onUpdateModelValue = undefined,
+    onOpen = undefined,
+    onClose = undefined,
   } = $props();
 
   const panelWidth = $derived(

@@ -112,12 +112,12 @@ AnyUI uses pnpm workspaces and Turbo.
 ```bash
 pnpm install
 pnpm run dev
-pnpm run generate
+pnpm run build
 pnpm run dist
 pnpm run typecheck
 ```
 
-Workspace packages live under `packages/vue`, `packages/react`, and `packages/svelte`. React and Svelte sources are generated from the shared component manifest in `scripts/generate-framework-packages.mjs`, so regenerate them after changing the manifest or shared component API.
+Workspace packages live under `packages/vue`, `packages/react`, and `packages/svelte`. Build with `pnpm run build`; it preserves the maintained framework sources. Patch complete React and Svelte implementations directly alongside Vue changes. `pnpm run generate` rewrites framework sources from `scripts/generate-framework-packages.mjs`; use it only for implementations intentionally owned by the generator and review the diff for overwrites.
 
 `pnpm run dev` starts the website and mounts the multi-framework testground at `/testground/`, so docs and component previews run as one local site. The testground renders every component with Vue, React, and Svelte side by side against the library sources — see [its README](./packages/testground/README.md).
 

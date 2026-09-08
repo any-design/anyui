@@ -7,7 +7,7 @@
     showIcon = true,
     round = false,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   const defaultMessageIcon: Record<string, string> = {
     default: '',

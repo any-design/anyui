@@ -10,9 +10,9 @@
     round = true,
     emptyText = 'No data',
     class: className = '',
-    empty,
-    renderCell,
-    onRowClick,
+    empty = undefined,
+    renderCell = undefined,
+    onRowClick = undefined,
   } = $props();
 
   const getColWidth = (column: TableColumn) => {

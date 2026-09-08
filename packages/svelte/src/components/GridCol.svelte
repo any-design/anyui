@@ -8,7 +8,7 @@
     lg = undefined,
     xl = undefined,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   const normalizeSpan = (value: GridColSpan | undefined) => {
     if (value === 'auto') return 'auto';

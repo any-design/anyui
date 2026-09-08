@@ -7,9 +7,9 @@
     round = false,
     size = 'default',
     class: className = '',
-    children,
-    onUpdateModelValue,
-    onChange,
+    children = undefined,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
   } = $props();
   let containerEl = $state<HTMLDivElement>();
   let bgBlockPosition = $state<{ width: number; left: number } | undefined>(undefined);

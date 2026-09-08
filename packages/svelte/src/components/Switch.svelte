@@ -3,8 +3,8 @@
     modelValue = $bindable(false),
     disabled = false,
     class: className = '',
-    onUpdateModelValue,
-    onChange,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
   } = $props();
   const update = () => {
     if (disabled) return;

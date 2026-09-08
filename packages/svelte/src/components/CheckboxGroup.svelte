@@ -7,9 +7,9 @@
     gap = 16,
     checkIcon = 'si-glyph:checked',
     class: className = '',
-    children,
-    onUpdateModelValue,
-    onChange,
+    children = undefined,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
   } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
   const normalizeItem = (item: ACheckboxGroupItemConfig) =>

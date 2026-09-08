@@ -12,14 +12,14 @@
     appendToBody = true,
     zIndex = 1000,
     class: className = '',
-    children,
-    header,
-    footer,
-    onUpdateModelValue,
-    onConfirm,
-    onCancel,
-    onOpen,
-    onClose,
+    children = undefined,
+    header = undefined,
+    footer = undefined,
+    onUpdateModelValue = undefined,
+    onConfirm = undefined,
+    onCancel = undefined,
+    onOpen = undefined,
+    onClose = undefined,
   } = $props();
 
   const close = () => {

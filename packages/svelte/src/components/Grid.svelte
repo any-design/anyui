@@ -10,7 +10,7 @@
     minColWidth = 0,
     stretch = true,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   const formatStyleSize = (value: string | number | undefined) => {
     if (typeof value === 'number') return value + 'px';

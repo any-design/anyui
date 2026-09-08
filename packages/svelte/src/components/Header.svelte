@@ -2,7 +2,7 @@
   let {
     height = '',
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
   const formattedHeight = $derived(formatStyleSize(height));

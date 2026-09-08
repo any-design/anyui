@@ -8,10 +8,10 @@
     disabled = false,
     variant = 'default',
     class: className = '',
-    children,
-    media,
-    actions,
-    onClick,
+    children = undefined,
+    media = undefined,
+    actions = undefined,
+    onClick = undefined,
   } = $props();
   const interactive = $derived((clickable || Boolean(href)) && !disabled);
   const isLink = $derived(Boolean(href) && !disabled);
@@ -46,21 +46,20 @@
 {/snippet}
 
 {#if isLink}
-  <a class={classes} {href} aria-disabled={disabled || undefined} onclick={handleClick}>{@render inner()}</a>
-{:else if interactive}
+  <a class={classes} {href} tabindex={interactive ? 0 : undefined} aria-disabled={disabled || undefined} onclick={handleClick}>{@render inner()}</a>
+{:else}
   <div
     class={classes}
-    role="button"
-    tabindex="0"
+    role={interactive ? 'button' : undefined}
+    tabindex={interactive ? 0 : undefined}
     aria-disabled={disabled || undefined}
     onclick={handleClick}
     onkeydown={(event) => {
+      if (!interactive) return;
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         (event.currentTarget as HTMLElement).click();
       }
     }}
   >{@render inner()}</div>
-{:else}
-  <div class={classes} aria-disabled={disabled || undefined}>{@render inner()}</div>
 {/if}

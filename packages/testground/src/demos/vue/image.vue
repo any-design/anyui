@@ -3,7 +3,7 @@
     <div class="demo-block">
       <div class="demo-block__label">With Slots</div>
       <div class="demo-row">
-        <a-image src="/favicon.png" width="200" height="200">
+        <a-image :src="imageSrc" width="200" height="200">
           <template #loading>
             <span>Loading</span>
           </template>
@@ -15,3 +15,7 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+const imageSrc = `${import.meta.env.BASE_URL}logo.png`;
+</script>

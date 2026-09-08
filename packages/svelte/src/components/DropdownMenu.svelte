@@ -17,10 +17,10 @@
     menuClass = '',
     group = '',
     class: className = '',
-    children,
-    item: itemSnippet,
-    onCommand,
-    onVisibleChange,
+    children = undefined,
+    item: itemSnippet = undefined,
+    onCommand = undefined,
+    onVisibleChange = undefined,
   } = $props();
   let popper = $state<any>();
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);

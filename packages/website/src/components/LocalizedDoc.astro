@@ -113,14 +113,7 @@ const previewKeys = previewBlocks.map((block) => previewKey(block.index));
             const doc = preview?.closest('.localized-doc');
             if (!preview || !doc) return;
 
-            const readDocLang = () => {
-              try {
-                return JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}').lang;
-              } catch {
-                return undefined;
-              }
-            };
-            const target = readDocLang() === 'zh' ? 'zh' : 'en';
+            const target = document.documentElement.dataset.lang === 'zh' ? 'zh' : 'en';
             const pane = doc.querySelector(`:scope > .localized-doc__pane[data-lang="${target}"]`);
             const intro = pane?.querySelector('h1 + p') || pane?.querySelector('p');
             if (intro && intro.nextElementSibling !== preview) {
@@ -141,69 +134,3 @@ const previewKeys = previewBlocks.map((block) => previewKey(block.index));
     )
   }
 </div>
-
-<style is:global>
-  .localized-doc[data-lang='en'] > .localized-doc__pane[data-lang='zh'],
-  .localized-doc[data-lang='zh'] > .localized-doc__pane[data-lang='en'] {
-    display: none;
-  }
-
-  .localized-doc[data-lang='en'] .localized-doc__inline[data-lang='zh'],
-  .localized-doc[data-lang='zh'] .localized-doc__inline[data-lang='en'] {
-    display: none;
-  }
-</style>
-
-<script is:inline>
-  (() => {
-    const placeComponentPreview = (doc, lang) => {
-      const preview = doc.querySelector('.component-previews');
-      if (!preview) return;
-
-      const pane = doc.querySelector(`:scope > .localized-doc__pane[data-lang="${lang}"]`);
-      if (!pane) return;
-
-      const intro = pane.querySelector('h1 + p') || pane.querySelector('p');
-      if (intro) {
-        if (intro.nextElementSibling !== preview) {
-          intro.insertAdjacentElement('afterend', preview);
-        }
-        return;
-      }
-
-      if (preview.parentElement !== pane) {
-        pane.appendChild(preview);
-      }
-    };
-
-    // Apply the persisted language to every .localized-doc on the page.
-    // The global listeners are registered once (guarded by a window flag)
-    // so re-injecting this script on each page doesn't pile up handlers.
-    const applyDocLang = (lang) => {
-      const target = lang === 'zh' ? 'zh' : 'en';
-      document.querySelectorAll('.localized-doc').forEach((el) => {
-        el.setAttribute('data-lang', target);
-        placeComponentPreview(el, target);
-      });
-      document.documentElement.setAttribute('lang', target === 'zh' ? 'zh-CN' : 'en');
-      document.documentElement.setAttribute('data-lang', target);
-      window.dispatchEvent(new CustomEvent('anyui:lang-applied', { detail: target }));
-    };
-    const readDocLang = () => {
-      try {
-        return JSON.parse(localStorage.getItem('anyui-site-prefs') || '{}').lang;
-      } catch {
-        return undefined;
-      }
-    };
-
-    window.__anyuiApplyLang = applyDocLang;
-    applyDocLang(readDocLang());
-
-    if (!window.__anyuiLangBound) {
-      window.__anyuiLangBound = true;
-      document.addEventListener('astro:page-load', () => window.__anyuiApplyLang?.(readDocLang()));
-      window.addEventListener('anyui:lang-change', (e) => window.__anyuiApplyLang?.(e.detail));
-    }
-  })();
-</script>

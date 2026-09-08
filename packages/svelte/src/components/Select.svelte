@@ -13,14 +13,13 @@
     multiple = false,
     expandIcon = 'ic:outline-expand-more',
     class: className = '',
-    onUpdateModelValue,
-    onChange,
-    onBlur,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
+    onBlur = undefined,
   } = $props();
   const formItem = getContext<any>('anyui-form-item') ?? {};
   let expanded = $state(false);
-  const baseId = $props.id();
-  const dropdownId = 'a-select-dropdown-' + baseId;
+  const dropdownId = 'a-select-dropdown-' + Math.random().toString(36).slice(2);
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);
   const formattedWidth = $derived(formatStyleSize(width));
   const selectedValues = $derived(Array.isArray(modelValue) ? (modelValue as Array<string | number>) : []);

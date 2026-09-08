@@ -7,9 +7,11 @@
       'a-tab--disabled': disabled,
     }"
     role="tab"
+    :id="tabId"
+    :aria-controls="panelId"
     :aria-selected="active"
     :aria-disabled="disabled"
-    :tabindex="disabled ? -1 : 0"
+    :tabindex="disabled ? -1 : tabIndex"
     @click="handleClick"
     @keydown="handleKeyDown"
   >
@@ -46,32 +48,48 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const ctx = inject(TABS_CONTEXT, undefined as any);
+    const ctx = inject(TABS_CONTEXT, undefined);
     const element = ref<HTMLElement | undefined>();
 
-    const tab = ctx?.registerTab(props.value);
+    const tab = ctx?.registerTab(() => props.value, () => props.disabled);
     const active = tab?.active ?? false;
 
     const handleClick = () => {
       if (props.disabled) return;
       if (tab) {
-        ctx?.select(tab.key);
+        ctx?.select(tab.key.value);
       }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (props.disabled) return;
+      if (props.disabled || event.target !== event.currentTarget) return;
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         handleClick();
-      } else if (ctx) {
-        ctx.handleKeyDown(event);
+        return;
       }
+      const bar = element.value?.closest('[role="tablist"]');
+      const tabs = Array.from(bar?.querySelectorAll<HTMLElement>('[role="tab"]:not([aria-disabled="true"])') ?? [])
+        .filter((item) => item.closest('[role="tablist"]') === bar);
+      if (!tabs.length || !element.value) return;
+      const current = tabs.indexOf(element.value);
+      let next: number;
+      if (event.key === 'ArrowRight') next = (current + 1) % tabs.length;
+      else if (event.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length;
+      else if (event.key === 'Home') next = 0;
+      else if (event.key === 'End') next = tabs.length - 1;
+      else return;
+      event.preventDefault();
+      tabs[next].focus();
+      tabs[next].click();
     };
 
     return {
       element,
       active,
+      tabIndex: tab?.tabIndex ?? 0,
+      tabId: tab?.tabId,
+      panelId: tab?.panelId,
       handleClick,
       handleKeyDown,
     };
@@ -82,6 +100,7 @@ export default defineComponent({
 <style lang="scss">
 .a-tab {
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 6px;
   padding: 0 16px;
@@ -219,5 +238,24 @@ export default defineComponent({
 }
 .a-tabs--card.a-tabs--large .a-tab {
   border-radius: var(--a-radius-lg, 18px);
+}
+
+.a-tab:focus-visible {
+  border-radius: var(--a-radius-sm, 10px);
+  outline: 2px solid var(--primary);
+  outline-offset: -3px;
+  box-shadow: var(--a-focus-ring, 0 0 0 3px var(--primary-18));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-tab.a-tab,
+  .a-tab__icon,
+  .a-tab__label {
+    transition: none;
+  }
+  .a-tab.a-tab:hover,
+  .a-tab.a-tab:active {
+    transform: none;
+  }
 }
 </style>

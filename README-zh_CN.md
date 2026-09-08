@@ -111,12 +111,12 @@ AnyUI 使用 pnpm workspace 和 Turbo 管理大仓。
 ```bash
 pnpm install
 pnpm run dev
-pnpm run generate
+pnpm run build
 pnpm run dist
 pnpm run typecheck
 ```
 
-工作区包位于 `packages/vue`、`packages/react` 和 `packages/svelte`。React 与 Svelte 的源码由 `scripts/generate-framework-packages.mjs` 根据共享组件清单幂等生成；修改组件清单或共享 API 后请重新执行生成命令。
+工作区包位于 `packages/vue`、`packages/react` 和 `packages/svelte`。使用 `pnpm run build` 构建会保留各框架的维护源码。修改 Vue 组件时，应直接同步修改已完整实现的 React 与 Svelte 组件。`pnpm run generate` 会根据 `scripts/generate-framework-packages.mjs` 重写框架源码，仅在明确由生成器维护的实现需要更新时使用，并检查 diff，避免覆盖现有实现。
 
 `pnpm run dev` 会同时启动官网和多框架 Testground，并把 Testground 挂载到 `/testground/`，本地开发时文档和组件预览就是同一个站点。Testground 会直接基于库源码同时渲染 Vue / React / Svelte 三套组件——详见[它的 README](./packages/testground/README.md)。
 

@@ -10,8 +10,8 @@
     expandIcon = 'ic:round-keyboard-arrow-down',
     disabled = false,
     class: className = '',
-    children,
-    header,
+    children = undefined,
+    header = undefined,
   } = $props();
 
   const ctx = getContext<any>('anyui:accordion');

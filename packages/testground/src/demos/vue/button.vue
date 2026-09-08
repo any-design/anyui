@@ -1,6 +1,15 @@
 <template>
   <div>
     <div class="demo-block">
+      <div class="demo-block__label">Keyboard interaction</div>
+      <div class="demo-row">
+        <a-button @click="clicks++">Count clicks</a-button>
+        <a-button disabled @click="clicks++">Disabled counter</a-button>
+        <a-button loading @click="clicks++">Loading counter</a-button>
+        <span>Clicks: {{ clicks }}</span>
+      </div>
+    </div>
+    <div class="demo-block">
       <div class="demo-block__label">Types &amp; Sizes</div>
       <div class="demo-row">
         <a-button size="small">Small</a-button>
@@ -34,3 +43,8 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+const clicks = ref(0);
+</script>

@@ -7,9 +7,9 @@
     closable = false,
     showIcon = true,
     class: className = '',
-    children,
-    icon,
-    onClose,
+    children = undefined,
+    icon = undefined,
+    onClose = undefined,
   } = $props();
 
   // default icons per type, reusing the message icon set

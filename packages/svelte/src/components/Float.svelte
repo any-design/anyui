@@ -6,9 +6,9 @@
     centered = false,
     round = false,
     class: className = '',
-    children,
-    onClose,
-    onUpdateVisible,
+    children = undefined,
+    onClose = undefined,
+    onUpdateVisible = undefined,
   } = $props();
   const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
   const close = () => {

@@ -10,7 +10,7 @@
     scrollBehavior = 'smooth',
     scrollFade = false as AScrollFadeConfig,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   // the bars are inset 2px from each edge (see the shared styles)
   const BAR_INSET = 2;

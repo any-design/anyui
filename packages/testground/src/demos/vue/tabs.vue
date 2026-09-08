@@ -1,6 +1,22 @@
 <template>
   <div>
     <div class="demo-block">
+      <div class="demo-block__label">Implicit values &amp; kept state</div>
+      <a-tabs class="implicit-tabs" @change="implicitTab = $event">
+        <template #tab>
+          <a-tab disabled>Unavailable</a-tab>
+          <a-tab>First</a-tab>
+          <a-tab>Second</a-tab>
+          <a-tab disabled>Disabled last</a-tab>
+        </template>
+        <a-tab-panel>Unavailable panel</a-tab-panel>
+        <a-tab-panel keep-alive><a-input placeholder="Your note stays here" /></a-tab-panel>
+        <a-tab-panel lazy><p>Second implicit panel</p><a-input placeholder="Mounted on first visit" /></a-tab-panel>
+        <a-tab-panel>Disabled panel</a-tab-panel>
+      </a-tabs>
+      <span>Last selected index: {{ implicitTab ?? 'none' }}</span>
+    </div>
+    <div class="demo-block">
       <div class="demo-block__label">Default</div>
       <div class="demo-row">
         <a-tabs v-model="defaultTab" style="flex: 1">
@@ -66,4 +82,5 @@ import { ref } from 'vue';
 const defaultTab = ref(1);
 const card = ref(1);
 const sized = ref(1);
+const implicitTab = ref<string | number>();
 </script>

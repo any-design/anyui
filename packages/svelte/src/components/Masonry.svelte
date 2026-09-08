@@ -8,7 +8,7 @@
     gap = 16,
     fit = false,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
 
   let containerEl: HTMLDivElement | undefined = $state();

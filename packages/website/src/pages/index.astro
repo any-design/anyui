@@ -1,4 +1,5 @@
 ---
+import { version } from '../../../../package.json';
 import CodeBlock from '../components/CodeBlock.astro';
 import HeroShowcase from '../components/vue/HeroShowcase.vue';
 import FeatureGrid from '../components/vue/FeatureGrid.vue';
@@ -50,13 +51,13 @@ const seo = homeSeo();
 >
   <section class="hero">
     <div>
-      <span class="hero__eyebrow">🌸 v0.5.0 — now with liquid glass</span>
+      <span class="hero__eyebrow">🌸 v{version} · Vue, React &amp; Svelte</span>
       <h1 class="hero__title">
         A <em>cute</em> design system for Vue, React &amp; Svelte
       </h1>
       <p class="hero__desc">
-        AnyUI brings one fresh, modern, adorable visual language to all three frameworks — same
-        tokens, same classes, same API. Toggle 🌙 and 🧊 in the header to see it adapt live.
+        Rounded components, shared design tokens, and optional liquid glass.
+        Build with Vue, React or Svelte, and make it yours.
       </p>
       <HomeHeroActions client:load />
     </div>
@@ -77,7 +78,7 @@ const seo = homeSeo();
   <section class="features">
     <h2 class="section-title">Use it from any framework</h2>
     <p class="section-desc">
-      Same components, same class names, same props — pick your framework and keep the design.
+      Shared styles and design tokens, with an entrypoint for each framework.
     </p>
     <div class="features__grid">
       <div class="code-card">

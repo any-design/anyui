@@ -7,7 +7,7 @@
     estimatedItemHeight = undefined,
     ignoreInvisibleItems = false,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   let containerEl = $state<HTMLDivElement>();
   let containerHeight = $state(0);

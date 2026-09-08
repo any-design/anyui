@@ -15,11 +15,11 @@
     placeholder = '',
     type = 'text',
     class: className = '',
-    onUpdateModelValue,
-    onInput,
-    onChange,
-    onSubmit,
-    onBlur,
+    onUpdateModelValue = undefined,
+    onInput = undefined,
+    onChange = undefined,
+    onSubmit = undefined,
+    onBlur = undefined,
   } = $props();
   const formItem = getContext<any>('anyui-form-item') ?? {};
   const value = $derived(String(modelValue ?? ''));

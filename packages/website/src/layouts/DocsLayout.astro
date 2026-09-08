@@ -91,8 +91,6 @@ const mobileMenuGroups = nav.map((group) => ({
     <article class="prose">
       <MobileToc
         client:load
-        transition:persist="mobile-toc"
-        transition:persist-props
         auto={tocAuto}
         headings={headings}
       />
@@ -100,6 +98,7 @@ const mobileMenuGroups = nav.map((group) => ({
         <slot />
       </div>
       <div class="doc-toolbar">
+        <span class="doc-toolbar__label"><span data-site-lang="en">Documentation</span><span data-site-lang="zh">文档指南</span></span>
         <LangToggle
           client:load
           transition:persist="docs-lang-toggle"

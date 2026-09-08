@@ -2,7 +2,7 @@
   import Message from './Message.svelte';
   import type { MessageOptions } from '../types';
 
-  let { onCleared } = $props();
+  let { onCleared = undefined } = $props();
 
   type QueueItem = MessageOptions & { key: string };
 

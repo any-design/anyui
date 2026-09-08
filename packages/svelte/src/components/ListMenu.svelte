@@ -3,11 +3,10 @@
   let {
     menu = [] as AListMenuConfig,
     modelValue = $bindable(undefined),
-    selectedVariant = 'soft',
     class: className = '',
-    children,
-    onUpdateModelValue,
-    onChange,
+    children = undefined,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
   } = $props();
   const toItem = (item: AListMenuItemConfig): AListMenuDisplayItem =>
     typeof item === 'string' ? { type: 'item', label: item, value: item } : { type: 'item', ...item };
@@ -26,7 +25,7 @@
   };
 </script>
 
-<div class="a-list-menu a-list-menu--selected-{selectedVariant} {className}">
+<div class="a-list-menu {className}">
   {#each displayItems as item, index}
     {#if item.type === 'split' && item.label}
       <div class="a-list-menu__split"><span>{item.label}</span></div>

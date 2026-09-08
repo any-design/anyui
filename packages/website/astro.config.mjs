@@ -1,9 +1,11 @@
 import path from 'node:path';
+import { readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import svelte from '@astrojs/svelte';
 import vue from '@astrojs/vue';
 import { defineConfig } from 'astro/config';
+import Components from 'unplugin-vue-components/vite';
 
 import { previewPlugin } from './src/vite/preview-plugin.ts';
 
@@ -13,8 +15,18 @@ const reactSrc = path.resolve(__dirname, '../react/src');
 const svelteSrc = path.resolve(__dirname, '../svelte/src');
 const testgroundDevOrigin = process.env.ANYUI_TESTGROUND_DEV_ORIGIN ?? 'http://127.0.0.1:5174';
 
+// Import only the controls used by each island/demo. Registering the whole
+// library in appEntrypoint pulled every component into basic guide pages.
+const componentFiles = new Map(
+  readdirSync(path.join(vueSrc, 'packages'), { recursive: true })
+    .filter((file) => /^A[A-Z].*\.vue$/.test(path.basename(file)))
+    .map((file) => [path.basename(file, '.vue'), path.join(vueSrc, 'packages', file)]),
+);
+
 export default defineConfig({
   site: 'https://anyui.pwp.sh',
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
+  devToolbar: { enabled: false },
   redirects: {
     '/docs': '/docs/getting-started',
   },
@@ -26,12 +38,22 @@ export default defineConfig({
       },
     },
   },
-  integrations: [
-    vue({ appEntrypoint: '/src/vue-app' }),
-    svelte(),
-  ],
+  integrations: [vue(), svelte()],
   vite: {
-    plugins: [previewPlugin()],
+    plugins: [
+      previewPlugin(),
+      Components({
+        dirs: [],
+        dts: false,
+        include: [/\/website\/src\/.*\.vue(?:\?.*)?$/],
+        resolvers: [
+          (name) => {
+            const from = componentFiles.get(name);
+            if (from) return { name: 'default', from };
+          },
+        ],
+      }),
+    ],
     server: {
       proxy: {
         '/testground': {

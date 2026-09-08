@@ -4,8 +4,8 @@
     items = [] as ARadioGroupItems,
     modelValue = $bindable(undefined),
     class: className = '',
-    onUpdateModelValue,
-    onChange,
+    onUpdateModelValue = undefined,
+    onChange = undefined,
   } = $props();
   const update = (value: string | number) => {
     modelValue = value;

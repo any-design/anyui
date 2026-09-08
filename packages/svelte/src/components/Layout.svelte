@@ -4,7 +4,7 @@
     fit = false,
     hasSide = false,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
 </script>
 

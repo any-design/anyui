@@ -1,8 +1,19 @@
 import { Button } from '@any-design/anyui-react';
+import { useState } from 'react';
 
 export default function ButtonDemo() {
+  const [clicks, setClicks] = useState(0);
   return (
     <div>
+      <div className="demo-block">
+        <div className="demo-block__label">Keyboard interaction</div>
+        <div className="demo-row">
+          <Button onClick={() => setClicks((value) => value + 1)}>Count clicks</Button>
+          <Button disabled onClick={() => setClicks((value) => value + 1)}>Disabled counter</Button>
+          <Button loading onClick={() => setClicks((value) => value + 1)}>Loading counter</Button>
+          <span>Clicks: {clicks}</span>
+        </div>
+      </div>
       <div className="demo-block">
         <div className="demo-block__label">Types &amp; Sizes</div>
         <div className="demo-row">

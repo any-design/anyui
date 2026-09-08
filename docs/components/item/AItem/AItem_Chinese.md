@@ -43,7 +43,7 @@ import { Item } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AItem title="设置" description="管理你的偏好" clickable href="/settings" />
+  <AItem title="主题设置" description="自定义主题" clickable href="/docs/theming" />
 </template>
 ```
 

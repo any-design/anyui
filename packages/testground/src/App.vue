@@ -1,5 +1,5 @@
 <template>
-  <div class="tg">
+  <div class="tg" data-testid="testground-root">
     <div class="tg__backdrop">
       <span></span>
       <span></span>
@@ -22,6 +22,8 @@
             'tg-sidebar__item': true,
             'tg-sidebar__item--active': entry.id === selectedId,
           }"
+          data-testid="component-nav-item"
+          :data-component-id="entry.id"
           @click="select(entry.id)"
         >
           <span>{{ entry.title }}</span>
@@ -45,12 +47,16 @@
 
     <main class="tg-main">
       <header class="tg-topbar">
-        <span class="tg-topbar__title">{{ selected?.title ?? 'Welcome' }}</span>
+        <span class="tg-topbar__title" data-testid="selected-title">{{
+          selected?.title ?? 'Welcome'
+        }}</span>
         <div class="tg-topbar__group">
           <span
             v-for="framework in FRAMEWORKS"
             :key="framework"
             :class="['tg-chip', `tg-chip--${framework}`, { 'tg-chip--on': enabled[framework] }]"
+            :data-testid="`framework-toggle-${framework}`"
+            :data-enabled="enabled[framework]"
             @click="toggleFramework(framework)"
           >
             <span class="dot"></span>
@@ -58,11 +64,21 @@
           </span>
         </div>
         <div class="tg-topbar__group">
-          <span :class="['tg-chip', { 'tg-chip--on': dark }]" @click="dark = !dark">
+          <span
+            :class="['tg-chip', { 'tg-chip--on': dark }]"
+            data-testid="theme-toggle"
+            :data-enabled="dark"
+            @click="dark = !dark"
+          >
             <Icon :icon="dark ? 'ph:moon-bold' : 'ph:sun-bold'" />
             {{ dark ? 'Dark' : 'Light' }}
           </span>
-          <span :class="['tg-chip', { 'tg-chip--on': glass }]" @click="glass = !glass">
+          <span
+            :class="['tg-chip', { 'tg-chip--on': glass }]"
+            data-testid="glass-toggle"
+            :data-enabled="glass"
+            @click="glass = !glass"
+          >
             <Icon icon="ph:drop-bold" />
             Glass
           </span>
@@ -70,22 +86,28 @@
       </header>
 
       <div class="tg-content">
-        <div v-if="selected" :key="selected.id" class="tg-content__grid">
+        <div
+          v-if="selected"
+          :key="selected.id"
+          class="tg-content__grid"
+          data-testid="demo-grid"
+          :data-component-id="selected.id"
+        >
           <section
             v-for="framework in activeFrameworks"
             :key="`${selected.id}-${framework}`"
             class="tg-panel"
+            :data-testid="`framework-panel-${framework}`"
+            :data-framework="framework"
+            :data-component-id="selected.id"
           >
             <div class="tg-panel__header">
               <span :class="['dot', `dot--${framework}`]"></span>
               <span>{{ FRAMEWORK_LABELS[framework] }}</span>
             </div>
-            <div class="tg-panel__body">
+            <div class="tg-panel__body" :data-testid="`framework-panel-body-${framework}`">
               <template v-if="selected[framework]">
-                <component
-                  :is="vueDemoFor(selected)"
-                  v-if="framework === 'vue'"
-                />
+                <component :is="vueDemoFor(selected)" v-if="framework === 'vue'" />
                 <ReactIsland v-else-if="framework === 'react'" :loader="selected.react!" />
                 <SvelteIsland v-else :loader="selected.svelte!" />
               </template>

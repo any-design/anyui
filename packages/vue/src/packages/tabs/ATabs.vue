@@ -10,17 +10,19 @@
 </template>
 
 <script lang="ts">
-import type { PropType, Ref } from 'vue';
+import type { PropType, ComputedRef } from 'vue';
 import {
   computed,
   defineComponent,
-  onMounted,
+  onScopeDispose,
   provide,
   ref,
+  shallowRef,
+  useId,
   watch,
 } from 'vue';
 
-import { TABS_CONTEXT } from './constants';
+import { TABS_CONTEXT, type TabRegistration } from './constants';
 import type { ATabsPosition, ATabsSize, ATabsType } from './types';
 
 export default defineComponent({
@@ -57,72 +59,53 @@ export default defineComponent({
   emits: ['update:modelValue', 'change'],
   setup(props, { emit }) {
     const internalValue = ref<string | number | undefined>(props.modelValue);
+    const id = useId();
     let autoTabIndex = 0;
     let autoPanelIndex = 0;
 
-    const tabOrder = ref<Array<string | number>>([]);
+    const tabOrder = shallowRef<Array<{ key: ComputedRef<string | number>; disabled: () => boolean }>>([]);
+    const firstValue = computed(() => tabOrder.value.find((tab) => !tab.disabled())?.key.value);
+    const currentValue = computed(() => internalValue.value ?? (props.autoSelect ? firstValue.value : undefined));
+    const focusValue = computed(() =>
+      tabOrder.value.some((tab) => !tab.disabled() && tab.key.value === currentValue.value)
+        ? currentValue.value : firstValue.value,
+    );
 
-    const currentValue = computed(() => internalValue.value);
-
-    const createActiveRef = (key: string | number): Ref<boolean> => {
-      const isActive = ref(false);
-
-      const updateActive = () => {
-        isActive.value = currentValue.value === key;
-      };
-      updateActive();
-      watch(currentValue, updateActive);
-
-      return isActive as Ref<boolean>;
-    };
+    const createRegistration = (key: ComputedRef<string | number>): TabRegistration => ({
+      key,
+      active: computed(() => currentValue.value === key.value),
+      tabIndex: computed(() => focusValue.value === key.value ? 0 : -1),
+      tabId: computed(() => `${id}-tab-${typeof key.value}-${encodeURIComponent(String(key.value))}`),
+      panelId: computed(() => `${id}-panel-${typeof key.value}-${encodeURIComponent(String(key.value))}`),
+    });
 
     const registerTab = (
-      value: string | number | undefined,
-    ): { active: Ref<boolean>; key: string | number } => {
-      const key = typeof value !== 'undefined' ? value : autoTabIndex++;
-      if (!tabOrder.value.includes(key)) {
-        tabOrder.value.push(key);
-      }
-
-      return { active: createActiveRef(key), key };
+      value: () => string | number | undefined,
+      disabled: () => boolean,
+    ): TabRegistration => {
+      const index = autoTabIndex++;
+      const key = computed(() => value() ?? index);
+      const entry = { key, disabled };
+      tabOrder.value = [...tabOrder.value, entry];
+      onScopeDispose(() => { tabOrder.value = tabOrder.value.filter((tab) => tab !== entry); });
+      return createRegistration(key);
     };
 
-    const registerPanel = (value: string | number | undefined): Ref<boolean> => {
-      const key = typeof value !== 'undefined' ? value : autoPanelIndex++;
-      return createActiveRef(key);
+    const registerPanel = (value: () => string | number | undefined): TabRegistration => {
+      const index = autoPanelIndex++;
+      return createRegistration(computed(() => value() ?? index));
     };
 
-    const select = (value: string | number | undefined) => {
+    const select = (value: string | number) => {
       internalValue.value = value;
       emit('update:modelValue', value);
       emit('change', value);
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const order = tabOrder.value;
-      if (!order.length) return;
-      const currentIdx = order.findIndex((v) => v === currentValue.value);
-      let nextIdx = currentIdx;
-      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-        nextIdx = (currentIdx + 1) % order.length;
-      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-        nextIdx = (currentIdx - 1 + order.length) % order.length;
-      } else if (event.key === 'Home') {
-        nextIdx = 0;
-      } else if (event.key === 'End') {
-        nextIdx = order.length - 1;
-      } else {
-        return;
-      }
-      event.preventDefault();
-      select(order[nextIdx]);
     };
 
     provide(TABS_CONTEXT, {
       registerTab,
       registerPanel,
       select,
-      handleKeyDown,
     });
 
     const rootClass = computed(() => [
@@ -138,12 +121,6 @@ export default defineComponent({
         internalValue.value = value;
       },
     );
-
-    onMounted(() => {
-      if (typeof props.modelValue === 'undefined' && props.autoSelect && tabOrder.value.length) {
-        internalValue.value = tabOrder.value[0];
-      }
-    });
 
     return {
       rootClass,

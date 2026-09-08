@@ -62,11 +62,13 @@ jobs:
       - name: Build package
         run: pnpm exec turbo run build
 
-      - name: Ensure generated sources are committed
+      - name: Ensure build preserves committed sources
         run: git diff --exit-code
 
       - name: Verify package contents
-        run: npm pack --dry-run
+        run: |
+          pnpm exec publint
+          pnpm run check:package
 
       - name: Publish dry run
         if: github.event_name == 'workflow_dispatch' && inputs.mode == 'dry-run'

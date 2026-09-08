@@ -4,6 +4,8 @@
 
 该组件在 **Vue**、**React** 和 **Svelte** 三端共享同一套 props，仅各框架的绑定语法略有不同。
 
+使用 `Tab` 聚焦按钮，按下 `Enter` 或松开 `Space` 触发操作。禁用和加载中的按钮不可触发，且会从 Tab 焦点顺序中跳过。加载态同时提供 `aria-busy`。
+
 ## 引入
 
 ```ts
@@ -18,7 +20,7 @@ import { Button } from '@any-design/anyui/vue';
 
 ### 样式类型
 
-`type` 属性决定整体外观。Vue 支持九种取值；React 与 Svelte 当前支持 `default`、`primary`、`gradient`、`gradient-reverse`。
+`type` 属性决定整体外观。三个框架共享同一套样式，包括主色、辅色、状态色、渐变与立体样式。
 
 ```vue
 <template>

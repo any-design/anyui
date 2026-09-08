@@ -1,12 +1,29 @@
 import { useState } from 'react';
-import { Tabs, Tab, TabPanel } from '@any-design/anyui-react';
+import { Tabs, Tab, TabPanel, Input } from '@any-design/anyui-react';
 
 export default function TabsDemo() {
+  const [implicitTab, setImplicitTab] = useState<string | number>();
   const [defaultTab, setDefaultTab] = useState<string | number>(1);
   const [card, setCard] = useState<string | number>(1);
   const [sized, setSized] = useState<string | number>(1);
   return (
     <div>
+      <div className="demo-block">
+        <div className="demo-block__label">Implicit values &amp; kept state</div>
+        <Tabs className="implicit-tabs" onChange={setImplicitTab}>
+          <>
+            <Tab disabled>Unavailable</Tab>
+            <Tab>First</Tab>
+            <Tab>Second</Tab>
+            <Tab disabled>Disabled last</Tab>
+            <TabPanel>Unavailable panel</TabPanel>
+            <TabPanel keepAlive><Input placeholder="Your note stays here" /></TabPanel>
+            <TabPanel lazy><p>Second implicit panel</p><Input placeholder="Mounted on first visit" /></TabPanel>
+            <TabPanel>Disabled panel</TabPanel>
+          </>
+        </Tabs>
+        <span>Last selected index: {implicitTab ?? 'none'}</span>
+      </div>
       <div className="demo-block">
         <div className="demo-block__label">Default</div>
         <div className="demo-row">

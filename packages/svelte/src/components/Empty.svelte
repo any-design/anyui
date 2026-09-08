@@ -4,7 +4,7 @@
     text = '',
     icon = 'iconoir:file-not-found',
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
 </script>
 

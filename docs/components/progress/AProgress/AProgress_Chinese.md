@@ -26,8 +26,12 @@ import { Progress } from '@any-design/anyui/vue';
 
 ```vue
 <template>
-  <AProgress :value="70" status="success" show-label :format="(v) => `${v} / 100`" />
+  <AProgress :value="70" status="success" show-label :format="formatProgress" />
 </template>
+
+<script setup>
+const formatProgress = (value) => `${value} / 100`;
+</script>
 ```
 
 ### 不确定状态

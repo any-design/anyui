@@ -6,7 +6,7 @@
     alwaysRender = false,
     renderWaitTime = 100,
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
   // matches the Vue ACollapse transition duration (var(--anim-duration, 200ms))
   const TRANSITION_DURATION = 200;

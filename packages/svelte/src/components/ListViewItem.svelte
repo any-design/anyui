@@ -6,8 +6,8 @@
     type = '',
     itemHeight = undefined,
     class: className = '',
-    children,
-    onClick,
+    children = undefined,
+    onClick = undefined,
   } = $props();
   const listView = getContext<any>('anyui-list-view') ?? {};
   const formatStyleSize = (value: string | number | undefined) => (typeof value === 'number' ? value + 'px' : value);

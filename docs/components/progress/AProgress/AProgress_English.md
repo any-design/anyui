@@ -26,8 +26,12 @@ Use `status` to tint the fill (`primary`, `success`, `warn`, `danger`, `info`) a
 
 ```vue
 <template>
-  <AProgress :value="70" status="success" show-label :format="(v) => `${v} / 100`" />
+  <AProgress :value="70" status="success" show-label :format="formatProgress" />
 </template>
+
+<script setup>
+const formatProgress = (value) => `${value} / 100`;
+</script>
 ```
 
 ### Indeterminate

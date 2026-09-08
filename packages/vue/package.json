@@ -1,6 +1,6 @@
 {
   "name": "@any-design/anyui-vue",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "private": true,
   "description": "Vue package for AnyUI",
   "type": "module",

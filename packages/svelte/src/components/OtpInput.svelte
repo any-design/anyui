@@ -7,8 +7,8 @@
     masked = false,
     autoFocus = false,
     class: className = '',
-    onUpdateModelValue,
-    onComplete,
+    onUpdateModelValue = undefined,
+    onComplete = undefined,
   } = $props();
   let inputEl = $state<HTMLInputElement>();
   let activeIndex = $state(0);

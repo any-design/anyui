@@ -1,8 +1,18 @@
 <script lang="ts">
   import { Button } from '@any-design/anyui-svelte';
+  let clicks = $state(0);
 </script>
 
 <div>
+  <div class="demo-block">
+    <div class="demo-block__label">Keyboard interaction</div>
+    <div class="demo-row">
+      <Button onClick={() => clicks++}>Count clicks</Button>
+      <Button disabled onClick={() => clicks++}>Disabled counter</Button>
+      <Button loading onClick={() => clicks++}>Loading counter</Button>
+      <span>Clicks: {clicks}</span>
+    </div>
+  </div>
   <div class="demo-block">
     <div class="demo-block__label">Types &amp; Sizes</div>
     <div class="demo-row">

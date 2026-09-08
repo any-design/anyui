@@ -4,6 +4,8 @@
 
 The same component ships for **Vue**, **React** and **Svelte** with an identical prop surface — only the binding syntax differs between frameworks.
 
+Use `Tab` to focus a button, then press `Enter` or release `Space` to activate it. Disabled and loading buttons block activation and are skipped in the tab order. Loading buttons expose `aria-busy`.
+
 ## Import
 
 ```ts
@@ -18,7 +20,7 @@ When you install the Vue plugin globally (`app.use(AnyUI)`) you can use `<AButto
 
 ### Style types
 
-The `type` prop drives the overall look. Vue supports nine values; React and Svelte currently support `default`, `primary`, `gradient`, and `gradient-reverse`.
+The `type` prop drives the overall look. All three frameworks share the same styles, including primary, secondary, status colors, gradients, and depth.
 
 ```vue
 <template>

@@ -6,12 +6,12 @@
     multiple = false,
     accept = undefined,
     class: className = '',
-    children,
-    dragging,
-    uploading,
-    error,
-    success,
-    onUpload,
+    children = undefined,
+    dragging = undefined,
+    uploading = undefined,
+    error = undefined,
+    success = undefined,
+    onUpload = undefined,
   } = $props();
   let inputEl = $state<HTMLInputElement>();
   let isDragging = $state(false);

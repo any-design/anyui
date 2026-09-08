@@ -5,9 +5,9 @@
     clean = false,
     link = '',
     class: className = '',
-    children,
-    header,
-    footer,
+    children = undefined,
+    header = undefined,
+    footer = undefined,
   } = $props();
   const formattedWidth = $derived(typeof width === 'number' ? width + 'px' : width);
   const hasHeader = $derived(Boolean(title || header));

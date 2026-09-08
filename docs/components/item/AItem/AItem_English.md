@@ -43,7 +43,7 @@ Set `clickable` for hover feedback, or `href` to render the item as a link.
 
 ```vue
 <template>
-  <AItem title="Settings" description="Manage your preferences" clickable href="/settings" />
+  <AItem title="Theme settings" description="Customize your theme" clickable href="/docs/theming" />
 </template>
 ```
 

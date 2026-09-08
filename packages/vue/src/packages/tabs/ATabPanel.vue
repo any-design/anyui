@@ -1,6 +1,6 @@
 <template>
-  <div v-if="rendered" class="a-tab-panel" :class="{ 'a-tab-panel--active': active }" role="tabpanel" :hidden="!active">
-    <slot v-if="active || keepAlive"></slot>
+  <div v-if="rendered" :id="panelId" class="a-tab-panel" :class="{ 'a-tab-panel--active': active }" role="tabpanel" :aria-labelledby="tabId" :hidden="!active">
+    <slot></slot>
   </div>
 </template>
 
@@ -29,26 +29,17 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const ctx = inject(TABS_CONTEXT, undefined as any);
-    const rendered = ref(false);
-
-    const active = ctx ? ctx.registerPanel(props.value) : ref(false);
-
-    watch(
-      active,
-      (isActive) => {
-        if (isActive) {
-          rendered.value = true;
-        } else if (!props.keepAlive) {
-          rendered.value = false;
-        }
-      },
-      { immediate: true },
-    );
+    const ctx = inject(TABS_CONTEXT, undefined);
+    const panel = ctx?.registerPanel(() => props.value);
+    const active = panel?.active ?? ref(false);
+    const visited = ref(false);
+    watch(active, (value) => { if (value) visited.value = true; }, { immediate: true });
 
     return {
       active,
-      rendered: computed(() => rendered.value || props.keepAlive || props.lazy),
+      tabId: panel?.tabId,
+      panelId: panel?.panelId,
+      rendered: computed(() => active.value || props.keepAlive || (props.lazy && visited.value)),
     };
   },
 });
@@ -69,6 +60,13 @@ export default defineComponent({
   &--active {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a-tab-panel {
+    transition: none;
+    transform: none;
   }
 }
 </style>

@@ -15,8 +15,8 @@
     zIndex = 3000,
     popupClass = '',
     class: className = '',
-    children,
-    onVisibleChange,
+    children = undefined,
+    onVisibleChange = undefined,
   } = $props();
   let popper = $state<any>();
   let openTimeout: ReturnType<typeof setTimeout> | undefined;

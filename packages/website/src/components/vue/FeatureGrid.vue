@@ -19,18 +19,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { PropType } from 'vue';
-
 interface Feature {
   icon: string;
   title: string;
   desc: string;
 }
 
-defineProps({
-  features: {
-    type: Array as PropType<Feature[]>,
-    default: () => [],
-  },
-});
+withDefaults(defineProps<{ features?: Feature[] }>(), { features: () => [] });
 </script>

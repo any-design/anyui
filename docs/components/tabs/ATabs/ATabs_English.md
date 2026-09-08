@@ -70,7 +70,9 @@ Set `keepAlive` on a panel to keep it mounted (hidden) when inactive, preserving
 
 ## Keyboard
 
-`←/→` and `↑/↓` move between tabs; `Home`/`End` jump to the first / last tab; `Enter`/`Space` activate.
+`Tab` focuses the selected tab. `←/→` move focus and selection between enabled tabs; `Home`/`End` jump to the first / last enabled tab; `Enter`/`Space` activate. Disabled tabs are skipped.
+
+When both triggers and panels omit `value`, each uses its zero-based position in its own list. Use explicit, unique values for dynamic lists that add, remove, or reorder tabs.
 
 ## ATabs Props
 
@@ -80,7 +82,7 @@ Set `keepAlive` on a panel to keep it mounted (hidden) when inactive, preserving
 | `type` | 'default' \| 'line' \| 'card' | 'default' | Visual variant. `line` is kept as a compatibility alias of `default`. |
 | `size` | 'small' \| 'default' \| 'large' | 'default' | Bar density. |
 | `position` | 'top' \| 'bottom' | 'top' | Bar placement. |
-| `autoSelect` | Boolean | true | Auto-select the first tab when no `modelValue` is provided. |
+| `autoSelect` | Boolean | true | Auto-select the first enabled tab when no `modelValue` is provided. |
 
 ## ATabs Slots
 

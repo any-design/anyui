@@ -1,12 +1,27 @@
 <script lang="ts">
-  import { Tabs, Tab, TabPanel } from '@any-design/anyui-svelte';
+  import { Tabs, Tab, TabPanel, Input } from '@any-design/anyui-svelte';
 
   let defaultTab = $state<string | number>(1);
   let card = $state<string | number>(1);
   let sized = $state<string | number>(1);
+  let implicitTab = $state<string | number>();
 </script>
 
 <div>
+  <div class="demo-block">
+    <div class="demo-block__label">Implicit values &amp; kept state</div>
+    <Tabs class="implicit-tabs" onChange={(value: string | number) => implicitTab = value}>
+      <Tab disabled>Unavailable</Tab>
+      <Tab>First</Tab>
+      <Tab>Second</Tab>
+      <Tab disabled>Disabled last</Tab>
+      <TabPanel>Unavailable panel</TabPanel>
+      <TabPanel keepAlive><Input placeholder="Your note stays here" /></TabPanel>
+      <TabPanel lazy><p>Second implicit panel</p><Input placeholder="Mounted on first visit" /></TabPanel>
+      <TabPanel>Disabled panel</TabPanel>
+    </Tabs>
+    <span>Last selected index: {implicitTab ?? 'none'}</span>
+  </div>
   <div class="demo-block">
     <div class="demo-block__label">Default</div>
     <div class="demo-row">

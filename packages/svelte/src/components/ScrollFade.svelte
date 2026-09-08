@@ -14,7 +14,7 @@
     fill = false,
     scrollBehavior = 'smooth',
     class: className = '',
-    children,
+    children = undefined,
   } = $props();
 
   const formatSize = (value: number | string | undefined) => {
