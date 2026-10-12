@@ -1,5 +1,5 @@
 <INSTRUCTIONS>
-@~/.codex/RTK.md
+Use `rtk` or `rtk proxy` for shell commands. Local usage guide: `~/.codex/RTK.md`.
 
 ## Commit Convention
 
